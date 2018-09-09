@@ -1,0 +1,30 @@
+.box1 {
+    line-height: 160px;
+    text-align: center;
+    font-size: 40px;
+    font-family: Futura;
+}
+
+.box1 .front {
+    background: rgba(255, 0, 0, 0.55);
+}
+
+.box1 .back {
+    background: rgba(0, 255, 0, 0.55);
+}
+
+.box1 .left {
+    background: rgba(0, 0, 255, 0.55);
+}
+
+.box1 .right {
+    background: rgba(255, 255, 0, 0.55);
+}
+
+.box1 .bottom {
+    background: rgba(255, 0, 255, 0.55);
+}
+
+.box1 .top {
+    background: rgba(0, 255, 255, 0.55);
+}
