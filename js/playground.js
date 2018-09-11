@@ -1,55 +1,18 @@
 var timeModule;
 
-function initialize() {
-    setupPlayground();
+function setup() {
     onStart();
-    recursiveAnimateStart();
 }
 
-function setupPlayground() {
-    var stage = Sprite3D.stage(),
-        rx = 0,
-        ry = 0,
-        rz = 0,
-        box = stage.appendChild(
-            Sprite3D
-            .box(100, ".box1")
-            .rotate(rx += Math.random() * 7 - 3.5, ry += Math.random() * 7 - 3.5, 0)
-            .update()
-        );
-
-    // let's use the "transitionEnd" event to drive our animation
-    box.addEventListener(Sprite3D.prefix("TransitionEnd"), moveTheBox, false);
-    //box.addEventListener( Sprite3D.prefix("transitionend"), moveTheBox, false );
-    box.addEventListener("transitionend", moveTheBox, false);
-
-    function moveTheBox(moveTheBox) {
-        box.css(
-            "Transition",
-            "all " + (.2 + Math.random()) + "s ease-in-out",
-            true // add a third argument and Sprite3D will add the current browser prefix to the property :)
-        ).rotate(
-            rx += Math.random() * 27 - 13.5,
-            ry += Math.random() * 27 - 13.5,
-            0
-        ).scale(
-            0.25 + Math.random() * 4,
-            0.25 + Math.random() * 4,
-            0.25 + Math.random() * 4
-        ).update();
-    }
-
-    // start the animation after the page has been rendered
-    setTimeout(moveTheBox, 500);
-}
-
-function recursiveAnimateStart() {
-    requestAnimationFrame(recursiveAnimateStart);
+function draw() {
     timeModule.update();
     onUpdate(timeModule.getDelta());
+    onDraw();
 }
 
 function onStart() {
+    createCanvas(500,500);
+  //  noLoop();
     timeModule = new TimeDelta();
 }
 
@@ -58,8 +21,29 @@ function onPause() {
 }
 
 function onUpdate(timeDelta) {
+ //   console.log(frameCount);
 }
 
 function onStop() {
 
 }
+
+function onDraw() {
+    background(100);
+    push();
+    translate(width*0.2, height*0.5);
+    rotate(frameCount / 200.0);
+    polygon(0, 0, 82, 3); 
+    pop();
+}
+
+function polygon(x, y, radius, npoints) {
+    var angle = TWO_PI / npoints;
+    beginShape();
+    for (var a = 0; a < TWO_PI; a += angle) {
+      var sx = x + cos(a) * radius;
+      var sy = y + sin(a) * radius;
+      vertex(sx, sy);
+    }
+    endShape(CLOSE);
+  }
