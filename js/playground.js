@@ -1,27 +1,33 @@
-var timeModule;
+var sceneObject;
 
 function setup() {
     onStart();
 }
 
 function draw() {
-    timeModule.update();
-    onUpdate(timeModule.getDelta());
+    onUpdate();
     onDraw();
 }
 
+//==================
+
 function onStart() {
-    createCanvas(500,500);
-  //  noLoop();
-    timeModule = new TimeDelta();
+    createCanvas(500, 500);
+    Broker.getInstance().publish(TOPICS.SCENE_LOADER, SCENES.TITLE);
+
+    var str = new AddressBuilder(SCENES.TITLE)
+        .appendArg("engery", 100.12)
+        .appendArg("okay", "true");
+    str.removeArgs();
+    console.log(str.build());
 }
 
 function onPause() {
 
 }
 
-function onUpdate(timeDelta) {
- //   console.log(frameCount);
+function onUpdate() {
+    getScene().onUpdate();
 }
 
 function onStop() {
@@ -29,21 +35,5 @@ function onStop() {
 }
 
 function onDraw() {
-    background(100);
-    push();
-    translate(width*0.2, height*0.5);
-    rotate(frameCount / 200.0);
-    polygon(0, 0, 82, 3); 
-    pop();
+    getScene().onDraw();
 }
-
-function polygon(x, y, radius, npoints) {
-    var angle = TWO_PI / npoints;
-    beginShape();
-    for (var a = 0; a < TWO_PI; a += angle) {
-      var sx = x + cos(a) * radius;
-      var sy = y + sin(a) * radius;
-      vertex(sx, sy);
-    }
-    endShape(CLOSE);
-  }
