@@ -69,7 +69,7 @@ class BrokerSet {
                 value = this.map.get(topic);
             }
             value.push(listener);
-        } else {
+        } else { 
             var value = [listener];
             this.map.set(topic, value);
         }
