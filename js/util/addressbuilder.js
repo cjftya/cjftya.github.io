@@ -1,17 +1,31 @@
 var AddressUtil = (function () {
     var addressUtil;
 
+    function modules() {
+        return {
+            getArg: function (data, key) {
+                var args = data.substring(data.indexOf('@') + 2, data.length).split('/');
+                for (var i in args) {
+                    var set = args[i].split('?');
+                    if (set[0] == key) {
+                        return set[1];
+                    }
+                }
+                return null;
+            },
+            
+            getAddress: function (data) {
+                return data.substring(0, data.indexOf('@'));
+            }
+        }
+    }
+
     return {
         getInstance: function () {
             if (addressUtil == null) {
-                addressUtil = new AddressUtil();
+                addressUtil = modules();
             }
             return addressUtil;
-        },
-
-        getArg: function (key) {
-
-            return 0;
         }
     };
 })();
@@ -24,11 +38,6 @@ class AddressBuilder {
     appendArg(key, value) {
         var v = !(value instanceof String) ? value.toString() : value;
         this.__address += '/' + key + '?' + v;
-        return this;
-    }
-
-    removeArgs() {
-        this.__address = this.__address.substring(0, this.__address.indexOf('/') - 1);
         return this;
     }
 

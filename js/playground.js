@@ -17,9 +17,10 @@ function onStart() {
 
     var str = new AddressBuilder(SCENES.TITLE)
         .appendArg("engery", 100.12)
-        .appendArg("okay", "true");
-    str.removeArgs();
-    console.log(str.build());
+        .appendArg("okay", "true")
+        .build();
+
+    console.log(str);
 }
 
 function onPause() {
