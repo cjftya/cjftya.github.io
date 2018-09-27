@@ -1,5 +1,5 @@
 var AddressUtil = (function () {
-    var addressUtil;
+    var __addressUtil;
 
     function modules() {
         return {
@@ -15,17 +15,17 @@ var AddressUtil = (function () {
             },
             
             getAddress: function (data) {
-                return data.substring(0, data.indexOf('@'));
+                return data.substring(0, data.indexOf('@')).split('#')[1];
             }
         }
     }
 
     return {
         getInstance: function () {
-            if (addressUtil == null) {
-                addressUtil = modules();
+            if (__addressUtil == null) {
+                __addressUtil = modules();
             }
-            return addressUtil;
+            return __addressUtil;
         }
     };
 })();

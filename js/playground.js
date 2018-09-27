@@ -1,40 +1,32 @@
-var sceneObject;
+// main module
+let __timeDeltaTool;
 
 function setup() {
-    onStart();
+    createCanvas(400, 720);
+    __timeDeltaTool = new TimeDelta();
+    var address = new AddressBuilder(SCENES.TITLE)
+        .appendArg("update", 1)
+        .build();
+    Broker.getInstance().publish(TOPICS.SCENE_LOADER, address);
 }
 
 function draw() {
-    onUpdate();
-    onDraw();
+    var scene = getScene();
+    if (scene != null && scene.isUpdate()) {
+        __timeDeltaTool.update();
+        scene.onUpdate(__timeDeltaTool.getDelta());
+        scene.onDraw();
+    }
 }
 
-//==================
-
-function onStart() {
-    createCanvas(500, 500);
-    Broker.getInstance().publish(TOPICS.SCENE_LOADER, SCENES.TITLE);
-
-    var str = new AddressBuilder(SCENES.TITLE)
-        .appendArg("engery", 100.12)
-        .appendArg("okay", "true")
-        .build();
-
-    console.log(str);
+function mousePressed() {
+    getScene().onTouchDown(mouseX, mouseY);
 }
 
-function onPause() {
-
+function mouseReleased() {
+    getScene().onTouchUp(mouseX, mouseY);
 }
 
-function onUpdate() {
-    getScene().onUpdate();
-}
-
-function onStop() {
-
-}
-
-function onDraw() {
-    getScene().onDraw();
+function mouseMoved() {
+    getScene().onTouchMove(mouseX, mouseY);
 }
