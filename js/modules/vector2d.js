@@ -1,37 +1,31 @@
 class Vector2d {
     constructor(px, py) {
-        this.__x = px;
-        this.__y = py;
+        this.x = px;
+        this.y = py;
     }
 
-    getX() {
-        return this.__x;
-    }
-
-    getY() {
-        return this.__y;
-    }
-
-    set(px, py) {
-        this.__x = px;
-        this.__y = py;
-    }
-
-    addX(delta) {
-        this.__x += delta;
-    }
-
-    addY(delta) {
-        this.__y += delta;
+    zero() {
+        this.x = 0;
+        this.y = 0;
     }
 
     add(deltaX, deltaY) {
-        this.__x += deltaX;
-        this.__y += deltaY;
+        this.x += deltaX;
+        this.y += deltaY;        
+    }
+
+    add(other) {
+        this.x += other.x;
+        this.y += other.y;
     }
 
     mul(deltaX, deltaY) {
-        this.__x *= deltaX;
-        this.__y *= deltaY;
+        this.x *= deltaX;
+        this.y *= deltaY;
+    }
+
+    mul(delta) {
+        this.x *= delta;
+        this.y *= delta;
     }
 }

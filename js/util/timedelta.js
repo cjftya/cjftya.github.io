@@ -7,6 +7,12 @@ class TimeDelta {
 
         this.__timeDelta = 0;
         this.__fpsCount = 0;
+
+        this.__isLoggingFPS = false;
+    }
+
+    setLoggingFPS(enable) {
+        this.__isLoggingFPS = enable;
     }
 
     update() {
@@ -17,6 +23,9 @@ class TimeDelta {
         this.__timeElapsed += this.__timeDelta;
         if(this.__timeElapsed >= 1.0) {
             this.__fpsCount = this.__frameCount / this.__timeElapsed;
+            if(this.__isLoggingFPS) {
+                console.log(this.__fpsCount);
+            }
             this.__frameCount = 0;
             this.__timeElapsed = 0;
         }
