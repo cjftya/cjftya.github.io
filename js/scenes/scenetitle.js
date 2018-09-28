@@ -8,7 +8,8 @@ class SceneTitle extends AbsScene {
     onStart() {
         var size = Broker.getInstance().read(TOPICS.WINDOW_SIZE);
         this.__rainModule.setArea(size[0], size[1]);
-        this.__rainModule.addForce(0, 1000);
+        this.__rainModule.setWindDirection(150);
+        this.__rainModule.setDropSpeed(9.8);
         this.__rainModule.onStart();
     }
 
