@@ -3,7 +3,11 @@ let __timeDeltaTool;
 
 function setup() {
     createCanvas(400, 720);
+    Broker.getInstance().publishOnlyValue(TOPICS.WINDOW_SIZE, [400, 720]);
+
     __timeDeltaTool = new TimeDelta();
+    //__timeDeltaTool.setLoggingFPS(true);
+
     var address = new AddressBuilder(SCENES.TITLE)
         .appendArg("update", 1)
         .build();

@@ -2,10 +2,10 @@ var TOPICS = {
 
     //* topics *//
     SCENE_LOADER: "topic-scene-loader",
-    SCENE_LIFE_CYCLE: "topic-scene-lifecycle"
+    SCENE_LIFE_CYCLE: "topic-scene-lifecycle",
 
     //* value topics *//
-
+    WINDOW_SIZE: "topic-value-window-size"
 };
 
 var SCENES = {
