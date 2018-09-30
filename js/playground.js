@@ -8,10 +8,9 @@ function setup() {
     __timeDeltaTool = new TimeDelta();
     //__timeDeltaTool.setLoggingFPS(true);
 
-    var address = new AddressBuilder(SCENES.TITLE)
+    Broker.getInstance().publish(TOPICS.SCENE_LOADER, new AddressBuilder(SCENES.TITLE)
         .appendArg("update", 1)
-        .build();
-    Broker.getInstance().publish(TOPICS.SCENE_LOADER, address);
+        .build());
 }
 
 function draw() {
