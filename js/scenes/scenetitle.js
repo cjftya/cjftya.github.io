@@ -10,6 +10,7 @@ class SceneTitle extends AbsScene {
         this.__rainModule.setArea(size[0], size[1]);
         this.__rainModule.setWindDirection(0);
         this.__rainModule.setDropSpeed(9.8);
+        this.__rainModule.setAmount(500);
         this.__rainModule.onStart();
     }
 
