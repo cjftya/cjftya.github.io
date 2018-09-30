@@ -20,14 +20,18 @@ class Rain {
         this.__fy = delta;
     }
 
+    setAmount(amount) {
+        this.__amount = amount;
+    }
+
     onStart() {
-        for (var i = 0; i < 200; i++) {
+        for (var i = 0; i < this.__amount; i++) {
             this.__drop.push(new RainDrop(random(this.__w) + (this.__fx * -0.7), -random(this.__h * 2)));
         }
     }
 
     onUpdate(timeDelta) {
-        for (var i = 0; i < this.__drop.length; i++) {
+        for (var i = 0; i < this.__amount; i++) {
             this.__drop[i].vel.x = this.__fx * timeDelta
             this.__drop[i].vel.y += this.__fy * timeDelta;
             this.__drop[i].pos.add(this.__drop[i].vel);
