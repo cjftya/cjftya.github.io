@@ -24,10 +24,4 @@ class SceneTitle extends AbsScene {
 
         this.__rainModule.onDraw();
     }
-
-    onTouchDown(tx, ty) {}
-
-    onTouchUp(tx, ty) {}
-
-    onTouchMove(tx, ty) {}
 }

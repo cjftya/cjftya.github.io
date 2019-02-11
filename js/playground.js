@@ -2,8 +2,8 @@
 let __timeDeltaTool;
 
 function setup() {
-    createCanvas(400, 720);
-    Broker.getInstance().publishOnlyValue(TOPICS.WINDOW_SIZE, [400, 720]);
+    createCanvas(600, 400);
+    Broker.getInstance().publishOnlyValue(TOPICS.WINDOW_SIZE, [600, 400]);
 
     __timeDeltaTool = new TimeDelta();
     //__timeDeltaTool.setLoggingFPS(true);
