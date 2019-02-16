@@ -1,13 +1,27 @@
+﻿var TimeDeltaUtil = (function () {
+    var __timeDelta;
+
+    return {
+        getInstance: function () {
+            if (__timeDelta == null) {
+                __timeDelta = new TimeDelta();
+                console.log("create new broker");
+            }
+            return __timeDelta;
+        }
+    };
+})();
+
 class TimeDelta {
     constructor() {
         this.__newTime = 0;
         this.__frameCount = 0;
         this.__timeElapsed = 0;
         this.__lastTime = Date.now();
-
+ 
         this.__timeDelta = 0;
         this.__fpsCount = 0;
-
+ 
         this.__isLoggingFPS = false;
     }
 

@@ -1,6 +1,8 @@
-class SceneTitle extends AbsScene {
+class TitleScene extends AbsScene {
     constructor(attr) {
         super(attr);
+        
+        this.setPresenter(new TitlePresenter(this));
 
         this.__rainModule = new Rain();
     }
@@ -24,4 +26,16 @@ class SceneTitle extends AbsScene {
 
         this.__rainModule.onDraw();
     }
+    
+    onTouchDown(tx, ty) {
+    	this.getPresenter().onTouchDown(tx, ty);
+	}
+ 
+    onTouchUp(tx, ty) {
+   	 this.getPresenter().onTouchUp(tx, ty);
+	}
+ 
+ //   onTouchMove(tx, ty) {
+ //   	this.getPresenter().onTouchMove(tx, ty);
+	//}
 }

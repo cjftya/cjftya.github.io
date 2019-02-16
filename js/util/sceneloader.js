@@ -1,20 +1,17 @@
 Broker.getInstance().subscribe(TOPICS.SCENE_LOADER, function (topic, data) {
     var sceneType = AddressUtil.getInstance().getAddress(data);
+    var sceneObject = null;
     switch (sceneType) {
         case SCENES.TITLE:
-            __sceneObject = new SceneTitle(data);
+            sceneObject = new TitleScene(data);
             break;
     }
-    __sceneObject.onStart();
+    sceneObject.onStart();
+    
+    Broker.getInstance().publish(TOPICS.SCENE_LOAD_COMPLETE, sceneObject);
 
     console.log("loaded " + sceneType + " scene");
 });
-
-var __sceneObject;
-
-function getScene() {
-    return __sceneObject;
-}
 
 Broker.getInstance().subscribe(TOPICS.SCENE_LIFE_CYCLE, function (topic, data) {
     switch (data) {
