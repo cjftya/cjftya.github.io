@@ -6,6 +6,13 @@ class AbsScene {
     isUpdate() {
         return this.__isUpdate > 0;
     }
+    
+    setPresenter(presenter) {
+		this.__presenter = presenter;
+	}
+    getPresenter() {
+ 		return  this.__presenter;
+	}
 
     onStart() {}
     onUpdate(timeDelta) {}
