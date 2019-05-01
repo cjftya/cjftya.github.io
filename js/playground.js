@@ -1,43 +1,48 @@
-﻿// main module
-var __currentScene = null;
-
-function setup() {
-    createCanvas(600, 400);
-    Broker.getInstance().publishOnlyValue(TOPICS.WINDOW_SIZE, [600, 400]);
-    
-    Broker.getInstance().subscribe(TOPICS.SCENE_LOAD_COMPLETE, function(topic, data) {
-    	__currentScene = data;
-    });
-
-    Broker.getInstance().publish(TOPICS.SCENE_LOADER, new AddressBuilder(SCENES.TITLE)
-        .appendArg("update", 1)
-        .build());
-
-	 //TimeDeltaUtil.getInstance().setLoggingFPS(true);   
+﻿function setup() {
+    installSystem();
+    loadSystem();
 }
 
 function draw() {
-    if (__currentScene != null && __currentScene.isUpdate()) {
-        TimeDeltaUtil.getInstance().update();
-        __currentScene.onUpdate(TimeDeltaUtil.getInstance().getDelta());
-        __currentScene.onDraw();
+    var system = TopicManager.ready().read(SYSTEMS.MAIN);
+    if (system != null) {
+        system.onOperate();
     }
 }
 
 function mousePressed() {
-	if(__currentScene != null) {
-	    __currentScene.onTouchDown(mouseX, mouseY);
+    var system = TopicManager.ready().read(SYSTEMS.MAIN);
+    if (system != null) {
+        system.onTouchDown(mouseX, mouseY);
     }
 }
 
 function mouseReleased() {
-	if(__currentScene != null) {
-	    __currentScene.onTouchUp(mouseX, mouseY);
+    var system = TopicManager.ready().read(SYSTEMS.MAIN);
+    if (system != null) {
+        system.onTouchUp(mouseX, mouseY);
     }
 }
 
 function mouseMoved() {
-	if(__currentScene != null) {
-	    __currentScene.onTouchMove(mouseX, mouseY);
+    var system = TopicManager.ready().read(SYSTEMS.MAIN);
+    if (system != null) {
+        system.onTouchMove(mouseX, mouseY);
+    }
+}
+
+function installSystem() {
+    TopicManager.ready().write(SYSTEMS.MAIN, new MainSystem());
+    //..
+    //..
+}
+
+function loadSystem() {
+    var sysArr = [];
+    sysArr.push(TopicManager.ready().read(SYSTEMS.MAIN));
+    //..
+    //..
+    for (var i = 0; i < sysArr.length; i++) {
+        sysArr[i].onCreate();
     }
 }

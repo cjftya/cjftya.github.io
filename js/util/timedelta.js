@@ -1,56 +1,56 @@
 ﻿var TimeDeltaUtil = (function () {
+    var __timeDeltaUtil;
+
+    var __frameCount;
+    var __timeElapsed;
+    var __lastTime;
     var __timeDelta;
+    var __fpsCount;
+    var __isLoggingFPS;
+
+    function modules() {
+        return {
+            setLoggingFPS: function (enable) {
+                __isLoggingFPS = enable;
+            },
+
+            update: function () {
+                var newTime = Date.now();
+                __timeDelta = (newTime - __lastTime) * 0.001;
+
+                __frameCount++;
+                __timeElapsed += __timeDelta;
+                if (__timeElapsed >= 1.0) {
+                    __fpsCount = __frameCount / __timeElapsed;
+                    if (__isLoggingFPS) {
+                        console.log(__fpsCount);
+                    }
+                    __frameCount = 0;
+                    __timeElapsed = 0;
+                }
+                __lastTime = newTime;
+            },
+
+            getDelta: function () {
+                return __timeDelta;
+            },
+
+            getFps: function () {
+                return __fpsCount;
+            }
+        }
+    }
 
     return {
         getInstance: function () {
-            if (__timeDelta == null) {
-                __timeDelta = new TimeDelta();
-                console.log("create new broker");
+            if (__timeDeltaUtil == null) {
+                __timeDeltaUtil = modules();
+                __newTime = __frameCount = __timeElapsed = __timeDelta
+                = __fpsCount = 0;
+                __lastTime = Date.now();
+                __isLoggingFPS = false;
             }
-            return __timeDelta;
+            return __timeDeltaUtil;
         }
     };
 })();
-
-class TimeDelta {
-    constructor() {
-        this.__newTime = 0;
-        this.__frameCount = 0;
-        this.__timeElapsed = 0;
-        this.__lastTime = Date.now();
- 
-        this.__timeDelta = 0;
-        this.__fpsCount = 0;
- 
-        this.__isLoggingFPS = false;
-    }
-
-    setLoggingFPS(enable) {
-        this.__isLoggingFPS = enable;
-    }
-
-    update() {
-        var newTime = Date.now();
-        this.__timeDelta = (newTime - this.__lastTime) * 0.001;
-    
-        this.__frameCount++;
-        this.__timeElapsed += this.__timeDelta;
-        if(this.__timeElapsed >= 1.0) {
-            this.__fpsCount = this.__frameCount / this.__timeElapsed;
-            if(this.__isLoggingFPS) {
-                console.log(this.__fpsCount);
-            }
-            this.__frameCount = 0;
-            this.__timeElapsed = 0;
-        }
-        this.__lastTime = newTime;
-    }
-
-    getDelta() {
-        return this.__timeDelta;
-    }
-
-    getFps() {
-        return this.__fpsCount;
-    }
-}

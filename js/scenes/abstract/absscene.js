@@ -1,24 +1,23 @@
 class AbsScene {
-    constructor(attr) {
-        this.__isUpdate = AddressUtil.getInstance().getArg(attr, "update");
+    constructor() {
     }
 
-    isUpdate() {
-        return this.__isUpdate > 0;
-    }
-    
     setPresenter(presenter) {
-		this.__presenter = presenter;
-	}
+        this.__presenter = presenter;
+    }
     getPresenter() {
- 		return  this.__presenter;
-	}
+        return this.__presenter;
+    }
 
-    onStart() {}
-    onUpdate(timeDelta) {}
-    onDraw() {}
+    onCreate() { }
+    onPause() { }
+    onStart() { }
+    onUpdate(timeDelta) { }
+    onDraw() { }
+    onEnd() { }
+    onDestroy() { }
 
-    onTouchDown(tx, ty) {}
-    onTouchUp(tx, ty) {}
-    onTouchMove(tx, ty) {}
+    onTouchDown(tx, ty) { }
+    onTouchUp(tx, ty) { }
+    onTouchMove(tx, ty) { }
 }
