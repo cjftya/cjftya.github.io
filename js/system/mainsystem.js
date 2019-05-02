@@ -12,7 +12,7 @@ class MainSystem extends AbsSystem {
 
     onCreate() {
         super.onCreate();
-        createCanvas(600, 400);
+        createCanvas(windowWidth, windowHeight);
         //TimeDeltaUtil.getInstance().setLoggingFPS(true);
 
         TopicManager.ready().publish(TOPICS.SCENE_LOADER, SCENES.MAIN);

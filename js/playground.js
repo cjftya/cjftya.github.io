@@ -46,3 +46,7 @@ function loadSystem() {
         sysArr[i].onCreate();
     }
 }
+
+function windowResized() {
+    resizeCanvas(windowWidth, windowHeight);
+}
