@@ -18,7 +18,7 @@ class MainScene extends AbsScene {
 
     onUpdate(timeDelta) {
         this.px += 2;
-        if (this.px >= 630) {
+        if (this.px >= windowWidth) {
             this.px = -30;
         }
     }
