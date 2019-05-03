@@ -1,7 +1,18 @@
 class Vector2d {
-    constructor(px, py) {
+    constructor() {
+        this.x = 0;
+        this.y = 0;
+    }
+
+    init(px, py) {
         this.x = px;
         this.y = py;
+    }
+
+    set(other) {
+        this.x = other.x;
+        this.y = other.y;
+        return this;
     }
 
     zero() {
@@ -9,19 +20,9 @@ class Vector2d {
         this.y = 0;
     }
 
-    add(deltaX, deltaY) {
-        this.x += deltaX;
-        this.y += deltaY;        
-    }
-
     add(other) {
         this.x += other.x;
         this.y += other.y;
-    }
-
-    mul(deltaX, deltaY) {
-        this.x *= deltaX;
-        this.y *= deltaY;
     }
 
     mul(delta) {
