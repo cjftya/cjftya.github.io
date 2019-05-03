@@ -34,6 +34,18 @@ class MainSystem extends AbsSystem {
         this.__scene.onDestroy();
     }
 
+    onTouchUp(mx, my) {
+        this.__scene.onTouchUp(mx, my);
+    }
+
+    onTouchDown(mx, my) {
+        this.__scene.onTouchDown(mx, my);
+    }
+
+    onTouchMove(mx, my) {
+        this.__scene.onTouchMove(mx, my);
+    }
+
     loadScece(topic, data) {
         console.log("load scene : " + data);
 
@@ -48,17 +60,5 @@ class MainSystem extends AbsSystem {
         this.__scene.onCreate();
         this.__scene.onStart();
         TopicManager.ready().write(SCENES.CURRENT, this.__scene);
-    }
-
-    onTouchUp(mx, my) {
-        this.__scene.onTouchUp(mx, my);
-    }
-
-    onTouchDown(mx, my) {
-        this.__scene.onTouchDown(mx, my);
-    }
-
-    onTouchMove(mx, my) {
-        this.__scene.onTouchMove(mx, my);
     }
 }

@@ -2,12 +2,13 @@ class MainScene extends AbsScene {
     constructor() {
         super();
 
-        this.setPresenter(new MainPresenter(this));
-
-        this.px = -30;
+        this.__circle = null;
     }
 
     onCreate() {
+        this.setPresenter(new MainPresenter(this));
+
+        this.__circle = new Circle(-30, 200, 20);
     }
 
     onPause() {
@@ -17,18 +18,18 @@ class MainScene extends AbsScene {
     }
 
     onUpdate(timeDelta) {
-        this.px += 2;
-        if (this.px >= windowWidth) {
-            this.px = -30;
+        this.__circle.updateVel(timeDelta);
+        this.__circle.updatePos(timeDelta);
+        if (this.__circle.pos.x >= windowWidth) {
+            this.__circle.pos.x = -30;
         }
     }
 
     onDraw() {
-        background(10, 10, 80);
+        background(0, 0, 0);
         noStroke();
 
-        fill(100, 100, 200);
-        ellipse(this.px, 200, 15, 15);
+        this.__circle.draw();
     }
 
     onEnd() {
@@ -38,6 +39,8 @@ class MainScene extends AbsScene {
     }
 
     onTouchDown(tx, ty) {
+        this.__circle.addForce(2000, 0);
+
         this.getPresenter().onTouchDown(tx, ty);
     }
 
