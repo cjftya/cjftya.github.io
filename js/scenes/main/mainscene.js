@@ -8,7 +8,7 @@ class MainScene extends AbsScene {
     onCreate() {
         this.setPresenter(new MainPresenter(this));
 
-        this.__circle = new Circle(-30, 200, 20);
+        this.__circle = new Circle(0 - 20, 200, 20);
     }
 
     onPause() {
@@ -20,8 +20,8 @@ class MainScene extends AbsScene {
     onUpdate(timeDelta) {
         this.__circle.updateVel(timeDelta);
         this.__circle.updatePos(timeDelta);
-        if (this.__circle.pos.x >= windowWidth) {
-            this.__circle.pos.x = -30;
+        if (this.__circle.pos.x >= windowWidth + this.__circle.radius) {
+            this.__circle.pos.x = 0 - this.__circle.radius;
         }
     }
 
