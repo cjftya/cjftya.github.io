@@ -60,7 +60,7 @@ class MainScene extends AbsScene {
         noStroke();
 
         fill(255);
-        text("aasasdd", 10, 20);
+        text(this.__debug, 10, 20);
 
         var list = ObjectPool.ready().getList();
         for (var [id, obj] of list.entries()) {
@@ -90,6 +90,6 @@ class MainScene extends AbsScene {
 
     onGyroControl(x, y, z) {
         this.__debug = "x : " + x + ", " + "y : " + y;
-        this.__circle.addForce(x * 30, y * 30);
+        this.__circle.addForce(x * 10, y * 10);
     }
 }
