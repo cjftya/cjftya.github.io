@@ -9,4 +9,12 @@ class MathUtil {
     static randInt(min, max) {
         return Math.floor(Math.random() * ((max - min) + 1)) + min;
     }
+
+    static angle2rad(v) {
+        return (v / 180) * Math.PI;
+    }
+
+    static rad2angle(v) {
+        return (v / Math.PI) * 180;
+    }
 }
