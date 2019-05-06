@@ -24,7 +24,7 @@ class AbsShape {
         if(dot > 9) {
             dot = Math.sqrt(dot);
             this.force.x = (this.force.x / dot) * 3;
-            this.force.y = (this.force.x / dot) * 3;
+            this.force.y = (this.force.y / dot) * 3;
         }
     }
 
