@@ -5,9 +5,7 @@ class Circle extends AbsShape {
         this.size = r * 2;
 
         this.pos.init(px, py);
-        this.invMass = r / r;
-
-        console.log(px);
+        this.invMass = 1;
     }
 
     updateVel(delta) {
