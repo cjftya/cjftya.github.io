@@ -90,6 +90,6 @@ class MainScene extends AbsScene {
 
     onGyroControl(x, y, z) {
         this.__debug = "x : " + x + ", " + "y : " + y;
-        this.__circle.addForce(x * 10, y * 10);
+        this.__circle.addForce(x, y);
     }
 }
