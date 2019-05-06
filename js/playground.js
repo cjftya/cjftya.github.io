@@ -62,4 +62,4 @@ window.addEventListener('deviceorientation', function (e) {
         }
         system.onGyroControl(e.gamma / 180, beta / 180, e.alpha);
     }
-}, false);
+});
