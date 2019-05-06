@@ -60,7 +60,7 @@ class MainScene extends AbsScene {
         noStroke();
 
         fill(255);
-        text(this.__debug, 10, 20);
+        text(this.__debug, 10, 150);
 
         var list = ObjectPool.ready().getList();
         for (var [id, obj] of list.entries()) {
