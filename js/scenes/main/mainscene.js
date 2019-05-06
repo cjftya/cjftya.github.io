@@ -82,7 +82,7 @@ class MainScene extends AbsScene {
         this.getPresenter().onTouchMove(tx, ty);
     }
 
-    onGyroControl(x, y, z) { 
-        this.__circle.addForce(x, y);
+    onGyroControl(x, y, z) {
+        this.__circle.addForce(x * 0.01, y * 0.01);
     }
 }
