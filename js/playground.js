@@ -60,6 +60,6 @@ window.addEventListener('deviceorientation', function (e) {
         } else if (beta < -90) {
             beta = -90;
         }
-        system.onGyroControl(e.gamma / 1, beta / 1, e.alpha);
+        system.onGyroControl(MathUtil.angle2rad(e.gamma), MathUtil.angle2rad(beta), e.alpha);
     }
 }, false);
