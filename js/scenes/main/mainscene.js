@@ -3,7 +3,7 @@ class MainScene extends AbsScene {
         super();
 
         this.__circle = null;
-        this.__debug = null;
+        this.__debug = "null";
     }
 
     onCreate() {
