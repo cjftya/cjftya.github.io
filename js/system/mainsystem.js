@@ -46,6 +46,10 @@ class MainSystem extends AbsSystem {
         this.__scene.onTouchMove(mx, my);
     }
 
+    onGyroControl(x, y, z) { 
+        
+    }
+
     loadScece(topic, data) {
         console.log("load scene : " + data);
 
