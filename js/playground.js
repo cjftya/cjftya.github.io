@@ -51,9 +51,9 @@ function windowResized() {
     resizeCanvas(windowWidth, windowHeight);
 }
 
-// accelerometer Data
 window.addEventListener('deviceorientation', function (e) {
-    alpha = e.alpha;
-    beta = e.beta;
-    gamma = e.gamma;
+    var system = TopicManager.ready().read(SYSTEMS.MAIN);
+    if (system != null) {
+        system.onGyroControl(e.alpha, e.beta, e.gamma);
+    }
 });
