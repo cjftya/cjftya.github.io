@@ -8,7 +8,11 @@ class MainScene extends AbsScene {
     onCreate() {
         this.setPresenter(new MainPresenter(this));
 
-        this.__circle = new Circle(0 - 20, 200, 20);
+        this.__circle = new Circle(50, 200, 20);
+        ObjectPool.ready().insert(this.__circle);
+        for (var i = 0; i < 50; i++) {
+            ObjectPool.ready().insert(new Circle(MathUtil.randInt(50, 600), MathUtil.randInt(50, 600), MathUtil.randInt(10, 20)));
+        }
     }
 
     onPause() {
@@ -18,10 +22,33 @@ class MainScene extends AbsScene {
     }
 
     onUpdate(timeDelta) {
-        this.__circle.updateVel(timeDelta);
-        this.__circle.updatePos(timeDelta);
-        if (this.__circle.pos.x >= windowWidth + this.__circle.radius) {
-            this.__circle.pos.x = 0 - this.__circle.radius;
+        var list = ObjectPool.ready().getList();
+        for (var [id1, obj1] of list.entries()) {
+            for (var [id2, obj2] of list.entries()) {
+                if (id1 == id2) {
+                    continue;
+                }
+                Collisions.ready().isCollide(obj1, obj2, timeDelta);
+            }
+        }
+        for (var [id1, obj1] of list.entries()) {
+            obj1.updateVel(timeDelta);
+            obj1.updatePos(timeDelta);
+
+            if (obj1.pos.x < 0 + obj1.radius) {
+                obj1.pos.x = 0 + obj1.radius;
+                obj1.vel.x *= -0.6;
+            } else if (obj1.pos.x > windowWidth - obj1.radius) {
+                obj1.pos.x = windowWidth - obj1.radius;
+                obj1.vel.x *= -0.6;
+            }
+            if (obj1.pos.y < 0 + obj1.radius) {
+                obj1.pos.y = 0 + obj1.radius;
+                obj1.vel.y *= -0.6;
+            } else if (obj1.pos.y > windowHeight - obj1.radius) {
+                obj1.pos.y = windowHeight - obj1.radius;
+                obj1.vel.y *= -0.6;
+            }
         }
     }
 
@@ -29,7 +56,10 @@ class MainScene extends AbsScene {
         background(0, 0, 0);
         noStroke();
 
-        this.__circle.draw();
+        var list = ObjectPool.ready().getList();
+        for (var [id, obj] of list.entries()) {
+            obj.draw();
+        }
     }
 
     onEnd() {
@@ -39,7 +69,7 @@ class MainScene extends AbsScene {
     }
 
     onTouchDown(tx, ty) {
-        this.__circle.addForce(2000, 0);
+        this.__circle.addForce(20, 0);
 
         this.getPresenter().onTouchDown(tx, ty);
     }
@@ -50,5 +80,9 @@ class MainScene extends AbsScene {
 
     onTouchMove(tx, ty) {
         this.getPresenter().onTouchMove(tx, ty);
+    }
+
+    onGyroControl(x, y, z) { 
+        this.__circle.addForce(x, y);
     }
 }

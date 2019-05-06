@@ -9,7 +9,7 @@ class AbsSystem {
     }
     onPause() { }
     onOperate() { }
-    onDestroy() { 
+    onDestroy() {
         this.subscribers.unInstall(TopicManager.ready());
         this.subscribers = null;
     }
@@ -17,8 +17,9 @@ class AbsSystem {
     onTouchUp(mx, my) { }
     onTouchDown(mx, my) { }
     onTouchMove(mx, my) { }
+    onGyroControl(x, y, z) { }
 
-    registerSubscribers() { 
+    registerSubscribers() {
         return null;
     }
 }

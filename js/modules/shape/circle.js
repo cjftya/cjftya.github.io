@@ -1,29 +1,28 @@
 class Circle extends AbsShape {
     constructor(px, py, r) {
-        super();
+        super(ShapeType.Circle);
+
         this.radius = r;
         this.size = r * 2;
 
-        this.pos.init(px, py);
+        this.pos.set(px, py);
         this.invMass = 1;
     }
 
     updateVel(delta) {
-        this.vel.x += (this.force.x * this.invMass) * delta;
-        this.vel.y += (this.force.y * this.invMass) * delta;
-
+        this.vel.x += (this.force.x * this.invMass);
+        this.vel.y += (0.1 + this.force.y * this.invMass);
         this.vel.mul(0.995);
-
         this.force.zero();
     }
 
     updatePos(delta) {
-        this.pos.x += this.vel.x * delta;
-        this.pos.y += this.vel.y * delta;
+        this.pos.x += this.vel.x;
+        this.pos.y += this.vel.y;
     }
 
     draw() {
-        fill(100, 100, 200);
+        fill(this.color[0], this.color[1], this.color[2]);
         ellipse(this.pos.x, this.pos.y, this.size, this.size);
     }
 }
