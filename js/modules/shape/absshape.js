@@ -23,8 +23,8 @@ class AbsShape {
         var dot = this.force.x * this.force.x + this.force.y * this.force.y;
         if(dot > 9) {
             dot = Math.sqrt(dot);
-            this.force.x = (fx / dot) * 3;
-            this.force.y = (fy / dot) * 3;
+            this.force.x = (this.force.x / dot) * 3;
+            this.force.y = (this.force.x / dot) * 3;
         }
     }
 
