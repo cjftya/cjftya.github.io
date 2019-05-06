@@ -3,7 +3,8 @@ class MainScene extends AbsScene {
         super();
 
         this.__circle = null;
-        this.__debug = "null";
+        this.__mx = 0;
+        this.__my = 0;
     }
 
     onCreate() {
@@ -13,7 +14,7 @@ class MainScene extends AbsScene {
 
         this.__circle = new Circle(50, 200, 20);
         ObjectPool.ready().insert(this.__circle);
-        for (var i = 0; i < 50; i++) {
+        for (var i = 0; i < 70; i++) {
             ObjectPool.ready().insert(new Circle(MathUtil.randInt(50, 600), MathUtil.randInt(50, 600), MathUtil.randInt(10, 20)));
         }
     }
@@ -75,12 +76,16 @@ class MainScene extends AbsScene {
     }
 
     onTouchDown(tx, ty) {
-        this.__circle.addForce(20, 0);
-
+        this.__mx = tx;
+        this.__my = ty;
         this.getPresenter().onTouchDown(tx, ty);
     }
 
     onTouchUp(tx, ty) {
+        var dx = tx - this.__mx;
+        var dy = ty - this.__my;
+        var dot = Math.sqrt(dx * dx + dy * dy);
+        this.__circle.addForce((dx / dot) * 10, (dy / dot) * 10);
         this.getPresenter().onTouchUp(tx, ty);
     }
 
@@ -89,11 +94,5 @@ class MainScene extends AbsScene {
     }
 
     onGyroControl(x, y, z) {
-        // this.__circle.addForce(x, y);
-
-        var list = ObjectPool.ready().getList();
-        for (var [id, obj] of list.entries()) {
-            obj.addForce(x, y);
-        }
     }
 }

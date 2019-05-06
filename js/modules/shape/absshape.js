@@ -18,14 +18,8 @@ class AbsShape {
     }
 
     addForce(fx, fy) {
-        this.force.x = fx;
-        this.force.y = fy;
-        // var dot = this.force.x * this.force.x + this.force.y * this.force.y;
-        // if(dot > 9) {
-        //     dot = Math.sqrt(dot);
-        //     this.force.x = (this.force.x / dot) * 3;
-        //     this.force.y = (this.force.y / dot) * 3;
-        // }
+        this.force.x += fx;
+        this.force.y += fy;
     }
 
     updateVel(delta) { }
