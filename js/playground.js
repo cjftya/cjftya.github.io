@@ -54,6 +54,12 @@ function windowResized() {
 window.addEventListener('deviceorientation', function (e) {
     var system = TopicManager.ready().read(SYSTEMS.MAIN);
     if (system != null) {
-        system.onGyroControl(e.alpha, e.beta, e.gamma);
+        var beta = e.beta;
+        if (beta > 90) {
+            beta = 90;
+        } else if (beta < -90) {
+            beta = -90;
+        }
+        system.onGyroControl(e.gamma / 180, beta / 180, e.alpha);
     }
-});
+}, false);
