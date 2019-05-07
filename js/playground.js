@@ -50,16 +50,3 @@ function loadSystem() {
 function windowResized() {
     resizeCanvas(windowWidth, windowHeight);
 }
-
-window.addEventListener('deviceorientation', function (e) {
-    var system = TopicManager.ready().read(SYSTEMS.MAIN);
-    if (system != null) {
-        var beta = e.beta;
-        if (beta > 90) {
-            beta = 90;
-        } else if (beta < -90) {
-            beta = -90;
-        }
-        system.onGyroControl(MathUtil.angle2rad(e.gamma), MathUtil.angle2rad(beta), e.alpha);
-    }
-}, false);

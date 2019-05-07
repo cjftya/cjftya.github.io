@@ -22,9 +22,6 @@
                 __timeElapsed += __timeDelta;
                 if (__timeElapsed >= 1.0) {
                     __fpsCount = __frameCount / __timeElapsed;
-                    if (__isLoggingFPS) {
-                        console.log(__fpsCount);
-                    }
                     __frameCount = 0;
                     __timeElapsed = 0;
                 }
@@ -35,7 +32,7 @@
                 return __timeDelta;
             },
 
-            getFps: function () {
+            getFPS: function () {
                 return __fpsCount;
             }
         }

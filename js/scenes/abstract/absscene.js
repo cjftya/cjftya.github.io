@@ -20,5 +20,4 @@ class AbsScene {
     onTouchDown(tx, ty) { }
     onTouchUp(tx, ty) { }
     onTouchMove(tx, ty) { }
-    onGyroControl(x, y, z) { }
 }
