@@ -3,6 +3,7 @@ class MainSystem extends AbsSystem {
         super();
 
         this.__scene = null;
+        this.__fpsCount = "null";
     }
 
     registerSubscribers() {
@@ -13,7 +14,7 @@ class MainSystem extends AbsSystem {
     onCreate() {
         super.onCreate();
         createCanvas(windowWidth, windowHeight);
-        //TimeDeltaUtil.getInstance().setLoggingFPS(true);
+        textSize(20);
 
         TopicManager.ready().publish(TOPICS.SCENE_LOADER, SCENES.MAIN);
         this.__scene = TopicManager.ready().read(SCENES.CURRENT);
@@ -25,8 +26,11 @@ class MainSystem extends AbsSystem {
 
     onOperate() {
         TimeDeltaUtil.getInstance().update();
+
         this.__scene.onUpdate(TimeDeltaUtil.getInstance().getDelta());
         this.__scene.onDraw();
+
+        this.drawFpsCount();
     }
 
     onDestroy() {
@@ -46,10 +50,6 @@ class MainSystem extends AbsSystem {
         this.__scene.onTouchMove(mx, my);
     }
 
-    onGyroControl(x, y, z) {
-        this.__scene.onGyroControl(x, y, z);
-    }
-
     loadScece(topic, data) {
         console.log("load scene : " + data);
 
@@ -64,5 +64,11 @@ class MainSystem extends AbsSystem {
         this.__scene.onCreate();
         this.__scene.onStart();
         TopicManager.ready().write(SCENES.CURRENT, this.__scene);
+    }
+
+    drawFpsCount() {
+        this.__fpsCount = "FPS : " + Math.floor(TimeDeltaUtil.getInstance().getFPS());
+        fill(255);
+        text(this.__fpsCount, 10, 20);
     }
 }

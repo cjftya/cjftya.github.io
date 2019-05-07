@@ -17,7 +17,6 @@ class AbsSystem {
     onTouchUp(mx, my) { }
     onTouchDown(mx, my) { }
     onTouchMove(mx, my) { }
-    onGyroControl(x, y, z) { }
 
     registerSubscribers() {
         return null;

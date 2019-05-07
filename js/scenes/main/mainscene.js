@@ -10,8 +10,6 @@ class MainScene extends AbsScene {
     onCreate() {
         this.setPresenter(new MainPresenter(this));
 
-        textSize(20);
-
         this.__circle = new Circle(50, 200, 20);
         ObjectPool.ready().insert(this.__circle);
         for (var i = 0; i < 70; i++) {
@@ -60,9 +58,6 @@ class MainScene extends AbsScene {
         background(0, 0, 0);
         noStroke();
 
-        // fill(255);
-        // text(this.__debug, 10, 150);
-
         var list = ObjectPool.ready().getList();
         for (var [id, obj] of list.entries()) {
             obj.draw();
@@ -91,8 +86,5 @@ class MainScene extends AbsScene {
 
     onTouchMove(tx, ty) {
         this.getPresenter().onTouchMove(tx, ty);
-    }
-
-    onGyroControl(x, y, z) {
     }
 }
