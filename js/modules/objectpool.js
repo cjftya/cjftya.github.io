@@ -14,7 +14,7 @@ var ObjectPool = (function () {
             clear: function () {
                 __list.clear();
             },
-            getData: function (id) {
+            find: function (id) {
                 return __list.get(id);
             },
             getList: function () {
