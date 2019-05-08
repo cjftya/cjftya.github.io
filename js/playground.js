@@ -10,24 +10,24 @@ function draw() {
     }
 }
 
-function touchStarted(event) {
+function mousePressed() {
     var system = TopicManager.ready().read(SYSTEMS.MAIN);
     if (system != null) {
-        system.onTouchDown(event.clientX, event.clientY);
+        system.onTouchDown(mouseX, mouseY);
     }
 }
 
-function touchEnded(event) {
+function mouseReleased() {
     var system = TopicManager.ready().read(SYSTEMS.MAIN);
     if (system != null) {
-        system.onTouchUp(event.clientX, event.clientY);
+        system.onTouchUp(mouseX, mouseY);
     }
 }
 
-function touchMoved(event) {
+function mouseDragged() {
     var system = TopicManager.ready().read(SYSTEMS.MAIN);
     if (system != null) {
-        system.onTouchMove(event.clientX, event.clientY);
+        system.onTouchMove(mouseX, mouseY);
     }
 }
 
