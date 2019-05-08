@@ -11,7 +11,7 @@ class Circle extends AbsShape {
 
     updateVel(delta) {
         this.vel.x += (this.force.x * this.invMass);
-        this.vel.y += (0.1 + this.force.y * this.invMass);
+        this.vel.y += (this.force.y * this.invMass);
         this.vel.mul(0.995);
         this.force.zero();
     }
