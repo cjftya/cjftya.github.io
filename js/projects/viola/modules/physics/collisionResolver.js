@@ -1,9 +1,9 @@
-class ContactResolver {
+class CollisionResolver {
     constructor(){
     }
 
     static preUpdate(s1, s2, point, depth, normal, delta) {
-        var fdepth = depth * 1.0;
+        var fdepth = depth * 0.5;
         var nx = normal.x * fdepth;
         var ny = normal.y * fdepth;
 

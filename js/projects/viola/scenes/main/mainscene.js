@@ -52,7 +52,7 @@ class MainScene extends AbsScene {
     }
 
     onDraw() {
-        background(0, 0, 0);
+        background(255, 255, 255);
         noStroke();
 
         var list = ObjectPool.ready().getList();

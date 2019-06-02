@@ -1,12 +1,12 @@
 class Transform {
     constructor(pos, angle) {
-        this.__t = pos;
+        this.__t = new Vector2d().set(pos.x, pos.y);
         this.__c = Math.cos(angle);
         this.__s = Math.sin(angle);
     }
 
     set(pos, angle) {
-        this.__t.set(pos);
+        this.__t.set(pos.x, pos.y);
         this.__c = Math.cos(angle);
         this.__s = Math.sin(angle);
         return this;
@@ -19,7 +19,7 @@ class Transform {
     }
 
     setPosition(pos) {
-        this.__t.set(pos);
+        this.__t.set(pos.x, pos.y);
         return this;
     }
 
