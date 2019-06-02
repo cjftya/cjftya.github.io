@@ -12,7 +12,6 @@ function setup() {
 
     this.__pinLock = new PinLock(patternResult);
     this.__particleCont = new ParticleController();
-    __fadeInOut = new FadeInOut(fadeInOutResult);
 }
 
 function draw() {
@@ -32,8 +31,10 @@ function draw() {
             rect(100, 100, 100, 100);
         }
     }
-    // __fadeInOut.update();
-    // __fadeInOut.draw();
+    if (__fadeInOut != null) {
+        __fadeInOut.update();
+        __fadeInOut.draw();
+    }
 }
 
 function mousePressed() {
@@ -54,6 +55,7 @@ function windowResized() {
 
 function patternResult(data) {
     __selectedContents = data;
+    __fadeInOut = new FadeInOut(fadeInOutResult);
     __fadeInOut.fadeIn();
 }
 
