@@ -1,9 +1,14 @@
-﻿function setup() {
+﻿function preload() {
+    font = loadFont("../../assets/font/Gabia-Solmee-Regular.ttf");
+}
 
+function setup() {
+    createCanvas(windowWidth, windowHeight);
 }
 
 function draw() {
-
+    background(255, 255, 255);
+    noStroke();
 }
 
 function mousePressed() {
