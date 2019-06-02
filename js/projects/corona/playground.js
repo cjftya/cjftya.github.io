@@ -7,11 +7,15 @@ function setup() {
     createCanvas(windowWidth, windowHeight);
 
     this.__pinLock = new PinLock(patternResolve);
+    this.__particleCont = new ParticleController();
 }
 
 function draw() {
     background(255,255, 255);
     noStroke();
+
+    this.__particleCont.update();
+    this.__particleCont.draw();
 
     this.__pinLock.draw();
 }
