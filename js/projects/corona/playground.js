@@ -23,7 +23,6 @@ function draw() {
         this.__particleCont.update();
         this.__particleCont.draw();
         this.__pinLock.draw();
-
     } else {
         if (__selectedContents == "__myGirlPattern") {
             fill(255, 0, 0, 50);
@@ -33,8 +32,8 @@ function draw() {
             rect(100, 100, 100, 100);
         }
     }
-    __fadeInOut.update();
-    __fadeInOut.draw();
+    // __fadeInOut.update();
+    // __fadeInOut.draw();
 }
 
 function mousePressed() {
