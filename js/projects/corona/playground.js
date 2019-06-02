@@ -12,6 +12,7 @@ function setup() {
 
     this.__pinLock = new PinLock(patternResult);
     this.__particleCont = new ParticleController();
+    __fadeInOut = new FadeInOut(fadeInOutResult);
 }
 
 function draw() {
@@ -55,7 +56,6 @@ function windowResized() {
 
 function patternResult(data) {
     __selectedContents = data;
-    __fadeInOut = new FadeInOut(fadeInOutResult);
     __fadeInOut.fadeIn();
 }
 
