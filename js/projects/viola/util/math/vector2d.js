@@ -26,9 +26,14 @@ class Vector2d {
         this.y -= other.y;
     }
 
+    static sub(a, b) {
+        return new Vector2d().set(a.x - b.x, a.y - b.y);
+    }
+
     mul(delta) {
         this.x *= delta;
         this.y *= delta;
+        return this;
     }
 
     length() {
@@ -49,8 +54,8 @@ class Vector2d {
     }
 
     static normalize(a) {
-        var dn = this.dot(a, a);
-        return new Vector2d(a.x / dn, a.y / dn);
+        var dn = Math.sqrt(this.dot(a, a));
+        return new Vector2d().set(a.x / dn, a.y / dn);
     }
 
     dot(other) {

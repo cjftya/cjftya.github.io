@@ -14,6 +14,9 @@ class Picker {
                     }
                     break;
                 case ShapeType.Poly:
+                    if (Collisions.poly2point(obj, point)) {
+                        return id;
+                    }
                     break;
             }
         }
