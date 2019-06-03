@@ -62,5 +62,4 @@ function patternResult(data) {
 function fadeInOutResult(data) {
     __contentsScene = true;
     __fadeInOut.fadeOut();
-    console.log(data);
 }
