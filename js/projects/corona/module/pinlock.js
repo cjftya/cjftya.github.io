@@ -15,14 +15,17 @@ class PinLock {
     setPatternPort() {
         this.__patternPorts = [];
 
-        var r = windowWidth / 7;
-        var sx = ((windowWidth - (r * 3)) / 2) - (r / 2);
-        var sy = ((windowHeight - (r * 3)) / 2) - (r / 2);
+        var temp1 = windowWidth / 7;
+        var temp2 = windowHeight / 7;
+        var r = temp1 > temp2 ? temp2 : temp1;
+        var s = r * 2;
+        var sx = r + (windowWidth - (s * 3)) / 2;
+        var sy = r + (windowHeight - (s * 3)) / 2;
 
         for (var i = 0; i < 3; i++) {
             for (var k = 0; k < 3; k++) {
-                var nx = sx + (k * r * 2);
-                var ny = sy + (i * r * 2);
+                var nx = sx + (k * (r * 2));
+                var ny = sy + (i * (r * 2));
                 this.__patternPorts.push(new PatternPort(nx, ny, r, 20));
             }
         }

@@ -2,14 +2,14 @@ class Particle {
     constructor() {
         this.__pos = new Point().set(Tools.randInt(0, windowWidth), Tools.randInt(0, windowHeight));
         this.__vel = new Point().set(Tools.randInt(-10, 10), Tools.randInt(-10, 10));
-        this.__r = Tools.randInt(3, 10);
+        this.__r = Tools.randInt(3, 35);
         this.__vel.x *= (this.__r / 500);
         this.__vel.y *= (this.__r / 500);
         this.__s = this.__r * 2;
         this.__cr = Tools.randInt(170, 230);
         this.__cg = this.__cr;
         this.__cb = this.__cr;
-        this.__ca = Tools.randInt(40, 80);
+        this.__ca = Tools.randInt(5, 30);
     }
 
     update() {
