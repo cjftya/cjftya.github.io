@@ -1,10 +1,14 @@
 ﻿var __fadeInOut = null;
 var __contentsScene = false;
 var __selectedContents = "";
+var __bgmList = [];
+
+var __writeParticle = null;
 
 function preload() {
+    __bgmList.push(new Audio( "https://cjftya.github.io/assets/audio/contents_bgm_1.mp3"));
+    __bgmList.push(new Audio( "https://cjftya.github.io/assets/audio/contents_bgm_2.mp3"));
     //font = loadFont("https://cjftya.github.io/assets/font/Gabia-Solmee-Regular.ttf");
-
 }
 
 function setup() {
@@ -13,6 +17,8 @@ function setup() {
     this.__pinLock = new PinLock(patternResult);
     this.__particleCont = new ParticleController();
     __fadeInOut = new FadeInOut(fadeInOutResult);
+
+    __writeParticle = new WriteEffect();
 }
 
 function draw() {
@@ -36,6 +42,8 @@ function draw() {
         __fadeInOut.update();
         __fadeInOut.draw();
     }
+    __writeParticle.update();
+    __writeParticle.draw();
 }
 
 function mousePressed() {
@@ -48,6 +56,8 @@ function mouseReleased() {
 
 function mouseDragged() {
     this.__pinLock.drag(mouseX, mouseY);
+    
+    this.__writeParticle.active(mouseX, mouseY);
 }
 
 function windowResized() {
