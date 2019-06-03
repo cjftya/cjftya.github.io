@@ -45,7 +45,8 @@ class FadeInOut {
     }
 
     draw() {
+        noStroke();
         this.__c.applyColor();
-        rect(-80, -80, windowWidth + 80, windowHeight + 80);
+        rect(0, 0, windowWidth, windowHeight);
     }
 }

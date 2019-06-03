@@ -1,7 +1,7 @@
 class ParticleController {
     constructor() {
         this.__particleList = [];
-        for (var i = 0; i < 100; i++) {
+        for (var i = 0; i < 200; i++) {
             this.__particleList.push(new Particle());
         }
     }
