@@ -2,8 +2,23 @@
 var __contentsScene = false;
 var __selectedContents = "";
 var __bgmList = [];
-
 var __writeParticle = null;
+var __dom = null;
+
+function load(element) {
+    __dom = element;
+    // element.documentElement.requestFullscreen();
+    // console.log(element.requestFullScreen);
+    // if(element.requestFullScreen) {
+    //     element.requestFullScreen();
+    // } else if(element.webkitRequestFullScreen ) {
+    //     element.webkitRequestFullScreen();
+    // } else if(element.mozRequestFullScreen) {
+    //     element.mozRequestFullScreen();
+    // } else if (element.msRequestFullscreen) {
+    //     element.msRequestFullscreen(); // IE
+    // }
+}
 
 function preload() {
     __bgmList.push(new Audio( "https://cjftya.github.io/assets/audio/contents_bgm_1.mp3"));
@@ -48,6 +63,7 @@ function draw() {
 
 function mousePressed() {
     this.__pinLock.pick(mouseX, mouseY);
+    __dom.documentElement.requestFullscreen();
 }
 
 function mouseReleased() {
