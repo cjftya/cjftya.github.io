@@ -1,10 +1,10 @@
 class Rect extends AbsShape {
-    constructor(px, py, w, h) {
+    constructor(px, py, w, h, a) {
         super(ShapeType.Poly);
 
         this.pos.set(px, py);
 
-        this.angle = 0;
+        this.angle = a;
 
         this.invMass = 1;
         
@@ -22,8 +22,7 @@ class Rect extends AbsShape {
             new Vector2d().set(localX - hw, localY + hh)
         ]);
         
-        this.syncTransform();
-        this.syncEdge();
+        this.syncBody();
     }
 
     updateVel(delta) {
@@ -38,8 +37,7 @@ class Rect extends AbsShape {
         this.pos.y += this.vel.y;
         // this.angle += 0.01;
 
-        this.syncTransform();
-        this.syncEdge();
+        this.syncBody();
     }
 
     draw() {

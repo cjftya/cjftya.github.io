@@ -2,6 +2,17 @@ class Collisions {
     constructor() {
     }
 
+    static module(list, timeDelta) {
+        for (var [id1, obj1] of list.entries()) {
+            for (var [id2, obj2] of list.entries()) {
+                if (id1 == id2) {
+                    continue;
+                }
+                this.checkCollision(obj1, obj2, timeDelta);
+            }
+        }
+    }
+
     static checkCollision(s1, s2, delta) {
         // if (s1.type > s2.type) {
         //     var tmp = s1;

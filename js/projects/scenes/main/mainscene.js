@@ -9,8 +9,12 @@ class MainScene extends AbsScene {
     onCreate() {
         this.setPresenter(new MainPresenter(this));
 
-        for (var i = 0; i < 70; i++) {
+        for (var i = 0; i < 30; i++) {
             ObjectPool.ready().insert(new Circle(MathUtil.randInt(50, 600), MathUtil.randInt(50, 600), MathUtil.randInt(10, 20)));
+        }
+        for (var i = 0; i < 1; i++) {
+            ObjectPool.ready().insert(new Rect(MathUtil.randInt(50, 600), MathUtil.randInt(50, 600),
+                MathUtil.randInt(30, 50), MathUtil.randInt(30, 50), MathUtil.randInt(0, 45)));
         }
     }
 
@@ -27,14 +31,6 @@ class MainScene extends AbsScene {
 
         var list = ObjectPool.ready().getList();
         for (var [id1, obj1] of list.entries()) {
-            for (var [id2, obj2] of list.entries()) {
-                if (id1 == id2) {
-                    continue;
-                }
-                Collisions.checkCollision(obj1, obj2, timeDelta);
-            }
-        }
-        for (var [id1, obj1] of list.entries()) {
             obj1.updateVel(timeDelta);
             obj1.updatePos(timeDelta);
 
@@ -49,6 +45,7 @@ class MainScene extends AbsScene {
                 obj1.pos.y = windowHeight - obj1.radius;
             }
         }
+        Collisions.module(list, timeDelta);
     }
 
     onDraw() {

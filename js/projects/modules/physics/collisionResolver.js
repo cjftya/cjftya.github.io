@@ -1,5 +1,5 @@
 class CollisionResolver {
-    constructor(){
+    constructor() {
     }
 
     static preUpdate(s1, s2, point, depth, normal, delta) {
@@ -11,6 +11,13 @@ class CollisionResolver {
         s1.pos.y += ny;
         s2.pos.x -= nx;
         s2.pos.y -= ny;
+
+        if (s1.type == ShapeType.Poly) {
+            s1.syncBody();
+        }
+        if (s2.type == ShapeType.Poly) {
+            s2.syncBody();
+        }
     }
 
     static update(delta) {

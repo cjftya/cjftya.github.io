@@ -68,7 +68,7 @@ class MainSystem extends AbsSystem {
 
     drawFpsCount() {
         this.__fpsCount = "FPS : " + Math.floor(TimeDeltaUtil.getInstance().getFPS());
-        fill(255);
+        fill(0);
         text(this.__fpsCount, 10, 20);
     }
 }

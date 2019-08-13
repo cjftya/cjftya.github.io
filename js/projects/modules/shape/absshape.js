@@ -56,6 +56,11 @@ class AbsShape {
         }
     }
 
+    syncBody() {
+        this.syncTransform();
+        this.syncEdge();
+    }
+
     syncEdge() {
         for (var i = 0; i < this.vertex.length; i++) {
             var a = this.vertex[i];
