@@ -1,39 +1,46 @@
 var ObjectPool = (function () {
     var __pool;
     var __list;
-    var __counter;
 
-    function modules() {
+    function modules(type) {
         return {
             insert: function (object) {
-                __list.set(object.id, object);
+                __list.get(type).set(object.id, object);
             },
             remove: function (id) {
-                __list.delete(id);
+                __list.get(type).delete(id);
             },
             clear: function () {
-                __list.clear();
+                __list.get(type).clear();
             },
             find: function (id) {
-                return __list.get(id);
+                return __list.get(type).get(id);
             },
             getList: function () {
-                return __list;
-            },
-            getCounter() {
-                return __counter++;
+                return __list.get(type);
             }
         }
     }
 
     return {
-        ready: function () {
+        __ready: function (type) {
             if (__pool == null) {
-                __pool = modules();
+                __pool = new Map();
                 __list = new Map();
-                __counter = 0;
             }
-            return __pool;
+            if (__pool.get(type) == null) {
+                if (__list.get(type) == null) {
+                    __list.set(type, new Map());
+                }
+                __pool.set(type, modules(type));
+            }
+            return __pool.get(type);
+        },
+        shape: function () {
+            return this.__ready(PoolType.Shape);
+        },
+        particle: function () {
+            return this.__ready(PoolType.Particle);
         }
     };
 })();

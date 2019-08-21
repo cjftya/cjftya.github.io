@@ -14,17 +14,14 @@ class Collisions {
     }
 
     static checkCollision(s1, s2, delta) {
-        // if (s1.type > s2.type) {
-        //     var tmp = s1;
-        //     s1 = s2;
-        //     s2 = tmp;
-        // }
         if (s1.type == ShapeType.Circle && s2.type == ShapeType.Circle) {
             return this.circle2circle(s1, s2, delta);
         } else if (s1.type == ShapeType.Circle && s2.type == ShapeType.Poly) {
             return this.circle2poly(s1, s2, delta);
         } else if (s1.type == ShapeType.Poly && s2.type == ShapeType.Circle) {
             return this.circle2poly(s2, s1, delta);
+        } else if (s1.type == ShapeType.Poly && s2.type == ShapeType.Poly) {
+            return this.poly2poly(s1, s2, delta);
         }
         return false;
     }
@@ -96,7 +93,61 @@ class Collisions {
         return false;
     }
 
+    static __findMSA(s, edge, num) {
+        var minDist = -999999;
+        var minIndex = -1;
+        for (var i = 0; i < num; i++) {
+            var dist = s.distanceOnPlane(edge[i].getNormal(), edge[i].getStartPos());
+            if (dist > 0) {
+                return [0, -1];
+            }
+            else if (dist > minDist) {
+                minDist = dist;
+                minIndex = i;
+            }
+        }
+        return [minDist, minIndex];
+    }
+
+    static __findVerts(s1, s2, n, depth, delta) {
+        var num = 0;
+        var contact = [];
+        for (var i = 0; i < s1.vertex.length; i++) {
+            var e = s1.vertex[i];
+            if (s2.containPoint(e)) {
+                contact.push(e);
+                num++;
+            }
+        }
+        for (var i = 0; i < s2.vertex.length; i++) {
+            var e = s2.vertex[i];
+            if (s1.containPoint(e)) {
+                contact.push(e);
+                num++;
+            }
+        }
+
+        var df = depth / num;
+        for (var i = 0; i < contact.length; i++) {
+            CollisionResolver.preUpdate(s1, s2, contact[i], df, n, num > 1 ? 0 : 1);
+        }
+        return num > 0;
+    }
+
     static poly2poly(s1, s2, delta) {
-        return false;
+        var msa1 = this.__findMSA(s2, s1.edge, s1.vertex.length);
+        if (msa1[1] == -1) {
+            return false;
+        }
+
+        var msa2 = this.__findMSA(s1, s2.edge, s2.vertex.length);
+        if (msa2[1] == -1) {
+            return false;
+        }
+
+        if (msa1[0] > msa2[0]) {
+            return this.__findVerts(s1, s2, s1.edge[msa1[1]].getNormal(), msa1[0], delta);
+        }
+        return this.__findVerts(s1, s1, Vector2d.neg(s2.edge[msa2[1]].getNormal()), msa2[0], delta);
     }
 }

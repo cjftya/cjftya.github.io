@@ -1,10 +1,9 @@
-﻿var TOPICS = {
-    //* topics *//
-    SCENE_LOADER: "topic-scene-loader",
-    SCENE_LOAD_COMPLETE: "topic-scene-load-complete",
-    SCENE_LIFE_CYCLE: "topic-scene-lifecycle",
+﻿//* topics *// 
+var TOPICS = {
+    SCENE_LOADER: "topic-scene-loader"
 };
-
+ 
+//* data key *//
 var DISPLAY_INFO = {
     WINDOW_SIZE: "display-win-size"
 }

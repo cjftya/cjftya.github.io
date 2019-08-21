@@ -1,17 +1,20 @@
 class Rect extends AbsShape {
-    constructor(px, py, w, h, a) {
-        super(ShapeType.Poly);
+    constructor(id, px, py, w, h, a, mode) {
+        super(id, ShapeType.Poly, mode);
 
         this.pos.set(px, py);
 
         this.angle = a;
 
-        this.invMass = 1;
+        this.trans.set(this.pos, this.angle);
         
         this.w = w;
         this.h = h;
         var hw = w / 2;
         var hh = h / 2;
+
+        this.mass = (w + h) * 0.01;
+        this.invMass = 1 / this.mass;
 
         var localX = 0;
         var localY = 0;
@@ -21,11 +24,23 @@ class Rect extends AbsShape {
             new Vector2d().set(localX + hw, localY + hh),
             new Vector2d().set(localX - hw, localY + hh)
         ]);
+
+        
+        var m4 = this.mass / this.vertex.length;
+        for (var i = 0; i < this.vertex.length; i++) {
+            var diff = Vector2d.sub(this.vertex[i], new Vector2d().set(localX, localY));
+            var d = diff.length();
+            this.inertial += ((d * d) * m4);
+        }
+       // this.inertial = (1 / 12) * (this.mass * (w * w + h * h));
+        this.invInertial = 1 / this.inertial;
+        console.log(this.invInertial);
         
         this.syncBody();
     }
 
     updateVel(delta) {
+        this.angle_vel *= 0.995;
         this.vel.x += (this.force.x * this.invMass);
         this.vel.y += (this.force.y * this.invMass);
         this.vel.mul(0.995);
@@ -33,9 +48,9 @@ class Rect extends AbsShape {
     }
 
     updatePos(delta) {
+        this.angle += this.angle_vel;
         this.pos.x += this.vel.x;
         this.pos.y += this.vel.y;
-        // this.angle += 0.01;
 
         this.syncBody();
     }

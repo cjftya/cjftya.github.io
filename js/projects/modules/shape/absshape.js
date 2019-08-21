@@ -19,9 +19,10 @@ class Edge {
 }
 
 class AbsShape {
-    constructor(type) {
+    constructor(id, type, mode) {
         this.type = type;
-        this.id = type + ObjectPool.ready().getCounter();
+        this.mode = mode;
+        this.id = id;
         this.color = [MathUtil.randNum(255), MathUtil.randNum(255), MathUtil.randNum(255)];
 
         this.pos = new Vector2d();
@@ -29,7 +30,11 @@ class AbsShape {
         this.angle = 0;
         this.angle_vel = 0;
 
+        this.mass = 0;
         this.invMass = 0;
+ 
+        this.inertial = 0;
+        this.invInertial = 0;
 
         this.centroid = new Vector2d();
         this.force = new Vector2d();
@@ -99,6 +104,7 @@ class AbsShape {
         for (var i = 0; i < this.vertex.length; i++) {
             min = Math.min(min, Vector2d.dot(n, this.vertex[i]));
         }
+        return min - d;
     }
 
     addForce(fx, fy) {

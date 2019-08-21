@@ -1,6 +1,6 @@
 class Circle extends AbsShape {
-    constructor(px, py, r) {
-        super(ShapeType.Circle);
+    constructor(id, px, py, r, mode) {
+        super(id, ShapeType.Circle, mode);
 
         this.radius = r;
         this.size = r * 2;
