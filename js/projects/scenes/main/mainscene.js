@@ -9,12 +9,12 @@ class MainScene extends AbsScene {
     onCreate() {
         this.setPresenter(new MainPresenter(this));
 
-        for (var i = 0; i < 30; i++) {
-            ObjectPool.ready().insert(new Circle(MathUtil.randInt(50, 600), MathUtil.randInt(50, 600), MathUtil.randInt(10, 20)));
+        for (var i = 0; i < 50; i++) {
+            ObjectPool.shape().insert(ShapeFactory.createCircle(MathUtil.randInt(50, 600), MathUtil.randInt(50, 600), MathUtil.randInt(10, 20), ShapeMode.Dynamic));
         }
-        for (var i = 0; i < 1; i++) {
-            ObjectPool.ready().insert(new Rect(MathUtil.randInt(50, 600), MathUtil.randInt(50, 600),
-                MathUtil.randInt(30, 50), MathUtil.randInt(30, 50), MathUtil.randInt(0, 45)));
+        for (var i = 0; i < 7; i++) {
+            ObjectPool.shape().insert(ShapeFactory.createRect(MathUtil.randInt(50, 600), MathUtil.randInt(50, 600),
+                MathUtil.randInt(30, 80), MathUtil.randInt(10, 50), MathUtil.randInt(0, 45), ShapeMode.Dynamic));
         }
     }
 
@@ -29,30 +29,38 @@ class MainScene extends AbsScene {
             Springs.followEasing(this.__selectedObject.pos, this.__mPoint, 0.1);
         }
 
-        var list = ObjectPool.ready().getList();
+        var list = ObjectPool.shape().getList();
+        Collisions.module(list, timeDelta);
         for (var [id1, obj1] of list.entries()) {
+            if (obj1.mode == ShapeMode.Static) {
+                continue;
+            }
+            obj1.vel.y += 0.3;
             obj1.updateVel(timeDelta);
             obj1.updatePos(timeDelta);
 
             if (obj1.pos.x < 0 + obj1.radius) {
                 obj1.pos.x = 0 + obj1.radius;
+                obj1.vel.x *= -0.6;
             } else if (obj1.pos.x > windowWidth - obj1.radius) {
                 obj1.pos.x = windowWidth - obj1.radius;
+                obj1.vel.x *= -0.6;
             }
             if (obj1.pos.y < 0 + obj1.radius) {
                 obj1.pos.y = 0 + obj1.radius;
+                obj1.vel.y *= -0.6;
             } else if (obj1.pos.y > windowHeight - obj1.radius) {
                 obj1.pos.y = windowHeight - obj1.radius;
+                obj1.vel.y *= -0.6;
             }
         }
-        Collisions.module(list, timeDelta);
     }
 
     onDraw() {
         background(255, 255, 255);
         noStroke();
 
-        var list = ObjectPool.ready().getList();
+        var list = ObjectPool.shape().getList();
         for (var [id, obj] of list.entries()) {
             obj.draw();
         }
@@ -69,7 +77,7 @@ class MainScene extends AbsScene {
         var id = Picker.pick(tx, ty);
         if (id > -1) {
             console.log("obj id : " + id);
-            this.__selectedObject = ObjectPool.ready().find(id);
+            this.__selectedObject = ObjectPool.shape().find(id);
         }
         this.__mPoint.set(tx, ty);
     }
@@ -85,6 +93,7 @@ class MainScene extends AbsScene {
     onTouchMove(tx, ty) {
         this.getPresenter().onTouchMove(tx, ty);
         if (this.__selectedObject != null) {
+            this.__selectedObject.vel.zero();
             this.__mPoint.set(tx, ty);
         }
     }
