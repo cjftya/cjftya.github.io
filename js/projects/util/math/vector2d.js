@@ -19,6 +19,7 @@ class Vector2d {
     add(other) {
         this.x += other.x;
         this.y += other.y;
+        return this;
     }
 
     sub(other) {
@@ -34,6 +35,20 @@ class Vector2d {
         this.x *= delta;
         this.y *= delta;
         return this;
+    }
+
+    static mul(a, b) {
+        return new Vector2d().set(a.x * b.x, a.y * b.y);
+    }
+
+    div(a) {
+        this.x /= a.x;
+        this.y /= a.y;
+        return this;
+    }
+
+    static div(a, b) {
+        return new Vector2d().set(a.x / b.x, a.y / b.y);
     }
 
     length() {
