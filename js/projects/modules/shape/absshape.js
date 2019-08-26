@@ -27,6 +27,7 @@ class AbsShape {
 
         this.pos = new Vector2d();
         this.vel = new Vector2d();
+        this.accel = new Vector2d();
         this.angle = 0;
         this.angle_vel = 0;
 
@@ -37,7 +38,6 @@ class AbsShape {
         this.invInertial = 0;
 
         this.centroid = new Vector2d();
-        this.force = new Vector2d();
 
         this.trans = new Transform(this.pos, this.angle);
 
@@ -108,8 +108,8 @@ class AbsShape {
     }
 
     addForce(fx, fy) {
-        this.force.x += fx;
-        this.force.y += fy;
+        this.accel.x += fx * this.invMass;
+        this.accel.y += fy * this.invMass;
     }
 
     updateVel(delta) { }

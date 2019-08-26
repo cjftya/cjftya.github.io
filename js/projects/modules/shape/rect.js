@@ -32,7 +32,6 @@ class Rect extends AbsShape {
             var d = diff.length();
             this.inertial += ((d * d) * m4);
         }
-       // this.inertial = (1 / 12) * (this.mass * (w * w + h * h));
         this.invInertial = 1 / this.inertial;
         console.log(this.invInertial);
         
@@ -40,11 +39,11 @@ class Rect extends AbsShape {
     }
 
     updateVel(delta) {
-        this.angle_vel *= 0.995;
-        this.vel.x += (this.force.x * this.invMass);
-        this.vel.y += (this.force.y * this.invMass);
-        this.vel.mul(0.995);
-        this.force.zero();
+        this.angle_vel *= 0.9995;
+        this.vel.x += this.accel.x;
+        this.vel.y += this.accel.y;
+        this.vel.mul(0.9995);
+        this.accel.zero();
     }
 
     updatePos(delta) {

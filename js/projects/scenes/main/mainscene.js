@@ -2,6 +2,7 @@ class MainScene extends AbsScene {
     constructor() {
         super();
 
+        this.__world = new World();
         this.__mPoint = new Vector2d();
         this.__selectedObject = null;
     }
@@ -16,6 +17,7 @@ class MainScene extends AbsScene {
             ObjectPool.shape().insert(ShapeFactory.createRect(MathUtil.randInt(50, 600), MathUtil.randInt(50, 600),
                 MathUtil.randInt(30, 80), MathUtil.randInt(10, 50), MathUtil.randInt(0, 45), ShapeMode.Dynamic));
         }
+        
     }
 
     onPause() {
@@ -26,34 +28,10 @@ class MainScene extends AbsScene {
 
     onUpdate(timeDelta) {
         if (this.__selectedObject != null) {
-            Springs.followEasing(this.__selectedObject.pos, this.__mPoint, 0.1);
+            Springs.followEasingVel(this.__selectedObject, this.__mPoint, 0.1);
         }
 
-        var list = ObjectPool.shape().getList();
-        Collisions.module(list, timeDelta);
-        for (var [id1, obj1] of list.entries()) {
-            if (obj1.mode == ShapeMode.Static) {
-                continue;
-            }
-            obj1.vel.y += 0.3;
-            obj1.updateVel(timeDelta);
-            obj1.updatePos(timeDelta);
-
-            if (obj1.pos.x < 0 + obj1.radius) {
-                obj1.pos.x = 0 + obj1.radius;
-                obj1.vel.x *= -0.6;
-            } else if (obj1.pos.x > windowWidth - obj1.radius) {
-                obj1.pos.x = windowWidth - obj1.radius;
-                obj1.vel.x *= -0.6;
-            }
-            if (obj1.pos.y < 0 + obj1.radius) {
-                obj1.pos.y = 0 + obj1.radius;
-                obj1.vel.y *= -0.6;
-            } else if (obj1.pos.y > windowHeight - obj1.radius) {
-                obj1.pos.y = windowHeight - obj1.radius;
-                obj1.vel.y *= -0.6;
-            }
-        }
+        this.__world.module(timeDelta);
     }
 
     onDraw() {
@@ -93,7 +71,6 @@ class MainScene extends AbsScene {
     onTouchMove(tx, ty) {
         this.getPresenter().onTouchMove(tx, ty);
         if (this.__selectedObject != null) {
-            this.__selectedObject.vel.zero();
             this.__mPoint.set(tx, ty);
         }
     }

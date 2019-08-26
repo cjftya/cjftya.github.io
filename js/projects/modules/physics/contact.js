@@ -5,6 +5,8 @@ class Contact {
         this.__d = d; //collision depth
         this.__aId = aid;
         this.__bId = bid;
+
+        this.__deltaVelocity = 0;
     }
 
     getPoint() {

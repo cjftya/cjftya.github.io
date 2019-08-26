@@ -6,14 +6,17 @@ class Circle extends AbsShape {
         this.size = r * 2;
 
         this.pos.set(px, py);
-        this.invMass = 1;
+        this.mass = this.radius * 0.1;
+        this.invMass = 1 / this.mass;
+        this.inertial = 1;
+        this.invInertial = 1 / this.inertial;
     }
 
     updateVel(delta) {
-        this.vel.x += (this.force.x * this.invMass);
-        this.vel.y += (this.force.y * this.invMass);
-        this.vel.mul(0.995);
-        this.force.zero();
+        this.vel.x += this.accel.x;
+        this.vel.y += this.accel.y;
+        this.vel.mul(0.9995);
+        this.accel.zero();
     }
 
     updatePos(delta) {
