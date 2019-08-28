@@ -6,7 +6,8 @@ class Collisions {
         var list = ObjectPool.shape().getList();
         for (var [id1, obj1] of list.entries()) {
             for (var [id2, obj2] of list.entries()) {
-                if (id1 == id2) {
+                if (id1 == id2 ||
+                    (obj1.mode == ShapeMode.Static && obj2.mode == ShapeMode.Static)) {
                     continue;
                 }
                 this.checkCollision(conArr, obj1, obj2, timeDelta);
@@ -71,7 +72,7 @@ class Collisions {
         if(minIdx < 0) {
             return;
         }
-        
+
         var n = s2.edge[minIdx].getNormal();
         var a = s2.vertex[minIdx];
         var b = s2.vertex[(minIdx + 1) % s2.vertex.length];
@@ -116,6 +117,10 @@ class Collisions {
     }
 
     static __findVerts(conArr, s1, s2, n, depth, delta) {
+        if(s1.id == s2.id) {
+            return false;
+        }
+        
         var num = 0;
         var contact = [];
         for (var i = 0; i < s1.vertex.length; i++) {

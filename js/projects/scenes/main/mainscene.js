@@ -10,14 +10,24 @@ class MainScene extends AbsScene {
     onCreate() {
         this.setPresenter(new MainPresenter(this));
 
-        for (var i = 0; i < 50; i++) {
+        for (var i = 0; i < 100; i++) {
             ObjectPool.shape().insert(ShapeFactory.createCircle(MathUtil.randInt(50, 600), MathUtil.randInt(50, 600), MathUtil.randInt(10, 20), ShapeMode.Dynamic));
         }
-        for (var i = 0; i < 7; i++) {
+        for (var i = 0; i < 5; i++) {
             ObjectPool.shape().insert(ShapeFactory.createRect(MathUtil.randInt(50, 600), MathUtil.randInt(50, 600),
-                MathUtil.randInt(30, 80), MathUtil.randInt(10, 50), MathUtil.randInt(0, 45), ShapeMode.Dynamic));
+                MathUtil.randInt(30, 80), MathUtil.randInt(20, 50), MathUtil.randInt(0, 45), ShapeMode.Dynamic));
         }
-        
+        // ground
+        ObjectPool.shape().insert(ShapeFactory.createRect(windowWidth/2, windowHeight,
+            windowWidth, 30, 0, ShapeMode.Static));
+
+        // left
+        ObjectPool.shape().insert(ShapeFactory.createRect(0, windowHeight/2,
+            30, windowHeight, 0, ShapeMode.Static));
+
+        // right
+        ObjectPool.shape().insert(ShapeFactory.createRect(windowWidth, windowHeight/2,
+            30, windowHeight, 0, ShapeMode.Static));
     }
 
     onPause() {

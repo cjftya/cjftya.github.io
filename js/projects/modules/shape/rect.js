@@ -13,7 +13,7 @@ class Rect extends AbsShape {
         var hw = w / 2;
         var hh = h / 2;
 
-        this.mass = (w + h) * 0.01;
+        this.mass = (w + h) * 0.015;
         this.invMass = 1 / this.mass;
 
         var localX = 0;
