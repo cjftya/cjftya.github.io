@@ -12,9 +12,12 @@ class CollisionResolver {
         // if(vDotN < 0) {
         //     return;
         // }
-        // var n1 = -(1.0 + 0.4)*vDotN;
+        // var n1 = -(1.0 + 0.9) * vDotN;
         // var n2 = Vector2d.dot(np, np) * (s1.invMass + s2.invMass);
         // var j = n1 / n2;
+        // if(s1.mode == ShapeMode.Static || s2.mode == ShapeMode.Static) {
+        //     //j *= 2;
+        // }
         // s1.vel.x += (j * np.x) * s1.invMass;
         // s1.vel.y += (j * np.y) * s1.invMass;
         // s2.vel.x -= (j * np.x) * s2.invMass;
@@ -30,10 +33,10 @@ class CollisionResolver {
         var v2 = Vector2d.add(s2.vel, Vector2d.perp(cp2).mul(s2.angle_vel));
         var rVel = Vector2d.sub(v1, v2);
         var vDotN = rVel.dot(np);
-        if(vDotN < 0) {
+        if (vDotN < 0) {
             return;
         }
-        var n1 = -(1.0 + 0.4)*vDotN;
+        var n1 = -(1.0 + 1) * vDotN;
         var n2 = Vector2d.dot(np, np) * (s1.invMass + s2.invMass);
         var ccp1 = Vector2d.cross(cp1, np) * s1.invInertial;
         var ccp2 = Vector2d.cross(cp2, np) * s2.invInertial;
@@ -47,18 +50,16 @@ class CollisionResolver {
         s2.vel.y -= (j * np.y) * s2.invMass;
 
         if (s1.type == ShapeType.Poly) {
-            if(s1.type == ShapeMode.Dynamic) {
+            if (s1.type == ShapeMode.Dynamic) {
                 var na1 = Vector2d.cross(cp1, np) * s1.invInertial;
-                //      s1.angle -= na1;
-                s1.angle_vel -= na1;
+                s1.angle_vel += na1;
             }
             s1.syncBody();
         }
         if (s2.type == ShapeType.Poly) {
             if (s2.type == ShapeMode.Dynamic) {
                 var na2 = Vector2d.cross(cp2, np) * s2.invInertial;
-                //    s2.angle -= na1;
-                s2.angle_vel += na2;
+                s2.angle_vel -= na2;
             }
             s2.syncBody();
         }
@@ -91,7 +92,7 @@ class CollisionResolver {
             s2.vel.y -= n2y;
         }
         if (s1.type == ShapeType.Poly) {
-            if(s1.mode == ShapeMode.Dynamic) {
+            if (s1.mode == ShapeMode.Dynamic) {
                 var na1 = Vector2d.cross(cp1, contact.getNormal()) * s1.invInertial;
                 s1.angle -= na1;
                 s1.angle_vel -= na1;
@@ -99,7 +100,7 @@ class CollisionResolver {
             s1.syncBody();
         }
         if (s2.type == ShapeType.Poly) {
-            if(s2.mode == ShapeMode.Dynamic) {
+            if (s2.mode == ShapeMode.Dynamic) {
                 var na2 = Vector2d.cross(cp2, contact.getNormal()) * s2.invInertial;
                 s2.angle += na2;
                 s2.angle_vel += na2;
@@ -110,6 +111,6 @@ class CollisionResolver {
 
     static update(contact, delta) {
         this.preResolvePosition(contact, delta);
-  //      this.preResolveVelocity(contact, delta)
+        this.preResolveVelocity(contact, delta)
     }
 }
