@@ -22,6 +22,10 @@ class Vector2d {
         return this;
     }
 
+    static add(a, b) {
+        return new Vector2d().set(a.x + b.x, a.y + b.y);
+    }
+
     sub(other) {
         this.x -= other.x;
         this.y -= other.y;
@@ -71,6 +75,10 @@ class Vector2d {
     static normalize(a) {
         var dn = Math.sqrt(this.dot(a, a));
         return new Vector2d().set(a.x / dn, a.y / dn);
+    }
+
+    dot() {
+        return this.x * this.x + this.y * this.y;
     }
 
     dot(other) {
