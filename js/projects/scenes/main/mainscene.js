@@ -10,7 +10,7 @@ class MainScene extends AbsScene {
     onCreate() {
         this.setPresenter(new MainPresenter(this));
 
-        for (var i = 0; i < 100; i++) {
+        for (var i = 0; i < 5; i++) {
             ObjectPool.shape().insert(ShapeFactory.createCircle(MathUtil.randInt(50, 600), MathUtil.randInt(50, 600), MathUtil.randInt(10, 20), ShapeMode.Dynamic));
         }
         for (var i = 0; i < 5; i++) {
