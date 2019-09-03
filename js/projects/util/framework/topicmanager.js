@@ -7,11 +7,11 @@ var TopicManager = (function () {
             read: function (topic) {
                 var value = __topicMap.get(topic);
                 if (value == null) {
-                    console.log("not found data");
+                    console.log("not found data : " + topic);
                     return null;
                 } else {
                     if (value instanceof Function) {
-                        throw new Error("you can't read Function");
+                        throw new Error("you can't read Function : " + topic);
                     } else {
                         return value;
                     }
@@ -20,10 +20,10 @@ var TopicManager = (function () {
 
             write: function (topic, data) {
                 if (data instanceof Function) {
-                    throw new Error("data type is Function");
+                    throw new Error("data type is Function : " + topic);
                 } else {
                     if (__topicMap.has(topic)) {
-                        console.log("value overwrite");
+                        console.log("value overwrite : " + topic);
                     }
                     __topicMap.set(topic, data);
                 }

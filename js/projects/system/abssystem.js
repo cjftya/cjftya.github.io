@@ -1,17 +1,21 @@
 class AbsSystem {
     constructor() {
-        this.subscribers = null;
+        this.__subscribers = null;
     }
 
     onCreate() {
-        this.subscribers = this.registerSubscribers();
-        this.subscribers.install(TopicManager.ready());
+        this.__subscribers = this.registerSubscribers();
+        if (this.__subscribers != null) {
+            this.__subscribers.install(TopicManager.ready());
+        }
     }
     onPause() { }
     onOperate() { }
     onDestroy() {
-        this.subscribers.unInstall(TopicManager.ready());
-        this.subscribers = null;
+        if(this.__subscribers != null) {
+            this.__subscribers.unInstall(TopicManager.ready());
+            this.__subscribers = null;
+        }
     }
 
     onTouchUp(mx, my) { }

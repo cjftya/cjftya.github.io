@@ -1,36 +1,43 @@
 class World {
     constructor() {
-        this.__contactList = new ContackDataStruct();
-        this.__iterator = 3;
+        // default setting
+        this.__iterator = 1;
+        this.__gravity = new Vector2d().set(0, 0.4);
+        this.__stopLoop = false;
+    }
+
+    stop() {
+        this.__stopLoop = true;
+    }
+
+    setGravity(gx, gy) {
+        this.__gravity.set(gx, gy);
+    }
+
+    setIteratorWorld(count) {
+        this.__iterator = count;
     }
 
     resolveContact(timeDelta) {
         for (var i = 0; i < this.__iterator; i++) {
-            Collisions.module(this.__contactList, timeDelta);
+            Collisions.module(timeDelta);
         }
-    }
-
-    runPhysics(timeDelta) {
-        for (var i = 0; i < this.__contactList.getConArr().length; i++) {
-            var contact = this.__contactList.getConArr()[i];
-            var sameCount = this.__contactList.getCount(contact.getIdA());
-            CollisionResolver.preUpdate(contact, sameCount);
-        }
-        this.__contactList.clear();
     }
 
     module(timeDelta) {
+        if (this.__stopLoop) {
+            return;
+        }
+
         var list = ObjectPool.shape().getList();
         for (var [id, obj] of list.entries()) {
             if (obj.mode == ShapeMode.Static) {
                 continue;
             }
-            obj.addForce(0, 0.4);
+            obj.addForce(this.__gravity.x, this.__gravity.y);
             obj.updateVel(timeDelta);
             obj.updatePos(timeDelta);
         }
-
         this.resolveContact(timeDelta);
-  //      this.runPhysics(timeDelta);
     }
 }

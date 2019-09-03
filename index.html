@@ -23,12 +23,13 @@
     <!-- load p5 lib -->
     <script src="lib/p5.min.js" type="text/javascript"></script>
 
-    <!-- load contents -->
+    <!-- load tools -->
     <script src="js/projects/util/framework/topics.js" type="text/javascript"></script>
     <script src="js/projects/util/framework/topicmanager.js" type="text/javascript"></script>
     <script src="js/projects/util/framework/timedelta.js" type="text/javascript"></script>
     <script src="js/projects/util/framework/subscriberinstaller.js" type="text/javascript"></script>
 
+    <!-- load enum data -->
     <script src="js/projects/util/enum.js" type="text/javascript"></script>
 
     <!-- load math util -->
@@ -36,30 +37,34 @@
     <script src="js/projects/util/math/vector2d.js" type="text/javascript"></script>
     <script src="js/projects/util/math/transform.js" type="text/javascript"></script>
 
+    <!-- load object pool manager -->
+    <script src="js/projects/modules/absobject.js" type="text/javascript"></script>
     <script src="js/projects/modules/objectpool.js" type="text/javascript"></script>
 
-    <!-- load collisions module -->
+    <!-- load collision module -->
     <script src="js/projects/modules/physics/contact.js" type="text/javascript"></script>
     <script src="js/projects/modules/physics/collisions.js" type="text/javascript"></script>
     <script src="js/projects/modules/physics/collisionResolver.js" type="text/javascript"></script>
-    <script src="js/projects/modules/physics/springs.js" type="text/javascript"></script>
     <script src="js/projects/modules/physics/picker.js" type="text/javascript"></script>
 
     <!-- load constraint module -->
-    <script src="js/projects/modules/physics/constraint/pcontact.js" type="text/javascript"></script>
-    <script src="js/projects/modules/physics/constraint/constraints.js" type="text/javascript"></script>
+    <script src="js/projects/modules/physics/springs.js" type="text/javascript"></script>
     <script src="js/projects/modules/physics/constraint/constraintResolver.js" type="text/javascript"></script>
 
-    <script src="js/projects/modules/physics/contactdatastruct.js" type="text/javascript"></script>
+    <!-- physics ground -->
     <script src="js/projects/modules/physics/world.js" type="text/javascript"></script>
 
     <!-- load scene -->
     <script src="js/projects/scenes/abstract/abspresenter.js" type="text/javascript"></script>
     <script src="js/projects/scenes/abstract/absscene.js" type="text/javascript"></script>
+
+    <!-- load [main scene] -->
     <script src="js/projects/scenes/main/mainpresenter.js" type="text/javascript"></script>
     <script src="js/projects/scenes/main/mainscene.js" type="text/javascript"></script>
-    <script src="js/projects/scenes/stage/stagepresenter.js" type="text/javascript"></script>
-    <script src="js/projects/scenes/stage/stagescene.js" type="text/javascript"></script>
+
+    <!-- load [physics scene] -->
+    <script src="js/projects/scenes/physics/physicspresenter.js" type="text/javascript"></script>
+    <script src="js/projects/scenes/physics/physicsscene.js" type="text/javascript"></script>
 
     <!-- load system -->
     <script src="js/projects/system/abssystem.js" type="text/javascript"></script>

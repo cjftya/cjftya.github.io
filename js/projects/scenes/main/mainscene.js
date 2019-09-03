@@ -1,43 +1,25 @@
 class MainScene extends AbsScene {
     constructor() {
         super();
+    }
+
+    onCreate() {
+        this.setPresenter(new MainPresenter(this));
 
         this.__world = new World();
         this.__mPoint = new Vector2d();
         this.__selectedObject = null;
     }
 
-    onCreate() {
-        this.setPresenter(new MainPresenter(this));
+    onStart() {
+        this.__world.setGravity(0, 0);
 
-        for (var i = 0; i < 5; i++) {
-            ObjectPool.shape().insert(ShapeFactory.createCircle(MathUtil.randInt(50, 600), MathUtil.randInt(50, 600), MathUtil.randInt(10, 20), ShapeMode.Dynamic));
+        for (var i = 0; i < 1; i++) {
+            ObjectPool.shape().insert(ShapeFactory.createCircle(MathUtil.randInt(50, 600), MathUtil.randInt(50, 600), MathUtil.randInt(40, 50), ShapeMode.Dynamic));
         }
-        for (var i = 0; i < 5; i++) {
-            ObjectPool.shape().insert(ShapeFactory.createRect(MathUtil.randInt(50, 600), MathUtil.randInt(50, 600),
-                MathUtil.randInt(30, 80), MathUtil.randInt(20, 50), MathUtil.randInt(0, 45), ShapeMode.Dynamic));
-        }
-        // ground
-        ObjectPool.shape().insert(ShapeFactory.createRect(windowWidth/2, windowHeight,
-            windowWidth, 30, 0, ShapeMode.Static));
-
-        // left
-        ObjectPool.shape().insert(ShapeFactory.createRect(0, windowHeight/2,
-            30, windowHeight, 0, ShapeMode.Static));
-
-        // right
-        ObjectPool.shape().insert(ShapeFactory.createRect(windowWidth, windowHeight/2,
-            30, windowHeight, 0, ShapeMode.Static));
-
-                    // right
-        ObjectPool.shape().insert(ShapeFactory.createRect(150, windowHeight/2,
-            windowWidth/3, 50, 35, ShapeMode.Static));
     }
 
     onPause() {
-    }
-
-    onStart() {
     }
 
     onUpdate(timeDelta) {
@@ -59,6 +41,7 @@ class MainScene extends AbsScene {
     }
 
     onEnd() {
+        ObjectPool.release();
     }
 
     onDestroy() {
@@ -70,7 +53,7 @@ class MainScene extends AbsScene {
         if (id > -1) {
             console.log("obj id : " + id);
             this.__selectedObject = ObjectPool.shape().find(id);
-            if(this.__selectedObject.mode == ShapeMode.Static) {
+            if (this.__selectedObject.mode == ShapeMode.Static) {
                 this.__selectedObject = null;
             }
         }
@@ -81,6 +64,10 @@ class MainScene extends AbsScene {
         this.getPresenter().onTouchUp(tx, ty);
         if (this.__selectedObject != null) {
             this.__mPoint.set(this.__selectedObject.pos.x, this.__selectedObject.pos.y);
+
+            if(this.__selectedObject.id == 1) {
+                TopicManager.ready().publish(TOPICS.SCENE_LOADER, SCENES.PHYSICS);
+            }
             this.__selectedObject = null;
         }
     }

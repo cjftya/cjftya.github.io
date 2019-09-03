@@ -1,14 +1,13 @@
 var ShapeFactory = (function () {
-    var __counter;
     var __inst;
 
     function modules() {
         return {
             rect: function (px, py, w, h, a, mode) {
-                return new Rect(__counter++, px, py, w, h, a, mode);
+                return new Rect(px, py, w, h, a, mode);
             },
             circle: function (px, py, r, mode) {
-                return new Circle(__counter++, px, py, r, mode);
+                return new Circle(px, py, r, mode);
             }
         }
     }

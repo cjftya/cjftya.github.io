@@ -33,13 +33,13 @@ function mouseDragged() {
 
 function installSystem() {
     TopicManager.ready().write(SYSTEMS.MAIN, new MainSystem());
-    //..
-    //..
+    TopicManager.ready().write(SYSTEMS.SOUND, new SoundSystem());
 }
 
 function loadSystem() {
     var sysArr = [];
     sysArr.push(TopicManager.ready().read(SYSTEMS.MAIN));
+    sysArr.push(TopicManager.ready().read(SYSTEMS.SOUND));
     //..
     //..
     for (var i = 0; i < sysArr.length; i++) {

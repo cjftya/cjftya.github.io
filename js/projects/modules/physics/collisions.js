@@ -2,7 +2,7 @@ class Collisions {
     constructor() {
     }
 
-    static module(conArr, timeDelta) {
+    static module(timeDelta) {
         var list = ObjectPool.shape().getList();
         for (var [id1, obj1] of list.entries()) {
             for (var [id2, obj2] of list.entries()) {
@@ -10,20 +10,20 @@ class Collisions {
                     (obj1.mode == ShapeMode.Static && obj2.mode == ShapeMode.Static)) {
                     continue;
                 }
-                this.checkCollision(conArr, obj1, obj2, timeDelta);
+                this.checkCollision(obj1, obj2, timeDelta);
             }
         }
     }
 
-    static checkCollision(conArr, s1, s2, delta) {
+    static checkCollision(s1, s2, delta) {
         if (s1.type == ShapeType.Circle && s2.type == ShapeType.Circle) {
-            return this.circle2circle(conArr, s1, s2, delta);
+            return this.circle2circle(s1, s2, delta);
         } else if (s1.type == ShapeType.Circle && s2.type == ShapeType.Poly) {
-            return this.circle2poly(conArr, s1, s2, delta);
+            return this.circle2poly(s1, s2, delta);
         } else if (s1.type == ShapeType.Poly && s2.type == ShapeType.Circle) {
-            return this.circle2poly(conArr, s2, s1, delta);
+            return this.circle2poly(s2, s1, delta);
         } else if (s1.type == ShapeType.Poly && s2.type == ShapeType.Poly) {
-            return this.poly2poly(conArr, s1, s2, delta);
+            return this.poly2poly(s1, s2, delta);
         }
         return false;
     }
@@ -39,7 +39,7 @@ class Collisions {
         return s.containPoint(p);
     }
 
-    static circle2circle(conArr, s1, s2, delta) {
+    static circle2circle(s1, s2, delta) {
         var dx = s2.pos.x - s1.pos.x;
         var dy = s2.pos.y - s1.pos.y;
         var d = dx * dx + dy * dy;
@@ -48,14 +48,13 @@ class Collisions {
             var dist = Math.sqrt(d);
             var normal = new Vector2d().set(dx / dist, dy / dist);
             var point = new Vector2d().set(s1.pos.x + (normal.x * s1.radius), s1.pos.y + (normal.y * s1.radius));
-           // conArr.addContact(point, normal, dist - r, s1.id, s2.id);
             CollisionResolver.update(new Contact(point, normal, dist - r, s1.id, s2.id), delta);
             return true;
         }
         return false;
     }
 
-    static circle2poly(conArr, s1, s2, delta) {
+    static circle2poly(s1, s2, delta) {
         var minDist = -999999;
         var minIdx = -1;
 
@@ -116,7 +115,7 @@ class Collisions {
         return [minDist, minIndex];
     }
 
-    static __findVerts(conArr, s1, s2, n, depth, delta) {
+    static __findVerts(s1, s2, n, depth, delta) {
         if(s1.id == s2.id) {
             return false;
         }
@@ -145,7 +144,7 @@ class Collisions {
         return num > 0;
     }
 
-    static poly2poly(conArr, s1, s2, delta) {
+    static poly2poly(s1, s2, delta) {
         var msa1 = this.__findMSA(s2, s1.edge, s1.vertex.length);
         if (msa1[1] == -1) {
             return false;
@@ -157,8 +156,8 @@ class Collisions {
         }
 
         if (msa1[0] > msa2[0]) {
-            return this.__findVerts(conArr, s1, s2, s1.edge[msa1[1]].getNormal(), msa1[0], delta);
+            return this.__findVerts(s1, s2, s1.edge[msa1[1]].getNormal(), msa1[0], delta);
         }
-        return this.__findVerts(conArr, s1, s1, Vector2d.neg(s2.edge[msa2[1]].getNormal()), msa2[0], delta);
+        return this.__findVerts(s1, s1, Vector2d.neg(s2.edge[msa2[1]].getNormal()), msa2[0], delta);
     }
 }
