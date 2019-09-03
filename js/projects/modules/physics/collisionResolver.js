@@ -4,6 +4,7 @@ class CollisionResolver {
 
     static preResolveVelocity(contact, delta) {
         //in 2d : cross(w, r) = perp(r) * w
+
         // var s1 = ObjectPool.shape().find(contact.getIdA());
         // var s2 = ObjectPool.shape().find(contact.getIdB());
         // var np = contact.getNormal();
@@ -54,17 +55,14 @@ class CollisionResolver {
         if (s1.type == ShapeType.Poly) {
             if (s1.mode == ShapeMode.Dynamic) {
                 s1.vel = Vector2d.normalize(s1.vel).mul(s1.vel.length() * fri);
-                var na1 = Vector2d.cross(cp1, rp) * s1.invInertial;
-                s1.angle_vel += na1;
+                s1.angle_vel += Vector2d.cross(cp1, rp) * s1.invInertial;;
             }
             s1.syncBody();
         }
         if (s2.type == ShapeType.Poly) {
             if (s2.mode == ShapeMode.Dynamic) {
                 s2.vel = Vector2d.normalize(s2.vel).mul(s2.vel.length() * fri);
-
-                var na2 = Vector2d.cross(cp2, rp) * s2.invInertial;
-                s2.angle_vel -= na2;
+                s2.angle_vel -= Vector2d.cross(cp2, rp) * s2.invInertial;;
             }
             s2.syncBody();
         }

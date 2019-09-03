@@ -1,6 +1,6 @@
 class Rect extends AbsShape {
-    constructor(id, px, py, w, h, a, mode) {
-        super(id, ShapeType.Poly, mode);
+    constructor(px, py, w, h, a, mode) {
+        super(ShapeType.Poly, mode);
 
         this.pos.set(px, py);
 

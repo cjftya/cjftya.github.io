@@ -16,5 +16,6 @@ var SYSTEMS = {
 
 var SCENES = {
     MAIN: "scene-main",
+    PHYSICS: "scene-physics",
     CURRENT: "scene-current"
 };

@@ -1,6 +1,6 @@
 var PoolType = {
-    Particle: 0,
-    Shape: 1
+    Shape: 0,
+    UI: 1
 };
 
 var ShapeType = {

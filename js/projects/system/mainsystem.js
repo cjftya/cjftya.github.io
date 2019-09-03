@@ -8,7 +8,9 @@ class MainSystem extends AbsSystem {
 
     registerSubscribers() {
         return new SubscriberInstaller()
-            .add(TOPICS.SCENE_LOADER, this.loadScece);
+            .add(TOPICS.SCENE_LOADER, (topic, data) => {
+                this.loadScece(topic, data);
+            });
     }
 
     onCreate() {
@@ -17,7 +19,6 @@ class MainSystem extends AbsSystem {
         textSize(20);
 
         TopicManager.ready().publish(TOPICS.SCENE_LOADER, SCENES.MAIN);
-        this.__scene = TopicManager.ready().read(SCENES.CURRENT);
     }
 
     onPause() {
@@ -52,18 +53,33 @@ class MainSystem extends AbsSystem {
 
     loadScece(topic, data) {
         console.log("load scene : " + data);
+        var curScene = TopicManager.ready().read(SCENES.CURRENT);
+        if (curScene != null) {
+            console.log("exit scene : " + curScene);
+            curScene.onEnd();
+            curScene.onDestroy();
+            curScene = null;
+        }
 
         switch (data) {
             case SCENES.MAIN:
-                this.__scene = new MainScene();
+                curScene = new MainScene();
+                break;
+            case SCENES.PHYSICS:
+                curScene = new PhysicsScene();
                 break;
             default:
-                console.log("unknown scene type : " + topic);
+                console.log("unknown scene type : " + data);
                 break;
         }
-        this.__scene.onCreate();
-        this.__scene.onStart();
-        TopicManager.ready().write(SCENES.CURRENT, this.__scene);
+        if (curScene != null) {
+            curScene.onCreate();
+            curScene.onStart();
+            this.__scene = curScene;
+            TopicManager.ready().write(SCENES.CURRENT, curScene);
+        } else {
+            console.log("scene load fail" + data);
+        }
     }
 
     drawFpsCount() {

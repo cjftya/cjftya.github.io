@@ -1,10 +1,13 @@
 var ObjectPool = (function () {
     var __pool;
     var __list;
+    var __objectCounter;
 
     function modules(type) {
         return {
             insert: function (object) {
+                object.setId(++__objectCounter);
+                object.setOriginType(type);
                 __list.get(type).set(object.id, object);
             },
             remove: function (id) {
@@ -25,6 +28,7 @@ var ObjectPool = (function () {
     return {
         __ready: function (type) {
             if (__pool == null) {
+                __objectCounter = 0;
                 __pool = new Map();
                 __list = new Map();
             }
@@ -36,11 +40,15 @@ var ObjectPool = (function () {
             }
             return __pool.get(type);
         },
+        release: function() {
+            this.__ready(PoolType.Shape).clear();
+            this.__ready(PoolType.UI).clear();
+        },
         shape: function () {
             return this.__ready(PoolType.Shape);
         },
-        particle: function () {
-            return this.__ready(PoolType.Particle);
+        ui: function () {
+            return this.__ready(PoolType.UI);
         }
     };
 })();

@@ -18,11 +18,12 @@ class Edge {
     }
 }
 
-class AbsShape {
-    constructor(id, type, mode) {
+class AbsShape extends AbsObject {
+    constructor(type, mode) {
+        super();
+
         this.type = type;
         this.mode = mode;
-        this.id = id;
         this.color = [MathUtil.randNum(255), MathUtil.randNum(255), MathUtil.randNum(255)];
 
         this.pos = new Vector2d();
