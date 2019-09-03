@@ -1,7 +1,7 @@
 class World {
     constructor() {
         this.__contactList = new ContackDataStruct();
-        this.__iterator = 1;
+        this.__iterator = 3;
     }
 
     resolveContact(timeDelta) {

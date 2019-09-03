@@ -36,29 +36,34 @@ class CollisionResolver {
         if (vDotN < 0) {
             return;
         }
-        var n1 = -(1.0 + 1) * vDotN;
+        var n1 = -(1.0 + 0.4) * vDotN;
         var n2 = Vector2d.dot(np, np) * (s1.invMass + s2.invMass);
         var ccp1 = Vector2d.cross(cp1, np) * s1.invInertial;
         var ccp2 = Vector2d.cross(cp2, np) * s2.invInertial;
         var s = Vector2d.add(Vector2d.perp(cp1).mul(ccp1), Vector2d.perp(cp2).mul(ccp2));
         n2 += (s.x * s.x + s.y * s.y);
         var j = n1 / n2;
+        var rp = new Vector2d().set(np.x * j, np.y * j);
 
-        s1.vel.x += (j * np.x) * s1.invMass;
-        s1.vel.y += (j * np.y) * s1.invMass;
-        s2.vel.x -= (j * np.x) * s2.invMass;
-        s2.vel.y -= (j * np.y) * s2.invMass;
+        s1.vel.x += rp.x * s1.invMass;
+        s1.vel.y += rp.y * s1.invMass;
+        s2.vel.x -= rp.x * s2.invMass;
+        s2.vel.y -= rp.y * s2.invMass;
 
+        var fri = s1.type == ShapeType.Circle ? 0.95 : 0.8;
         if (s1.type == ShapeType.Poly) {
-            if (s1.type == ShapeMode.Dynamic) {
-                var na1 = Vector2d.cross(cp1, np) * s1.invInertial;
+            if (s1.mode == ShapeMode.Dynamic) {
+                s1.vel = Vector2d.normalize(s1.vel).mul(s1.vel.length() * fri);
+                var na1 = Vector2d.cross(cp1, rp) * s1.invInertial;
                 s1.angle_vel += na1;
             }
             s1.syncBody();
         }
         if (s2.type == ShapeType.Poly) {
-            if (s2.type == ShapeMode.Dynamic) {
-                var na2 = Vector2d.cross(cp2, np) * s2.invInertial;
+            if (s2.mode == ShapeMode.Dynamic) {
+                s2.vel = Vector2d.normalize(s2.vel).mul(s2.vel.length() * fri);
+
+                var na2 = Vector2d.cross(cp2, rp) * s2.invInertial;
                 s2.angle_vel -= na2;
             }
             s2.syncBody();
