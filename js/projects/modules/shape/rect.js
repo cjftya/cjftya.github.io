@@ -14,6 +14,9 @@ class Rect extends AbsShape {
         var hh = h / 2;
 
         this.mass = (w + h) * 0.015;
+        if(this.mode == ShapeMode.Static) {
+            this.mass *= 1000;
+        }
         this.invMass = 1 / this.mass;
 
         var localX = 0;

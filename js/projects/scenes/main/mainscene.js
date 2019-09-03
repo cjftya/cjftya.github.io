@@ -28,6 +28,10 @@ class MainScene extends AbsScene {
         // right
         ObjectPool.shape().insert(ShapeFactory.createRect(windowWidth, windowHeight/2,
             30, windowHeight, 0, ShapeMode.Static));
+
+                    // right
+        ObjectPool.shape().insert(ShapeFactory.createRect(150, windowHeight/2,
+            windowWidth/3, 50, 35, ShapeMode.Static));
     }
 
     onPause() {
@@ -66,6 +70,9 @@ class MainScene extends AbsScene {
         if (id > -1) {
             console.log("obj id : " + id);
             this.__selectedObject = ObjectPool.shape().find(id);
+            if(this.__selectedObject.mode == ShapeMode.Static) {
+                this.__selectedObject = null;
+            }
         }
         this.__mPoint.set(tx, ty);
     }

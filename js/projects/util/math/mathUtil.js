@@ -17,4 +17,8 @@ class MathUtil {
     static rad2angle(v) {
         return (v / Math.PI) * 180;
     }
+
+    static abs(a) {
+        return a < 0 ? -a : a;
+    }
 }
