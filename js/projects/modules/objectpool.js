@@ -42,13 +42,13 @@ var ObjectPool = (function () {
         },
         release: function() {
             this.__ready(PoolType.Shape).clear();
-            this.__ready(PoolType.UI).clear();
+            this.__ready(PoolType.Ui).clear();
         },
         shape: function () {
             return this.__ready(PoolType.Shape);
         },
         ui: function () {
-            return this.__ready(PoolType.UI);
+            return this.__ready(PoolType.Ui);
         }
     };
 })();

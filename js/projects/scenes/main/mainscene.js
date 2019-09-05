@@ -4,19 +4,14 @@ class MainScene extends AbsScene {
     }
 
     onCreate() {
-        this.setPresenter(new MainPresenter(this));
-
         this.__world = new World();
         this.__mPoint = new Vector2d();
         this.__selectedObject = null;
     }
 
     onStart() {
-        this.__world.setGravity(0, 0);
-
-        for (var i = 0; i < 1; i++) {
-            ObjectPool.shape().insert(ShapeFactory.createCircle(MathUtil.randInt(50, 600), MathUtil.randInt(50, 600), MathUtil.randInt(40, 50), ShapeMode.Dynamic));
-        }
+        this.initializeUiObject();
+        this.initializePhysicsObject();
     }
 
     onPause() {
@@ -48,7 +43,6 @@ class MainScene extends AbsScene {
     }
 
     onTouchDown(tx, ty) {
-        this.getPresenter().onTouchDown(tx, ty);
         var id = Picker.pick(tx, ty);
         if (id > -1) {
             console.log("obj id : " + id);
@@ -61,21 +55,37 @@ class MainScene extends AbsScene {
     }
 
     onTouchUp(tx, ty) {
-        this.getPresenter().onTouchUp(tx, ty);
         if (this.__selectedObject != null) {
             this.__mPoint.set(this.__selectedObject.pos.x, this.__selectedObject.pos.y);
-
-            if(this.__selectedObject.id == 1) {
-                TopicManager.ready().publish(TOPICS.SCENE_LOADER, SCENES.PHYSICS);
-            }
             this.__selectedObject = null;
         }
     }
 
     onTouchMove(tx, ty) {
-        this.getPresenter().onTouchMove(tx, ty);
         if (this.__selectedObject != null) {
             this.__mPoint.set(tx, ty);
         }
+    }
+
+    initializePhysicsObject() {
+        this.__world.setGravity(0, 0);
+
+        for (var i = 0; i < 1; i++) {
+            ObjectPool.shape().insert(ShapeFactory.createCircle(MathUtil.randInt(50, 600), MathUtil.randInt(50, 600), MathUtil.randInt(40, 50), ShapeMode.Dynamic));
+        }
+    }
+
+    initializeUiObject() {
+        var button = UiCreator.newButton(100, 100, 100, 50)
+            .setText("Collisions")
+            .setBgColor(220, 150, 150)
+            .setListener(() => {
+                this.callScene();
+            });
+        ObjectPool.ui().insert(button);
+    }
+
+    callScene() {
+        TopicManager.ready().publish(TOPICS.SCENE_LOADER, SCENES.PHYSICS);
     }
 }

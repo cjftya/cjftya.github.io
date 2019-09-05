@@ -1,16 +1,16 @@
-class AbsScene {
+class UiObject extends AbsObject {
     constructor() {
+        super();
     }
 
     onCreate() { }
-    onPause() { }
-    onStart() { }
-    onUpdate(timeDelta) { }
-
+    onUpdate() { }
     onDraw() { }
+    onDestory() { }
 
-    onEnd() { }
-    onDestroy() { }
+    intersects(tx, ty) {
+        return false;
+    }
 
     onTouchDown(tx, ty) { }
     onTouchUp(tx, ty) { }

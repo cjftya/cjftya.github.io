@@ -4,8 +4,6 @@ class PhysicsScene extends AbsScene {
     }
 
     onCreate() {
-        this.setPresenter(new PhysicsPresenter(this));
-
         this.__world = new World();
         this.__mPoint = new Vector2d();
         this.__selectedObject = null;
@@ -65,7 +63,6 @@ class PhysicsScene extends AbsScene {
     }
 
     onTouchDown(tx, ty) {
-        this.getPresenter().onTouchDown(tx, ty);
         var id = Picker.pick(tx, ty);
         if (id > -1) {
             console.log("obj id : " + id);
@@ -78,7 +75,6 @@ class PhysicsScene extends AbsScene {
     }
 
     onTouchUp(tx, ty) {
-        this.getPresenter().onTouchUp(tx, ty);
         if (this.__selectedObject != null) {
             this.__mPoint.set(this.__selectedObject.pos.x, this.__selectedObject.pos.y);
             this.__selectedObject = null;
@@ -86,7 +82,6 @@ class PhysicsScene extends AbsScene {
     }
 
     onTouchMove(tx, ty) {
-        this.getPresenter().onTouchMove(tx, ty);
         if (this.__selectedObject != null) {
             this.__mPoint.set(tx, ty);
         }
