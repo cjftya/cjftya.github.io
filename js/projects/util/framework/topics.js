@@ -16,6 +16,6 @@ var SYSTEMS = {
 
 var SCENES = {
     MAIN: "scene-main",
-    PHYSICS: "scene-physics",
+    COLLISION: "scene-collsion",
     CURRENT: "scene-current"
 };

@@ -1,4 +1,4 @@
-class PhysicsScene extends AbsScene {
+class CollisionScene extends AbsScene {
     constructor() {
         super();
     }
@@ -10,28 +10,16 @@ class PhysicsScene extends AbsScene {
     }
 
     onStart() {
-        for (var i = 0; i < 5; i++) {
-            ObjectPool.shape().insert(ShapeFactory.createCircle(MathUtil.randInt(50, 600), MathUtil.randInt(50, 600), MathUtil.randInt(10, 20), ShapeMode.Dynamic));
-        }
-        for (var i = 0; i < 5; i++) {
-            ObjectPool.shape().insert(ShapeFactory.createRect(MathUtil.randInt(50, 600), MathUtil.randInt(50, 600),
-                MathUtil.randInt(30, 80), MathUtil.randInt(20, 50), MathUtil.randInt(0, 45), ShapeMode.Dynamic));
-        }
-        // ground
-        ObjectPool.shape().insert(ShapeFactory.createRect(windowWidth / 2, windowHeight,
-            windowWidth, 30, 0, ShapeMode.Static));
+        var winSize = TopicManager.ready().read(DISPLAY_INFO.WINDOW_SIZE);
+        var backButton = UiCreator.newButton(winSize[0] - 100, 5, 80, 40)
+            .setText("Back")
+            .setBgColor(220, 150, 150)
+            .setListener(() => {
+                TopicManager.ready().publish(TOPICS.SCENE_LOADER, SCENES.MAIN);
+            });
+        ObjectPool.ui().insert(backButton);
 
-        // left
-        ObjectPool.shape().insert(ShapeFactory.createRect(0, windowHeight / 2,
-            30, windowHeight, 0, ShapeMode.Static));
-
-        // right
-        ObjectPool.shape().insert(ShapeFactory.createRect(windowWidth, windowHeight / 2,
-            30, windowHeight, 0, ShapeMode.Static));
-
-        // right
-        ObjectPool.shape().insert(ShapeFactory.createRect(150, windowHeight / 2,
-            windowWidth / 3, 50, 35, ShapeMode.Static));
+        DemoCollsion.Demo3(ObjectPool.shape());
     }
 
     onPause() {

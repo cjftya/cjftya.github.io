@@ -3,7 +3,6 @@ class MainSystem extends AbsSystem {
         super();
 
         this.__scene = null;
-        this.__fpsCount = "null";
     }
 
     registerSubscribers() {
@@ -69,8 +68,8 @@ class MainSystem extends AbsSystem {
             case SCENES.MAIN:
                 curScene = new MainScene();
                 break;
-            case SCENES.PHYSICS:
-                curScene = new PhysicsScene();
+            case SCENES.COLLISION:
+                curScene = new CollisionScene();
                 break;
             default:
                 console.log("unknown scene type : " + data);
@@ -82,16 +81,15 @@ class MainSystem extends AbsSystem {
             this.__scene = curScene;
             TopicManager.ready().write(SCENES.CURRENT, curScene);
         } else {
-            console.log("scene load fail" + data);
+            console.log("scene load fail : " + data);
         }
     }
 
     drawFpsCount() {
-        this.__fpsCount = "FPS : " + Math.floor(TimeDeltaUtil.getInstance().getFPS());
         textSize(20);
         noStroke();
         fill(0);
         textAlign(LEFT, TOP);
-        text(this.__fpsCount, 10, 10);
+        text("FPS : " + Math.floor(TimeDeltaUtil.getInstance().getFPS()), 10, 10);
     }
 }
