@@ -32,6 +32,8 @@ function mouseDragged() {
 }
 
 function installSystem() {
+    TopicManager.ready().write(DISPLAY_INFO.WINDOW_SIZE, [windowWidth, windowHeight]);
+    
     TopicManager.ready().write(SYSTEMS.MAIN, new MainSystem());
     TopicManager.ready().write(SYSTEMS.SOUND, new SoundSystem());
 }
@@ -48,5 +50,6 @@ function loadSystem() {
 }
 
 function windowResized() {
+    TopicManager.ready().write(DISPLAY_INFO.WINDOW_SIZE, [windowWidth, windowHeight]);
     resizeCanvas(windowWidth, windowHeight);
 }
