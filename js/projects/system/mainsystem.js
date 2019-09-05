@@ -16,7 +16,6 @@ class MainSystem extends AbsSystem {
     onCreate() {
         super.onCreate();
         createCanvas(windowWidth, windowHeight);
-        textSize(20);
 
         TopicManager.ready().publish(TOPICS.SCENE_LOADER, SCENES.MAIN);
     }
@@ -31,6 +30,8 @@ class MainSystem extends AbsSystem {
         this.__scene.onUpdate(TimeDeltaUtil.getInstance().getDelta());
         this.__scene.onDraw();
 
+        UiManager.ready().draw();
+
         this.drawFpsCount();
     }
 
@@ -40,14 +41,17 @@ class MainSystem extends AbsSystem {
     }
 
     onTouchUp(mx, my) {
+        UiManager.ready().touchUp(mx, my);
         this.__scene.onTouchUp(mx, my);
     }
 
     onTouchDown(mx, my) {
+        UiManager.ready().touchDown(mx, my);
         this.__scene.onTouchDown(mx, my);
     }
 
     onTouchMove(mx, my) {
+        //iManager.ready().touchMove(mx, my);
         this.__scene.onTouchMove(mx, my);
     }
 
@@ -84,7 +88,10 @@ class MainSystem extends AbsSystem {
 
     drawFpsCount() {
         this.__fpsCount = "FPS : " + Math.floor(TimeDeltaUtil.getInstance().getFPS());
+        textSize(20);
+        noStroke();
         fill(0);
-        text(this.__fpsCount, 10, 20);
+        textAlign(LEFT, TOP);
+        text(this.__fpsCount, 10, 10);
     }
 }
