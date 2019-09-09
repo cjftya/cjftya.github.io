@@ -71,6 +71,18 @@ class MainSystem extends AbsSystem {
             case SCENES.COLLISION:
                 curScene = new CollisionScene();
                 break;
+            case SCENES.CONSTRAINT:
+                curScene = new ConstraintScene();
+                break;
+            case SCENES.PERFORMANCE:
+                curScene = new PerformanceScene();
+                break;
+            case SCENES.PARTICLE:
+                curScene = new ParticleScene();
+                break;
+            case SCENES.ETC:
+                curScene = new EtcScene();
+                break;
             default:
                 console.log("unknown scene type : " + data);
                 break;

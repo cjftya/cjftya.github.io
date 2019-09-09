@@ -1,4 +1,4 @@
-class CollisionScene extends AbsScene {
+class ConstraintScene extends AbsScene {
     constructor() {
         super();
     }
@@ -13,23 +13,21 @@ class CollisionScene extends AbsScene {
         var winSize = TopicManager.ready().read(DISPLAY_INFO.WINDOW_SIZE);
         var backButton = UiCreator.newButton(winSize[0] - 100, 5, 80, 40)
             .setText("Back")
-            .setBgColor(220, 150, 150)
+            .setBgColor(150, 150, 220)
             .setListener(() => {
                 TopicManager.ready().publish(TOPICS.SCENE_LOADER, SCENES.MAIN);
             });
         ObjectPool.ui().insert(backButton);
 
-        DemoCollsion.Demo3(ObjectPool.shape());
+        ConstraintType.createRope(150, 20, 10, 15);
+        ConstraintType.createRope(250, 120, 10, 25);
+        ConstraintType.createRope(450, 320, 10, 35);
     }
 
     onPause() {
     }
 
     onUpdate(timeDelta) {
-        if (this.__selectedObject != null) {
-            Springs.followEasingVel(this.__selectedObject, this.__mPoint, 0.1);
-        }
-
         this.__world.module(timeDelta);
     }
 
@@ -37,9 +35,13 @@ class CollisionScene extends AbsScene {
         background(255, 255, 255);
         noStroke();
 
-        var list = ObjectPool.shape().getList();
+        var list = ObjectPool.connect().getList();
         for (var [id, obj] of list.entries()) {
             obj.draw();
+        }
+
+        for (var i = 0; i < ConnectManager.ready().size(); i++) {
+            ConnectManager.ready().draw();
         }
     }
 
@@ -52,28 +54,24 @@ class CollisionScene extends AbsScene {
     }
 
     onTouchDown(tx, ty) {
-        var id = Picker.pick(tx, ty);
+        var id = Picker.pickConnect(tx, ty);
         if (id > -1) {
             console.log("obj id : " + id);
-            this.__selectedObject = ObjectPool.shape().find(id);
-            if (this.__selectedObject.mode == ShapeMode.Static) {
-                this.__selectedObject = null;
-            }
+            this.__selectedObject = ObjectPool.connect().find(id);
+            this.__selectedObject.pick(tx, ty);
         }
-        this.__mPoint.set(tx, ty);
     }
 
     onTouchUp(tx, ty) {
         if (this.__selectedObject != null) {
-            this.__mPoint.set(this.__selectedObject.pos.x, this.__selectedObject.pos.y);
+            this.__selectedObject.release(tx, ty);
             this.__selectedObject = null;
         }
     }
 
     onTouchMove(tx, ty) {
         if (this.__selectedObject != null) {
-            this.__mPoint.set(tx, ty);
+            this.__selectedObject.move(tx, ty);
         }
     }
 }
-

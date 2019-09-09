@@ -9,6 +9,7 @@ var ObjectPool = (function () {
                 object.setId(++__objectCounter);
                 object.setOriginType(type);
                 __list.get(type).set(object.id, object);
+                return object;
             },
             remove: function (id) {
                 __list.get(type).delete(id);
@@ -43,12 +44,16 @@ var ObjectPool = (function () {
         release: function() {
             this.__ready(PoolType.Shape).clear();
             this.__ready(PoolType.Ui).clear();
+            this.__ready(PoolType.Connect).clear();
         },
         shape: function () {
             return this.__ready(PoolType.Shape);
         },
         ui: function () {
             return this.__ready(PoolType.Ui);
+        },
+        connect: function() {
+            return this.__ready(PoolType.Connect);
         }
     };
 })();
