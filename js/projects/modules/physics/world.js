@@ -8,6 +8,7 @@ class World {
 
     stop() {
         this.__stopLoop = true;
+        ConnectManager.ready().clear();
     }
 
     setGravity(gx, gy) {
@@ -24,12 +25,25 @@ class World {
         }
     }
 
+    resolveConstraint(timeDelta) {
+        for (var i = 0; i < ConnectManager.ready().size(); i++) {
+            ConstraintResolver.update(ConnectManager.ready().getAt(i));
+        }
+    }
+
     module(timeDelta) {
         if (this.__stopLoop) {
             return;
         }
 
-        var list = ObjectPool.shape().getList();
+        var list = ObjectPool.connect().getList();
+        for (var [id, obj] of list.entries()) {
+            obj.addForce(this.__gravity.x, this.__gravity.y);
+            obj.updatePos(timeDelta);
+        }
+        this.resolveConstraint(timeDelta);
+
+        list = ObjectPool.shape().getList();
         for (var [id, obj] of list.entries()) {
             if (obj.mode == ShapeMode.Static) {
                 continue;

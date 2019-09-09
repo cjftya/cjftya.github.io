@@ -44,6 +44,7 @@ class CollisionScene extends AbsScene {
     }
 
     onEnd() {
+        this.__world.stop();
         ObjectPool.release();
     }
 

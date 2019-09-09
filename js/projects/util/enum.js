@@ -4,7 +4,8 @@
 //Star - Object
 var PoolType = {
     Shape: 0,
-    Ui: 1
+    Ui: 1,
+    Connect: 2
 };
 
 var UiType = {
@@ -18,7 +19,8 @@ var UiType = {
 //Start - Shape
 var ShapeType = {
     Circle: 0,
-    Poly: 1000
+    Poly: 1000,
+    Point: 2000
 };
 var ShapeMode = {
     Static: 0,

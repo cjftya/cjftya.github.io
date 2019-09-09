@@ -84,31 +84,35 @@ class MainScene extends AbsScene {
             .setText("Collisions")
             .setBgColor(220, 150, 150)
             .setListener(() => {
-                this.callScene();
+                this.publishScene(SCENES.COLLISION);
             });
         
         var performanceButton = UiCreator.newButton(px, py + (hdiff * 1), 100, 50)
             .setText("Performance")
             .setBgColor(150, 220, 150)
             .setListener(() => {
+                this.publishScene(SCENES.PERFORMANCE);
             });
 
         var constraintButton = UiCreator.newButton(px, py + (hdiff * 2), 100, 50)
             .setText("Constraint")
             .setBgColor(150, 150, 220)
             .setListener(() => {
+                this.publishScene(SCENES.CONSTRAINT);
             });
 
         var particleButton = UiCreator.newButton(px, py + (hdiff * 3), 100, 50)
             .setText("Particle")
             .setBgColor(220, 220, 150)
             .setListener(() => {
+                this.publishScene(SCENES.PARTICLE);
             });
 
         var etcButton = UiCreator.newButton(px, py + (hdiff * 4), 100, 50)
             .setText("Etc")
             .setBgColor(220, 150, 220)
             .setListener(() => {
+                this.publishScene(SCENES.ETC);
             });
 
         ObjectPool.ui().insert(collsionButton);
@@ -118,7 +122,7 @@ class MainScene extends AbsScene {
         ObjectPool.ui().insert(etcButton);
     }
 
-    callScene() {
-        TopicManager.ready().publish(TOPICS.SCENE_LOADER, SCENES.COLLISION);
+    publishScene(sceneType) {
+        TopicManager.ready().publish(TOPICS.SCENE_LOADER, sceneType);
     }
 }

@@ -17,5 +17,9 @@ var SYSTEMS = {
 var SCENES = {
     MAIN: "scene-main",
     COLLISION: "scene-collsion",
+    PARTICLE: "scene-particle",
+    PERFORMANCE: "scene-performance",
+    CONSTRAINT: "scene-constraint",
+    ETC: "scene-etc",
     CURRENT: "scene-current"
 };
