@@ -19,9 +19,8 @@ class ConstraintScene extends AbsScene {
             });
         ObjectPool.ui().insert(backButton);
 
-        ConstraintType.createRope(150, 20, 10, 15);
-        ConstraintType.createRope(250, 120, 10, 25);
-        ConstraintType.createRope(450, 320, 10, 35);
+        ConstraintType.createRope(150, 320, 10, 25);
+        ConstraintType.createCloth(150, 60, 5, 5, 50);
     }
 
     onPause() {
