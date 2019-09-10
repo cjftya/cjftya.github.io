@@ -8,13 +8,14 @@ class Point extends AbsObject {
 
         this.color = [0, 0, 0];
 
-        this.radius = 7;
+        this.radius = 15;
         this.size = this.radius * 2;
 
         this.mass = 1;
         this.invMass = 1 / this.mass;
 
         this.isFixed = false;
+        this.isPicked = false;
     }
 
     fixPoint() {
@@ -26,7 +27,7 @@ class Point extends AbsObject {
     }
 
     addForce(fx, fy) {
-        if(this.isFixed) {
+        if (this.isFixed || this.isPicked) {
             return;
         }
         this.accel.x += fx * this.invMass;
@@ -34,7 +35,7 @@ class Point extends AbsObject {
     }
 
     updatePos(delta) {
-        if(this.isFixed) {
+        if (this.isFixed || this.isPicked) {
             return;
         }
         var nx = this.pos.x + ((this.pos.x - this.oldPos.x) * 0.9995) + this.accel.x;
@@ -45,18 +46,18 @@ class Point extends AbsObject {
     }
 
     pick(px, py) {
-        this.isFixed = true;
+        this.isPicked = true;
         this.pos.set(px, py);
         this.oldPos.set(px, py);
     }
 
     move(px, py) {
         this.pos.set(px, py);
-        this.oldPos.set(px, py);        
+        this.oldPos.set(px, py);
     }
 
     release(px, py) {
-        this.isFixed = false;
+        this.isPicked = false;
         this.pos.set(px, py);
         this.oldPos.set(px, py);
     }

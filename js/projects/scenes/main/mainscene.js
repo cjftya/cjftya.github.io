@@ -69,14 +69,9 @@ class MainScene extends AbsScene {
 
     initializePhysicsObject() {
         this.__world.setGravity(0, 0);
-
-        for (var i = 0; i < 1; i++) {
-            ObjectPool.shape().insert(ShapeFactory.createCircle(MathUtil.randInt(50, 600), MathUtil.randInt(50, 600), MathUtil.randInt(40, 50), ShapeMode.Dynamic));
-        }
     }
 
     initializeUiObject() {
-        var winSize = TopicManager.ready().read(DISPLAY_INFO.WINDOW_SIZE);
         var px = 30;
         var py = 100;
         var hdiff = 90;
