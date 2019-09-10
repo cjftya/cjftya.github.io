@@ -5,7 +5,9 @@ var ConnectManager = (function () {
     function modules() {
         return {
             add(connect) {
-                __list.push(connect);
+                if (!this.containts(connect)) {
+                    __list.push(connect);
+                }
             },
             getAt(i) {
                 return __list[i];
@@ -16,11 +18,21 @@ var ConnectManager = (function () {
             clear() {
                 __list = [];
             },
+            containts(obj) {
+                for (var i = 0; i < __list.length; i++) {
+                    var con = __list[i];
+                    if ((obj.getIdA() == con.getIdA() && obj.getIdB() == con.getIdB()) ||
+                        (obj.getIdA() == con.getIdB() && obj.getIdB() == con.getIdA()) ||
+                        (obj.getIdB() == con.getIdA() && obj.getIdA() == con.getIdB())) {
+                        return true;
+                    }
+                }
+                return false;
+            },
             draw() {
                 for (var i = 0; i < __list.length; i++) {
                     var aObj = ObjectPool.connect().find(__list[i].getIdA());
                     var bObj = ObjectPool.connect().find(__list[i].getIdB());
-                    stroke(0);
                     line(aObj.pos.x, aObj.pos.y, bObj.pos.x, bObj.pos.y);
                 }
             }
