@@ -5,6 +5,13 @@ class Connect {
         this.__length = l;
         this.__constraintForce = cf;
         this.__dampForce = df;
+        this.__ignoreCompressForce = false;
+    }
+    isIgnoreCompress() {
+        return this.__ignoreCompressForce;
+    }
+    setIgnoreCompressForce(enable) {
+        this.__ignoreCompressForce = enable;
     }
 
     getConstraintForce() {
