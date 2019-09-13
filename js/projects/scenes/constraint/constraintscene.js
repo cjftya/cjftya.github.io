@@ -22,6 +22,7 @@ class ConstraintScene extends AbsScene {
         ConstraintType.createRope(150, 290, 7, 25);
         ConstraintType.createCloth(100, 50, 5, 5, 50);
         ConstraintType.createSoftBox(250, 250, 100);
+        ConstraintType.createBox(250, 250, 120);
     }
 
     onPause() {
@@ -32,7 +33,7 @@ class ConstraintScene extends AbsScene {
     }
 
     onDraw() {
-        background(255, 255, 255);
+        background(0, 0, 0);
         noStroke();
 
         var list = ObjectPool.connect().getList();

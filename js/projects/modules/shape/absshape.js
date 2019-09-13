@@ -24,7 +24,8 @@ class AbsShape extends AbsObject {
 
         this.type = type;
         this.mode = mode;
-        this.color = [MathUtil.randNum(255), MathUtil.randNum(255), MathUtil.randNum(255)];
+        this.color = [MathUtil.randInt(100,255), 
+            MathUtil.randInt(100,255), MathUtil.randInt(100,255)];
 
         this.pos = new Vector2d();
         this.oldPos = new Vector2d();

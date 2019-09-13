@@ -11,7 +11,7 @@ class UiButton extends UiObject {
         this.textSize = 15;
         this.strokeWeight = 3;
 
-        this.textColor = color(0, 0, 0);
+        this.textColor = color(240, 240, 240);
         this.bgColor = color(170, 170, 170);
 
         this.listener = null;
@@ -23,7 +23,7 @@ class UiButton extends UiObject {
     onDraw() {
         this.bgColor.setAlpha(this.click ? 255 - this.alphaDim : 255);
         fill(this.bgColor);
-        stroke(50);
+        stroke(240);
         strokeWeight(this.strokeWeight);
         rect(this.pos.x, this.pos.y, this.w, this.h, this.rounding);
 
