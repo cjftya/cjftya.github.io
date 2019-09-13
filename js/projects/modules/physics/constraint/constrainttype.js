@@ -24,7 +24,9 @@ class ConstraintType {
         }
         list[0].fixPoint();
         for (var i = 0; i < list.length - 1; i++) {
-            ConnectManager.ready().add(this.__getConnect(list[i], list[i + 1], l, 0.5, 0));
+            var con = this.__getConnect(list[i], list[i + 1], l, 0.5, 0);
+            con.setIgnoreCompressForce(true);
+            ConnectManager.ready().add(con);
         }
     }
 
