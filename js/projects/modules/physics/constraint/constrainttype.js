@@ -11,7 +11,8 @@ class ConstraintType {
     }
 
     static __getRandomColor() {
-        return [MathUtil.randNum(255), MathUtil.randNum(255), MathUtil.randNum(255)];   
+        return [MathUtil.randInt(100,255), 
+            MathUtil.randInt(100,255), MathUtil.randInt(100,255)];
     }
 
     static createRope(px, py, count, l) {
@@ -71,6 +72,31 @@ class ConstraintType {
 
         ConnectManager.ready().add(this.__getConnectAutoDist(list[0][1], list[2][1], energy, 0.0));
         ConnectManager.ready().add(this.__getConnectAutoDist(list[1][0], list[1][2], energy, 0.0));
+    }
+
+    static createBox(px, py, size) {
+        var list = [];
+        var color = this.__getRandomColor();
+        var s = size / 2;
+        for (var i = 0, ip = py - s; i < 2; i++ , ip += s) {
+            list.push([]);
+            for (var k = 0, kp = px - s; k < 2; k++ , kp += s) {
+                var p = new Point(kp, ip);
+                p.color = color;
+                list[i].push(ObjectPool.connect().insert(p));
+            }
+        }
+        /*
+        0,0  0,1
+        1,0  1,1
+        */
+        ConnectManager.ready().add(this.__getConnectAutoDist(list[0][0], list[0][1], 0.5, 0.0));
+        ConnectManager.ready().add(this.__getConnectAutoDist(list[0][1], list[1][1], 0.5, 0.0));
+        ConnectManager.ready().add(this.__getConnectAutoDist(list[1][1], list[1][0], 0.5, 0.0));
+        ConnectManager.ready().add(this.__getConnectAutoDist(list[1][0], list[0][0], 0.5, 0.0));
+
+        ConnectManager.ready().add(this.__getConnectAutoDist(list[0][0], list[1][1], 0.5, 0.0));
+        ConnectManager.ready().add(this.__getConnectAutoDist(list[0][1], list[1][0], 0.5, 0.0));
     }
 
     static createCloth(px, py, wc, hc, l) {

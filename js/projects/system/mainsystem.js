@@ -100,7 +100,7 @@ class MainSystem extends AbsSystem {
     drawFpsCount() {
         textSize(20);
         noStroke();
-        fill(0);
+        fill(240);
         textAlign(LEFT, TOP);
         text("FPS : " + Math.floor(TimeDeltaUtil.getInstance().getFPS()), 10, 10);
     }
