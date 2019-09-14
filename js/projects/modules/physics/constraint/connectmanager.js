@@ -30,12 +30,12 @@ var ConnectManager = (function () {
                 return false;
             },
             draw() {
+                stroke(255);
                 strokeWeight(1);
                 for (var i = 0; i < __list.length; i++) {
                     var aObj = ObjectPool.connect().find(__list[i].getIdA());
                     var bObj = ObjectPool.connect().find(__list[i].getIdB());
                     var color = __list[i].getColor();
-                    stroke(color[0], color[1], color[2]);
                     line(aObj.pos.x, aObj.pos.y, bObj.pos.x, bObj.pos.y);
                 }
             }
