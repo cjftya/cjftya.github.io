@@ -6,6 +6,13 @@ class Connect {
         this.__constraintForce = cf;
         this.__dampForce = df;
         this.__ignoreCompressForce = false;
+        this.__color = null;
+    }
+    getColor() {
+        return this.__color;
+    }
+    setColor(color) {
+        this.__color = color;
     }
     isIgnoreCompress() {
         return this.__ignoreCompressForce;
