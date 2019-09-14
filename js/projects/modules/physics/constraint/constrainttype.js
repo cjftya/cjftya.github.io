@@ -1,18 +1,22 @@
 class ConstraintType {
     constructor() { }
 
-    static __getConnect(a, b, l, cf, df) {
-        return new Connect(a.id, b.id, l, cf, df);
+    static __getConnect(a, b, l, cf, df, color) {
+        var con = new Connect(a.id, b.id, l, cf, df);
+        con.setColor(color);
+        return con;
     }
 
-    static __getConnectAutoDist(a, b, cf, df) {
+    static __getConnectAutoDist(a, b, cf, df, color) {
         var dist = Vector2d.sub(a.pos, b.pos).length();
-        return new Connect(a.id, b.id, dist, cf, df);
+        var con = new Connect(a.id, b.id, dist, cf, df);
+        con.setColor(color);
+        return con;
     }
 
     static __getRandomColor() {
-        return [MathUtil.randInt(100,255), 
-            MathUtil.randInt(100,255), MathUtil.randInt(100,255)];
+        return [MathUtil.randInt(100, 255),
+        MathUtil.randInt(100, 255), MathUtil.randInt(100, 255)];
     }
 
     static createRope(px, py, count, l) {
@@ -25,7 +29,7 @@ class ConstraintType {
         }
         list[0].fixPoint();
         for (var i = 0; i < list.length - 1; i++) {
-            var con = this.__getConnect(list[i], list[i + 1], l, 0.5, 0);
+            var con = this.__getConnect(list[i], list[i + 1], l, 0.5, 0, color);
             con.setIgnoreCompressForce(true);
             ConnectManager.ready().add(con);
         }
@@ -53,50 +57,25 @@ class ConstraintType {
         2,0  2,1  2,2
         */
         var energy = 0.5;
-        ConnectManager.ready().add(this.__getConnectAutoDist(list[0][0], list[0][1], energy, 0.0));
-        ConnectManager.ready().add(this.__getConnectAutoDist(list[0][1], list[0][2], energy, 0.0));
-        ConnectManager.ready().add(this.__getConnectAutoDist(list[0][2], list[1][2], energy, 0.0));
-        ConnectManager.ready().add(this.__getConnectAutoDist(list[1][2], list[2][2], energy, 0.0));
-        ConnectManager.ready().add(this.__getConnectAutoDist(list[2][2], list[2][1], energy, 0.0));
-        ConnectManager.ready().add(this.__getConnectAutoDist(list[2][1], list[2][0], energy, 0.0));
-        ConnectManager.ready().add(this.__getConnectAutoDist(list[2][0], list[1][0], energy, 0.0));
-        ConnectManager.ready().add(this.__getConnectAutoDist(list[0][0], list[1][0], energy, 0.0));
+        ConnectManager.ready().add(this.__getConnectAutoDist(list[0][0], list[0][1], energy, 0.0, color));
+        ConnectManager.ready().add(this.__getConnectAutoDist(list[0][1], list[0][2], energy, 0.0, color));
+        ConnectManager.ready().add(this.__getConnectAutoDist(list[0][2], list[1][2], energy, 0.0, color));
+        ConnectManager.ready().add(this.__getConnectAutoDist(list[1][2], list[2][2], energy, 0.0, color));
+        ConnectManager.ready().add(this.__getConnectAutoDist(list[2][2], list[2][1], energy, 0.0, color));
+        ConnectManager.ready().add(this.__getConnectAutoDist(list[2][1], list[2][0], energy, 0.0, color));
+        ConnectManager.ready().add(this.__getConnectAutoDist(list[2][0], list[1][0], energy, 0.0, color));
+        ConnectManager.ready().add(this.__getConnectAutoDist(list[0][0], list[1][0], energy, 0.0, color));
 
-        ConnectManager.ready().add(this.__getConnectAutoDist(list[0][1], list[1][0], energy, 0.0));
-        ConnectManager.ready().add(this.__getConnectAutoDist(list[0][2], list[2][0], energy, 0.0));
-        ConnectManager.ready().add(this.__getConnectAutoDist(list[1][2], list[2][1], energy, 0.0));
+        ConnectManager.ready().add(this.__getConnectAutoDist(list[0][1], list[1][0], energy, 0.0, color));
+        ConnectManager.ready().add(this.__getConnectAutoDist(list[0][2], list[2][0], energy, 0.0, color));
+        ConnectManager.ready().add(this.__getConnectAutoDist(list[1][2], list[2][1], energy, 0.0, color));
 
-        ConnectManager.ready().add(this.__getConnectAutoDist(list[1][0], list[2][1], energy, 0.0));
-        ConnectManager.ready().add(this.__getConnectAutoDist(list[0][0], list[2][2], energy, 0.0));
-        ConnectManager.ready().add(this.__getConnectAutoDist(list[0][1], list[1][2], energy, 0.0));
+        ConnectManager.ready().add(this.__getConnectAutoDist(list[1][0], list[2][1], energy, 0.0, color));
+        ConnectManager.ready().add(this.__getConnectAutoDist(list[0][0], list[2][2], energy, 0.0, color));
+        ConnectManager.ready().add(this.__getConnectAutoDist(list[0][1], list[1][2], energy, 0.0, color));
 
-        ConnectManager.ready().add(this.__getConnectAutoDist(list[0][1], list[2][1], energy, 0.0));
-        ConnectManager.ready().add(this.__getConnectAutoDist(list[1][0], list[1][2], energy, 0.0));
-    }
-
-    static createBox(px, py, size) {
-        var list = [];
-        var color = this.__getRandomColor();
-        var s = size / 2;
-        for (var i = 0, ip = py - s; i < 2; i++ , ip += s) {
-            list.push([]);
-            for (var k = 0, kp = px - s; k < 2; k++ , kp += s) {
-                var p = new Point(kp, ip);
-                p.color = color;
-                list[i].push(ObjectPool.connect().insert(p));
-            }
-        }
-        /*
-        0,0  0,1
-        1,0  1,1
-        */
-        ConnectManager.ready().add(this.__getConnectAutoDist(list[0][0], list[0][1], 0.5, 0.0));
-        ConnectManager.ready().add(this.__getConnectAutoDist(list[0][1], list[1][1], 0.5, 0.0));
-        ConnectManager.ready().add(this.__getConnectAutoDist(list[1][1], list[1][0], 0.5, 0.0));
-        ConnectManager.ready().add(this.__getConnectAutoDist(list[1][0], list[0][0], 0.5, 0.0));
-
-        ConnectManager.ready().add(this.__getConnectAutoDist(list[0][0], list[1][1], 0.5, 0.0));
-        ConnectManager.ready().add(this.__getConnectAutoDist(list[0][1], list[1][0], 0.5, 0.0));
+        ConnectManager.ready().add(this.__getConnectAutoDist(list[0][1], list[2][1], energy, 0.0, color));
+        ConnectManager.ready().add(this.__getConnectAutoDist(list[1][0], list[1][2], energy, 0.0, color));
     }
 
     static createCloth(px, py, wc, hc, l) {
@@ -121,7 +100,7 @@ class ConstraintType {
                     var tx = k + ax[p];
                     var ty = i + ay[p];
                     if (tx >= 0 && tx < wc && ty >= 0 && ty < hc) {
-                        var con = this.__getConnectAutoDist(list[i][k], list[ty][tx], 0.9, 0.5);
+                        var con = this.__getConnectAutoDist(list[i][k], list[ty][tx], 0.9, 0.5, color);
                         con.setIgnoreCompressForce(true);
                         ConnectManager.ready().add(con);
                     }
