@@ -2,7 +2,7 @@ class World {
     constructor() {
         // default setting
         this.__iterator = 1;
-        this.__gravity = new Vector2d().set(0, 0.4);
+        this.__gravity = new Vector2d().set(0, 0.0);
         this.__stopLoop = false;
         this.__screen = TopicManager.ready().read(DISPLAY_INFO.WINDOW_SIZE);
     }
@@ -21,9 +21,7 @@ class World {
     }
 
     resolveContact(timeDelta) {
-        for (var i = 0; i < this.__iterator; i++) {
-            Collisions.module(timeDelta);
-        }
+        Collisions.module(timeDelta);
     }
 
     resolveConstraint(timeDelta) {
@@ -33,14 +31,14 @@ class World {
     }
 
     resolveConstraintBlock(point) {
-        if(point.pos.x < 0) {
+        if (point.pos.x < 0) {
             point.pos.x = 0;
-        } else if(point.pos.x > this.__screen[0]) {
+        } else if (point.pos.x > this.__screen[0]) {
             point.pos.x = this.__screen[0];
         }
-        if(point.pos.y < 0) {
+        if (point.pos.y < 0) {
             point.pos.y = 0;
-        } else if(point.pos.y > this.__screen[1]) {
+        } else if (point.pos.y > this.__screen[1]) {
             point.pos.y = this.__screen[1];
             point.pos.x -= (point.pos.x - point.oldPos.x) + point.accel.x;
         }
@@ -59,15 +57,32 @@ class World {
         }
         this.resolveConstraint(timeDelta);
 
+        // body update ===>
         list = ObjectPool.shape().getList();
+
+        // integration
         for (var [id, obj] of list.entries()) {
             if (obj.mode == ShapeMode.Static) {
                 continue;
             }
-            obj.addForce(this.__gravity.x, this.__gravity.y);
-            obj.updateVel(timeDelta);
-            obj.updatePos(timeDelta);
+            obj.updatePos(timeDelta, this.__gravity.x, this.__gravity.y);
         }
-        this.resolveContact(timeDelta);
+        for (var i = 0; i < this.__iterator; i++) {
+            // update constraint
+            for (var [id, obj] of list.entries()) {
+                if (obj.mode == ShapeMode.Static) {
+                    continue;
+                }
+                obj.updateConstraint();
+            }
+
+            // sync body
+            for (var [id, obj] of list.entries()) {
+                obj.syncBody();
+            }
+
+            // collision & resolver
+            this.resolveContact(timeDelta);
+        }
     }
 }

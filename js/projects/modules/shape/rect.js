@@ -1,17 +1,6 @@
 class Rect extends AbsShape {
-    constructor(px, py, w, h, a, mode) {
+    constructor(x, y, w, h, mode) {
         super(ShapeType.Poly, mode);
-
-        this.pos.set(px, py);
-
-        this.angle = a;
-
-        this.trans.set(this.pos, this.angle);
-        
-        this.w = w;
-        this.h = h;
-        var hw = w / 2;
-        var hh = h / 2;
 
         this.mass = (w + h) * 0.015;
         if(this.mode == ShapeMode.Static) {
@@ -19,50 +8,45 @@ class Rect extends AbsShape {
         }
         this.invMass = 1 / this.mass;
 
-        var localX = 0;
-        var localY = 0;
         this.setVertex([
-            new Vector2d().set(localX - hw, localY - hh),
-            new Vector2d().set(localX + hw, localY - hh),
-            new Vector2d().set(localX + hw, localY + hh),
-            new Vector2d().set(localX - hw, localY + hh)
+            new CtPoint(x, y),
+            new CtPoint(x + w, y),
+            new CtPoint(x + w, y + h),
+            new CtPoint(x, y + h)
         ]);
 
-        
-        var m4 = this.mass / this.vertex.length;
+        this.setConnection([
+            new Edge(0, 1),
+            new Edge(1, 2),
+            new Edge(2, 3),
+            new Edge(3, 0),
+            new Edge(0, 2).setInner(),
+            new Edge(1, 3).setInner()
+        ]); 
+    }
+
+    updatePos(delta, gx, gy) {
         for (var i = 0; i < this.vertex.length; i++) {
-            var diff = Vector2d.sub(this.vertex[i], new Vector2d().set(localX, localY));
-            var d = diff.length();
-            this.inertial += ((d * d) * m4);
+            var p = this.vertex[i];
+            p.accel.x += gx;
+            p.accel.y += gy;
+            var nx = ((p.pos.x * this.viscosity) - (p.oldPos.x * this.viscosity)) + p.accel.x;
+            var ny = ((p.pos.y * this.viscosity) - (p.oldPos.y * this.viscosity)) + p.accel.y;
+            p.oldPos.set(p.pos.x, p.pos.y);
+            p.pos.x += nx;
+            p.pos.y += ny;
+            p.accel.zero();
         }
-        this.invInertial = 1 / this.inertial;
-        console.log(this.invInertial);
-        
-        this.syncBody();
-    }
-
-    updateVel(delta) {
-        this.angle_vel *= 0.9995;
-        this.vel.x += this.accel.x;
-        this.vel.y += this.accel.y;
-        this.vel.mul(0.9995);
-        this.accel.zero();
-    }
-
-    updatePos(delta) {
-        this.angle += this.angle_vel;
-        this.pos.x += this.vel.x;
-        this.pos.y += this.vel.y;
-
-        this.syncBody();
     }
 
     draw() {
         fill(this.color[0], this.color[1], this.color[2]);
         beginShape();
         for (var i = 0; i < this.vertex.length; i++) {
-            vertex(this.vertex[i].x, this.vertex[i].y);
+            vertex(this.vertex[i].pos.x, this.vertex[i].pos.y);
         }
         endShape(CLOSE);
+        fill(255);
+        ellipse(this.center.x, this.center.y, 10, 10);
     }
 }
