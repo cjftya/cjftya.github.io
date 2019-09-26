@@ -23,7 +23,7 @@ class Collisions {
         } else if (s1.type == ShapeType.Poly && s2.type == ShapeType.Circle) {
             return this.circle2poly(s2, s1, delta);
         } else if (s1.type == ShapeType.Poly && s2.type == ShapeType.Poly) {
-            return this.poly2poly(s1, s2, delta);
+            return this.poly2poly2(s1, s2, delta);
         }
         return false;
     }
@@ -68,7 +68,7 @@ class Collisions {
                 minIdx = i;
             }
         }
-        if(minIdx < 0) {
+        if (minIdx < 0) {
             return;
         }
 
@@ -93,7 +93,7 @@ class Collisions {
         } else {
             var point = new Vector2d().set(s1.pos.x + (n.x * (s1.radius + minDist * 0.5)),
                 s1.pos.y + (n.y * (s1.radius + minDist * 0.5)));
-                CollisionResolver.update(new Contact(point, n.neg(), minDist, s1.id, s2.id), delta);
+            CollisionResolver.update(new Contact(point, n.neg(), minDist, s1.id, s2.id), delta);
             return true;
         }
         return false;
@@ -116,10 +116,10 @@ class Collisions {
     }
 
     static __findVerts(s1, s2, n, depth, delta) {
-        if(s1.id == s2.id) {
+        if (s1.id == s2.id) {
             return false;
         }
-        
+
         var num = 0;
         var contact = [];
         for (var i = 0; i < s1.vertex.length; i++) {
@@ -159,5 +159,72 @@ class Collisions {
             return this.__findVerts(s1, s2, s1.edge[msa1[1]].getNormal(), msa1[0], delta);
         }
         return this.__findVerts(s1, s1, Vector2d.neg(s2.edge[msa2[1]].getNormal()), msa2[0], delta);
+    }
+
+    static poly2poly2(s1, s2, delta) {
+        var minDist = 99999;
+        var s1EdgeCount = s1.getEdgeCount();
+        var s2EdgeCount = s2.getEdgeCount();
+        var collisionNormal = null;
+        var collisionPoint = null;
+        var collisionEdge = null;
+        var collisionDepth = 0;
+        var otherShape = null;
+
+        var totalEdgeCount = s1EdgeCount + s2EdgeCount;
+        for (var i = 0; i < totalEdgeCount; i++) {
+            var e, selectShape;
+
+            if (i < s1EdgeCount) {
+                e = s1.edge[i];
+                selectShape = s1;
+            } else {
+                e = s2.edge[i - s1EdgeCount];
+                selectShape = s2;
+            }
+            var en = Vector2d.sub(selectShape.vertex[e.aIndex].pos, selectShape.vertex[e.bIndex].pos).normalize();
+
+            var rangeA = s1.projectAxis(en);
+            var rangeB = s2.projectAxis(en);
+
+            var dist = rangeA[0] < rangeB[0] ? rangeB[0] - rangeA[1] :
+                rangeA[0] - rangeB[1];
+
+            if (dist > 0) {
+                return false;
+            } else if (Math.abs(dist) < minDist) {
+                minDist = Math.abs(dist);
+                collisionNormal = en;
+                collisionEdge = e;
+            }
+        }
+        collisionDepth = minDist;
+
+        if (selectShape.id != s2.id) {
+            var t = s2;
+            s2 = s1;
+            s1 = t;
+        }
+
+        var n = Vector2d.sub(s1.center, s2.center).dot(collisionNormal);
+        if (n < 0) {
+            collisionNormal.neg();
+        }
+
+        var smallestDist = 99999, v, dist;
+        for (var i = 0; i < s1.vertex.length; i++) {
+            v = s1.vertex[i];
+            var line = Vector2d.sub(v.pos, s2.center);
+            dist = collisionNormal.dot(line);
+
+            if (dist < smallestDist) {
+                smallestDist = dist;
+                collisionPoint = v;
+                otherShape = s1;
+            }
+        }
+        console.log("collision");
+        CollisionResolver.resolver(collisionEdge, collisionNormal, collisionDepth, collisionPoint, selectShape, otherShape);
+        return true;
     }
 }

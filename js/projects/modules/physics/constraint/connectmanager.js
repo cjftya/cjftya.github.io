@@ -30,8 +30,8 @@ var ConnectManager = (function () {
                 return false;
             },
             draw() {
-                stroke(255);
                 strokeWeight(1);
+                stroke(200);
                 for (var i = 0; i < __list.length; i++) {
                     var aObj = ObjectPool.connect().find(__list[i].getIdA());
                     var bObj = ObjectPool.connect().find(__list[i].getIdB());

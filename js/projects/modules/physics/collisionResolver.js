@@ -116,4 +116,37 @@ class CollisionResolver {
         this.preResolvePosition(contact, delta);
         this.preResolveVelocity(contact, delta)
     }
+
+    static resolver(e, n, d, p, s1, s2) {
+        var rx = n.x * d;
+        var ry = n.y * d;
+        var p0 = s1.vertex[e.aIndex].pos;
+        var p1 = s1.vertex[e.bIndex].pos;
+        var o0 = s1.vertex[e.aIndex].oldPos;
+        var o1 = s1.vertex[e.bIndex].oldPos;
+        var vp = p.pos;
+        var vo = p.oldPos;
+
+        // calculate where on the edge the collision vertex lies
+        var t = Math.abs(p0.x - p1.x) > Math.abs(p0.y - p1.y)
+            ? (vp.x - rx - p0.x) / (p1.x - p0.x)
+            : (vp.y - ry - p0.y) / (p1.y - p0.y);
+        var lambda = 1 / (t * t + (1 - t) * (1 - t));
+
+        // mass coefficient
+        var m0 = s2.mass,
+            m1 = s1.mass,
+            tm = m0 + m1,
+            m0 = m0 / tm,
+            m1 = m1 / tm;
+
+        // apply the collision response
+        p0.x -= rx * (1 - t) * lambda * m0;
+        p0.y -= ry * (1 - t) * lambda * m0;
+        p1.x -= rx * t * lambda * m0;
+        p1.y -= ry * t * lambda * m0;
+
+        vp.x += rx * m1;
+        vp.y += ry * m1;
+    }
 }

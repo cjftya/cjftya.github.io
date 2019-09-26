@@ -5,7 +5,7 @@ class CollisionScene extends AbsScene {
 
     onCreate() {
         this.__world = new World();
-        this.__mPoint = new Vector2d();
+        this.__oldPoint = new Vector2d();
         this.__selectedObject = null;
     }
 
@@ -19,16 +19,16 @@ class CollisionScene extends AbsScene {
             });
         ObjectPool.ui().insert(backButton);
 
-        DemoCollsion.Demo3(ObjectPool.shape());
+        DemoCollsion.Demo2(ObjectPool.shape());
     }
 
     onPause() {
     }
 
     onUpdate(timeDelta) {
-        if (this.__selectedObject != null) {
-            Springs.followEasingVel(this.__selectedObject, this.__mPoint, 0.1);
-        }
+        // if (this.__selectedObject != null) {
+        //     Springs.followEasingVel(this.__selectedObject, this.__mPoint, 0.1);
+        // }
 
         this.__world.module(timeDelta);
     }
@@ -52,6 +52,8 @@ class CollisionScene extends AbsScene {
     }
 
     onTouchDown(tx, ty) {
+        this.__oldPoint.set(tx, ty);
+
         var id = Picker.pick(tx, ty);
         if (id > -1) {
             console.log("obj id : " + id);
@@ -60,19 +62,22 @@ class CollisionScene extends AbsScene {
                 this.__selectedObject = null;
             }
         }
-        this.__mPoint.set(tx, ty);
     }
 
     onTouchUp(tx, ty) {
         if (this.__selectedObject != null) {
-            this.__mPoint.set(this.__selectedObject.pos.x, this.__selectedObject.pos.y);
             this.__selectedObject = null;
         }
     }
 
     onTouchMove(tx, ty) {
         if (this.__selectedObject != null) {
-            this.__mPoint.set(tx, ty);
+            var vx = (tx - this.__oldPoint.x) * 0.1;
+            var vy = (ty - this.__oldPoint.y) * 0.1;
+
+            this.__selectedObject.movePos(vx, vy);
+
+            this.__oldPoint.set(tx, ty);
         }
     }
 }

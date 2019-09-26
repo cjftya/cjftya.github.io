@@ -77,10 +77,6 @@ class Vector2d {
         return new Vector2d().set(a.x / dn, a.y / dn);
     }
 
-    dot() {
-        return this.x * this.x + this.y * this.y;
-    }
-
     dot(other) {
         return this.x * other.x + this.y * other.y;
     }

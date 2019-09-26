@@ -3,8 +3,8 @@ var ShapeFactory = (function () {
 
     function modules() {
         return {
-            rect: function (px, py, w, h, a, mode) {
-                return new Rect(px, py, w, h, a, mode);
+            rect: function (px, py, w, h, mode) {
+                return new Rect(px, py, w, h, mode);
             },
             circle: function (px, py, r, mode) {
                 return new Circle(px, py, r, mode);
@@ -20,8 +20,8 @@ var ShapeFactory = (function () {
             }
             return __inst;
         },
-        createRect: function (px, py, w, h, a, mode) {
-            return this.__ready().rect(px, py, w, h, a, mode);
+        createRect: function (px, py, w, h, mode) {
+            return this.__ready().rect(px, py, w, h, mode);
         },
         createCircle: function (px, py, r, mode) {
             return this.__ready().circle(px, py, r, mode);
