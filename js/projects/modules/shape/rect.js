@@ -2,6 +2,8 @@ class Rect extends AbsShape {
     constructor(x, y, w, h, mode) {
         super(ShapeType.Poly, mode);
 
+        this.w = w;
+        this.h = h;
         this.mass = (w + h) * 0.015;
         if(this.mode == ShapeMode.Static) {
             this.mass *= 1000;
@@ -38,6 +40,15 @@ class Rect extends AbsShape {
             p.accel.zero();
         }
     }
+    
+    containPoint(p) {
+        var d = Vector2d.sub(this.center, p).length();
+        var r = (this.w < this.h ? this.w : this.h) * 0.5;
+        if (d < r) {
+            return true;
+        }
+        return false;
+    }
 
     draw() {
         fill(this.color[0], this.color[1], this.color[2]);
@@ -46,7 +57,5 @@ class Rect extends AbsShape {
             vertex(this.vertex[i].pos.x, this.vertex[i].pos.y);
         }
         endShape(CLOSE);
-        fill(255);
-        ellipse(this.center.x, this.center.y, 10, 10);
     }
 }
