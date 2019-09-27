@@ -1,8 +1,8 @@
 class World {
     constructor() {
         // default setting
-        this.__iterator = 1;
-        this.__gravity = new Vector2d().set(0, 0.0);
+        this.__iterator = 5;
+        this.__gravity = new Vector2d().set(0, 0.2);
         this.__stopLoop = false;
         this.__screen = TopicManager.ready().read(DISPLAY_INFO.WINDOW_SIZE);
     }
@@ -57,10 +57,7 @@ class World {
         }
         this.resolveConstraint(timeDelta);
 
-        // body update ===>
         list = ObjectPool.shape().getList();
-
-        // integration
         for (var [id, obj] of list.entries()) {
             if (obj.mode == ShapeMode.Static) {
                 continue;
@@ -68,20 +65,12 @@ class World {
             obj.updatePos(timeDelta, this.__gravity.x, this.__gravity.y);
         }
         for (var i = 0; i < this.__iterator; i++) {
-            // update constraint
             for (var [id, obj] of list.entries()) {
-                if (obj.mode == ShapeMode.Static) {
-                    continue;
+                if (obj.mode == ShapeMode.Dynamic) {
+                    obj.updateConstraint();
                 }
-                obj.updateConstraint();
-            }
-
-            // sync body
-            for (var [id, obj] of list.entries()) {
                 obj.syncBody();
             }
-
-            // collision & resolver
             this.resolveContact(timeDelta);
         }
     }

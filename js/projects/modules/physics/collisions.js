@@ -23,7 +23,7 @@ class Collisions {
         } else if (s1.type == ShapeType.Poly && s2.type == ShapeType.Circle) {
             return this.circle2poly(s2, s1, delta);
         } else if (s1.type == ShapeType.Poly && s2.type == ShapeType.Poly) {
-            return this.poly2poly2(s1, s2, delta);
+            return this.poly2poly(s1, s2, delta);
         }
         return false;
     }
@@ -99,69 +99,7 @@ class Collisions {
         return false;
     }
 
-    static __findMSA(s, edge, num) {
-        var minDist = -999999;
-        var minIndex = -1;
-        for (var i = 0; i < num; i++) {
-            var dist = s.distanceOnPlane(edge[i].getNormal(), edge[i].getStartPos());
-            if (dist > 0) {
-                return [0, -1];
-            }
-            else if (dist > minDist) {
-                minDist = dist;
-                minIndex = i;
-            }
-        }
-        return [minDist, minIndex];
-    }
-
-    static __findVerts(s1, s2, n, depth, delta) {
-        if (s1.id == s2.id) {
-            return false;
-        }
-
-        var num = 0;
-        var contact = [];
-        for (var i = 0; i < s1.vertex.length; i++) {
-            var e = s1.vertex[i];
-            if (s2.containPoint(e)) {
-                contact.push(e);
-                num++;
-            }
-        }
-        for (var i = 0; i < s2.vertex.length; i++) {
-            var e = s2.vertex[i];
-            if (s1.containPoint(e)) {
-                contact.push(e);
-                num++;
-            }
-        }
-
-        var df = depth / num;
-        for (var i = 0; i < contact.length; i++) {
-            CollisionResolver.update(new Contact(contact[i], n, df, s1.id, s2.id), delta);
-        }
-        return num > 0;
-    }
-
     static poly2poly(s1, s2, delta) {
-        var msa1 = this.__findMSA(s2, s1.edge, s1.vertex.length);
-        if (msa1[1] == -1) {
-            return false;
-        }
-
-        var msa2 = this.__findMSA(s1, s2.edge, s2.vertex.length);
-        if (msa2[1] == -1) {
-            return false;
-        }
-
-        if (msa1[0] > msa2[0]) {
-            return this.__findVerts(s1, s2, s1.edge[msa1[1]].getNormal(), msa1[0], delta);
-        }
-        return this.__findVerts(s1, s1, Vector2d.neg(s2.edge[msa2[1]].getNormal()), msa2[0], delta);
-    }
-
-    static poly2poly2(s1, s2, delta) {
         var minDist = 99999;
         var s1EdgeCount = s1.getEdgeCount();
         var s2EdgeCount = s2.getEdgeCount();
@@ -169,20 +107,23 @@ class Collisions {
         var collisionPoint = null;
         var collisionEdge = null;
         var collisionDepth = 0;
-        var otherShape = null;
+
+        if (!s1.aabb.intersect(s2.aabb)) {
+            return false;
+        }
+
+        // if (!(0 > Math.abs(s2.center.x - s1.center.x) - (s2.halfEx.x + s1.halfEx.x) &&
+        //     0 > Math.abs(s2.center.y - s1.center.y) - (s2.halfEx.y + s1.halfEx.y))) {
+        //     return false;
+        // }
 
         var totalEdgeCount = s1EdgeCount + s2EdgeCount;
         for (var i = 0; i < totalEdgeCount; i++) {
-            var e, selectShape;
-
-            if (i < s1EdgeCount) {
-                e = s1.edge[i];
-                selectShape = s1;
-            } else {
-                e = s2.edge[i - s1EdgeCount];
-                selectShape = s2;
-            }
-            var en = Vector2d.sub(selectShape.vertex[e.aIndex].pos, selectShape.vertex[e.bIndex].pos).normalize();
+            var e = i < s1EdgeCount ? s1.edge[i] : s2.edge[i - s1EdgeCount];
+            var ex = e.parent.vertex[e.aIndex].pos.y - e.parent.vertex[e.bIndex].pos.y;
+            var ey = e.parent.vertex[e.bIndex].pos.x - e.parent.vertex[e.aIndex].pos.x;
+            var ed = 1 / Math.sqrt(ex * ex + ey * ey);
+            var en = new Vector2d().set(ex * ed, ey * ed);
 
             var rangeA = s1.projectAxis(en);
             var rangeB = s2.projectAxis(en);
@@ -200,7 +141,7 @@ class Collisions {
         }
         collisionDepth = minDist;
 
-        if (selectShape.id != s2.id) {
+        if (collisionEdge.parent.id != s2.id) {
             var t = s2;
             s2 = s1;
             s1 = t;
@@ -214,17 +155,14 @@ class Collisions {
         var smallestDist = 99999, v, dist;
         for (var i = 0; i < s1.vertex.length; i++) {
             v = s1.vertex[i];
-            var line = Vector2d.sub(v.pos, s2.center);
-            dist = collisionNormal.dot(line);
+            dist = collisionNormal.dot(Vector2d.sub(v.pos, s2.center));
 
             if (dist < smallestDist) {
                 smallestDist = dist;
                 collisionPoint = v;
-                otherShape = s1;
             }
         }
-        console.log("collision");
-        CollisionResolver.resolver(collisionEdge, collisionNormal, collisionDepth, collisionPoint, selectShape, otherShape);
+        CollisionResolver.resolver(collisionEdge, collisionNormal, collisionDepth, collisionPoint);
         return true;
     }
 }

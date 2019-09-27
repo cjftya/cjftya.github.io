@@ -4,11 +4,16 @@ class Edge {
         this.bIndex = b;
         this.dist = 0;
         this.inner = false;
+        this.parent = null;
     }
 
     setInner() {
         this.inner = true;
         return this;
+    }
+
+    setParent(p) {
+        this.parent = p;
     }
 }
 
@@ -18,6 +23,11 @@ class CtPoint {
         this.pos = new Vector2d().set(x, y);
         this.oldPos = new Vector2d().set(x, y);
         this.accel = new Vector2d();
+        this.parent = null;
+    }
+
+    setParent(p) {
+        this.parent = p;
     }
 }
 
@@ -31,20 +41,26 @@ class AbsShape extends AbsObject {
         MathUtil.randInt(100, 255), MathUtil.randInt(100, 255)];
 
         this.center = new Vector2d();
+        this.halfEx = new Vector2d();
+
+        this.aabb = new AABB();
 
         this.mass = 0;
         this.invMass = 0;
 
-        this.viscosity = 0.9;
+        this.viscosity = 1.0;
 
         this.vertex = [];
         this.edge = [];
 
         this.innerEdgeCount = 0;
+
+        this.syncBody();
     }
 
     setVertex(vertexList) {
         for (var i = 0; i < vertexList.length; i++) {
+            vertexList[i].setParent(this);
             this.vertex.push(vertexList[i]);
         }
     }
@@ -53,6 +69,7 @@ class AbsShape extends AbsObject {
         for (var i = 0; i < connectList.length; i++) {
             var connect = connectList[i];
             connect.dist = Vector2d.lengthSqrt(this.vertex[connect.aIndex].pos, this.vertex[connect.bIndex].pos);
+            connect.setParent(this);
             if (connect.inner) {
                 this.innerEdgeCount++;
             }
@@ -61,12 +78,7 @@ class AbsShape extends AbsObject {
     }
 
     getEdgeCount() {
-        return this.edge.length = this.innerEdgeCount;
-    }
-
-    debug() {
-        this.vertex[0].pos.x += 0;
-        this.vertex[0].pos.y += 5;
+        return this.edge.length - this.innerEdgeCount;
     }
 
     movePos(vx, vy) {
@@ -79,9 +91,13 @@ class AbsShape extends AbsObject {
     }
 
     syncBody() {
+        if (this.vertex.length == 0) {
+            return;
+        }
+
         var minX = 99999.0, minY = 99999.0, maxX = -99999.0, maxY = -99999.0;
-		for (var i = 0; i < this.vertex.length; i++) {
-			var v = this.vertex[i];
+        for (var i = 0; i < this.vertex.length; i++) {
+            var v = this.vertex[i];
             if (v.pos.x > maxX) {
                 maxX = v.pos.x;
             }
@@ -96,6 +112,9 @@ class AbsShape extends AbsObject {
             }
 		}
         this.center.set((minX + maxX) * 0.5, (minY + maxY) * 0.5);
+        this.halfEx.set((maxX - minX) * 0.5, (maxY - minY) * 0.5);
+
+        this.aabb.update(minX, minY, maxX - minX, maxY - minY);
     }
 
     projectAxis(axis) {
@@ -116,10 +135,6 @@ class AbsShape extends AbsObject {
     }
 
     containPoint(p) {
-        var d = Vector2d.sub(this.center, p).length();
-        if(d < 50) {
-            return true;
-        }
         return false;
     }
 
