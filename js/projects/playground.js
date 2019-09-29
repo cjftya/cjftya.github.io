@@ -38,6 +38,7 @@ function mouseDragged() {
 }
 
 function mouseMoved() {
+    alert("bbb");
     var isMobile = TopicManager.ready().read(DEVICE_INFO.IS_MOBILE);
     if (!isMobile) {
         var system = TopicManager.ready().read(SYSTEMS.MAIN);

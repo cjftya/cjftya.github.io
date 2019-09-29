@@ -64,6 +64,7 @@ class UiButton extends UiObject {
         }
         this.bgColor.setAlpha(0);
         this.click = false;
+        this.hover = false;
     }
 
     onTouchHover(tx, ty) {
