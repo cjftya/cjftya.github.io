@@ -1,6 +1,12 @@
 ﻿function setup() {
     installSystem();
     loadSystem();
+
+    // if (/Android|webOS|iPhone|iPad|iPod|Opera Mini/i.test(navigator.userAgent)) {
+    //     alert("aaa");
+    // } else {
+    //     alert("bbb");
+    // }
 }
 
 function draw() {
@@ -28,6 +34,13 @@ function mouseDragged() {
     var system = TopicManager.ready().read(SYSTEMS.MAIN);
     if (system != null) {
         system.onTouchMove(mouseX, mouseY);
+    }
+}
+
+function mouseMoved() {
+    var system = TopicManager.ready().read(SYSTEMS.MAIN);
+    if (system != null) {
+        system.onTouchHover(mouseX, mouseY);
     }
 }
 

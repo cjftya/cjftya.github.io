@@ -64,10 +64,9 @@ class UiButton extends UiObject {
         }
         this.bgColor.setAlpha(0);
         this.click = false;
-        this.hover = false;
     }
 
-    onTouchMove(tx, ty) { 
+    onTouchHover(tx, ty) { 
         if (this.intersects(tx, ty)) {
             this.hover = true;
         } else {

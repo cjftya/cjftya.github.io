@@ -26,6 +26,12 @@ var UiManager = (function () {
                 for (var [id, obj] of list.entries()) {
                     obj.onTouchMove(px, py);
                 }
+            },
+            touchHover: function (px, py) {
+                var list = ObjectPool.ui().getList();
+                for (var [id, obj] of list.entries()) {
+                    obj.onTouchHover(px, py);
+                }
             }
         }
     }
