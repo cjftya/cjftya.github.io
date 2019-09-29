@@ -8,9 +8,9 @@ class ParticleScene extends AbsScene {
 
     onStart() {
         var winSize = TopicManager.ready().read(DISPLAY_INFO.WINDOW_SIZE);
-        var backButton = UiCreator.newButton(winSize[0] - 100, 5, 80, 40)
+        var backButton = UiCreator.newButton(winSize[0] - 85, 5, 80, 40)
             .setText("Back")
-            .setBgColor(220, 220, 150)
+            .setAllColor(220, 220, 150)
             .setListener(() => {
                 TopicManager.ready().publish(TOPICS.SCENE_LOADER, SCENES.MAIN);
             });
@@ -24,7 +24,7 @@ class ParticleScene extends AbsScene {
     }
 
     onDraw() {
-        background(255, 255, 255);
+        background(20, 20, 40);
         noStroke();
     }
 
