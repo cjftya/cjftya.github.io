@@ -28,17 +28,13 @@ function mouseReleased() {
 
 function mouseDragged() {
     var system = TopicManager.ready().read(SYSTEMS.MAIN);
-    var isMobile = TopicManager.ready().read(DEVICE_INFO.IS_MOBILE);
     if (system != null) {
-        if (isMobile) {
-            system.onTouchHover(mouseX, mouseY);
-        }
+        system.onTouchHover(mouseX, mouseY); // mobile issue fix
         system.onTouchMove(mouseX, mouseY);
     }
 }
 
 function mouseMoved() {
-    alert("bbb");
     var isMobile = TopicManager.ready().read(DEVICE_INFO.IS_MOBILE);
     if (!isMobile) {
         var system = TopicManager.ready().read(SYSTEMS.MAIN);
