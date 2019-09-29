@@ -50,7 +50,7 @@ class MainSystem extends AbsSystem {
     }
 
     onTouchMove(mx, my) {
-        //iManager.ready().touchMove(mx, my);
+        UiManager.ready().touchMove(mx, my);
         this.__scene.onTouchMove(mx, my);
     }
 
