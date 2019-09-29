@@ -21,6 +21,7 @@ class AbsSystem {
     onTouchUp(mx, my) { }
     onTouchDown(mx, my) { }
     onTouchMove(mx, my) { }
+    onTouchHover(mx, my) { }
 
     registerSubscribers() {
         return null;

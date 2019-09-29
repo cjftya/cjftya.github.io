@@ -54,6 +54,10 @@ class MainSystem extends AbsSystem {
         this.__scene.onTouchMove(mx, my);
     }
 
+    onTouchHover(mx, my) {
+        UiManager.ready().touchHover(mx, my);
+    }
+
     loadScece(topic, data) {
         console.log("load scene : " + data);
         var curScene = TopicManager.ready().read(SCENES.CURRENT);
