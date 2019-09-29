@@ -2,11 +2,7 @@
     installSystem();
     loadSystem();
 
-    // if (/Android|webOS|iPhone|iPad|iPod|Opera Mini/i.test(navigator.userAgent)) {
-    //     alert("aaa");
-    // } else {
-    //     alert("bbb");
-    // }
+    this.initialize();
 }
 
 function draw() {
@@ -32,21 +28,28 @@ function mouseReleased() {
 
 function mouseDragged() {
     var system = TopicManager.ready().read(SYSTEMS.MAIN);
+    var isMobile = TopicManager.ready().read(DEVICE_INFO.IS_MOBILE);
     if (system != null) {
+        if(isMobile) {
+            system.onTouchHover(mouseX, mouseY);
+        }
         system.onTouchMove(mouseX, mouseY);
     }
 }
 
 function mouseMoved() {
-    var system = TopicManager.ready().read(SYSTEMS.MAIN);
-    if (system != null) {
-        system.onTouchHover(mouseX, mouseY);
+    var isMobile = TopicManager.ready().read(DEVICE_INFO.IS_MOBILE);
+    if(!isMobile){
+        var system = TopicManager.ready().read(SYSTEMS.MAIN);
+        if (system != null) {
+            system.onTouchHover(mouseX, mouseY);
+        }
     }
 }
 
 function installSystem() {
     TopicManager.ready().write(DISPLAY_INFO.WINDOW_SIZE, [windowWidth, windowHeight]);
-    
+
     TopicManager.ready().write(SYSTEMS.MAIN, new MainSystem());
     TopicManager.ready().write(SYSTEMS.SOUND, new SoundSystem());
 }
@@ -65,4 +68,10 @@ function loadSystem() {
 function windowResized() {
     TopicManager.ready().write(DISPLAY_INFO.WINDOW_SIZE, [windowWidth, windowHeight]);
     resizeCanvas(windowWidth, windowHeight);
+}
+
+function initialize() {
+    // check device
+    var isMobile = /Android|webOS|iPhone|iPad|iPod|Opera Mini/i.test(navigator.userAgent);
+    TopicManager.ready().write(DEVICE_INFO.IS_MOBILE, isMobile);
 }
