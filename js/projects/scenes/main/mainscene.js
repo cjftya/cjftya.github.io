@@ -26,7 +26,7 @@ class MainScene extends AbsScene {
     }
 
     onDraw() {
-        background(0, 0, 0);
+        background(20, 20, 40);
         noStroke();
 
         var list = ObjectPool.shape().getList();
@@ -75,37 +75,37 @@ class MainScene extends AbsScene {
         var px = 30;
         var py = 100;
         var hdiff = 90;
-        var collsionButton = UiCreator.newButton(px, py, 100, 50)
+        var collsionButton = UiCreator.newButton(px, py, 120, 50)
             .setText("Collisions")
-            .setBgColor(220, 150, 150)
+            .setAllColor(220, 150, 150)
             .setListener(() => {
                 this.publishScene(SCENES.COLLISION);
             });
         
-        var performanceButton = UiCreator.newButton(px, py + (hdiff * 1), 100, 50)
+        var performanceButton = UiCreator.newButton(px, py + (hdiff * 1), 120, 50)
             .setText("Performance")
-            .setBgColor(150, 220, 150)
+            .setAllColor(150, 220, 150)
             .setListener(() => {
                 this.publishScene(SCENES.PERFORMANCE);
             });
 
-        var constraintButton = UiCreator.newButton(px, py + (hdiff * 2), 100, 50)
+        var constraintButton = UiCreator.newButton(px, py + (hdiff * 2), 120, 50)
             .setText("Constraint")
-            .setBgColor(150, 150, 220)
+            .setAllColor(150, 150, 220)
             .setListener(() => {
                 this.publishScene(SCENES.CONSTRAINT);
             });
 
-        var particleButton = UiCreator.newButton(px, py + (hdiff * 3), 100, 50)
+        var particleButton = UiCreator.newButton(px, py + (hdiff * 3), 120, 50)
             .setText("Particle")
-            .setBgColor(220, 220, 150)
+            .setAllColor(220, 220, 150)
             .setListener(() => {
                 this.publishScene(SCENES.PARTICLE);
             });
 
-        var etcButton = UiCreator.newButton(px, py + (hdiff * 4), 100, 50)
+        var etcButton = UiCreator.newButton(px, py + (hdiff * 4), 120, 50)
             .setText("Etc")
-            .setBgColor(220, 150, 220)
+            .setAllColor(220, 150, 220)
             .setListener(() => {
                 this.publishScene(SCENES.ETC);
             });

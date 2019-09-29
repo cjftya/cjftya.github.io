@@ -11,9 +11,9 @@ class ConstraintScene extends AbsScene {
 
     onStart() {
         var winSize = TopicManager.ready().read(DISPLAY_INFO.WINDOW_SIZE);
-        var backButton = UiCreator.newButton(winSize[0] - 100, 5, 80, 40)
+        var backButton = UiCreator.newButton(winSize[0] - 115, 5, 80, 40)
             .setText("Back")
-            .setBgColor(150, 150, 220)
+            .setAllColor(150, 150, 220)
             .setListener(() => {
                 TopicManager.ready().publish(TOPICS.SCENE_LOADER, SCENES.MAIN);
             });
@@ -32,7 +32,7 @@ class ConstraintScene extends AbsScene {
     }
 
     onDraw() {
-        background(0, 0, 0);
+        background(20, 20, 40);
         noStroke();
 
         var list = ObjectPool.connect().getList();
