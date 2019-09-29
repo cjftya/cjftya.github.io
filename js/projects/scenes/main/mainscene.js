@@ -77,7 +77,7 @@ class MainScene extends AbsScene {
         var hdiff = 90;
         var collsionButton = UiCreator.newButton(px, py, 120, 50)
             .setText("Collisions")
-            .setAllColor(150, 150, 150)
+            .setAllColor(220, 150, 150)
             .setListener(() => {
                 this.publishScene(SCENES.COLLISION);
             });
