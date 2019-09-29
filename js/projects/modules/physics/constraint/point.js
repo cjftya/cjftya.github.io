@@ -63,7 +63,7 @@ class Point extends AbsObject {
     }
 
     draw() {
-        // fill(this.color[0], this.color[1], this.color[2]);
-        // ellipse(this.pos.x, this.pos.y, 8, 8);
+        fill(this.color[0], this.color[1], this.color[2]);
+        ellipse(this.pos.x, this.pos.y, 8, 8);
     }
 }

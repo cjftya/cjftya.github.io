@@ -11,7 +11,7 @@ class ConstraintScene extends AbsScene {
 
     onStart() {
         var winSize = TopicManager.ready().read(DISPLAY_INFO.WINDOW_SIZE);
-        var backButton = UiCreator.newButton(winSize[0] - 115, 5, 80, 40)
+        var backButton = UiCreator.newButton(winSize[0] - 85, 5, 80, 40)
             .setText("Back")
             .setAllColor(150, 150, 220)
             .setListener(() => {
@@ -22,6 +22,8 @@ class ConstraintScene extends AbsScene {
         ConstraintType.createRope(150, 290, 7, 25);
         ConstraintType.createCloth(100, 50, 5, 5, 50);
         ConstraintType.createSoftBox(250, 250, 100);
+
+        this.__world.setGravity(0, 0.4);
     }
 
     onPause() {
@@ -39,7 +41,7 @@ class ConstraintScene extends AbsScene {
         for (var [id, obj] of list.entries()) {
             obj.draw();
         }
-        ConnectManager.ready().draw();
+        //ConnectManager.ready().draw();
     }
 
     onEnd() {
