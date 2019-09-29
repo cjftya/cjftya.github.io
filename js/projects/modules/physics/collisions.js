@@ -112,11 +112,6 @@ class Collisions {
             return false;
         }
 
-        // if (!(0 > Math.abs(s2.center.x - s1.center.x) - (s2.halfEx.x + s1.halfEx.x) &&
-        //     0 > Math.abs(s2.center.y - s1.center.y) - (s2.halfEx.y + s1.halfEx.y))) {
-        //     return false;
-        // }
-
         var totalEdgeCount = s1EdgeCount + s2EdgeCount;
         for (var i = 0; i < totalEdgeCount; i++) {
             var e = i < s1EdgeCount ? s1.edge[i] : s2.edge[i - s1EdgeCount];

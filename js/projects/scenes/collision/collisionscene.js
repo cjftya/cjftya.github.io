@@ -26,10 +26,6 @@ class CollisionScene extends AbsScene {
     }
 
     onUpdate(timeDelta) {
-        // if (this.__selectedObject != null) {
-        //     Springs.followEasingVel(this.__selectedObject, this.__mPoint, 0.1);
-        // }
-
         this.__world.module(timeDelta);
     }
 

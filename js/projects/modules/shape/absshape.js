@@ -135,6 +135,8 @@ class AbsShape extends AbsObject {
     }
 
     containPoint(p) {
+        
+
         return false;
     }
 

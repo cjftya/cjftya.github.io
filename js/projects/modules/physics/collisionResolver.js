@@ -46,12 +46,13 @@ class CollisionResolver {
         var ry = tangent.y * relTv;
 
         // apply tangent friction
-        vo.x += rx * 0.2 * m1;
-        vo.y += ry * 0.2 * m1;
+        var kf = 0.4;
+        vo.x += rx * kf * m1;
+        vo.y += ry * kf * m1;
 
-        o0.x -= rx * (1 - t) * 0.2 * lambda * m0;
-        o0.y -= ry * (1 - t) * 0.2 * lambda * m0;
-        o1.x -= rx * t * 0.2 * lambda * m0;
-        o1.y -= ry * t * 0.2 * lambda * m0;
+        o0.x -= rx * (1 - t) * kf * lambda * m0;
+        o0.y -= ry * (1 - t) * kf * lambda * m0;
+        o1.x -= rx * t * kf * lambda * m0;
+        o1.y -= ry * t * kf * lambda * m0;
     }
 }
