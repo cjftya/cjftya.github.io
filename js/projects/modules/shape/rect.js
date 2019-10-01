@@ -30,6 +30,9 @@ class Rect extends AbsShape {
     updatePos(delta, gx, gy) {
         for (var i = 0; i < this.vertex.length; i++) {
             var p = this.vertex[i];
+            if (p.isPicked || p.isFixed) {
+                continue;
+            }
             p.accel.x += gx;
             p.accel.y += gy;
             var nx = ((p.pos.x * this.viscosity) - (p.oldPos.x * this.viscosity)) + p.accel.x;
@@ -42,10 +45,11 @@ class Rect extends AbsShape {
     }
     
     containPoint(p) {
-        var d = Vector2d.sub(this.center, p).length();
-        var r = (this.w < this.h ? this.w : this.h) * 0.5;
-        if (d < r) {
-            return true;
+        for (var i = 0; i < this.vertex.length; i++) {
+            var d = Vector2d.sub(this.vertex[i], p).length();
+            if (d < 400) {
+                return true;
+            }
         }
         return false;
     }
