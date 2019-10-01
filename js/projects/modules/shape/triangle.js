@@ -29,6 +29,9 @@ class Triangle extends AbsShape {
     updatePos(delta, gx, gy) {
         for (var i = 0; i < this.vertex.length; i++) {
             var p = this.vertex[i];
+            if (p.isPicked || p.isFixed) {
+                continue;
+            }
             p.accel.x += gx;
             p.accel.y += gy;
             var nx = ((p.pos.x * this.viscosity) - (p.oldPos.x * this.viscosity)) + p.accel.x;
@@ -40,15 +43,6 @@ class Triangle extends AbsShape {
         }
     }
     
-    containPoint(p) {
-        var d = Vector2d.sub(this.center, p).length();
-        var r = this.s * 0.5;
-        if (d < r) {
-            return true;
-        }
-        return false;
-    }
-
     draw() {
         fill(this.color[0], this.color[1], this.color[2]);
         beginShape();

@@ -17,13 +17,15 @@ class Edge {
     }
 }
 
- // constraint point
+// constraint point
 class CtPoint {
     constructor(x, y) {
         this.pos = new Vector2d().set(x, y);
         this.oldPos = new Vector2d().set(x, y);
         this.accel = new Vector2d();
         this.parent = null;
+        this.isFixed = false;
+        this.isPicked = false;
     }
 
     setParent(p) {
@@ -81,15 +83,6 @@ class AbsShape extends AbsObject {
         return this.edge.length - this.innerEdgeCount;
     }
 
-    movePos(vx, vy) {
-        for (var i = 0; i < this.vertex.length; i++) {
-            this.vertex[i].pos.x += vx;
-            this.vertex[i].pos.y += vy;
-            // this.vertex[i].oldPos.x += vx;
-            // this.vertex[i].oldPos.y += vy;
-        }
-    }
-
     syncBody() {
         if (this.vertex.length == 0) {
             return;
@@ -110,7 +103,7 @@ class AbsShape extends AbsObject {
             if (v.pos.y < minY) {
                 minY = v.pos.y;
             }
-		}
+        }
         this.center.set((minX + maxX) * 0.5, (minY + maxY) * 0.5);
         this.halfEx.set((maxX - minX) * 0.5, (maxY - minY) * 0.5);
 
@@ -135,9 +128,34 @@ class AbsShape extends AbsObject {
     }
 
     containPoint(p) {
-        
-
         return false;
+    }
+
+    getPickPoint(p) {
+        for (var i = 0; i < this.vertex.length; i++) {
+            var d = Vector2d.sub(this.vertex[i].pos, p).length();
+            if (d < 10) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    pick(index) {
+        this.vertex[index].isPicked = true;
+        this.vertex[index].oldPos.set(this.vertex[index].pos.x,
+            this.vertex[index].pos.y);
+    }
+
+    move(index, vx, vy) {
+        this.vertex[index].pos.x += vx;
+        this.vertex[index].pos.y += vy;
+        this.vertex[index].oldPos.x += vx;
+        this.vertex[index].oldPos.y += vy;
+    }
+
+    release(index) {
+        this.vertex[index].isPicked = false;
     }
 
     updateConstraint() {
@@ -145,22 +163,24 @@ class AbsShape extends AbsObject {
             var e = this.edge[i];
             var dx = this.vertex[e.bIndex].pos.x - this.vertex[e.aIndex].pos.x;
             var dy = this.vertex[e.bIndex].pos.y - this.vertex[e.aIndex].pos.y;
- 
+
             // using square root approximation
             var delta = e.dist / (dx * dx + dy * dy + e.dist) - 0.5;
 
             dx *= delta;
             dy *= delta;
 
-            this.vertex[e.aIndex].pos.x -= dx;
-            this.vertex[e.aIndex].pos.y -= dy;
-            this.vertex[e.bIndex].pos.x += dx;
-            this.vertex[e.bIndex].pos.y += dy;
+            if (!this.vertex[e.aIndex].isFixed && !this.vertex[e.aIndex].isPicked) {
+                this.vertex[e.aIndex].pos.x -= dx;
+                this.vertex[e.aIndex].pos.y -= dy;
+            }
+            if (!this.vertex[e.bIndex].isFixed && !this.vertex[e.bIndex].isPicked) {
+                this.vertex[e.bIndex].pos.x += dx;
+                this.vertex[e.bIndex].pos.y += dy;
+            }
         }
     }
 
-    updatePos(delta) {
-    }
-
+    updatePos(delta) { }
     draw() { }
 }

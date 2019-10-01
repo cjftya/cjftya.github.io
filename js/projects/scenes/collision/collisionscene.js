@@ -7,6 +7,7 @@ class CollisionScene extends AbsScene {
         this.__world = new World();
         this.__oldPoint = new Vector2d();
         this.__selectedObject = null;
+        this.__selectedVertex = null;
     }
 
     onStart() {
@@ -49,29 +50,32 @@ class CollisionScene extends AbsScene {
 
     onTouchDown(tx, ty) {
         this.__oldPoint.set(tx, ty);
-
-        var id = Picker.pick(tx, ty);
-        if (id > -1) {
-            console.log("obj id : " + id);
-            this.__selectedObject = ObjectPool.shape().find(id);
+        var pickData = Picker.pickPoint(tx, ty);
+        if (pickData != null) {
+            this.__selectedObject = pickData[0];
+            this.__selectedVertex = pickData[1];
             if (this.__selectedObject.mode == ShapeMode.Static) {
                 this.__selectedObject = null;
+            } else {
+                this.__selectedObject.pick(this.__selectedVertex);
+                console.log("obj id : " + this.__selectedObject + ", vertex id : " + this.__selectedVertex);
             }
         }
     }
 
     onTouchUp(tx, ty) {
         if (this.__selectedObject != null) {
+            this.__selectedObject.release(this.__selectedVertex);
             this.__selectedObject = null;
         }
     }
 
     onTouchMove(tx, ty) {
         if (this.__selectedObject != null) {
-            var vx = (tx - this.__oldPoint.x) * 0.1;
-            var vy = (ty - this.__oldPoint.y) * 0.1;
+            var nx = tx - this.__oldPoint.x;
+            var ny = ty - this.__oldPoint.y;
 
-            this.__selectedObject.movePos(vx, vy);
+            this.__selectedObject.move(this.__selectedVertex, nx, ny);
 
             this.__oldPoint.set(tx, ty);
         }

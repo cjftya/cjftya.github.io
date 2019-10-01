@@ -26,15 +26,15 @@ class DemoCollsion {
     }
 
     static Demo2(shapePool) {
-        for (var i = 0; i < 33; i++) {
+        for (var i = 0; i < 20; i++) {
             shapePool.insert(ShapeFactory.createPentagon(MathUtil.randInt(50, windowHeight - 50), MathUtil.randInt(50, windowHeight - 500),
                 MathUtil.randInt(20, 30), ShapeMode.Dynamic));
         }
-        for (var i = 0; i < 33; i++) {
+        for (var i = 0; i < 20; i++) {
             shapePool.insert(ShapeFactory.createRect(MathUtil.randInt(50, windowHeight - 50), MathUtil.randInt(50, windowHeight - 300),
                 MathUtil.randInt(20, 40), MathUtil.randInt(20, 40), ShapeMode.Dynamic));
         }
-        for (var i = 0; i < 33; i++) {
+        for (var i = 0; i < 20; i++) {
             shapePool.insert(ShapeFactory.createTriangle(MathUtil.randInt(50, windowHeight - 50), MathUtil.randInt(50, windowHeight - 100),
                 MathUtil.randInt(25, 40), ShapeMode.Dynamic));
         }

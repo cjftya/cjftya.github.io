@@ -13,6 +13,19 @@ class Picker {
         return -1;
     }
 
+    static pickPoint(px, py) {
+        var point = new Vector2d().set(px, py);
+        var list = ObjectPool.shape().getList();
+        var index = -1;
+        for (var [id, obj] of list.entries()) {
+            index = obj.getPickPoint(point);
+            if(index >= 0) {
+                return [obj, index];
+            }
+        }
+        return null;
+    }
+
     static pick(px, py) {
         var point = new Vector2d().set(px, py);
         var list = ObjectPool.shape().getList();
