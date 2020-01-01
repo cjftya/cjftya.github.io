@@ -1,7 +1,7 @@
 class World {
     constructor() {
         // default setting
-        this.__iterator = 5;
+        this.__iterator = 3;
         this.__gravity = new Vector2d().set(0, 0.2);
         this.__stopLoop = false;
         this.__screen = TopicManager.ready().read(DISPLAY_INFO.WINDOW_SIZE);
@@ -49,6 +49,7 @@ class World {
             return;
         }
 
+        // resolve constraint
         var list = ObjectPool.connect().getList();
         for (var [id, obj] of list.entries()) {
             obj.addForce(this.__gravity.x, this.__gravity.y);
@@ -57,6 +58,7 @@ class World {
         }
         this.resolveConstraint(timeDelta);
 
+        // resolve body
         list = ObjectPool.shape().getList();
         for (var [id, obj] of list.entries()) {
             if (obj.mode == ShapeMode.Static) {
