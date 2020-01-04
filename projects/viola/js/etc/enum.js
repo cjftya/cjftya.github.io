@@ -1,7 +1,7 @@
-//Star - Object
+//Start - Object
 //End - Object
 
-//Star - Object
+//Start - Object
 var PoolType = {
     Shape: 0,
     Ui: 1,
