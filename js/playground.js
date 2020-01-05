@@ -2,6 +2,7 @@
 
 function setup() {
     createCanvas(windowWidth, windowHeight);
+    TopicManager.ready().write(DISPLAY_INFO.WINDOW_SIZE, [windowWidth, windowHeight]);
 
     this.initialize();
 }
