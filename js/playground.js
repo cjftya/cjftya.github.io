@@ -1,4 +1,5 @@
 ﻿var backgroundEffect;
+var counter;
 
 function setup() {
     createCanvas(windowWidth, windowHeight);
@@ -28,6 +29,10 @@ function drawFpsCount() {
 }
 
 function mousePressed() {
+    counter++;
+    if(counter == 10) {
+       location.replace("projects/viola/index.html");        
+    }
     //    location.replace("projects/viola/index.html");
     //    location.replace("projects/letterbe/index.html");
 }
@@ -51,4 +56,6 @@ function initialize() {
     TopicManager.ready().write(DEVICE_INFO.IS_MOBILE, isMobile);
 
     backgroundEffect = EffectFactory.createParticle(Particle.Snow);
+
+    counter = 0;
 }
