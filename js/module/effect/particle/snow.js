@@ -1,15 +1,25 @@
 class Snow extends AbsParticle {
-    constructor() {
+    constructor(w, h, amount) {
         super(Particle.Snow);
 
         this.__active = false;
-        this.__amount = 500;
 
+        this.__w = w;
+        this.__h = h;
+        this.__amount = amount;
+
+        this.__particles = null;
+        this.__offsets = null;
+
+        this.setAmount(amount);
+    }
+
+    setAmount(amount) {
         this.__particles = [];
         this.__offsets = [];
 
         var p;
-        for (var i = 0; i < this.__amount; i++) {
+        for (var i = 0; i < amount; i++) {
             p = new ParticleCircle();
             this.setupParticle(p);
 
@@ -18,17 +28,13 @@ class Snow extends AbsParticle {
         }
     }
 
-    setAmount(a) {
-        this.__amount = a;
-    }
-
     setupParticle(p) {
         p.pos.x = MathUtil.randInt(50, windowWidth - 50);
         p.pos.y = MathUtil.randInt(100, windowHeight * 2) * -1;
         p.setRadius(MathUtil.randInt(3, 10));
 
         p.vel.x = (MathUtil.randInt(1, 5) * 0.1) * (MathUtil.randInt(1, 20) <= 10 ? -1 : 1);
-        p.vel.y = p.getRadius() * 0.2;
+        p.vel.y = p.getRadius() * 0.15;
 
         p.setColor(255, 255, 255);
         p.setAlpha(p.getRadius() * 20);
