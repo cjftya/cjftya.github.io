@@ -43,7 +43,7 @@ class CharacterLock {
     setupPositionForParticle() {
         for (var i = 0; i < this.__points.length; i++) {
             this.__particles[i].setPos(this.__points[i].pos.x, this.__points[i].pos.y);
-            this.__particles[i].setLife(150);
+            this.__particles[i].setLife(100);
             this.__particles[i].setFreq(0.03);
         }
     }
