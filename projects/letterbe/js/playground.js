@@ -1,4 +1,4 @@
-﻿var test = "aasdasd";
+﻿var characterLock;
 
 function setup() {
     createCanvas(windowWidth, windowHeight);
@@ -12,38 +12,33 @@ function setup() {
 function draw() {
     background(20, 20, 40);
     noStroke();
+
+    TimeDeltaUtil.getInstance().update();
+
+    characterLock.update(TimeDeltaUtil.getInstance().getDelta());
+    characterLock.draw();
+
+    this.drawFpsCount();
+}
+
+function drawFpsCount() {
+    textSize(20);
+    noStroke();
+    fill(240);
+    textAlign(LEFT, TOP);
+    text("FPS : " + Math.floor(TimeDeltaUtil.getInstance().getFPS()), 10, 10);
 }
 
 function mousePressed() {
-    // var system = TopicManager.ready().read(SYSTEMS.MAIN);
-    // if (system != null) {
-    //     system.onTouchDown(mouseX, mouseY);
-    // }
 }
 
 function mouseReleased() {
-    // var system = TopicManager.ready().read(SYSTEMS.MAIN);
-    // if (system != null) {
-    //     system.onTouchUp(mouseX, mouseY);
-    // }
 }
 
 function mouseDragged() {
-    // var system = TopicManager.ready().read(SYSTEMS.MAIN);
-    // if (system != null) {
-    //     system.onTouchHover(mouseX, mouseY); // mobile issue fix
-    //     system.onTouchMove(mouseX, mouseY);
-    // }
 }
 
 function mouseMoved() {
-    // var isMobile = TopicManager.ready().read(DEVICE_INFO.IS_MOBILE);
-    // if (!isMobile) {
-    //     var system = TopicManager.ready().read(SYSTEMS.MAIN);
-    //     if (system != null) {
-    //         system.onTouchHover(mouseX, mouseY);
-    //     }
-    // }
 }
 
 function windowResized() {
@@ -53,5 +48,7 @@ function windowResized() {
 
 function initialize() {
     var isMobile = /Android|webOS|iPhone|iPad|iPod|Opera Mini/i.test(navigator.userAgent);
-   // TopicManager.ready().write(DEVICE_INFO.IS_MOBILE, isMobile);
+    TopicManager.ready().write(DEVICE_INFO.IS_MOBILE, isMobile);
+
+    characterLock = new CharacterLock();
 }

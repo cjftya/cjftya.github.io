@@ -31,7 +31,7 @@ function drawFpsCount() {
 function mousePressed() {
     counter++;
     if(counter == 10) {
-       location.href = "projects/viola/index.html";        
+       location.href = "projects/letterbe/index.html";        
     }
     //    location.replace("projects/viola/index.html");
     //    location.replace("projects/letterbe/index.html");
