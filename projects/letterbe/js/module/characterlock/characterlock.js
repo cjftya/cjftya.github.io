@@ -1,6 +1,8 @@
 class CharacterLock {
     constructor() {
-        //textFont(loadFont("assets/Santalum.ttf"));
+        //assets/Santalum.ttf
+        //https://cjftya.github.io/projects/letterbe/assets/Santalum.ttf
+        textFont(loadFont("https://cjftya.github.io/projects/letterbe/assets/Santalum.ttf"));
 
         this.__points = [];
         this.__particles = [];
