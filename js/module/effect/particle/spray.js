@@ -19,7 +19,7 @@ class Spray extends AbsParticle {
     setupPaticle(p) {
         p.pos.x = this.__center.x + Math.cos(MathUtil.angle2rad(MathUtil.randInt(0, 360))) * 15;
         p.pos.y = this.__center.y + Math.sin(MathUtil.angle2rad(MathUtil.randInt(0, 360))) * 15;
-        p.setRadius(MathUtil.randInt(1, 4));
+        p.setRadius(MathUtil.randInt(1, 3));
 
         p.vel.x = Math.cos(MathUtil.angle2rad(MathUtil.randInt(0, 360))) * (MathUtil.randInt(1, 5) * 0.1);
         p.vel.y = Math.sin(MathUtil.angle2rad(MathUtil.randInt(0, 360))) * (MathUtil.randInt(1, 5) * 0.1);
