@@ -4,6 +4,23 @@ class ParticleCircle {
         this.vel = new Vector2d();
         this.__r = 0;
         this.__color = color(255, 255, 255);
+        this.__life = 0;
+    }
+
+    setLife(v) {
+        this.__life = v;
+    }
+
+    getLife() {
+        return this.__life;
+    }
+
+    increaseLife(v) {
+        this.__life += v;
+    }
+
+    decreaseLife(v) {
+        this.__life -= v;
     }
 
     setRadius(r) {

@@ -3,5 +3,6 @@ var Effect = {
 };
 
 var Particle = {
-    Snow: 0
+    Snow: 0,
+    Spray: 1
 };
