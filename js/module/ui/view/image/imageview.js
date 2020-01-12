@@ -10,7 +10,7 @@ class ImageView extends AbsView {
         this.__h = 0;
         this.__listener = null;
 
-        imageMode(CENTER);
+       // imageMode(CENTER);
 
         //width resize =  (height resize * original width size) / original height size
         //height resize = (width resize * original height size) / original width size
@@ -39,10 +39,14 @@ class ImageView extends AbsView {
     setImageSrc(src) {
         this.__src = src;
         this.__image = loadImage(src);
-        this.__w = this.__image.width;
-        this.__h = this.__image.height;
-        console.log(this.__image);
-        this.__image.resize(500,500);
+        var img = new Image();
+        img.src = src;
+        this.__w = img.naturalWidth;
+        img.onload = function () {
+            alert(this.width + 'x' + this.height);
+        }
+       // this.__h = img;
+        console.log(this.__w);
         return this;
     }
 
@@ -57,6 +61,6 @@ class ImageView extends AbsView {
     }
 
     draw() {
-        image(this.__image, 200, this.__h);
+        image(this.__image, 0+70, 0+50, 140, 100);
     }
 }
