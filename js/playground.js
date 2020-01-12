@@ -1,5 +1,6 @@
 ﻿var backgroundEffect;
 var counter;
+var tester;
 
 function setup() {
     createCanvas(windowWidth, windowHeight);
@@ -11,6 +12,8 @@ function setup() {
 function draw() {
     background(20, 20, 40);
     noStroke();
+
+    tester.draw();
 
     TimeDeltaUtil.getInstance().update();
 
@@ -56,6 +59,9 @@ function initialize() {
     TopicManager.ready().write(DEVICE_INFO.IS_MOBILE, isMobile);
 
     backgroundEffect = EffectFactory.createParticle(Particle.Snow);
+    tester = new ImageView()
+        .setImageSrc("https://cjftya.github.io/assets/logo.png")
+        .setWidth(200);
 
     counter = 0;
 }

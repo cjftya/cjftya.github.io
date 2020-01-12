@@ -6,7 +6,7 @@ function setup() {
 
     this.initialize();
 
-    console.log("letter be");
+    console.log("letterbe");
 }
 
 function draw() {
