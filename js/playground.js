@@ -32,10 +32,10 @@ function drawFpsCount() {
 }
 
 function mousePressed() {
-    counter++;
-    if (counter == 10) {
-        location.href = "projects/letterbe/index.html";
-    }
+    // counter++;
+    // if (counter == 10) {
+    //     location.href = "projects/letterbe/index.html";
+    // }
     //    location.replace("projects/viola/index.html");
     //    location.replace("projects/letterbe/index.html");
 }
@@ -60,8 +60,9 @@ function initialize() {
 
     backgroundEffect = EffectFactory.createParticle(Particle.Snow);
     tester = new ImageView()
-        .setImageSrc("https://cjftya.github.io/assets/logo2.jpg");
-    //   .setWidth(200);
+        .setPos(50, 50)
+        .setScale(0.5)
+        .setImageSrc("https://cjftya.github.io/assets/logo2.JPG");
 
     counter = 0;
 }
