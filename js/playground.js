@@ -62,7 +62,7 @@ function initialize() {
     tester = new ImageView()
         .setPos(50, 50)
         .setScale(0.5)
-        .setImageSrc("https://cjftya.github.io/assets/logo2.JPG");
+        .setImageSrc("https://cjftya.github.io/assets/linkimage.jpg");
 
     counter = 0;
 }
