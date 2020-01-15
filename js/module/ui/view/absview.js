@@ -5,10 +5,6 @@ class AbsView {
 
     }
 
-    update(delta) {
-
-    }
-
     draw() {
 
     }

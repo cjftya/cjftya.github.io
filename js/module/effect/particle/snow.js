@@ -34,9 +34,11 @@ class Snow extends AbsParticle {
         p.setRadius(MathUtil.randInt(3, 10));
 
         p.vel.x = (MathUtil.randInt(1, 5) * 0.1) * (MathUtil.randInt(1, 20) <= 10 ? -1 : 1);
-        p.vel.y = p.getRadius() * 0.15;
+        p.vel.y = p.getRadius() * 0.1;
 
-        p.setColor(255, 255, 255);
+        
+        var gb = MathUtil.randInt(150, 190);
+        p.setColor(MathUtil.randInt(240, 250), gb, gb);
         p.setAlpha(p.getRadius() * 20);
     }
 
