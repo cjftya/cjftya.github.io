@@ -1,7 +1,7 @@
 ﻿var backgroundEffect;
 var counter;
 var tester;
-var backColor;
+var bubleColor;
 var bubleArr;
 
 function setup() {
@@ -15,7 +15,7 @@ function draw() {
     background(255, 255, 245);
     noStroke();
 
-    fill(backColor1);
+    fill(bubleColor);
     for (var b of bubleArr) {
         ellipse(b.x, b.y, b.r, b.r);
     }
@@ -71,8 +71,8 @@ function initialize() {
         .setScale(0.5)
         .setImageSrc("https://cjftya.github.io/assets/logo2.JPG");
 
-    backColor1 = color(250, 190, 190);
-    backColor1.setAlpha(10);
+    bubleColor = color(250, 190, 190);
+    bubleColor.setAlpha(10);
 
     bubleArr = [];
     var x, y, r;
@@ -82,7 +82,6 @@ function initialize() {
         r = MathUtil.randInt(250, 800);
         bubleArr.push({ x, y, r });
     }
-    console.log(bubleArr[0].x);
 
     counter = 0;
 }
