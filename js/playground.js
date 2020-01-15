@@ -10,23 +10,23 @@ function setup() {
 }
 
 function draw() {
-    background(20, 20, 40);
+    background(255, 255, 245);
     noStroke();
 
-    tester.draw();
+//    tester.draw();
 
     TimeDeltaUtil.getInstance().update();
 
     backgroundEffect.update(TimeDeltaUtil.getInstance().getDelta());
     backgroundEffect.draw();
 
-    this.drawFpsCount();
+ //   this.drawFpsCount();
 }
 
 function drawFpsCount() {
     textSize(20);
     noStroke();
-    fill(240);
+    fill(0);
     textAlign(LEFT, TOP);
     text("FPS : " + Math.floor(TimeDeltaUtil.getInstance().getFPS()), 10, 10);
 }

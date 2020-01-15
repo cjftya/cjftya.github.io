@@ -111,11 +111,9 @@ class ImageView extends AbsView {
         return this;
     }
 
-    update(delta) {
-    }
-
     draw() {
         if (this.__loadComplete) {
+          //  tint(255, 255);
             image(this.__image, this.__pos.x, this.__pos.y, this.__w, this.__h);
         }
     }
