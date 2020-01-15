@@ -55,9 +55,9 @@ class ParticleCircle {
 
     draw() {
         fill(this.__colorThird);
-        ellipse(this.pos.x, this.pos.y, this.__r*2.1, this.__r*2.1);
+        ellipse(this.pos.x, this.pos.y, this.__r*4, this.__r*4);
         fill(this.__colorSecond);
-        ellipse(this.pos.x, this.pos.y, this.__r*1.6, this.__r*1.6);
+        ellipse(this.pos.x, this.pos.y, this.__r*2.3, this.__r*2.3);
         fill(this.__color);
         ellipse(this.pos.x, this.pos.y, this.__r, this.__r);
     }
