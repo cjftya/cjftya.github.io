@@ -27,7 +27,7 @@ function draw() {
     backgroundEffect.update(TimeDeltaUtil.getInstance().getDelta());
     backgroundEffect.draw();
 
- //   this.drawFpsCount();
+   this.drawFpsCount();
 }
 
 function drawFpsCount() {
@@ -72,7 +72,7 @@ function initialize() {
         .setImageSrc("https://cjftya.github.io/assets/logo2.JPG");
 
     backColor1 = color(250, 190, 190);
-    backColor1.setAlpha(7);
+    backColor1.setAlpha(10);
 
     bubleArr = [];
     var x, y, r;
