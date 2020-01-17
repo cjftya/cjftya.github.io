@@ -6,15 +6,10 @@ class Snow extends AbsParticle {
 
         this.__w = w;
         this.__h = h;
+        this.__windDir = new Vector2d();
+        this.__windEnergy = new Vector2d();
+
         this.__amount = amount;
-
-        this.__particles = null;
-        this.__offsets = null;
-
-        this.setAmount(amount);
-    }
-
-    setAmount(amount) {
         this.__particles = [];
         this.__offsets = [];
 
@@ -28,18 +23,41 @@ class Snow extends AbsParticle {
         }
     }
 
+    setWind(wx, wy) {
+        this.__windDir.set(wx < 0 ? -1 : 1, wy < 0 ? -1 : 1);
+        this.__windEnergy.set(this.__windDir.x == 1 ? wx : -wx,
+            this.__windDir.y == 1 ? wy : -wy);
+
+        for (var i = 0; i < this.__amount; i++) {
+            if (wx != 0) {
+                this.__particles[i].vel.x = ((MathUtil.randInt(1, 5) * 0.1) * this.__windDir.x) + this.__windEnergy.x;
+                this.__offsets[i] = (MathUtil.randInt(1, 50) * 0.001) * this.__windDir.x;
+            }
+            if (wy != 0) {
+                this.__particles[i].vel.y = ((p.getRadius() * 0.1) * this.__windDir.y) + this.__windEnergy.y;
+            }
+        }
+        return this;
+    }
+
     setupParticle(p) {
         p.pos.x = MathUtil.randInt(50, windowWidth - 50);
         p.pos.y = MathUtil.randInt(100, windowHeight * 2) * -1;
         p.setRadius(MathUtil.randInt(3, 10));
 
-        p.vel.x = (MathUtil.randInt(1, 5) * 0.1) * (MathUtil.randInt(1, 20) <= 10 ? -1 : 1);
-        p.vel.y = p.getRadius() * 0.1;
-
-        
+        if (this.__windEnergy.x == 0) {
+            p.vel.x = (MathUtil.randInt(1, 5) * 0.1) * (MathUtil.randInt(1, 20) <= 10 ? -1 : 1);
+        } else {
+            p.vel.x = ((MathUtil.randInt(1, 5) * 0.1) * this.__windDir.x) + this.__windEnergy.x;
+        }
+        if (this.__windEnergy.y == 0) {
+            p.vel.y = p.getRadius() * 0.1;
+        } else {
+            p.vel.y = ((p.getRadius() * 0.1) * this.__windDir.y) + this.__windEnergy.y;
+        }
         var gb = MathUtil.randInt(150, 190);
         p.setColor(MathUtil.randInt(240, 250), gb, gb);
-        p.setAlpha(p.getRadius() + 5);
+        p.setAlpha(p.getRadius() + 10);
     }
 
     start() {
@@ -63,7 +81,7 @@ class Snow extends AbsParticle {
             p.pos.x += p.vel.x + offset;
             p.pos.y += p.vel.y;
 
-            if (p.pos.y > windowHeight + 60) {
+            if (p.pos.y > windowHeight*2 + 60) {
                 this.setupParticle(p);
             }
             if (p.pos.x < -60) {
