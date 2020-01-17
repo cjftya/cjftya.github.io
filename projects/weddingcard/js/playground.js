@@ -4,8 +4,8 @@ var bubleColor;
 var bubleArr;
 
 function setup() {
-    createCanvas(windowWidth, windowHeight);
-    TopicManager.ready().write(DISPLAY_INFO.WINDOW_SIZE, [windowWidth, windowHeight]);
+    createCanvas(windowWidth, windowHeight*2);
+    TopicManager.ready().write(DISPLAY_INFO.WINDOW_SIZE, [windowWidth, windowHeight*2]);
 
     this.initialize();
 
@@ -73,7 +73,7 @@ function initialize() {
     var x, y, r;
     for (var i = 0; i < 8; i++) {
         x = MathUtil.randInt(50, windowWidth - 50);
-        y = MathUtil.randInt(50, windowHeight - 50);
+        y = MathUtil.randInt(50, windowHeight*2 - 50);
         r = MathUtil.randInt(250, 800);
         bubleArr.push({ x, y, r });
     }
