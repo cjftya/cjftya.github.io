@@ -39,7 +39,7 @@ class Snow extends AbsParticle {
         
         var gb = MathUtil.randInt(150, 190);
         p.setColor(MathUtil.randInt(240, 250), gb, gb);
-        p.setAlpha(p.getRadius() * 20);
+        p.setAlpha(p.getRadius() + 5);
     }
 
     start() {

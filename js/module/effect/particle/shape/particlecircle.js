@@ -5,7 +5,7 @@ class ParticleCircle {
         this.__r = 0;
         this.__color = color(255, 255, 255);
         this.__colorSecond = color(255, 255, 255);
-        this.__colorSecond.setAlpha(30);
+        this.__colorSecond.setAlpha(15);
         this.__colorThird = color(255, 255, 255);
         this.__colorThird.setAlpha(10);
         this.__life = 0;
@@ -55,9 +55,9 @@ class ParticleCircle {
 
     draw() {
         fill(this.__colorThird);
-        ellipse(this.pos.x, this.pos.y, this.__r*4, this.__r*4);
+        ellipse(this.pos.x, this.pos.y, this.__r*5, this.__r*5);
         fill(this.__colorSecond);
-        ellipse(this.pos.x, this.pos.y, this.__r*2.3, this.__r*2.3);
+        ellipse(this.pos.x, this.pos.y, this.__r*3, this.__r*3);
         fill(this.__color);
         ellipse(this.pos.x, this.pos.y, this.__r, this.__r);
     }
