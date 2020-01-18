@@ -3,9 +3,17 @@ var tester;
 var bubleColor;
 var bubleArr;
 
+function preload() {
+    TopicManager.ready().write(RESOURCE.DATA, new ResourceLoader()
+        .add("https://cjftya.github.io/assets/logo2.JPG", ResourceType.Image)
+        .add("https://cjftya.github.io/assets/linkimage.jpg", ResourceType.Image)
+        .setListener(this.onLoadedResource)
+        .load());
+}
+
 function setup() {
-    createCanvas(windowWidth, windowHeight*2);
-    TopicManager.ready().write(DISPLAY_INFO.WINDOW_SIZE, [windowWidth, windowHeight*2]);
+    createCanvas(windowWidth, windowHeight * 2);
+    TopicManager.ready().write(DISPLAY_INFO.WINDOW_SIZE, [windowWidth, windowHeight * 2]);
 
     this.initialize();
 
@@ -21,7 +29,7 @@ function draw() {
         ellipse(b.x, b.y, b.r, b.r);
     }
 
-    //    tester.draw();
+    // tester.draw();
 
     TimeDeltaUtil.getInstance().update();
 
@@ -61,20 +69,23 @@ function initialize() {
     TopicManager.ready().write(DEVICE_INFO.IS_MOBILE, isMobile);
 
     backgroundEffect = EffectFactory.createParticle(Particle.Snow);
-    tester = new ImageView()
+    tester = new ImageView("https://cjftya.github.io/assets/logo2.JPG")
         .setPos(50, 50)
-        .setScale(0.5)
-        .setImageSrc("https://cjftya.github.io/assets/logo2.JPG");
+        .setScale(0.6);
 
     bubleColor = color(250, 190, 190);
     bubleColor.setAlpha(10);
 
     bubleArr = [];
     var x, y, r;
-    for (var i = 0; i < 8; i++) {
+    for (var i = 0; i < 5; i++) {
         x = MathUtil.randInt(50, windowWidth - 50);
-        y = MathUtil.randInt(50, windowHeight*2 - 50);
+        y = MathUtil.randInt(50, windowHeight * 2 - 50);
         r = MathUtil.randInt(250, 800);
         bubleArr.push({ x, y, r });
     }
+}
+
+function onLoadedResource(total, count) {
+    console.log(total + " : " + count);
 }

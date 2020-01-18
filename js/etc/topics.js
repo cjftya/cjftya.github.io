@@ -6,3 +6,7 @@ var DISPLAY_INFO = {
 var DEVICE_INFO = {
     IS_MOBILE: "device-info-is-mobile"
 }
+
+var RESOURCE = {
+    DATA: "resource-data"
+}
