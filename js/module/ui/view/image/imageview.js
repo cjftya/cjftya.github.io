@@ -1,24 +1,24 @@
 class ImageView extends AbsView {
-    constructor() {
+    constructor(src) {
         super(0);
 
-        this.__image = null;
+        var resource = TopicManager.ready().read(RESOURCE.DATA)
+        this.__src = src;
+        this.__image = resource.get(src).getData();
+
         this.__mask = null;
-        this.__src = null;
         this.__maskSrc = null;
 
         this.__pos = new Vector2d();
 
-        this.__w = 0;
-        this.__h = 0;
+        this.__w = this.__image.width;
+        this.__h = this.__image.height;
         this.__scale = 1.0;
 
-        this.__originW = 0;
-        this.__originH = 0;
+        this.__originW = this.__w;
+        this.__originH = this.__h;
 
         this.__listener = null;
-
-        this.__loadComplete = false;
 
         //width resize = (height resize * original width size) / original height size
         //height resize = (width resize * original height size) / original width size
@@ -38,7 +38,7 @@ class ImageView extends AbsView {
     }
 
     setWidth(rw) {
-        if (this.__loadComplete && this.__w != rw) {
+        if (this.__w != rw) {
             if (this.isScale()) {
                 this.changeOriginalSize();
             }
@@ -48,7 +48,7 @@ class ImageView extends AbsView {
     }
 
     setHeight(rh) {
-        if (this.__loadComplete && this.__h != rh) {
+        if (this.__h != rh) {
             if (this.isScale()) {
                 this.changeOriginalSize();
             }
@@ -58,19 +58,17 @@ class ImageView extends AbsView {
     }
 
     setScale(s) {
-        if(this.__scale == s) {
+        if (this.__scale == s) {
             return;
         }
 
         this.__scale = s;
-        if (this.__loadComplete) {
-            if (this.isScale()) {
-                this.changeOriginalSize();
-            }
-            var reSizeW = this.__w * s;
-            this.__h = (reSizeW * this.__h) / this.__w;
-            this.__w = reSizeW;
+        if (this.isScale()) {
+            this.changeOriginalSize();
         }
+        var reSizeW = this.__w * s;
+        this.__h = (reSizeW * this.__h) / this.__w;
+        this.__w = reSizeW;
         return this;
     }
 
@@ -84,37 +82,15 @@ class ImageView extends AbsView {
         this.__scale = 1.0;
     }
 
-    setImageSrc(src) {
-        this.__loadComplete = false;
-        this.__src = src;
-        this.__image = loadImage(src);
-
-        let thisO = this;
-        var img = new Image();
-        img.src = src;
-        img.onload = function () {
-            thisO.__loadComplete = true;
-
-            var reSizeW = this.width * thisO.__scale;
-            thisO.__h = (reSizeW * this.height) / this.width;
-            thisO.__w = reSizeW;
-            thisO.__originW = this.width;
-            thisO.__originH = this.height;
-        }
-        return this;
-    }
-
     setMaskSrc(maskSrc) {
+        var resource = TopicManager.ready().read(RESOURCE.DATA)
         this.__maskSrc = maskSrc;
-        this.__mask = loadImage(maskSrc);
+        this.__mask = resource.get(maskSrc).getData();
         this.__image.mask(this.__mask);
         return this;
     }
 
     draw() {
-        if (this.__loadComplete) {
-          //  tint(255, 255);
-            image(this.__image, this.__pos.x, this.__pos.y, this.__w, this.__h);
-        }
+        image(this.__image, this.__pos.x, this.__pos.y, this.__w, this.__h);
     }
 }
