@@ -24,6 +24,8 @@ class ResourceLoader {
         for (var [path, type] of this.__typeMap.entries()) {
             if(type == ResourceType.Image) {
                 this.__dataMap.set(path, new ImageData(path));
+            } else if(type == ResourceType.Font) {
+                this.__dataMap.set(path, new FontData(path));
             }
             this.__listener(this.__typeMap.size, this.__dataMap.size);
         }
