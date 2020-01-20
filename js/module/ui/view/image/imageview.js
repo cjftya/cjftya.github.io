@@ -45,6 +45,7 @@ class ImageView extends AbsView {
             this.__h = (rw * this.__h) / this.__w;
             this.__w = rw;
         }
+        return this;
     }
 
     setHeight(rh) {
@@ -55,6 +56,7 @@ class ImageView extends AbsView {
             this.__w = (rh * this.__w) / this.__h;
             this.__h = rh;
         }
+        return this;
     }
 
     setScale(s) {

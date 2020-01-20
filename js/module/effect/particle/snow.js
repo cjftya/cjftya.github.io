@@ -13,10 +13,12 @@ class Snow extends AbsParticle {
         this.__particles = [];
         this.__offsets = [];
 
+        this.__winSize = TopicManager.ready().read(DISPLAY_INFO.WINDOW_SIZE);
+
         var p;
         for (var i = 0; i < amount; i++) {
             p = new ParticleCircle();
-            this.setupParticle(p);
+            this.setupParticle(p, true);
 
             this.__particles.push(p);
             this.__offsets.push(MathUtil.randInt(1, 50) * 0.001);
@@ -40,9 +42,9 @@ class Snow extends AbsParticle {
         return this;
     }
 
-    setupParticle(p) {
-        p.pos.x = MathUtil.randInt(50, windowWidth - 50);
-        p.pos.y = MathUtil.randInt(100, windowHeight * 2) * -1;
+    setupParticle(p, firstLoad) {
+        p.pos.x = firstLoad ? MathUtil.randInt(0, this.__winSize[0] + 200) - 100 : MathUtil.randInt(50, this.__winSize[0] - 50);
+        p.pos.y = firstLoad ? MathUtil.randInt(0, this.__winSize[1] + 500) - 500 : MathUtil.randInt(100, this.__winSize[1]) * -1;
         p.setRadius(MathUtil.randInt(3, 10));
 
         if (this.__windEnergy.x == 0) {
@@ -71,7 +73,7 @@ class Snow extends AbsParticle {
     stop() {
         this.__active = false;
     }
-
+    
     update(delta) {
         var p, offset;
         for (var i = 0; i < this.__particles.length; i++) {
@@ -81,12 +83,12 @@ class Snow extends AbsParticle {
             p.pos.x += p.vel.x + offset;
             p.pos.y += p.vel.y;
 
-            if (p.pos.y > windowHeight*2 + 60) {
-                this.setupParticle(p);
+            if (p.pos.y > this.__winSize[1] + 60) {
+                this.setupParticle(p, false);
             }
             if (p.pos.x < -60) {
-                p.pos.x = windowWidth + 30;
-            } else if (p.pos.x > windowWidth + 60) {
+                p.pos.x = this.__winSize[0] + 30;
+            } else if (p.pos.x > this.__winSize[0] + 60) {
                 p.pos.x = -30;
             }
         }
