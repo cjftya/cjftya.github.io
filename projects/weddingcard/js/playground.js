@@ -78,8 +78,8 @@ function mouseMoved() {
 }
 
 function windowResized() {
-    TopicManager.ready().write(DISPLAY_INFO.WINDOW_SIZE, [windowWidth, windowHeight * 2]);
-    resizeCanvas(windowWidth, windowHeight);
+    TopicManager.ready().write(DISPLAY_INFO.WINDOW_SIZE, [windowWidth, windowHeight * 3]);
+    resizeCanvas(windowWidth, windowHeight * 3);
 }
 
 function initialize() {
