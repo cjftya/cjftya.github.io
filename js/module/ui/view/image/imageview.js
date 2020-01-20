@@ -15,13 +15,26 @@ class ImageView extends AbsView {
         this.__h = this.__image.height;
         this.__scale = 1.0;
 
+        this.__cw = 0;
+        this.__ch = 0;
+
         this.__originW = this.__w;
         this.__originH = this.__h;
 
         this.__listener = null;
 
+        this.__cropMode = false;
+
         //width resize = (height resize * original width size) / original height size
         //height resize = (width resize * original height size) / original width size
+    }
+
+    getWidth() {
+        return this.__w;
+    }
+
+    getHeight() {
+        return this.__h;
     }
 
     setListener(listener) {
@@ -59,6 +72,17 @@ class ImageView extends AbsView {
         return this;
     }
 
+    setCropMode(v) {
+        this.__cropMode = v;
+        return this;
+    }
+
+    setCropSize(w, h) {
+        this.__cw = w;
+        this.__ch = h;
+        return this;
+    }
+
     setScale(s) {
         if (this.__scale == s) {
             return;
@@ -93,6 +117,11 @@ class ImageView extends AbsView {
     }
 
     draw() {
-        image(this.__image, this.__pos.x, this.__pos.y, this.__w, this.__h);
+        if (this.__cropMode) {
+            image(this.__image, this.__pos.x, this.__pos.y, this.__cw, this.__ch,
+                160, 200, this.__cw, this.__ch);
+        } else {
+            image(this.__image, this.__pos.x, this.__pos.y, this.__w, this.__h);
+        }
     }
 }
