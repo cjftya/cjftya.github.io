@@ -15,6 +15,8 @@ class ImageView extends AbsView {
         this.__h = this.__image.height;
         this.__scale = 1.0;
 
+        this.__cx = 0;
+        this.__cy = 0;
         this.__cw = 0;
         this.__ch = 0;
 
@@ -88,6 +90,12 @@ class ImageView extends AbsView {
         return this;
     }
 
+    setCropSrcPos(cx, cy) {
+        this.__cx = cx;
+        this.__cy = cy;
+        return this;
+    }
+
     setScale(s) {
         if (this.__scale == s) {
             return;
@@ -124,7 +132,7 @@ class ImageView extends AbsView {
     draw() {
         if (this.__cropMode) {
             image(this.__image, this.__pos.x, this.__pos.y, this.__cw, this.__ch,
-                160, 200, this.__cw, this.__ch);
+                this.__cx, this.__cy, this.__cw, this.__ch);
         } else {
             image(this.__image, this.__pos.x, this.__pos.y, this.__w, this.__h);
         }
