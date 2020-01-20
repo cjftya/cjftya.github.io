@@ -11,6 +11,9 @@ var mainImageView;
 var bendlogogImageView;
 
 var oldY;
+var dragPos;
+var dragVel;
+var deltaVel;
 
 function preload() {
     TopicManager.ready().write(RESOURCE.DATA, new ResourceLoader()
@@ -29,6 +32,8 @@ function setup() {
     this.initialize();
 
     oldY = 0;
+    dragPos = 0;
+    dragVel = 0;
 
     console.log("wedding card");
 }
@@ -43,6 +48,8 @@ function draw() {
     for (var b of bubleArr) {
         ellipse(b.x, b.y, b.r, b.r);
     }
+
+    this.updateWeddingContents();
 
     // wedding contents
     testText.draw();
@@ -59,6 +66,19 @@ function draw() {
     backgroundEffect.draw();
 
     this.drawFpsCount();
+}
+
+function updateWeddingContents() {
+    deltaVel = (dragPos + dragVel) - dragPos; 
+    dragPos += dragVel;
+    dragVel *= 0.9;
+    testText.addPos(0, deltaVel);
+    mainImageView.addPos(0, deltaVel);
+    testText2.addPos(0, deltaVel);
+    testText3.addPos(0, deltaVel);
+    testText4.addPos(0, deltaVel);
+    testText5.addPos(0, deltaVel);
+    bendlogogImageView.addPos(0, deltaVel);
 }
 
 function drawFpsCount() {
@@ -78,15 +98,15 @@ function mouseReleased() {
 
 function mouseDragged() {
     var vx = mouseY - oldY;
+    dragVel += vx * 0.1;
 
-    console.log(vx);
-    testText.addPos(0, vx);
-    mainImageView.addPos(0, vx);
-    testText2.addPos(0, vx);
-    testText3.addPos(0, vx);
-    testText4.addPos(0, vx);
-    testText5.addPos(0, vx);
-    bendlogogImageView.addPos(0, vx);
+    // testText.addPos(0, vx);
+    // mainImageView.addPos(0, vx);
+    // testText2.addPos(0, vx);
+    // testText3.addPos(0, vx);
+    // testText4.addPos(0, vx);
+    // testText5.addPos(0, vx);
+    // bendlogogImageView.addPos(0, vx);
 
     oldY = mouseY;
 }
