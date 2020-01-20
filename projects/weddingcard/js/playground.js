@@ -22,6 +22,7 @@ function preload() {
         .add("https://cjftya.github.io/assets/logo2.JPG", ResourceType.Image)
         .add("https://cjftya.github.io/assets/main.jpg", ResourceType.Image)
         .add("https://cjftya.github.io/assets/bendlogo.jpg", ResourceType.Image)
+        .add("https://cjftya.github.io/assets/mask1.png", ResourceType.Image)
         .add("https://cjftya.github.io/assets/godoMaum.ttf", ResourceType.Font)
         .setListener(this.onLoadedResource)
         .load());
@@ -110,8 +111,7 @@ function mouseDragged() {
     var absVx = vx < 0 ? -vx : vx;
     if(dragPos < absVx) {
         dragPos = absVx;
-        dragVel = vx;
-        console.log(dragVel);
+        dragVel = vx * 0.8;
     }
 
     testText.addPos(0, vx);
@@ -140,7 +140,7 @@ function initialize() {
     clicked = false;
 
     var resource = TopicManager.ready().read(RESOURCE.DATA);
-    textFont(resource.get("https://cjftya.github.io/assets/godoMaum.ttf").getData());
+//    textFont(resource.get("https://cjftya.github.io/assets/godoMaum.ttf").getData());
 
     backgroundEffect = EffectFactory.createParticle(Particle.Snow);
 
@@ -169,8 +169,8 @@ function initializeWeddingContents() {
         .setPos(0, 80);
 
     mainImageView = new ImageView("https://cjftya.github.io/assets/main.jpg")
-        .setPos(70, 130)
-        .setWidth(winSize[0] - 140);
+        .setPos(45, 130)
+        .setWidth(winSize[0] - 90);
 
     testText2 = new TextView("임현철 ღ 진서영")
         .setAlign(CENTER, null)
