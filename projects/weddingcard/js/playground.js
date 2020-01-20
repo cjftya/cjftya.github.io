@@ -10,6 +10,8 @@ var testText5;
 var mainImageView;
 var bendlogogImageView;
 
+var oldY;
+
 function preload() {
     TopicManager.ready().write(RESOURCE.DATA, new ResourceLoader()
         .add("https://cjftya.github.io/assets/logo2.JPG", ResourceType.Image)
@@ -21,10 +23,12 @@ function preload() {
 }
 
 function setup() {
-    createCanvas(windowWidth, windowHeight * 3);
-    TopicManager.ready().write(DISPLAY_INFO.WINDOW_SIZE, [windowWidth, windowHeight * 3]);
+    createCanvas(windowWidth, windowHeight);
+    TopicManager.ready().write(DISPLAY_INFO.WINDOW_SIZE, [windowWidth, windowHeight]);
 
     this.initialize();
+
+    oldY = 0;
 
     console.log("wedding card");
 }
@@ -66,20 +70,33 @@ function drawFpsCount() {
 }
 
 function mousePressed() {
+    oldY = mouseY;
 }
 
 function mouseReleased() {
 }
 
 function mouseDragged() {
+    var vx = mouseY - oldY;
+
+    console.log(vx);
+    testText.addPos(0, vx);
+    mainImageView.addPos(0, vx);
+    testText2.addPos(0, vx);
+    testText3.addPos(0, vx);
+    testText4.addPos(0, vx);
+    testText5.addPos(0, vx);
+    bendlogogImageView.addPos(0, vx);
+
+    oldY = mouseY;
 }
 
 function mouseMoved() {
 }
 
 function windowResized() {
-    TopicManager.ready().write(DISPLAY_INFO.WINDOW_SIZE, [windowWidth, windowHeight * 3]);
-    resizeCanvas(windowWidth, windowHeight * 3);
+    TopicManager.ready().write(DISPLAY_INFO.WINDOW_SIZE, [windowWidth, windowHeight]);
+    resizeCanvas(windowWidth, windowHeight);
 }
 
 function initialize() {

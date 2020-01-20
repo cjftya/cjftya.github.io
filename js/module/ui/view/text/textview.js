@@ -38,6 +38,11 @@ class TextView extends AbsView {
         return this;
     }
 
+    addPos(x, y) {
+        this.__px += x;
+        this.__py += y;
+    }
+
     setPos(x, y) {
         this.__px = x;
         this.__py = y;

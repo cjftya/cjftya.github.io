@@ -45,6 +45,11 @@ class ImageView extends AbsView {
         return this;
     }
 
+    addPos(x, y) {
+        this.__pos.x += x;
+        this.__pos.y += y;
+    }
+
     setPos(x, y) {
         this.__pos.set(x, y);
         return this;
