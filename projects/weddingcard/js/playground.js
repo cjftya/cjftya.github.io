@@ -15,6 +15,8 @@ var dragPos;
 var dragVel;
 var deltaVel;
 
+var clicked;
+
 function preload() {
     TopicManager.ready().write(RESOURCE.DATA, new ResourceLoader()
         .add("https://cjftya.github.io/assets/logo2.JPG", ResourceType.Image)
@@ -69,16 +71,20 @@ function draw() {
 }
 
 function updateWeddingContents() {
-    deltaVel = (dragPos + dragVel) - dragPos; 
+    if (clicked) {
+        return;
+    }
+
     dragPos += dragVel;
     dragVel *= 0.9;
-    testText.addPos(0, deltaVel);
-    mainImageView.addPos(0, deltaVel);
-    testText2.addPos(0, deltaVel);
-    testText3.addPos(0, deltaVel);
-    testText4.addPos(0, deltaVel);
-    testText5.addPos(0, deltaVel);
-    bendlogogImageView.addPos(0, deltaVel);
+
+    testText.addPos(0, dragVel);
+    mainImageView.addPos(0, dragVel);
+    testText2.addPos(0, dragVel);
+    testText3.addPos(0, dragVel);
+    testText4.addPos(0, dragVel);
+    testText5.addPos(0, dragVel);
+    bendlogogImageView.addPos(0, dragVel);
 }
 
 function drawFpsCount() {
@@ -90,23 +96,25 @@ function drawFpsCount() {
 }
 
 function mousePressed() {
+    clicked = true;
     oldY = mouseY;
 }
 
 function mouseReleased() {
+    clicked = false;
 }
 
 function mouseDragged() {
     var vx = mouseY - oldY;
-    dragVel += vx * 0.1;
+    dragVel = vx;
 
-    // testText.addPos(0, vx);
-    // mainImageView.addPos(0, vx);
-    // testText2.addPos(0, vx);
-    // testText3.addPos(0, vx);
-    // testText4.addPos(0, vx);
-    // testText5.addPos(0, vx);
-    // bendlogogImageView.addPos(0, vx);
+    testText.addPos(0, vx);
+    mainImageView.addPos(0, vx);
+    testText2.addPos(0, vx);
+    testText3.addPos(0, vx);
+    testText4.addPos(0, vx);
+    testText5.addPos(0, vx);
+    bendlogogImageView.addPos(0, vx);
 
     oldY = mouseY;
 }
@@ -123,9 +131,11 @@ function initialize() {
     var isMobile = /Android|webOS|iPhone|iPad|iPod|Opera Mini/i.test(navigator.userAgent);
     TopicManager.ready().write(DEVICE_INFO.IS_MOBILE, isMobile);
 
+    clicked = false;
+
     var resource = TopicManager.ready().read(RESOURCE.DATA);
     console.log(resource);
-   // textFont(resource.get("https://cjftya.github.io/assets/Goyang.ttf").getData());
+    // textFont(resource.get("https://cjftya.github.io/assets/Goyang.ttf").getData());
 
     backgroundEffect = EffectFactory.createParticle(Particle.Snow);
 
