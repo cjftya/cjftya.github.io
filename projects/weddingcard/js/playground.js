@@ -134,7 +134,6 @@ function initialize() {
     clicked = false;
 
     var resource = TopicManager.ready().read(RESOURCE.DATA);
-    console.log(resource);
     // textFont(resource.get("https://cjftya.github.io/assets/Goyang.ttf").getData());
 
     backgroundEffect = EffectFactory.createParticle(Particle.Snow);
@@ -195,6 +194,7 @@ function initializeWeddingContents() {
         .setPos(0, 1400)
         .setWidth(winSize[0])
         .setCropMode(true)
+        .setCropSrcPos(winSize[0] / 4, 200)
         .setCropSize(winSize[0], 100);
 }
 
