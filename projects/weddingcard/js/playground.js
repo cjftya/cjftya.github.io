@@ -88,7 +88,7 @@ function initialize() {
 
     var resource = TopicManager.ready().read(RESOURCE.DATA);
     console.log(resource);
-    textFont(resource.get("https://cjftya.github.io/assets/Goyang.ttf").getData());
+   // textFont(resource.get("https://cjftya.github.io/assets/Goyang.ttf").getData());
 
     backgroundEffect = EffectFactory.createParticle(Particle.Snow);
 
