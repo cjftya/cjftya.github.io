@@ -9,7 +9,7 @@ var EffectFactory = (function () {
                 console.log("snow amount : " + amount);
                 switch (type) {
                     case Particle.Snow:
-                        var windX = (MathUtil.randInt(2, 3) * 0.2) * (MathUtil.randInt(1, 20) <= 10 ? -1 : 1);
+                        var windX = (MathUtil.randInt(2, 3) * 0.3) * (MathUtil.randInt(1, 20) <= 10 ? -1 : 1);
                         return new Snow(winSize[0], winSize[1], amount * 2)
                             .setWind(windX, 0);
                     default:
