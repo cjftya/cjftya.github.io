@@ -72,10 +72,10 @@ function draw() {
 
 function updateWeddingContents() {
     if (clicked) {
-    //    return;
+   //     return;
     }
 
-    dragPos += dragVel;
+    // dragPos += dragVel;
     dragVel *= 0.9;
 
     testText.addPos(0, dragVel);
@@ -102,11 +102,17 @@ function mousePressed() {
 
 function mouseReleased() {
     clicked = false;
+    dragPos = 0;
 }
 
 function mouseDragged() {
     var vx = mouseY - oldY;
-    dragVel += vx * 0.1;
+    var absVx = vx < 0 ? -vx : vx;
+    if(dragPos < absVx) {
+        dragPos = absVx;
+        dragVel = vx;
+        console.log(dragVel);
+    }
 
     testText.addPos(0, vx);
     mainImageView.addPos(0, vx);
