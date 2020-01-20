@@ -22,7 +22,7 @@ function preload() {
         .add("https://cjftya.github.io/assets/logo2.JPG", ResourceType.Image)
         .add("https://cjftya.github.io/assets/main.jpg", ResourceType.Image)
         .add("https://cjftya.github.io/assets/bendlogo.jpg", ResourceType.Image)
-        .add("https://cjftya.github.io/assets/Goyang.ttf", ResourceType.Font)
+        .add("https://cjftya.github.io/assets/godoMaum.ttf", ResourceType.Font)
         .setListener(this.onLoadedResource)
         .load());
 }
@@ -140,7 +140,7 @@ function initialize() {
     clicked = false;
 
     var resource = TopicManager.ready().read(RESOURCE.DATA);
-    // textFont(resource.get("https://cjftya.github.io/assets/Goyang.ttf").getData());
+    textFont(resource.get("https://cjftya.github.io/assets/godoMaum.ttf").getData());
 
     backgroundEffect = EffectFactory.createParticle(Particle.Snow);
 
