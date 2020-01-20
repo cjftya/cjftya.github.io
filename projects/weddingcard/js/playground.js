@@ -15,7 +15,7 @@ function preload() {
         .add("https://cjftya.github.io/assets/logo2.JPG", ResourceType.Image)
         .add("https://cjftya.github.io/assets/main.jpg", ResourceType.Image)
         .add("https://cjftya.github.io/assets/bendlogo.jpg", ResourceType.Image)
-        .add("https://cjftya.github.io/assets/ylee.ttf", ResourceType.Font)
+        .add("https://cjftya.github.io/assets/Goyang.ttf", ResourceType.Font)
         .setListener(this.onLoadedResource)
         .load());
 }
@@ -87,7 +87,8 @@ function initialize() {
     TopicManager.ready().write(DEVICE_INFO.IS_MOBILE, isMobile);
 
     var resource = TopicManager.ready().read(RESOURCE.DATA);
-    textFont(resource.get("https://cjftya.github.io/assets/ylee.ttf").getData());
+    console.log(resource);
+    textFont(resource.get("https://cjftya.github.io/assets/Goyang.ttf").getData());
 
     backgroundEffect = EffectFactory.createParticle(Particle.Snow);
 
