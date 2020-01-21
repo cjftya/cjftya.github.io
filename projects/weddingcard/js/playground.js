@@ -13,6 +13,9 @@ var testText6;
 var mainImageView;
 var bendlogogImageView;
 var imageViewer;
+var slideShow;
+
+var spray;
 
 var old;
 var dragVel, dragMax;
@@ -24,7 +27,12 @@ function preload() {
         .add("https://cjftya.github.io/assets/logo2.JPG", ResourceType.Image)
         .add("https://cjftya.github.io/assets/main.jpg", ResourceType.Image)
         .add("https://cjftya.github.io/assets/bendlogo.jpg", ResourceType.Image)
-        .add("https://cjftya.github.io/assets/mask1.png", ResourceType.Image)
+        .add("https://cjftya.github.io/assets/mask.png", ResourceType.Image)
+        .add("https://cjftya.github.io/assets/p1.png", ResourceType.Image)
+        .add("https://cjftya.github.io/assets/p2.png", ResourceType.Image)
+        .add("https://cjftya.github.io/assets/p3.png", ResourceType.Image)
+        .add("https://cjftya.github.io/assets/p4.png", ResourceType.Image)
+        .add("https://cjftya.github.io/assets/p5.png", ResourceType.Image)
         .setListener(this.onLoadedResource)
         .load());
 }
@@ -66,10 +74,15 @@ function draw() {
     testText6.draw();
     bendlogogImageView.draw();
 
+    spray.update(TimeDeltaUtil.getInstance().getDelta());
+    spray.draw();
+
+    slideShow.draw();
+
     imageViewer.draw();
 
-    lineTrace.update(TimeDeltaUtil.getInstance().getDelta());
-    lineTrace.draw();
+    // lineTrace.update(TimeDeltaUtil.getInstance().getDelta());
+    // lineTrace.draw();
 
     // background effect
     backgroundEffect.update(TimeDeltaUtil.getInstance().getDelta());
@@ -94,6 +107,8 @@ function updateWeddingContents(vy) {
     testText6.addPos(0, vy);
     bendlogogImageView.addPos(0, vy);
     lineTrace.addPos(0, vy);
+    spray.addPos(0, vy);
+    slideShow.addPos(0, vy);
 }
 
 function drawFpsCount() {
@@ -199,6 +214,11 @@ function initializeWeddingContents() {
         .setTextStyle(BOLD)
         .setPos(0, 130 + mainImageView.getHeight() + 40);
 
+    spray = new Spray()
+        .setPos(winSize[0] / 2, 130 + mainImageView.getHeight() + 40)
+        .setLife(100)
+        .setFreq(0.08);
+
     testText3 = new TextView("2020. 04. 11. SAT  2:00 PM")
         .setAlign(CENTER, null)
         .setColor(120, 100, 100)
@@ -231,6 +251,14 @@ function initializeWeddingContents() {
         .setSize(22)
         .setTextStyle(BOLD)
         .setPos(0, 1550);
+
+    slideShow = new SlideShow()
+        .addImage("https://cjftya.github.io/assets/p1.png")
+        .addImage("https://cjftya.github.io/assets/p2.png")
+        .addImage("https://cjftya.github.io/assets/p3.png")
+        .addImage("https://cjftya.github.io/assets/p4.png")
+        .addImage("https://cjftya.github.io/assets/p5.png")
+        .set(winSize[0] - 200)
 }
 
 function onLoadedResource(total, count) {

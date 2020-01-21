@@ -51,6 +51,7 @@ class ParticleCircle {
         this.__colorThird.setRed(r);
         this.__colorThird.setGreen(g);
         this.__colorThird.setBlue(b);
+        return this;
     }
 
     draw() {
