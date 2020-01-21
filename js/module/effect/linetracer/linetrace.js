@@ -10,6 +10,12 @@ class LineTrace {
         this.__visibleLine = true;
         this.__start = false;
         this.__energy = 1;
+
+        this.__isInverse = false;
+    }
+
+    inverse() {
+        this.__isInverse = true;
     }
 
     addPoint(x, y) {
@@ -27,8 +33,9 @@ class LineTrace {
     }
 
     start() {
-        this.setupVelocity(0);
-        this.__pos.set(this.__points[0].x, this.__points[0].y);
+        this.__indexCount = MathUtil.randInt(0, this.__points.length - 1);
+        this.setupVelocity(this.__indexCount);
+        this.__pos.set(this.__points[this.__indexCount].x, this.__points[this.__indexCount].y);
         this.__start = true;
     }
 
@@ -40,8 +47,12 @@ class LineTrace {
         this.__vel.y = this.__energy * (dy / d);
     }
 
-    getTracePos() {
-        return this.__pos;
+    getTraceX() {
+        return this.__pos.x + this.__posOffset.x;
+    }
+
+    getTraceY() {
+        return this.__pos.y + this.__posOffset.y;
     }
 
     update(delta) {
@@ -53,15 +64,26 @@ class LineTrace {
         var dy = this.__points[this.__indexCount].y - this.__pos.y;
         var d = dx * dx + dy * dy;
         if (d < 100) {
-            this.__indexCount++;
-            if (this.__indexCount >= this.__points.length) {
-                this.__indexCount = 0;
-            }
+            this.selectNextPoint();
             this.setupVelocity(this.__indexCount);
         }
 
         this.__pos.x += this.__vel.x;
         this.__pos.y += this.__vel.y;
+    }
+
+    selectNextPoint() {
+        if (this.__isInverse) {
+            this.__indexCount--;
+            if (this.__indexCount < 0) {
+                this.__indexCount = this.__points.length - 1;
+            }
+        } else {
+            this.__indexCount++;
+            if (this.__indexCount >= this.__points.length) {
+                this.__indexCount = 0;
+            }
+        }
     }
 
     draw() {

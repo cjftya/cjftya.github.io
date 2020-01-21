@@ -9,6 +9,7 @@ class ParticleCircle {
         this.__colorThird = color(255, 255, 255);
         this.__colorThird.setAlpha(10);
         this.__life = 0;
+        this.__isBlur = false;
     }
 
     setLife(v) {
@@ -39,6 +40,10 @@ class ParticleCircle {
         this.__color.setAlpha(a);
     }
 
+    setBlur(v) {
+        this.__isBlur = v;
+    }
+
     setColor(r, g, b) {
         this.__color.setRed(r);
         this.__color.setGreen(g);
@@ -55,10 +60,12 @@ class ParticleCircle {
     }
 
     draw() {
-        fill(this.__colorThird);
-        ellipse(this.pos.x, this.pos.y, this.__r*5, this.__r*5);
-        fill(this.__colorSecond);
-        ellipse(this.pos.x, this.pos.y, this.__r*3, this.__r*3);
+        if (this.__isBlur) {
+            fill(this.__colorThird);
+            ellipse(this.pos.x, this.pos.y, this.__r * 5, this.__r * 5);
+            fill(this.__colorSecond);
+            ellipse(this.pos.x, this.pos.y, this.__r * 3, this.__r * 3);
+        }
         fill(this.__color);
         ellipse(this.pos.x, this.pos.y, this.__r, this.__r);
     }
