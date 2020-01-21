@@ -34,6 +34,10 @@ class SlideShow {
         return this.__pos;
     }
 
+    getHeight() {
+        return this.__h;
+    }
+
     setWidth(w) {
         for (var img of this.__images) {
             this.__h = (w * img.height) / img.width;

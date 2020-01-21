@@ -57,6 +57,10 @@ class ImageView extends AbsView {
         return this;
     }
 
+    getPos() {
+        return this.__pos;
+    }
+
     setWidth(rw) {
         if (this.__w != rw) {
             if (this.isScale()) {

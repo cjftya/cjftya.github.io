@@ -12,8 +12,7 @@ class TextView extends AbsView {
         var winSize = TopicManager.ready().read(DISPLAY_INFO.WINDOW_SIZE);
         this.__w = winSize[0];
         this.__h = winSize[1];
-        this.__px = 0;
-        this.__py = 0;
+        this.__pos = new Vector2d();
     }
 
     setColor(r, g, b) {
@@ -45,14 +44,17 @@ class TextView extends AbsView {
     }
 
     addPos(x, y) {
-        this.__px += x;
-        this.__py += y;
+        this.__pos.x += x;
+        this.__pos.y += y;
     }
 
     setPos(x, y) {
-        this.__px = x;
-        this.__py = y;
+        this.__pos.set(x, y);
         return this;
+    }
+
+    getPos(){
+        return this.__pos;
     }
 
     draw() {
@@ -61,6 +63,6 @@ class TextView extends AbsView {
         noStroke();
         fill(this.__color);
         textAlign(this.__wp, this.__hp);
-        text(this.__text, this.__px, this.__py, this.__w, this.__h);
+        text(this.__text, this.__pos.x, this.__pos.y, this.__w, this.__h);
     }
 }

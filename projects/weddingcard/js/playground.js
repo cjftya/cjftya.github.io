@@ -11,6 +11,11 @@ var testText3;
 var testText4;
 var testText5;
 var testText6;
+var invitationTextView;
+var invitationTextView2;
+var invitationTextView3;
+var invitationTextView4;
+
 var mainImageView;
 var bendlogogImageView;
 var imageViewer;
@@ -77,6 +82,10 @@ function draw() {
     testText2.draw();
     testText3.draw();
     testText4.draw();
+    invitationTextView.draw();
+    invitationTextView2.draw();
+    invitationTextView3.draw();
+    invitationTextView4.draw();
     testText5.draw();
     testText6.draw();
     bendlogogImageView.draw();
@@ -88,10 +97,10 @@ function draw() {
     slideShow.update(TimeDeltaUtil.getInstance().getDelta());
 
     lineTrace.update(TimeDeltaUtil.getInstance().getDelta());
- //   lineTrace.draw();
+//    lineTrace.draw();
 
     lineTrace2.update(TimeDeltaUtil.getInstance().getDelta());
-  //  lineTrace2.draw();
+//    lineTrace2.draw();
 
     lineTraceSpray.setPos(lineTrace.getTraceX(), lineTrace.getTraceY());
     lineTraceSpray.update(TimeDeltaUtil.getInstance().getDelta());
@@ -122,6 +131,10 @@ function updateWeddingContents(vy) {
     testText2.addPos(0, vy);
     testText3.addPos(0, vy);
     testText4.addPos(0, vy);
+    invitationTextView.addPos(0, vy);
+    invitationTextView2.addPos(0, vy);
+    invitationTextView3.addPos(0, vy);
+    invitationTextView4.addPos(0, vy);
     testText5.addPos(0, vy);
     testText6.addPos(0, vy);
     bendlogogImageView.addPos(0, vy);
@@ -149,7 +162,6 @@ function mousePressed() {
         imageViewer.hide();
         slideShow.resume();
     } else if (slideShow.inBound(mouseX, mouseY)) {
-        // slideShow.next();
         var resource = TopicManager.ready().read(RESOURCE.DATA);
         imageViewer.setImage(resource.get("https://cjftya.github.io/assets/realratio/p1.png").getData());
         imageViewer.show();
@@ -224,7 +236,7 @@ function initializeWeddingContents() {
         .setPos(0, 80);
 
     mainImageView = new ImageView("https://cjftya.github.io/assets/main.jpg")
-        .setPos(45, 130)
+        .setPos(45, testText.getPos().y + 60)
         .setWidth(winSize[0] - 90);
 
     testText2 = new TextView("임현철 ღ 진서영")
@@ -232,10 +244,10 @@ function initializeWeddingContents() {
         .setColor(120, 80, 80)
         .setSize(17)
         .setTextStyle(BOLD)
-        .setPos(0, 130 + mainImageView.getHeight() + 40);
+        .setPos(0, mainImageView.getHeight() + 170);
 
     spray = new Spray(30)
-        .setPos(winSize[0] / 2, 130 + mainImageView.getHeight() + 40)
+        .setPos(winSize[0] / 2, mainImageView.getHeight() + 170)
         .setCreateArea(50, 15)
         .setLife(100)
         .setFreq(0.08)
@@ -245,13 +257,13 @@ function initializeWeddingContents() {
         .setAlign(CENTER, null)
         .setColor(120, 100, 100)
         .setSize(15)
-        .setPos(0, 130 + mainImageView.getHeight() + 140);
+        .setPos(0, testText2.getPos().y + 100);
 
     testText4 = new TextView("더 케이트원타원 A동 LL층 | 아펠가모 웨딩홀")
         .setAlign(CENTER, null)
         .setColor(120, 100, 100)
         .setSize(15)
-        .setPos(0, 130 + mainImageView.getHeight() + 160);
+        .setPos(0, testText3.getPos().y + 30);
 
     testText5 = new TextView("Invitation")
         .setAlign(CENTER, null)
@@ -260,8 +272,32 @@ function initializeWeddingContents() {
         .setTextStyle(BOLD)
         .setPos(0, 130 + mainImageView.getHeight() + 250);
 
+    invitationTextView = new TextView("너무나 사랑스럽고 지켜주고싶은 사람을 만났습니다.")
+        .setAlign(CENTER, null)
+        .setColor(120, 100, 100)
+        .setSize(12)
+        .setPos(0, testText5.getPos().y + 60);
+
+    invitationTextView2 = new TextView("변치않는 마음과 믿음으로 하나가 되어 행복하게 살겠습니다.")
+        .setAlign(CENTER, null)
+        .setColor(120, 100, 100)
+        .setSize(12)
+        .setPos(0, invitationTextView.getPos().y + 30);
+
+    invitationTextView3 = new TextView("믿은과 사랑을 약속하는 귀한 날에 축복의 걸음을 하시어")
+        .setAlign(CENTER, null)
+        .setColor(120, 100, 100)
+        .setSize(12)
+        .setPos(0, invitationTextView2.getPos().y + 30);
+
+    invitationTextView4 = new TextView("지켜봐주신다면 더없는 기쁨으로 담아두겠습니다.")
+        .setAlign(CENTER, null)
+        .setColor(120, 100, 100)
+        .setSize(12)
+        .setPos(0, invitationTextView3.getPos().y + 30);
+
     bendlogogImageView = new ImageView("https://cjftya.github.io/assets/bendlogo.jpg")
-        .setPos(0, 1400)
+        .setPos(0, invitationTextView4.getPos().y + 140)
         .setWidth(winSize[0])
         .setCropMode(true)
         .setCropSrcPos(winSize[0] / 4, 200)
@@ -272,7 +308,7 @@ function initializeWeddingContents() {
         .setColor(120, 80, 80)
         .setSize(22)
         .setTextStyle(BOLD)
-        .setPos(0, 1570);
+        .setPos(0, bendlogogImageView.getPos().y + 200);
 
     slideShow = new SlideShow()
         .addImage("https://cjftya.github.io/assets/p1.png")
@@ -283,14 +319,14 @@ function initializeWeddingContents() {
         .setMask("https://cjftya.github.io/assets/mask.png")
         .setWidth(winSize[0])
         .setDelay(5)
-        .setPos(0, 1550);
+        .setPos(0, testText6.getPos().y + 60);
 
     lineTrace = new LineTrace();
     var oneSlice = Math.PI * 2 / 30;
     for (var i = 0; i < 30; i++) {
         var xp = Math.cos(oneSlice * i) * (winSize[0] / 3.0);
         var yp = Math.sin(oneSlice * i) * (winSize[0] / 3.3);
-        lineTrace.addPoint(xp + winSize[0] / 2, yp + 1790);
+        lineTrace.addPoint(xp + winSize[0] / 2, yp + slideShow.getPos().y + slideShow.getHeight() / 2);
     }
     lineTrace.inverse();
     lineTrace.start();
@@ -300,7 +336,7 @@ function initializeWeddingContents() {
     for (var i = 0; i < 30; i++) {
         var xp = Math.cos(oneSlice * i) * (winSize[0] / 2.4);
         var yp = Math.sin(oneSlice * i) * (winSize[0] / 3.2);
-        lineTrace2.addPoint(xp + winSize[0] / 2, yp + 1790);
+        lineTrace2.addPoint(xp + winSize[0] / 2, yp + slideShow.getPos().y + slideShow.getHeight() / 2);
     }
     lineTrace2.start();
 
