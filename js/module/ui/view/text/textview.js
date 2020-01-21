@@ -7,6 +7,7 @@ class TextView extends AbsView {
         this.__color = color(0, 0, 0);
         this.__wp = LEFT;
         this.__hp = TOP;
+        this.__textStyle = NORMAL; 
 
         var winSize = TopicManager.ready().read(DISPLAY_INFO.WINDOW_SIZE);
         this.__w = winSize[0];
@@ -38,6 +39,11 @@ class TextView extends AbsView {
         return this;
     }
 
+    setTextStyle(s) {
+        this.__textStyle = s;
+        return this;
+    }
+
     addPos(x, y) {
         this.__px += x;
         this.__py += y;
@@ -51,6 +57,7 @@ class TextView extends AbsView {
 
     draw() {
         textSize(this.__textSize);
+        textStyle(this.__textStyle);
         noStroke();
         fill(this.__color);
         textAlign(this.__wp, this.__hp);
