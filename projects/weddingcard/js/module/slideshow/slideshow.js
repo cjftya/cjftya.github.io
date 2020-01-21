@@ -1,6 +1,7 @@
 class SlideShow {
     constructor() {
         this.__images = [];
+        this.__paths = [];
         this.__indexCount = 0;
 
         this.__pos = new Vector2d();
@@ -19,9 +20,14 @@ class SlideShow {
         this.__pos.y += y;
     }
 
+    setPos(x, y) {
+        this.__pos.set(x, y);
+        return this;
+    }
+
     setWidth(w) {
         for (var img of this.__images) {
-            this.__h = (ws * img.height) / img.width;
+            this.__h = (w * img.height) / img.width;
             this.__w = w;
             this.__scale = this.__w / img.width;
         }
@@ -29,14 +35,16 @@ class SlideShow {
     }
 
     addImage(img) {
+        this.__paths.push(img);
         var resource = TopicManager.ready().read(RESOURCE.DATA);
         this.__images.push(resource.get(img).getData());
         return this;
     }
 
     setMask(mask) {
+        var resource = TopicManager.ready().read(RESOURCE.DATA);
         for (var img of this.__images) {
-            img.mask(mask);
+            img.mask(resource.get(mask).getData());
         }
         return this;
     }
@@ -48,11 +56,28 @@ class SlideShow {
         }
     }
 
+    getCurrentImage() {
+        return this.__paths[this.__indexCount];
+    }
+
+    inBound(x, y) {
+        var dx = (this.__pos.x + this.__w / 2) - x;
+        var dy = (this.__pos.y + this.__h / 2) - y;
+        var d = dx * dx + dy * dy;
+        if (d < (this.__w / 3) * (this.__w / 3)) {
+            return true;
+        }
+        return false;
+    }
+
     update(delta) {
 
     }
 
     draw() {
+        imageMode(CORNER);
         image(this.__images[this.__indexCount], this.__pos.x, this.__pos.y, this.__w, this.__h);
+        // fill(200,150);
+        // ellipse(this.__pos.x + this.__w/2, this.__pos.y + this.__h/2, 200, 200);
     }
 }

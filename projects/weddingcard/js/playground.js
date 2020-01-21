@@ -33,6 +33,11 @@ function preload() {
         .add("https://cjftya.github.io/assets/p3.png", ResourceType.Image)
         .add("https://cjftya.github.io/assets/p4.png", ResourceType.Image)
         .add("https://cjftya.github.io/assets/p5.png", ResourceType.Image)
+        .add("https://cjftya.github.io/assets/realratio/p1.png", ResourceType.Image)
+        .add("https://cjftya.github.io/assets/realratio/p2.png", ResourceType.Image)
+        .add("https://cjftya.github.io/assets/realratio/p3.png", ResourceType.Image)
+        .add("https://cjftya.github.io/assets/realratio/p4.png", ResourceType.Image)
+        .add("https://cjftya.github.io/assets/realratio/p5.png", ResourceType.Image)
         .setListener(this.onLoadedResource)
         .load());
 }
@@ -126,6 +131,12 @@ function mousePressed() {
     if (imageViewer.isShowing() && !imageViewer.inBound(mouseX, mouseY)) {
         imageViewer.hide();
     }
+    if (slideShow.inBound(mouseX, mouseY)) {
+        // slideShow.next();
+        var resource = TopicManager.ready().read(RESOURCE.DATA);
+        imageViewer.setImage(resource.get(slideShow.getCurrentImage()).getData());
+        imageViewer.show();
+    }
 }
 
 function mouseReleased() {
@@ -133,7 +144,7 @@ function mouseReleased() {
 }
 
 function mouseDragged() {
-    var vx = mouseY - old.x;
+    var vx = mouseX - old.x;
     var vy = mouseY - old.y;
     if (imageViewer.isShowing()) {
         imageViewer.addPos(vx, vy);
@@ -250,7 +261,7 @@ function initializeWeddingContents() {
         .setColor(120, 80, 80)
         .setSize(22)
         .setTextStyle(BOLD)
-        .setPos(0, 1550);
+        .setPos(0, 1570);
 
     slideShow = new SlideShow()
         .addImage("https://cjftya.github.io/assets/p1.png")
@@ -258,7 +269,9 @@ function initializeWeddingContents() {
         .addImage("https://cjftya.github.io/assets/p3.png")
         .addImage("https://cjftya.github.io/assets/p4.png")
         .addImage("https://cjftya.github.io/assets/p5.png")
-        .set(winSize[0] - 200)
+        .setMask("https://cjftya.github.io/assets/mask.png")
+        .setWidth(winSize[0])
+        .setPos(0, 1550);
 }
 
 function onLoadedResource(total, count) {
