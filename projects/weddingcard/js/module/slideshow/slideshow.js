@@ -13,6 +13,11 @@ class SlideShow {
 
         this.__w = 0;
         this.__h = 0;
+
+        this.__second = 0;
+        this.__delay = 0;
+
+        this.__active = true;
     }
 
     addPos(x, y) {
@@ -23,6 +28,10 @@ class SlideShow {
     setPos(x, y) {
         this.__pos.set(x, y);
         return this;
+    }
+
+    getPos() {
+        return this.__pos;
     }
 
     setWidth(w) {
@@ -49,6 +58,11 @@ class SlideShow {
         return this;
     }
 
+    setDelay(s) {
+        this.__delay = s;
+        return this;
+    }
+
     next() {
         this.__indexCount++;
         if (this.__indexCount >= this.__images.length) {
@@ -70,8 +84,24 @@ class SlideShow {
         return false;
     }
 
-    update(delta) {
+    pause() {
+        this.__active = false;
+    }
 
+    resume() {
+        this.__active = true;
+    }
+
+    update(delta) {
+        if(!this.__active) {
+            return;
+        }
+
+        this.__second += delta;
+        if (this.__second >= this.__delay) {
+            this.next();
+            this.__second = 0;
+        }
     }
 
     draw() {

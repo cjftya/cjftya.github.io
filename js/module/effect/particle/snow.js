@@ -20,6 +20,7 @@ class Snow extends AbsParticle {
             p = new ParticleCircle();
             this.setupParticle(p, true);
 
+            p.setBlur(true);
             this.__particles.push(p);
             this.__offsets.push(MathUtil.randInt(1, 50) * 0.001);
         }

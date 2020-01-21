@@ -52,13 +52,13 @@ class ImageViewer extends AbsViewer {
             rect(0, 0, this.__ws, this.__hs);
 
             imageMode(CENTER);
-            image(this.__image, this.__pos.x+this.__posOffset.x, this.__pos.y+this.__posOffset.y, this.__w, this.__h);
+            image(this.__image, this.__pos.x + this.__posOffset.x, this.__pos.y + this.__posOffset.y, this.__w, this.__h);
         }
     }
 
     inBound(x, y) {
-        var ax = this.__pos.x+this.__posOffset.x;
-        var ay = this.__pos.y+this.__posOffset.y;
+        var ax = this.__pos.x + this.__posOffset.x;
+        var ay = this.__pos.y + this.__posOffset.y;
         var px1 = ax - (this.__w / 2);
         var px2 = ax + (this.__w / 2);
         var py1 = ay - (this.__h / 2);

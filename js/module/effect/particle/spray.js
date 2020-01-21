@@ -1,5 +1,5 @@
 class Spray extends AbsParticle {
-    constructor() {
+    constructor(amount) {
         super(Particle.Spray);
 
         this.__center = new Vector2d();
@@ -8,10 +8,13 @@ class Spray extends AbsParticle {
         this.__freq = 0;
         this.__freqCount = 0;
         this.__sprayCount = 0;
+        
+        this.__aw = 0;
+        this.__ah = 0;
 
         this.__posOffset = new Vector2d();
 
-        this.__amount = 30;
+        this.__amount = amount;
         this.__particles = [];
         for (var i = 0; i < this.__amount; i++) {
             this.__particles.push(new ParticleCircle().setColor(200, 80, 80));
@@ -19,8 +22,8 @@ class Spray extends AbsParticle {
     }
 
     setupPaticle(p) {
-        p.pos.x = this.__center.x + Math.cos(MathUtil.angle2rad(MathUtil.randInt(0, 360))) * 50;
-        p.pos.y = this.__center.y + Math.sin(MathUtil.angle2rad(MathUtil.randInt(0, 360))) * 10;
+        p.pos.x = this.__center.x + this.__posOffset.x + Math.cos(MathUtil.angle2rad(MathUtil.randInt(0, 360))) * this.__aw;
+        p.pos.y = this.__center.y + this.__posOffset.y + Math.sin(MathUtil.angle2rad(MathUtil.randInt(0, 360))) * this.__ah;
         p.setRadius(MathUtil.randInt(1, 3));
 
         p.vel.x = Math.cos(MathUtil.angle2rad(MathUtil.randInt(0, 360))) * (MathUtil.randInt(1, 5) * 0.1);
@@ -49,6 +52,19 @@ class Spray extends AbsParticle {
 
     setLife(v) {
         this.__life = v;
+        return this;
+    }
+
+    setCreateArea(aw, ah) {
+        this.__aw = aw;
+        this.__ah = ah;
+        return this;
+    }
+
+    setBlur(v) {
+        for (var p of this.__particles) {
+            p.setBlur(v);
+        }
         return this;
     }
 

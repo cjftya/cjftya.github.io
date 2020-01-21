@@ -3,6 +3,7 @@ var bubleColor;
 var bubleArr;
 
 var lineTrace;
+var lineTrace2;
 
 var testText;
 var testText2;
@@ -16,6 +17,8 @@ var imageViewer;
 var slideShow;
 
 var spray;
+var lineTraceSpray;
+var lineTraceSpray2;
 
 var old;
 var dragVel, dragMax;
@@ -24,7 +27,6 @@ var clicked;
 
 function preload() {
     TopicManager.ready().write(RESOURCE.DATA, new ResourceLoader()
-        .add("https://cjftya.github.io/assets/logo2.JPG", ResourceType.Image)
         .add("https://cjftya.github.io/assets/main.jpg", ResourceType.Image)
         .add("https://cjftya.github.io/assets/bendlogo.jpg", ResourceType.Image)
         .add("https://cjftya.github.io/assets/mask.png", ResourceType.Image)
@@ -83,11 +85,23 @@ function draw() {
     spray.draw();
 
     slideShow.draw();
+    slideShow.update(TimeDeltaUtil.getInstance().getDelta());
+
+    lineTrace.update(TimeDeltaUtil.getInstance().getDelta());
+ //   lineTrace.draw();
+
+    lineTrace2.update(TimeDeltaUtil.getInstance().getDelta());
+  //  lineTrace2.draw();
+
+    lineTraceSpray.setPos(lineTrace.getTraceX(), lineTrace.getTraceY());
+    lineTraceSpray.update(TimeDeltaUtil.getInstance().getDelta());
+    lineTraceSpray.draw();
+
+    lineTraceSpray2.setPos(lineTrace2.getTraceX(), lineTrace2.getTraceY());
+    lineTraceSpray2.update(TimeDeltaUtil.getInstance().getDelta());
+    lineTraceSpray2.draw();
 
     imageViewer.draw();
-
-    // lineTrace.update(TimeDeltaUtil.getInstance().getDelta());
-    // lineTrace.draw();
 
     // background effect
     backgroundEffect.update(TimeDeltaUtil.getInstance().getDelta());
@@ -112,8 +126,11 @@ function updateWeddingContents(vy) {
     testText6.addPos(0, vy);
     bendlogogImageView.addPos(0, vy);
     lineTrace.addPos(0, vy);
+    lineTrace2.addPos(0, vy);
     spray.addPos(0, vy);
     slideShow.addPos(0, vy);
+    lineTraceSpray.addPos(0, vy);
+    lineTraceSpray2.addPos(0, vy);
 }
 
 function drawFpsCount() {
@@ -130,12 +147,13 @@ function mousePressed() {
     dragMax = 0;
     if (imageViewer.isShowing() && !imageViewer.inBound(mouseX, mouseY)) {
         imageViewer.hide();
-    }
-    if (slideShow.inBound(mouseX, mouseY)) {
+        slideShow.resume();
+    } else if (slideShow.inBound(mouseX, mouseY)) {
         // slideShow.next();
         var resource = TopicManager.ready().read(RESOURCE.DATA);
-        imageViewer.setImage(resource.get(slideShow.getCurrentImage()).getData());
+        imageViewer.setImage(resource.get("https://cjftya.github.io/assets/realratio/p1.png").getData());
         imageViewer.show();
+        slideShow.pause();
     }
 }
 
@@ -187,15 +205,6 @@ function initialize() {
         bubleArr.push({ x, y, r });
     }
 
-    lineTrace = new LineTrace();
-    var oneSlice = Math.PI * 2 / 20;
-    for (var i = 0; i < 20; i++) {
-        var xp = Math.cos(oneSlice * i) * 100;
-        var yp = Math.sin(oneSlice * i) * 100;
-        lineTrace.addPoint(xp + winSize[0] / 2, yp + 1750);
-    }
-    lineTrace.start();
-
     this.initializeWeddingContents();
 }
 
@@ -225,10 +234,12 @@ function initializeWeddingContents() {
         .setTextStyle(BOLD)
         .setPos(0, 130 + mainImageView.getHeight() + 40);
 
-    spray = new Spray()
+    spray = new Spray(30)
         .setPos(winSize[0] / 2, 130 + mainImageView.getHeight() + 40)
+        .setCreateArea(50, 15)
         .setLife(100)
-        .setFreq(0.08);
+        .setFreq(0.08)
+        .setBlur(true);
 
     testText3 = new TextView("2020. 04. 11. SAT  2:00 PM")
         .setAlign(CENTER, null)
@@ -271,7 +282,41 @@ function initializeWeddingContents() {
         .addImage("https://cjftya.github.io/assets/p5.png")
         .setMask("https://cjftya.github.io/assets/mask.png")
         .setWidth(winSize[0])
+        .setDelay(5)
         .setPos(0, 1550);
+
+    lineTrace = new LineTrace();
+    var oneSlice = Math.PI * 2 / 30;
+    for (var i = 0; i < 30; i++) {
+        var xp = Math.cos(oneSlice * i) * (winSize[0] / 3.0);
+        var yp = Math.sin(oneSlice * i) * (winSize[0] / 3.3);
+        lineTrace.addPoint(xp + winSize[0] / 2, yp + 1790);
+    }
+    lineTrace.inverse();
+    lineTrace.start();
+
+    lineTrace2 = new LineTrace();
+    var oneSlice = Math.PI * 2 / 30;
+    for (var i = 0; i < 30; i++) {
+        var xp = Math.cos(oneSlice * i) * (winSize[0] / 2.4);
+        var yp = Math.sin(oneSlice * i) * (winSize[0] / 3.2);
+        lineTrace2.addPoint(xp + winSize[0] / 2, yp + 1790);
+    }
+    lineTrace2.start();
+
+    lineTraceSpray = new Spray(30)
+        .setPos(1000, 1000)
+        .setCreateArea(10, 10)
+        .setLife(150)
+        .setFreq(0.04)
+        .setBlur(true);
+
+    lineTraceSpray2 = new Spray(30)
+        .setPos(1000, 1000)
+        .setCreateArea(10, 10)
+        .setLife(150)
+        .setFreq(0.04)
+        .setBlur(true);
 }
 
 function onLoadedResource(total, count) {
