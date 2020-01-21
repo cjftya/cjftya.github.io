@@ -2,18 +2,20 @@
 var bubleColor;
 var bubleArr;
 
+var lineTrace;
+
 var testText;
 var testText2;
 var testText3;
 var testText4;
 var testText5;
+var testText6;
 var mainImageView;
 var bendlogogImageView;
+var imageViewer;
 
-var oldY;
-var dragPos;
-var dragVel;
-var deltaVel;
+var old;
+var dragVel, dragMax;
 
 var clicked;
 
@@ -23,7 +25,6 @@ function preload() {
         .add("https://cjftya.github.io/assets/main.jpg", ResourceType.Image)
         .add("https://cjftya.github.io/assets/bendlogo.jpg", ResourceType.Image)
         .add("https://cjftya.github.io/assets/mask1.png", ResourceType.Image)
-        .add("https://cjftya.github.io/assets/godoMaum.ttf", ResourceType.Font)
         .setListener(this.onLoadedResource)
         .load());
 }
@@ -34,9 +35,9 @@ function setup() {
 
     this.initialize();
 
-    oldY = 0;
-    dragPos = 0;
-    dragVel = 0;
+    old = new Vector2d();
+    dragVel = dragMax = 0;
+    guideY = 0;
 
     console.log("wedding card");
 }
@@ -52,7 +53,8 @@ function draw() {
         ellipse(b.x, b.y, b.r, b.r);
     }
 
-    this.updateWeddingContents();
+    dragVel *= 0.9;
+    this.updateWeddingContents(dragVel);
 
     // wedding contents
     testText.draw();
@@ -61,8 +63,13 @@ function draw() {
     testText3.draw();
     testText4.draw();
     testText5.draw();
+    testText6.draw();
     bendlogogImageView.draw();
 
+    imageViewer.draw();
+
+    lineTrace.update(TimeDeltaUtil.getInstance().getDelta());
+    lineTrace.draw();
 
     // background effect
     backgroundEffect.update(TimeDeltaUtil.getInstance().getDelta());
@@ -71,21 +78,22 @@ function draw() {
     this.drawFpsCount();
 }
 
-function updateWeddingContents() {
-    if (clicked) {
-   //     return;
+function updateWeddingContents(vy) {
+    guideY += vy;
+    if (guideY > 0) {
+        vy += (0 - guideY) * 0.05;
+        guideY += (0 - guideY) * 0.05;
     }
 
-    // dragPos += dragVel;
-    dragVel *= 0.9;
-
-    testText.addPos(0, dragVel);
-    mainImageView.addPos(0, dragVel);
-    testText2.addPos(0, dragVel);
-    testText3.addPos(0, dragVel);
-    testText4.addPos(0, dragVel);
-    testText5.addPos(0, dragVel);
-    bendlogogImageView.addPos(0, dragVel);
+    testText.addPos(0, vy);
+    mainImageView.addPos(0, vy);
+    testText2.addPos(0, vy);
+    testText3.addPos(0, vy);
+    testText4.addPos(0, vy);
+    testText5.addPos(0, vy);
+    testText6.addPos(0, vy);
+    bendlogogImageView.addPos(0, vy);
+    lineTrace.addPos(0, vy);
 }
 
 function drawFpsCount() {
@@ -98,31 +106,31 @@ function drawFpsCount() {
 
 function mousePressed() {
     clicked = true;
-    oldY = mouseY;
+    old.set(mouseX, mouseY);
+    dragMax = 0;
+    if (imageViewer.isShowing() && !imageViewer.inBound(mouseX, mouseY)) {
+        imageViewer.hide();
+    }
 }
 
 function mouseReleased() {
     clicked = false;
-    dragPos = 0;
 }
 
 function mouseDragged() {
-    var vx = mouseY - oldY;
-    var absVx = vx < 0 ? -vx : vx;
-    if(dragPos < absVx) {
-        dragPos = absVx;
-        dragVel = vx * 0.8;
+    var vx = mouseY - old.x;
+    var vy = mouseY - old.y;
+    if (imageViewer.isShowing()) {
+        imageViewer.addPos(vx, vy);
+    } else {
+        var absVy = vy < 0 ? -vy : vy;
+        if (dragMax < absVy) {
+            dragMax = absVy;
+            dragVel = vy * 0.6;
+        }
+        this.updateWeddingContents(vy);
     }
-
-    testText.addPos(0, vx);
-    mainImageView.addPos(0, vx);
-    testText2.addPos(0, vx);
-    testText3.addPos(0, vx);
-    testText4.addPos(0, vx);
-    testText5.addPos(0, vx);
-    bendlogogImageView.addPos(0, vx);
-
-    oldY = mouseY;
+    old.set(mouseX, mouseY);
 }
 
 function mouseMoved() {
@@ -139,9 +147,6 @@ function initialize() {
 
     clicked = false;
 
-    var resource = TopicManager.ready().read(RESOURCE.DATA);
-//    textFont(resource.get("https://cjftya.github.io/assets/godoMaum.ttf").getData());
-
     backgroundEffect = EffectFactory.createParticle(Particle.Snow);
 
     var winSize = TopicManager.ready().read(DISPLAY_INFO.WINDOW_SIZE);
@@ -156,16 +161,31 @@ function initialize() {
         bubleArr.push({ x, y, r });
     }
 
+    lineTrace = new LineTrace();
+    var oneSlice = Math.PI * 2 / 20;
+    for (var i = 0; i < 20; i++) {
+        var xp = Math.cos(oneSlice * i) * 100;
+        var yp = Math.sin(oneSlice * i) * 100;
+        lineTrace.addPoint(xp + winSize[0] / 2, yp + 1750);
+    }
+    lineTrace.start();
+
     this.initializeWeddingContents();
 }
 
 function initializeWeddingContents() {
     var winSize = TopicManager.ready().read(DISPLAY_INFO.WINDOW_SIZE);
+    var resource = TopicManager.ready().read(RESOURCE.DATA);
 
-    testText = new TextView("~ ෆ We're getting married ෆ ~")
+    imageViewer = new ImageViewer()
+        .setPos(winSize[0] / 2, winSize[1] / 2)
+        .setImage(resource.get("https://cjftya.github.io/assets/main.jpg").getData());
+
+    testText = new TextView("We're getting married")
         .setAlign(CENTER, null)
         .setColor(120, 80, 80)
-        .setSize(20)
+        .setSize(22)
+        .setTextStyle(BOLD)
         .setPos(0, 80);
 
     mainImageView = new ImageView("https://cjftya.github.io/assets/main.jpg")
@@ -176,24 +196,26 @@ function initializeWeddingContents() {
         .setAlign(CENTER, null)
         .setColor(120, 80, 80)
         .setSize(17)
+        .setTextStyle(BOLD)
         .setPos(0, 130 + mainImageView.getHeight() + 40);
 
     testText3 = new TextView("2020. 04. 11. SAT  2:00 PM")
         .setAlign(CENTER, null)
-        .setColor(120, 80, 80)
+        .setColor(120, 100, 100)
         .setSize(15)
         .setPos(0, 130 + mainImageView.getHeight() + 140);
 
     testText4 = new TextView("더 케이트원타원 A동 LL층 | 아펠가모 웨딩홀")
         .setAlign(CENTER, null)
-        .setColor(120, 80, 80)
+        .setColor(120, 100, 100)
         .setSize(15)
         .setPos(0, 130 + mainImageView.getHeight() + 160);
 
-    testText5 = new TextView("~ ෆ Initation ෆ ~")
+    testText5 = new TextView("Invitation")
         .setAlign(CENTER, null)
         .setColor(120, 80, 80)
-        .setSize(20)
+        .setSize(22)
+        .setTextStyle(BOLD)
         .setPos(0, 130 + mainImageView.getHeight() + 250);
 
     bendlogogImageView = new ImageView("https://cjftya.github.io/assets/bendlogo.jpg")
@@ -202,6 +224,13 @@ function initializeWeddingContents() {
         .setCropMode(true)
         .setCropSrcPos(winSize[0] / 4, 200)
         .setCropSize(winSize[0], 100);
+
+    testText6 = new TextView("Gallery")
+        .setAlign(CENTER, null)
+        .setColor(120, 80, 80)
+        .setSize(22)
+        .setTextStyle(BOLD)
+        .setPos(0, 1550);
 }
 
 function onLoadedResource(total, count) {
