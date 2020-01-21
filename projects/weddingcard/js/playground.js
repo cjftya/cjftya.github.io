@@ -18,6 +18,8 @@ var invitationTextView4;
 
 var mainImageView;
 var bendlogogImageView;
+var mapImageView;
+
 var imageViewer;
 var slideShow;
 
@@ -35,6 +37,7 @@ function preload() {
         .add("https://cjftya.github.io/assets/main.jpg", ResourceType.Image)
         .add("https://cjftya.github.io/assets/bendlogo.jpg", ResourceType.Image)
         .add("https://cjftya.github.io/assets/mask.png", ResourceType.Image)
+    //    .add("https://cjftya.github.io/assets/map.png", ResourceType.Image)
         .add("https://cjftya.github.io/assets/p1.png", ResourceType.Image)
         .add("https://cjftya.github.io/assets/p2.png", ResourceType.Image)
         .add("https://cjftya.github.io/assets/p3.png", ResourceType.Image)
@@ -110,6 +113,8 @@ function draw() {
     lineTraceSpray2.update(TimeDeltaUtil.getInstance().getDelta());
     lineTraceSpray2.draw();
 
+    mapImageView.draw();
+
     imageViewer.draw();
 
     // background effect
@@ -144,6 +149,7 @@ function updateWeddingContents(vy) {
     slideShow.addPos(0, vy);
     lineTraceSpray.addPos(0, vy);
     lineTraceSpray2.addPos(0, vy);
+    mapImageView.addPos(0, vy);
 }
 
 function drawFpsCount() {
@@ -353,6 +359,10 @@ function initializeWeddingContents() {
         .setLife(150)
         .setFreq(0.04)
         .setBlur(true);
+
+    mapImageView = new ImageView("https://cjftya.github.io/assets/map.jpg")
+        .setPos(0, slideShow.getPos().y + slideShow.getHeight() / 2)
+        .setWidth(winSize[0] - 90);
 }
 
 function onLoadedResource(total, count) {
