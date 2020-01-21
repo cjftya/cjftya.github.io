@@ -39,6 +39,7 @@ function preload() {
         .add("https://cjftya.github.io/assets/bendlogo.jpg", ResourceType.Image)
         .add("https://cjftya.github.io/assets/mask.png", ResourceType.Image)
         .add("https://cjftya.github.io/assets/map.jpg", ResourceType.Image)
+        .add("https://cjftya.github.io/assets/mapmask.png", ResourceType.Image)
         .add("https://cjftya.github.io/assets/p1.png", ResourceType.Image)
         .add("https://cjftya.github.io/assets/p2.png", ResourceType.Image)
         .add("https://cjftya.github.io/assets/p3.png", ResourceType.Image)
@@ -117,6 +118,7 @@ function draw() {
     locationTextView.draw();
     mapImageView.draw();
 
+    imageViewer.update(TimeDeltaUtil.getInstance().getDelta());
     imageViewer.draw();
 
     // background effect
@@ -131,6 +133,9 @@ function updateWeddingContents(vy) {
     if (guideY > 0) {
         vy += (0 - guideY) * 0.05;
         guideY += (0 - guideY) * 0.05;
+    } else if(guideY < -(mapImageView.getPos().y+mapImageView.getHeight()*5)) {
+        vy += (-(mapImageView.getPos().y+mapImageView.getHeight()*5) - guideY) * 0.05;
+        guideY += (-(mapImageView.getPos().y+mapImageView.getHeight()*5) - guideY) * 0.05;
     }
 
     testText.addPos(0, vy);
@@ -170,17 +175,18 @@ function mousePressed() {
     if (imageViewer.isShowing() && !imageViewer.inBound(mouseX, mouseY)) {
         imageViewer.hide();
         slideShow.resume();
-    } else if (slideShow.inBound(mouseX, mouseY)) {
+    } else if (!imageViewer.isShowing() && slideShow.inBound(mouseX, mouseY)) {
         var resource = TopicManager.ready().read(RESOURCE.DATA);
         imageViewer.setImage(resource.get("https://cjftya.github.io/assets/realratio/p1.png").getData());
         imageViewer.show();
         slideShow.pause();
     }
-    mapImageView.inBound(mouseX, mouseY);
+    mapImageView.onTouchDown(mouseX, mouseY);
 }
 
 function mouseReleased() {
     clicked = false;
+    mapImageView.onTouchUp(mouseX, mouseY);
 }
 
 function mouseDragged() {
@@ -329,7 +335,7 @@ function initializeWeddingContents() {
         .setMask("https://cjftya.github.io/assets/mask.png")
         .setWidth(winSize[0])
         .setDelay(5)
-        .setPos(0, testText6.getPos().y + 60);
+        .setPos(0, testText6.getPos().y + 50);
 
     lineTrace = new LineTrace();
     var oneSlice = Math.PI * 2 / 30;
@@ -375,7 +381,6 @@ function initializeWeddingContents() {
         .setPos(0, locationTextView.getPos().y + 60)
         .setWidth(winSize[0])
         .setListener(() => {
-            console.log("asdads");
             location.href = "https://m.map.naver.com/search2/site.nhn?query=%EA%B4%91%ED%99%94%EB%AC%B8%EC%95%84%ED%8E%A0%EA%B0%80%EB%AA%A8&sm=shistory&style=v5&code=31738014#/map";
         });
 }
