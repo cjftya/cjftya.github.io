@@ -15,6 +15,7 @@ var invitationTextView;
 var invitationTextView2;
 var invitationTextView3;
 var invitationTextView4;
+var locationTextView;
 
 var mainImageView;
 var bendlogogImageView;
@@ -37,7 +38,7 @@ function preload() {
         .add("https://cjftya.github.io/assets/main.jpg", ResourceType.Image)
         .add("https://cjftya.github.io/assets/bendlogo.jpg", ResourceType.Image)
         .add("https://cjftya.github.io/assets/mask.png", ResourceType.Image)
-    //    .add("https://cjftya.github.io/assets/map.png", ResourceType.Image)
+        .add("https://cjftya.github.io/assets/map.jpg", ResourceType.Image)
         .add("https://cjftya.github.io/assets/p1.png", ResourceType.Image)
         .add("https://cjftya.github.io/assets/p2.png", ResourceType.Image)
         .add("https://cjftya.github.io/assets/p3.png", ResourceType.Image)
@@ -113,6 +114,7 @@ function draw() {
     lineTraceSpray2.update(TimeDeltaUtil.getInstance().getDelta());
     lineTraceSpray2.draw();
 
+    locationTextView.draw();
     mapImageView.draw();
 
     imageViewer.draw();
@@ -150,6 +152,7 @@ function updateWeddingContents(vy) {
     lineTraceSpray.addPos(0, vy);
     lineTraceSpray2.addPos(0, vy);
     mapImageView.addPos(0, vy);
+    locationTextView.addPos(0, vy);
 }
 
 function drawFpsCount() {
@@ -173,6 +176,7 @@ function mousePressed() {
         imageViewer.show();
         slideShow.pause();
     }
+    mapImageView.inBound(mouseX, mouseY);
 }
 
 function mouseReleased() {
@@ -360,9 +364,20 @@ function initializeWeddingContents() {
         .setFreq(0.04)
         .setBlur(true);
 
+    locationTextView = new TextView("Location")
+        .setAlign(CENTER, null)
+        .setColor(120, 80, 80)
+        .setSize(22)
+        .setTextStyle(BOLD)
+        .setPos(0, slideShow.getPos().y + slideShow.getHeight() + 120);
+
     mapImageView = new ImageView("https://cjftya.github.io/assets/map.jpg")
-        .setPos(0, slideShow.getPos().y + slideShow.getHeight() / 2)
-        .setWidth(winSize[0] - 90);
+        .setPos(0, locationTextView.getPos().y + 60)
+        .setWidth(winSize[0])
+        .setListener(() => {
+            console.log("asdads");
+            location.href = "https://m.map.naver.com/search2/site.nhn?query=%EA%B4%91%ED%99%94%EB%AC%B8%EC%95%84%ED%8E%A0%EA%B0%80%EB%AA%A8&sm=shistory&style=v5&code=31738014#/map";
+        });
 }
 
 function onLoadedResource(total, count) {
