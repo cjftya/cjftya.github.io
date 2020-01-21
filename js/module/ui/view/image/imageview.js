@@ -27,6 +27,8 @@ class ImageView extends AbsView {
 
         this.__cropMode = false;
 
+        this.__clickCount = 0;
+
         //width resize = (height resize * original width size) / original height size
         //height resize = (width resize * original height size) / original width size
     }
@@ -133,6 +135,22 @@ class ImageView extends AbsView {
         return this;
     }
 
+    onTouchDown(x, y) {
+        if (this.inBound(x, y)) {
+            this.__clickCount++;
+        }
+    }
+
+    onTouchUp(x, y) {
+        if (this.inBound(x, y)) {
+            this.__clickCount++;
+            if (this.__clickCount == 2) {
+                this.__listener();
+            }
+        }
+        this.__clickCount = 0;
+    }
+
     inBound(x, y) {
         var ax = this.__pos.x;
         var ay = this.__pos.y;
@@ -143,7 +161,6 @@ class ImageView extends AbsView {
         if (x < px1 || x > px2 || y < py1 || y > py2) {
             return false;
         }
-        this.__listener();
         return true;
     }
 
