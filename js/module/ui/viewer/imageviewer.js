@@ -27,6 +27,10 @@ class ImageViewer extends AbsViewer {
         return this;
     }
 
+    getPos() {
+        return this.__pos;
+    }
+
     setImage(img) {
         this.__image = img;
         this.setFitScreen(img);
