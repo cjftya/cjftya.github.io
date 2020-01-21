@@ -133,6 +133,20 @@ class ImageView extends AbsView {
         return this;
     }
 
+    inBound(x, y) {
+        var ax = this.__pos.x;
+        var ay = this.__pos.y;
+        var px1 = ax;
+        var px2 = ax + this.__w;
+        var py1 = ay;
+        var py2 = ay + this.__h;
+        if (x < px1 || x > px2 || y < py1 || y > py2) {
+            return false;
+        }
+        this.__listener();
+        return true;
+    }
+
     draw() {
         imageMode(CORNER);
         if (this.__cropMode) {
