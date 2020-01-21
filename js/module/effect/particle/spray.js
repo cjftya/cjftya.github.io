@@ -9,16 +9,18 @@ class Spray extends AbsParticle {
         this.__freqCount = 0;
         this.__sprayCount = 0;
 
+        this.__posOffset = new Vector2d();
+
         this.__amount = 30;
         this.__particles = [];
         for (var i = 0; i < this.__amount; i++) {
-            this.__particles.push(new ParticleCircle());
+            this.__particles.push(new ParticleCircle().setColor(200, 80, 80));
         }
     }
 
     setupPaticle(p) {
-        p.pos.x = this.__center.x + Math.cos(MathUtil.angle2rad(MathUtil.randInt(0, 360))) * 15;
-        p.pos.y = this.__center.y + Math.sin(MathUtil.angle2rad(MathUtil.randInt(0, 360))) * 15;
+        p.pos.x = this.__center.x + Math.cos(MathUtil.angle2rad(MathUtil.randInt(0, 360))) * 50;
+        p.pos.y = this.__center.y + Math.sin(MathUtil.angle2rad(MathUtil.randInt(0, 360))) * 10;
         p.setRadius(MathUtil.randInt(1, 3));
 
         p.vel.x = Math.cos(MathUtil.angle2rad(MathUtil.randInt(0, 360))) * (MathUtil.randInt(1, 5) * 0.1);
@@ -28,28 +30,26 @@ class Spray extends AbsParticle {
         p.setLife(this.__life);
     }
 
+    addPos(x, y) {
+        this.__posOffset.set(x, y);
+        this.__center.x += x;
+        this.__center.y += y;
+        return this;
+    }
+
     setPos(x, y) {
         this.__center.set(x, y);
+        return this;
     }
 
     setFreq(f) {
         this.__freq = f;
+        return this;
     }
 
     setLife(v) {
         this.__life = v;
-    }
-
-    start() {
-
-    }
-
-    pause() {
-
-    }
-
-    stop() {
-
+        return this;
     }
 
     update(delta) {
