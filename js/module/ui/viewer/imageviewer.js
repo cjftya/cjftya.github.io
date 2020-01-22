@@ -11,6 +11,9 @@ class ImageViewer extends AbsViewer {
         this.__hs = winSize[1];
         this.__scale = 1;
 
+        this.__scaleMin = -2;
+        this.__scaleMax = -2;
+
         this.__w = 0;
         this.__h = 0;
         this.__originW = 0;
@@ -41,6 +44,7 @@ class ImageViewer extends AbsViewer {
         this.__originW = img.width;
         this.__originH = img.height;
         this.setFitScreen(img);
+        console.log(this.__scale + ", " + this.__scaleMin);
         return this;
     }
 
@@ -58,7 +62,22 @@ class ImageViewer extends AbsViewer {
     }
 
     addScale(a) {
-        this.setScale(this.__scale + a);
+        var s = 0;
+        if (this.__scale + a > this.__scaleMax) {
+            s = this.__scaleMax;
+        } else if (this.__scale + a < this.__scaleMin) {
+            s = this.__scaleMin;
+        } else {
+            s = this.__scale + a;
+        }
+        console.log(this.__scale + ", " + this.__scaleMin);
+        this.setScale(s);
+    }
+
+    setScaleLimit(min, max) {
+        this.__scaleMax = max == -1 ? this.__scale : max;
+        this.__scaleMin = min == -1 ? this.__scale : max;
+        return this;
     }
 
     getCenterX() {

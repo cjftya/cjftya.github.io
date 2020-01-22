@@ -225,6 +225,7 @@ function mouseReleased() {
     if (!imageViewer.isShowing() && slideShow.inBound(mouseX, mouseY) && !imageViewer.isInputDelay()) {
         var resource = TopicManager.ready().read(RESOURCE.DATA);
         imageViewer.setImage(resource.get("https://cjftya.github.io/assets/realratio/p1.png").getData());
+        imageViewer.setScaleLimit(-1, 1.5)
         imageViewer.show();
         slideShow.pause();
     }
@@ -265,6 +266,8 @@ function mouseMoved() {
 
 function keyPressed() {
     if (keyCode == LEFT_ARROW) {
+        imageViewer.addScale(-0.01);
+    } else if (keyCode == RIGHT_ARROW) {
         imageViewer.addScale(0.01);
     }
 }
@@ -294,7 +297,7 @@ function initialize() {
         bubleArr.push({ x, y, r });
     } 
 
-    this.initializeWeddingContents();
+    this.initializeWeddingContents();\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 }
 
 function initializeWeddingContents() {
@@ -302,10 +305,9 @@ function initializeWeddingContents() {
     var resource = TopicManager.ready().read(RESOURCE.DATA);
 
     imageViewer = new ImageViewer()
-        .setPos(winSize[0] / 2, winSize[1] / 2)
-        .setImage(resource.get("https://cjftya.github.io/assets/main.jpg").getData());
+        .setPos(winSize[0] / 2, winSize[1] / 2);
 
-    testText = new TextView("우 리 결 혼 합 니 다 14")
+    testText = new TextView("우 리 결 혼 합 니 다")
         .setAlign(CENTER, null)
         .setColor(120, 80, 80)
         .setSize(22)
