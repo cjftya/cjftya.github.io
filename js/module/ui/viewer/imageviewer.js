@@ -53,7 +53,7 @@ class ImageViewer extends AbsViewer {
     }
 
     addScale(a) {
-        this.this.setScale(this.__scale + a);
+        this.setScale(this.__scale + a);
     }
 
     getCenterX() {

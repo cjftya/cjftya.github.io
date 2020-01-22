@@ -242,6 +242,12 @@ function mouseDragged() {
 function mouseMoved() {
 }
 
+function keyPressed() {
+    if (keyCode === LEFT_ARROW) {
+        imageViewer.addScale(0.01);
+    }
+}
+
 function windowResized() {
     TopicManager.ready().write(DISPLAY_INFO.WINDOW_SIZE, [windowWidth, windowHeight]);
     resizeCanvas(windowWidth, windowHeight);
@@ -278,7 +284,7 @@ function initializeWeddingContents() {
         .setPos(winSize[0] / 2, winSize[1] / 2)
         .setImage(resource.get("https://cjftya.github.io/assets/main.jpg").getData());
 
-    testText = new TextView("우 리 결 혼 합 니 다 1")
+    testText = new TextView("우 리 결 혼 합 니 다 2")
         .setAlign(CENTER, null)
         .setColor(120, 80, 80)
         .setSize(22)
