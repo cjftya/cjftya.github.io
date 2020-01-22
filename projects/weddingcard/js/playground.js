@@ -42,6 +42,8 @@ var dragVel, dragMax;
 
 var clicked;
 
+var debugText;
+
 function preload() {
     TopicManager.ready().write(RESOURCE.DATA, new ResourceLoader()
         .add("https://cjftya.github.io/assets/main.jpg", ResourceType.Image)
@@ -195,7 +197,7 @@ function drawFpsCount() {
     noStroke();
     fill(20);
     textAlign(LEFT, TOP);
-    text("FPS : " + Math.floor(TimeDeltaUtil.getInstance().getFPS()), 10, 10);
+    text("FPS : " + Math.floor(TimeDeltaUtil.getInstance().getFPS()) + ", " + debugText, 10, 10);
 }
 
 function getTouchPointDist() {
@@ -247,6 +249,7 @@ function mouseDragged() {
             var newDist = this.getTouchPointDist();
             var vz = newDist - oldDist;
 
+            debugText = vz*0.00001;
             imageViewer.addScale(vz*0.00001);
 
             oldDist = newDist;
