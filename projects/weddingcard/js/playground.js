@@ -42,8 +42,6 @@ var dragVel, dragMax;
 
 var clicked;
 
-var debugText;
-
 function preload() {
     TopicManager.ready().write(RESOURCE.DATA, new ResourceLoader()
         .add("https://cjftya.github.io/assets/main.jpg", ResourceType.Image)
@@ -197,7 +195,7 @@ function drawFpsCount() {
     noStroke();
     fill(20);
     textAlign(LEFT, TOP);
-    text("FPS : " + Math.floor(TimeDeltaUtil.getInstance().getFPS()) + ", " + debugText, 10, 10);
+    text("FPS : " + Math.floor(TimeDeltaUtil.getInstance().getFPS()), 10, 10);
 }
 
 function getTouchPointDist() {
@@ -224,13 +222,13 @@ function mousePressed() {
 
 function mouseReleased() {
     clicked = false;
-    if (!imageViewer.isShowing() && slideShow.inBound(mouseX, mouseY)) {
+    if (!imageViewer.isShowing() && slideShow.inBound(mouseX, mouseY) && !imageViewer.isInputDelay()) {
         var resource = TopicManager.ready().read(RESOURCE.DATA);
         imageViewer.setImage(resource.get("https://cjftya.github.io/assets/realratio/p1.png").getData());
         imageViewer.show();
         slideShow.pause();
     }
-    if (imageViewer.isShowing() && !imageViewer.inBound(mouseX, mouseY)) {
+    if (imageViewer.isShowing() && !imageViewer.inBound(mouseX, mouseY) && !imageViewer.isInputDelay()) {
         imageViewer.hide();
         slideShow.resume();
     }
@@ -248,11 +246,7 @@ function mouseDragged() {
         } else {
             var newDist = this.getTouchPointDist();
             var vz = newDist - oldDist;
-            var cx = (touches[1].x + touches[0].x) / 2;
-            var cy = (touches[1].y + touches[0].y) / 2;
-
             imageViewer.addScale(vz*0.00001);
-
             oldDist = newDist;
         }
     } else {
