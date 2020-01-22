@@ -169,7 +169,7 @@ function updateWeddingContents(vy) {
     testText5.addPos(0, vy);
     testText6.addPos(0, vy);
     bendlogogImageView.addPos(0, vy);
-    bendlogogImageView.addCropSrcPos(0, vy*0.1);
+    bendlogogImageView.addCropSrcPos(0, vy * 0.1);
     lineTrace.addPos(0, vy);
     lineTrace2.addPos(0, vy);
     spray.addPos(0, vy);
@@ -204,18 +204,19 @@ function mousePressed() {
 
 function mouseReleased() {
     clicked = false;
+    if (!imageViewer.isShowing() && slideShow.inBound(mouseX, mouseY)) {
+        var resource = TopicManager.ready().read(RESOURCE.DATA);
+        imageViewer.setImage(resource.get("https://cjftya.github.io/assets/realratio/p1.png").getData());
+        imageViewer.show();
+        slideShow.pause();
+    }
     if (imageViewer.isShowing() && !imageViewer.inBound(mouseX, mouseY)) {
-    imageViewer.hide();
-    slideShow.resume();
-} else if (!imageViewer.isShowing() && slideShow.inBound(mouseX, mouseY)) {
-    var resource = TopicManager.ready().read(RESOURCE.DATA);
-    imageViewer.setImage(resource.get("https://cjftya.github.io/assets/realratio/p1.png").getData());
-    imageViewer.show();
-    slideShow.pause();
-}
-if (!imageViewer.isShowing() && !imageViewer.isInputDelay()) {
-    mapImageView.onTouchUp(mouseX, mouseY);
-}
+        imageViewer.hide();
+        slideShow.resume();
+    }
+    if (!imageViewer.isShowing() && !imageViewer.isInputDelay()) {
+        mapImageView.onTouchUp(mouseX, mouseY);
+    }
 }
 
 function mouseDragged() {
@@ -270,7 +271,7 @@ function initializeWeddingContents() {
     var resource = TopicManager.ready().read(RESOURCE.DATA);
 
     imageViewer = new ImageViewer()
-        .setPos(0, winSize[1] / 2)
+        .setPos(winSize[0] / 2, winSize[1] / 2)
         .setImage(resource.get("https://cjftya.github.io/assets/main.jpg").getData());
 
     testText = new TextView("우 리 결 혼 합 니 다")

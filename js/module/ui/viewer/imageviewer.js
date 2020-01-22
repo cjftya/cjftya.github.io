@@ -114,7 +114,7 @@ class ImageViewer extends AbsViewer {
             rect(0, 0, this.__ws, this.__hs);
 
             if(this.__alphaCount >= 210) {
-                imageMode(CORNER);
+                imageMode(CENTER);
                 image(this.__image, this.__pos.x + this.__posOffset.x, this.__pos.y + this.__posOffset.y, this.__w, this.__h);
             }
         }
