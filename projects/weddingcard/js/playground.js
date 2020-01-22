@@ -297,7 +297,7 @@ function initialize() {
         bubleArr.push({ x, y, r });
     } 
 
-    this.initializeWeddingContents();\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+    this.initializeWeddingContents();
 }
 
 function initializeWeddingContents() {
