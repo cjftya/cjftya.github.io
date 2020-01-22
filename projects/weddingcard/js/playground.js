@@ -205,8 +205,8 @@ function getTouchPointDist() {
         var bx = touches[1].x;
         var by = touches[1].y;
 
-        var cx = (bx - ax) / 2;
-        var cy = (by - ay) / 2;
+        var cx = (bx + ax) / 2;
+        var cy = (by + ay) / 2;
 
         fill(150);
         ellipse(ax, ay, 20, 20);
@@ -304,7 +304,7 @@ function initializeWeddingContents() {
         .setPos(winSize[0] / 2, winSize[1] / 2)
         .setImage(resource.get("https://cjftya.github.io/assets/main.jpg").getData());
 
-    testText = new TextView("우 리 결 혼 합 니 다 7")
+    testText = new TextView("우 리 결 혼 합 니 다 8")
         .setAlign(CENTER, null)
         .setColor(120, 80, 80)
         .setSize(22)
