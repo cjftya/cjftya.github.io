@@ -249,8 +249,7 @@ function mouseDragged() {
             var newDist = this.getTouchPointDist();
             var vz = newDist - oldDist;
 
-            debugText = vz*0.00001;
-            imageViewer.addScale(vz*0.00001);
+            imageViewer.addScale(vz*0.001);
 
             oldDist = newDist;
         }
@@ -269,7 +268,7 @@ function mouseMoved() {
 }
 
 function keyPressed() {
-    if (keyCode === LEFT_ARROW) {
+    if (keyCode == LEFT_ARROW) {
         imageViewer.addScale(0.01);
     }
 }
@@ -310,7 +309,7 @@ function initializeWeddingContents() {
         .setPos(winSize[0] / 2, winSize[1] / 2)
         .setImage(resource.get("https://cjftya.github.io/assets/main.jpg").getData());
 
-    testText = new TextView("우 리 결 혼 합 니 다 11")
+    testText = new TextView("우 리 결 혼 합 니 다 12")
         .setAlign(CENTER, null)
         .setColor(120, 80, 80)
         .setSize(22)

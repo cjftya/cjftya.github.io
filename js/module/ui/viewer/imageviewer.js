@@ -13,6 +13,8 @@ class ImageViewer extends AbsViewer {
 
         this.__w = 0;
         this.__h = 0;
+        this.__originW = 0;
+        this.__originH = 0;
 
         this.__isShow = false;
         this.__alphaCount = 0;
@@ -35,6 +37,8 @@ class ImageViewer extends AbsViewer {
 
     setImage(img) {
         this.__image = img;
+        this.__originW = img.width;
+        this.__originH = img.height;
         this.setFitScreen(img);
         return this;
     }
@@ -47,8 +51,8 @@ class ImageViewer extends AbsViewer {
 
     setScale(s) {
         this.__scale = s;
-        var reSizeW = this.__w * s;
-        this.__h = (reSizeW * this.__h) / this.__w;
+        var reSizeW = this.__originW * s;
+        this.__h = (reSizeW * this.__originH) / this.__originW;
         this.__w = reSizeW;
     }
 
