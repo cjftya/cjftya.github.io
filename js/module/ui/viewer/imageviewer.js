@@ -19,6 +19,7 @@ class ImageViewer extends AbsViewer {
         this.__isShow = false;
         this.__alphaCount = 0;
         this.__inputDelay = 0;
+        this.__isDelay = false;
     }
 
     addPos(x, y) {
@@ -86,25 +87,29 @@ class ImageViewer extends AbsViewer {
     }
 
     isInputDelay() {
-        return this.__inputDelay > 0;
+        return this.__isDelay;
     }
 
     hide() {
-        this.__inputDelay = 2;
+        this.__isDelay = true;
+        this.__inputDelay = 1;
         this.__posOffset.set(0, 0);
         this.__isShow = false;
     }
 
     show() {
+        this.__isDelay = true;
+        this.__inputDelay = 1;
         this.__isShow = true;
         this.__alphaCount = 0;
     }
 
     update(delta) {
-        if(!this.__isShow) {
+        if(this.__isDelay) {
             this.__inputDelay -= delta;
             if(this.__inputDelay <= 0) {
                 this.__inputDelay = 0;
+                this.__isDelay = false;
             }
         }
     }
