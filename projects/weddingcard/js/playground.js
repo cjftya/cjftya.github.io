@@ -37,6 +37,7 @@ var lineTraceSpray;
 var lineTraceSpray2;
 
 var old;
+var oldDist;
 var dragVel, dragMax;
 
 var clicked;
@@ -195,11 +196,17 @@ function drawFpsCount() {
     text("FPS : " + Math.floor(TimeDeltaUtil.getInstance().getFPS()), 10, 10);
 }
 
+function getTouchPointDist() {
+
+}
+
 function mousePressed() {
     clicked = true;
     old.set(mouseX, mouseY);
     dragMax = 0;
-    mapImageView.onTouchDown(mouseX, mouseY); 
+    mapImageView.onTouchDown(mouseX, mouseY);
+
+    alert(touches[0])
 }
 
 function mouseReleased() {
@@ -284,7 +291,7 @@ function initializeWeddingContents() {
         .setPos(winSize[0] / 2, winSize[1] / 2)
         .setImage(resource.get("https://cjftya.github.io/assets/main.jpg").getData());
 
-    testText = new TextView("우 리 결 혼 합 니 다 2")
+    testText = new TextView("우 리 결 혼 합 니 다 3")
         .setAlign(CENTER, null)
         .setColor(120, 80, 80)
         .setSize(22)
