@@ -141,7 +141,7 @@ function draw() {
     imageViewer.update(TimeDeltaUtil.getInstance().getDelta());
     imageViewer.draw();
 
-    getTouchPointDist();
+    this.getTouchPointDist();
 
     // background effect
     backgroundEffect.update(TimeDeltaUtil.getInstance().getDelta());
@@ -302,7 +302,7 @@ function initializeWeddingContents() {
         .setPos(winSize[0] / 2, winSize[1] / 2)
         .setImage(resource.get("https://cjftya.github.io/assets/main.jpg").getData());
 
-    testText = new TextView("우 리 결 혼 합 니 다 3")
+    testText = new TextView("우 리 결 혼 합 니 다 4")
         .setAlign(CENTER, null)
         .setColor(120, 80, 80)
         .setSize(22)
