@@ -212,6 +212,9 @@ function getTouchPointDist() {
         ellipse(ax, ay, 20, 20);
         ellipse(bx, by, 20, 20);
         ellipse(cx, cy, 20, 20);
+
+        alert(touches[0][0] + ", " + touches[0][1] +
+            touches[0][2] + touches[0][3]);
     }
 }
 
@@ -304,7 +307,7 @@ function initializeWeddingContents() {
         .setPos(winSize[0] / 2, winSize[1] / 2)
         .setImage(resource.get("https://cjftya.github.io/assets/main.jpg").getData());
 
-    testText = new TextView("우 리 결 혼 합 니 다 5")
+    testText = new TextView("우 리 결 혼 합 니 다 6")
         .setAlign(CENTER, null)
         .setColor(120, 80, 80)
         .setSize(22)
