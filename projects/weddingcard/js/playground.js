@@ -204,21 +204,19 @@ function getTouchPointDist() {
         var ay = touches[0].y;
         var bx = touches[1].x;
         var by = touches[1].y;
-
-        var cx = (bx + ax) / 2;
-        var cy = (by + ay) / 2;
-
-        fill(150);
-        ellipse(ax, ay, 20, 20);
-        ellipse(bx, by, 20, 20);
-        ellipse(cx, cy, 20, 20);
+        var dx = bx - ax;
+        var dy = by - ay;
+        var d = dx*dx+dy*dy;
+        return d;
     }
+    return 0;
 }
 
 function mousePressed() {
     clicked = true;
     old.set(mouseX, mouseY);
     dragMax = 0;
+    oldDist = this.getTouchPointDist();
     mapImageView.onTouchDown(mouseX, mouseY);
 }
 
@@ -246,7 +244,12 @@ function mouseDragged() {
         if(touches.length < 2) {
             imageViewer.addPos(vx, vy);
         } else {
-            imageViewer.addScale(0.01);
+            var newDist = this.getTouchPointDist();
+            var vz = newDist - oldDist;
+
+            imageViewer.addScale(vz*0.001);
+
+            oldDist = newDist;
         }
     } else {
         var absVy = vy < 0 ? -vy : vy;
@@ -304,7 +307,7 @@ function initializeWeddingContents() {
         .setPos(winSize[0] / 2, winSize[1] / 2)
         .setImage(resource.get("https://cjftya.github.io/assets/main.jpg").getData());
 
-    testText = new TextView("우 리 결 혼 합 니 다 8")
+    testText = new TextView("우 리 결 혼 합 니 다 9")
         .setAlign(CENTER, null)
         .setColor(120, 80, 80)
         .setSize(22)
