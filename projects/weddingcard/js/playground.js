@@ -223,7 +223,11 @@ function mouseDragged() {
     var vx = mouseX - old.x;
     var vy = mouseY - old.y;
     if (imageViewer.isShowing()) {
-        imageViewer.addPos(vx, vy);
+        if(touches.length < 2) {
+            imageViewer.addPos(vx, vy);
+        } else {
+            imageViewer.addScale(0.01);
+        }
     } else {
         var absVy = vy < 0 ? -vy : vy;
         if (dragMax < absVy) {
@@ -274,7 +278,7 @@ function initializeWeddingContents() {
         .setPos(winSize[0] / 2, winSize[1] / 2)
         .setImage(resource.get("https://cjftya.github.io/assets/main.jpg").getData());
 
-    testText = new TextView("우 리 결 혼 합 니 다")
+    testText = new TextView("우 리 결 혼 합 니 다 1")
         .setAlign(CENTER, null)
         .setColor(120, 80, 80)
         .setSize(22)
