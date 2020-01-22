@@ -141,6 +141,8 @@ function draw() {
     imageViewer.update(TimeDeltaUtil.getInstance().getDelta());
     imageViewer.draw();
 
+    getTouchPointDist();
+
     // background effect
     backgroundEffect.update(TimeDeltaUtil.getInstance().getDelta());
     backgroundEffect.draw();
@@ -197,7 +199,18 @@ function drawFpsCount() {
 }
 
 function getTouchPointDist() {
+    if (touches.length >= 2) {
+        var ax = touches[0][0];
+        var ay = touches[0][1];
+        var bx = touches[1][0];
+        var by = touches[1][1];
 
+        var cx = (bx - ax) / 2;
+        var cy = (by - ay) / 2;
+
+        fill(0, 255);
+        ellipse(cx, cy, 20, 20);
+    }
 }
 
 function mousePressed() {
@@ -205,8 +218,6 @@ function mousePressed() {
     old.set(mouseX, mouseY);
     dragMax = 0;
     mapImageView.onTouchDown(mouseX, mouseY);
-
-    alert(touches[0])
 }
 
 function mouseReleased() {
