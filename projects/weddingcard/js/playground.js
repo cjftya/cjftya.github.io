@@ -15,11 +15,19 @@ var invitationTextView;
 var invitationTextView2;
 var invitationTextView3;
 var invitationTextView4;
+var parentsTextView;
+var parentsTextView2;
+var parentsTextView3;
+var parentsTextView4;
 var locationTextView;
+var mapShortcutTextView;
 
 var mainImageView;
 var bendlogogImageView;
 var mapImageView;
+
+var rectpos1;
+var rectpos2;
 
 var imageViewer;
 var slideShow;
@@ -85,8 +93,16 @@ function draw() {
     testText.draw();
     mainImageView.draw();
     testText2.draw();
+
+    fill(100, 50);
+    rect(rectpos1.x, rectpos1.y, windowWidth, 100);
+
     testText3.draw();
     testText4.draw();
+    parentsTextView.draw();
+    parentsTextView2.draw();
+    parentsTextView3.draw();
+    parentsTextView4.draw();
     invitationTextView.draw();
     invitationTextView2.draw();
     invitationTextView3.draw();
@@ -98,14 +114,14 @@ function draw() {
     spray.update(TimeDeltaUtil.getInstance().getDelta());
     spray.draw();
 
-    slideShow.draw();
     slideShow.update(TimeDeltaUtil.getInstance().getDelta());
+    slideShow.draw();
 
     lineTrace.update(TimeDeltaUtil.getInstance().getDelta());
-//    lineTrace.draw();
+    //    lineTrace.draw();
 
     lineTrace2.update(TimeDeltaUtil.getInstance().getDelta());
-//    lineTrace2.draw();
+    //    lineTrace2.draw();
 
     lineTraceSpray.setPos(lineTrace.getTraceX(), lineTrace.getTraceY());
     lineTraceSpray.update(TimeDeltaUtil.getInstance().getDelta());
@@ -117,6 +133,9 @@ function draw() {
 
     locationTextView.draw();
     mapImageView.draw();
+    fill(120, 255);
+    rect(rectpos2.x, rectpos2.y, windowWidth, 40);
+    mapShortcutTextView.draw();
 
     imageViewer.update(TimeDeltaUtil.getInstance().getDelta());
     imageViewer.draw();
@@ -133,9 +152,9 @@ function updateWeddingContents(vy) {
     if (guideY > 0) {
         vy += (0 - guideY) * 0.05;
         guideY += (0 - guideY) * 0.05;
-    } else if(guideY < -(mapImageView.getPos().y+mapImageView.getHeight()*5)) {
-        vy += (-(mapImageView.getPos().y+mapImageView.getHeight()*5) - guideY) * 0.05;
-        guideY += (-(mapImageView.getPos().y+mapImageView.getHeight()*5) - guideY) * 0.05;
+    } else if (guideY < -(mapImageView.getPos().y + mapImageView.getHeight() * 5)) {
+        vy += (-(mapImageView.getPos().y + mapImageView.getHeight() * 5) - guideY) * 0.05;
+        guideY += (-(mapImageView.getPos().y + mapImageView.getHeight() * 5) - guideY) * 0.05;
     }
 
     testText.addPos(0, vy);
@@ -150,6 +169,7 @@ function updateWeddingContents(vy) {
     testText5.addPos(0, vy);
     testText6.addPos(0, vy);
     bendlogogImageView.addPos(0, vy);
+    bendlogogImageView.addCropSrcPos(0, vy*0.1);
     lineTrace.addPos(0, vy);
     lineTrace2.addPos(0, vy);
     spray.addPos(0, vy);
@@ -158,6 +178,13 @@ function updateWeddingContents(vy) {
     lineTraceSpray2.addPos(0, vy);
     mapImageView.addPos(0, vy);
     locationTextView.addPos(0, vy);
+    mapShortcutTextView.addPos(0, vy);
+    rectpos1.y += vy;
+    rectpos2.y += vy;
+    parentsTextView.addPos(0, vy);
+    parentsTextView2.addPos(0, vy);
+    parentsTextView3.addPos(0, vy);
+    parentsTextView4.addPos(0, vy);
 }
 
 function drawFpsCount() {
@@ -172,21 +199,23 @@ function mousePressed() {
     clicked = true;
     old.set(mouseX, mouseY);
     dragMax = 0;
-    if (imageViewer.isShowing() && !imageViewer.inBound(mouseX, mouseY)) {
-        imageViewer.hide();
-        slideShow.resume();
-    } else if (!imageViewer.isShowing() && slideShow.inBound(mouseX, mouseY)) {
-        var resource = TopicManager.ready().read(RESOURCE.DATA);
-        imageViewer.setImage(resource.get("https://cjftya.github.io/assets/realratio/p1.png").getData());
-        imageViewer.show();
-        slideShow.pause();
-    }
-    mapImageView.onTouchDown(mouseX, mouseY);
+    mapImageView.onTouchDown(mouseX, mouseY); 
 }
 
 function mouseReleased() {
     clicked = false;
+    if (imageViewer.isShowing() && !imageViewer.inBound(mouseX, mouseY)) {
+    imageViewer.hide();
+    slideShow.resume();
+} else if (!imageViewer.isShowing() && slideShow.inBound(mouseX, mouseY)) {
+    var resource = TopicManager.ready().read(RESOURCE.DATA);
+    imageViewer.setImage(resource.get("https://cjftya.github.io/assets/realratio/p1.png").getData());
+    imageViewer.show();
+    slideShow.pause();
+}
+if (!imageViewer.isShowing() && !imageViewer.isInputDelay()) {
     mapImageView.onTouchUp(mouseX, mouseY);
+}
 }
 
 function mouseDragged() {
@@ -231,7 +260,7 @@ function initialize() {
         y = MathUtil.randInt(50, winSize[1] - 50);
         r = MathUtil.randInt(250, 800);
         bubleArr.push({ x, y, r });
-    }
+    } 
 
     this.initializeWeddingContents();
 }
@@ -241,14 +270,13 @@ function initializeWeddingContents() {
     var resource = TopicManager.ready().read(RESOURCE.DATA);
 
     imageViewer = new ImageViewer()
-        .setPos(winSize[0] / 2, winSize[1] / 2)
+        .setPos(0, winSize[1] / 2)
         .setImage(resource.get("https://cjftya.github.io/assets/main.jpg").getData());
 
-    testText = new TextView("We're getting married")
+    testText = new TextView("우 리 결 혼 합 니 다")
         .setAlign(CENTER, null)
         .setColor(120, 80, 80)
         .setSize(22)
-        .setTextStyle(BOLD)
         .setPos(0, 80);
 
     mainImageView = new ImageView("https://cjftya.github.io/assets/main.jpg")
@@ -259,8 +287,35 @@ function initializeWeddingContents() {
         .setAlign(CENTER, null)
         .setColor(120, 80, 80)
         .setSize(17)
-        .setTextStyle(BOLD)
         .setPos(0, mainImageView.getHeight() + 170);
+
+    parentsTextView = new TextView("아버지 가나다")
+        .setAlign(LEFT, null)
+        .setColor(120, 100, 100)
+        .setAlpha(180)
+        .setSize(15)
+        .setPos(50, testText2.getPos().y + 50);
+
+    parentsTextView2 = new TextView("아버지 마바사")
+        .setAlign(RIGHT, null)
+        .setColor(120, 100, 100)
+        .setAlpha(180)
+        .setSize(15)
+        .setPos(-50, parentsTextView.getPos().y);
+
+    parentsTextView3 = new TextView("어머니 가나다")
+        .setAlign(LEFT, null)
+        .setColor(120, 100, 100)
+        .setAlpha(180)
+        .setSize(15)
+        .setPos(50, parentsTextView2.getPos().y + 40);
+
+    parentsTextView4 = new TextView("어머니 마바사")
+        .setAlign(RIGHT, null)
+        .setColor(120, 100, 100)
+        .setAlpha(180)
+        .setSize(15)
+        .setPos(-50, parentsTextView3.getPos().y);
 
     spray = new Spray(30)
         .setPos(winSize[0] / 2, mainImageView.getHeight() + 170)
@@ -273,7 +328,7 @@ function initializeWeddingContents() {
         .setAlign(CENTER, null)
         .setColor(120, 100, 100)
         .setSize(15)
-        .setPos(0, testText2.getPos().y + 100);
+        .setPos(0, testText2.getPos().y + 200);
 
     testText4 = new TextView("더 케이트원타원 A동 LL층 | 아펠가모 웨딩홀")
         .setAlign(CENTER, null)
@@ -281,34 +336,39 @@ function initializeWeddingContents() {
         .setSize(15)
         .setPos(0, testText3.getPos().y + 30);
 
+    rectpos1 = new Vector2d().set(0, testText3.getPos().y - 30);
+
     testText5 = new TextView("Invitation")
         .setAlign(CENTER, null)
         .setColor(120, 80, 80)
         .setSize(22)
-        .setTextStyle(BOLD)
-        .setPos(0, 130 + mainImageView.getHeight() + 250);
+        .setPos(0, testText4.getPos().y + 120);
 
     invitationTextView = new TextView("너무나 사랑스럽고 지켜주고싶은 사람을 만났습니다.")
         .setAlign(CENTER, null)
         .setColor(120, 100, 100)
+        .setAlpha(180)
         .setSize(12)
         .setPos(0, testText5.getPos().y + 60);
 
     invitationTextView2 = new TextView("변치않는 마음과 믿음으로 하나가 되어 행복하게 살겠습니다.")
         .setAlign(CENTER, null)
         .setColor(120, 100, 100)
+        .setAlpha(180)
         .setSize(12)
         .setPos(0, invitationTextView.getPos().y + 30);
 
     invitationTextView3 = new TextView("믿은과 사랑을 약속하는 귀한 날에 축복의 걸음을 하시어")
         .setAlign(CENTER, null)
         .setColor(120, 100, 100)
+        .setAlpha(180)
         .setSize(12)
         .setPos(0, invitationTextView2.getPos().y + 30);
 
     invitationTextView4 = new TextView("지켜봐주신다면 더없는 기쁨으로 담아두겠습니다.")
         .setAlign(CENTER, null)
         .setColor(120, 100, 100)
+        .setAlpha(180)
         .setSize(12)
         .setPos(0, invitationTextView3.getPos().y + 30);
 
@@ -316,14 +376,13 @@ function initializeWeddingContents() {
         .setPos(0, invitationTextView4.getPos().y + 140)
         .setWidth(winSize[0])
         .setCropMode(true)
-        .setCropSrcPos(winSize[0] / 4, 200)
+        .setCropSrcPos(200, 450)
         .setCropSize(winSize[0], 100);
 
     testText6 = new TextView("Gallery")
         .setAlign(CENTER, null)
         .setColor(120, 80, 80)
         .setSize(22)
-        .setTextStyle(BOLD)
         .setPos(0, bendlogogImageView.getPos().y + 200);
 
     slideShow = new SlideShow()
@@ -338,7 +397,7 @@ function initializeWeddingContents() {
         .setPos(0, testText6.getPos().y + 50);
 
     lineTrace = new LineTrace();
-    var oneSlice = Math.PI * 2 / 30;
+    var oneSlice = (Math.PI * 2) / 30;
     for (var i = 0; i < 30; i++) {
         var xp = Math.cos(oneSlice * i) * (winSize[0] / 3.0);
         var yp = Math.sin(oneSlice * i) * (winSize[0] / 3.3);
@@ -374,7 +433,6 @@ function initializeWeddingContents() {
         .setAlign(CENTER, null)
         .setColor(120, 80, 80)
         .setSize(22)
-        .setTextStyle(BOLD)
         .setPos(0, slideShow.getPos().y + slideShow.getHeight() + 120);
 
     mapImageView = new ImageView("https://cjftya.github.io/assets/map.jpg")
@@ -383,6 +441,15 @@ function initializeWeddingContents() {
         .setListener(() => {
             location.href = "https://m.map.naver.com/search2/site.nhn?query=%EA%B4%91%ED%99%94%EB%AC%B8%EC%95%84%ED%8E%A0%EA%B0%80%EB%AA%A8&sm=shistory&style=v5&code=31738014#/map";
         });
+
+    rectpos2 = new Vector2d().set(0, mapImageView.getPos().y + mapImageView.getHeight() - 40);
+
+    mapShortcutTextView = new TextView("네이버지도 바로가기")
+        .setAlign(CENTER, null)
+        .setColor(190, 190, 190)
+        .setTextStyle(BOLD)
+        .setSize(17)
+        .setPos(0, rectpos2.y + 40 / 3);
 }
 
 function onLoadedResource(total, count) {

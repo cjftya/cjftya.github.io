@@ -16,6 +16,7 @@ class ImageViewer extends AbsViewer {
 
         this.__isShow = false;
         this.__alphaCount = 0;
+        this.__inputDelay = 0;
     }
 
     addPos(x, y) {
@@ -51,6 +52,18 @@ class ImageViewer extends AbsViewer {
         this.__w = reSizeW;
     }
 
+    addScale(a) {
+        this.this.setScale(this.__scale + a);
+    }
+
+    getCenterX() {
+        return 0;
+    }
+
+    getCenterY() {
+        return 0;
+    }
+
     inBound(x, y) {
         var ax = this.__pos.x + this.__posOffset.x;
         var ay = this.__pos.y + this.__posOffset.y;
@@ -68,7 +81,12 @@ class ImageViewer extends AbsViewer {
         return this.__isShow;
     }
 
+    isInputDelay() {
+        return this.__inputDelay > 0;
+    }
+
     hide() {
+        this.__inputDelay = 2;
         this.__posOffset.set(0, 0);
         this.__isShow = false;
     }
@@ -79,7 +97,12 @@ class ImageViewer extends AbsViewer {
     }
 
     update(delta) {
-
+        if(!this.__isShow) {
+            this.__inputDelay -= delta;
+            if(this.__inputDelay <= 0) {
+                this.__inputDelay = 0;
+            }
+        }
     }
 
     draw() {
@@ -91,7 +114,7 @@ class ImageViewer extends AbsViewer {
             rect(0, 0, this.__ws, this.__hs);
 
             if(this.__alphaCount >= 210) {
-                imageMode(CENTER);
+                imageMode(CORNER);
                 image(this.__image, this.__pos.x + this.__posOffset.x, this.__pos.y + this.__posOffset.y, this.__w, this.__h);
             }
         }

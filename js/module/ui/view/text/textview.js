@@ -7,7 +7,7 @@ class TextView extends AbsView {
         this.__color = color(0, 0, 0);
         this.__wp = LEFT;
         this.__hp = TOP;
-        this.__textStyle = NORMAL; 
+        this.__textStyle = NORMAL;
 
         var winSize = TopicManager.ready().read(DISPLAY_INFO.WINDOW_SIZE);
         this.__w = winSize[0];
@@ -19,6 +19,11 @@ class TextView extends AbsView {
         this.__color.setRed(r);
         this.__color.setGreen(g);
         this.__color.setBlue(b);
+        return this;
+    }
+
+    setAlpha(a) {
+        this.__color.setAlpha(a);
         return this;
     }
 
@@ -46,6 +51,7 @@ class TextView extends AbsView {
     addPos(x, y) {
         this.__pos.x += x;
         this.__pos.y += y;
+        return this;
     }
 
     setPos(x, y) {
@@ -53,7 +59,7 @@ class TextView extends AbsView {
         return this;
     }
 
-    getPos(){
+    getPos() {
         return this.__pos;
     }
 

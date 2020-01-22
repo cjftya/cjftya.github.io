@@ -102,6 +102,12 @@ class ImageView extends AbsView {
         return this;
     }
 
+    addCropSrcPos(x, y) {
+        this.__cx += x;
+        this.__cy += y;
+        return this;
+    }
+
     setScale(s) {
         if (this.__scale == s) {
             return;
