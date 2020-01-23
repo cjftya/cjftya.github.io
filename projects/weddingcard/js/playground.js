@@ -307,7 +307,7 @@ function initializeWeddingContents() {
     imageViewer = new ImageViewer()
         .setPos(winSize[0] / 2, winSize[1] / 2);
 
-    testText = new TextView("우 리 결 혼 합 니 다")
+    testText = new TextView("우 리 결 혼 합 니 다 1")
         .setAlign(CENTER, null)
         .setColor(120, 80, 80)
         .setSize(22)
