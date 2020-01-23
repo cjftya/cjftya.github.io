@@ -239,26 +239,26 @@ function mouseReleased() {
 }
 
 function mouseDragged() {
-    var vx = mouseX - old.x;
-    var vy = mouseY - old.y;
-    if (imageViewer.isShowing()) {
-        if(touches.length < 2) {
-            imageViewer.addPos(vx, vy);
-        } else {
-            var newDist = this.getTouchPointDist();
-            var vz = newDist - oldDist;
-            imageViewer.addScale(vz*0.00001);
-            oldDist = newDist;
-        }
-    } else {
-        var absVy = vy < 0 ? -vy : vy;
-        if (dragMax < absVy) {
-            dragMax = absVy;
-            dragVel = vy * 0.6;
-        }
-        this.updateWeddingContents(vy);
-    }
-    old.set(mouseX, mouseY);
+    // var vx = mouseX - old.x;
+    // var vy = mouseY - old.y;
+    // if (imageViewer.isShowing()) {
+    //     if(touches.length < 2) {
+    //         imageViewer.addPos(vx, vy);
+    //     } else {
+    //         var newDist = this.getTouchPointDist();
+    //         var vz = newDist - oldDist;
+    //         imageViewer.addScale(vz*0.00001);
+    //         oldDist = newDist;
+    //     }
+    // } else {
+    //     var absVy = vy < 0 ? -vy : vy;
+    //     if (dragMax < absVy) {
+    //         dragMax = absVy;
+    //         dragVel = vy * 0.6;
+    //     }
+    //     this.updateWeddingContents(vy);
+    // }
+    // old.set(mouseX, mouseY);
 }
 
 function mouseMoved() {
@@ -307,7 +307,7 @@ function initializeWeddingContents() {
     imageViewer = new ImageViewer()
         .setPos(winSize[0] / 2, winSize[1] / 2);
 
-    testText = new TextView("우 리 결 혼 합 니 다")
+    testText = new TextView("우 리 결 혼 합 니 다 1")
         .setAlign(CENTER, null)
         .setColor(120, 80, 80)
         .setSize(22)
