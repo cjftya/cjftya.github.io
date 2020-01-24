@@ -1,3 +1,9 @@
+var ParticleContents = {
+    MainTitle: 0,
+    SlideShow1: 1,
+    SlideShow2: 2
+};
+
 var ImageContents = {
     Main: 0,
     Bend: 1

@@ -5,13 +5,9 @@ var bubleArr;
 var textViewMap;
 var imageViewMap;
 
-var lineTraceArr;
+var lineTraceMap;
 
-var lineTrace;
-var lineTrace2;
-var lineTraceSpray;
-var lineTraceSpray2;
-var spray;
+var sprayParticleMap;
 
 var imageViewer;
 var slideShow;
@@ -25,6 +21,10 @@ var oldDist;
 var dragVel, dragMax;
 
 var clicked;
+
+var winSize;
+
+var debugCount = 0;
 
 function preload() {
     TopicManager.ready().write(RESOURCE.DATA, new ResourceLoader()
@@ -75,34 +75,42 @@ function draw() {
     }
 
     for (var [id, view] of textViewMap.entries()) {
-        view.draw();
+        if (view.inScreen(winSize[0], winSize[1])) {
+            view.draw();
+        }
     }
 
     for (var [id, view] of imageViewMap.entries()) {
-        view.draw();
+        if (view.inScreen(winSize[0], winSize[1])) {
+            view.draw();
+        }
     }
 
-    // wedding contents
     fill(100, 50);
     rect(rectpos1.x, rectpos1.y, windowWidth, 100);
-
-    spray.update(TimeDeltaUtil.getInstance().getDelta());
-    spray.draw();
 
     slideShow.update(TimeDeltaUtil.getInstance().getDelta());
     slideShow.draw();
 
-    lineTrace.update(TimeDeltaUtil.getInstance().getDelta());
-    lineTraceSpray.setPos(lineTrace.getTraceX(), lineTrace.getTraceY());
-    lineTraceSpray.update(TimeDeltaUtil.getInstance().getDelta());
-    lineTraceSpray.draw();
+    for (var [id, trace] of lineTraceMap.entries()) {
+        trace.update(TimeDeltaUtil.getInstance().getDelta());
+        // trace.draw();
+    }
 
-    lineTrace2.update(TimeDeltaUtil.getInstance().getDelta());
-    lineTraceSpray2.setPos(lineTrace2.getTraceX(), lineTrace2.getTraceY());
-    lineTraceSpray2.update(TimeDeltaUtil.getInstance().getDelta());
-    lineTraceSpray2.draw();
+    for (var [id, particle] of sprayParticleMap.entries()) {
+        if (id != ParticleContents.MainTitle) {
+            var trace = lineTraceMap.get(id);
+            particle.setPos(trace.getTraceX(), trace.getTraceY());
+        }
+        if (particle.inScreen(winSize[0], winSize[1])) {
+            particle.update(TimeDeltaUtil.getInstance().getDelta());
+            particle.draw();
+            debugCount++;
+        }
+    }
 
     mapImageView.draw();
+
     fill(120, 255);
     rect(rectpos2.x, rectpos2.y, windowWidth, 40);
 
@@ -114,6 +122,8 @@ function draw() {
     backgroundEffect.draw();
 
     this.drawFpsCount();
+
+    debugCount = 0;
 }
 
 function updateWeddingContents(vy) {
@@ -131,16 +141,17 @@ function updateWeddingContents(vy) {
     }
     for (var [id, view] of imageViewMap.entries()) {
         view.addPos(0, vy);
-        if(id == ImageContents.Bend) {
+        if (id == ImageContents.Bend) {
             view.addCropSrcPos(0, vy * 0.1);
         }
     }
-    lineTrace.addPos(0, vy);
-    lineTrace2.addPos(0, vy);
-    spray.addPos(0, vy);
+    for (var [id, view] of sprayParticleMap.entries()) {
+        view.addPos(0, vy);
+    }
+    for (var [id, trace] of lineTraceMap.entries()) {
+        trace.addPos(0, vy);
+    }
     slideShow.addPos(0, vy);
-    lineTraceSpray.addPos(0, vy);
-    lineTraceSpray2.addPos(0, vy);
     mapImageView.addPos(0, vy);
     rectpos1.y += vy;
     rectpos2.y += vy;
@@ -151,7 +162,7 @@ function drawFpsCount() {
     noStroke();
     fill(20);
     textAlign(LEFT, TOP);
-    text("FPS : " + Math.floor(TimeDeltaUtil.getInstance().getFPS()), 10, 10);
+    text("FPS : " + Math.floor(TimeDeltaUtil.getInstance().getFPS()) + ", debug : " + debugCount, 10, 10);
 }
 
 function getTouchPointDist() {
@@ -174,7 +185,7 @@ function mouseReleased() {
     if (!imageViewer.isShowing() && slideShow.inBound(mouseX, mouseY) && !imageViewer.isInputDelay()) {
         var resource = TopicManager.ready().read(RESOURCE.DATA);
         imageViewer.setImage(resource.get("https://cjftya.github.io/assets/realratio/p1.png").getData());
-        imageViewer.setScaleLimit(-1, 1.3)
+        imageViewer.setScaleLimit(-1, 1.1)
         imageViewer.show();
         slideShow.pause();
     }
@@ -210,19 +221,20 @@ function mouseDragged() {
     old.set(mouseX, mouseY);
 }
 
-function mouseMoved() {
-}
+// function mouseMoved() {
+// }
 
-function keyPressed() {
-    if (keyCode == LEFT_ARROW) {
-        imageViewer.addScale(-0.01);
-    } else if (keyCode == RIGHT_ARROW) {
-        imageViewer.addScale(0.01);
-    }
-}
+// function keyPressed() {
+//     if (keyCode == LEFT_ARROW) {
+//         imageViewer.addScale(-0.01);
+//     } else if (keyCode == RIGHT_ARROW) {
+//         imageViewer.addScale(0.01);
+//     }
+// }
 
 function windowResized() {
-    TopicManager.ready().write(DISPLAY_INFO.WINDOW_SIZE, [windowWidth, windowHeight]);
+    winSize = [windowWidth, windowHeight];
+    TopicManager.ready().write(DISPLAY_INFO.WINDOW_SIZE, winSize);
     resizeCanvas(windowWidth, windowHeight);
 }
 
@@ -230,11 +242,12 @@ function initialize() {
     var isMobile = /Android|webOS|iPhone|iPad|iPod|Opera Mini/i.test(navigator.userAgent);
     TopicManager.ready().write(DEVICE_INFO.IS_MOBILE, isMobile);
 
+    winSize = TopicManager.ready().read(DISPLAY_INFO.WINDOW_SIZE);
+
     clicked = false;
 
     backgroundEffect = EffectFactory.createParticle(Particle.Snow);
 
-    var winSize = TopicManager.ready().read(DISPLAY_INFO.WINDOW_SIZE);
     var x, y, r;
     bubleArr = [];
     bubleColor = color(250, 190, 190);
@@ -249,13 +262,12 @@ function initialize() {
 }
 
 function initializeWeddingContents() {
-    var winSize = TopicManager.ready().read(DISPLAY_INFO.WINDOW_SIZE);
     var resource = TopicManager.ready().read(RESOURCE.DATA);
 
     imageViewer = new ImageViewer()
         .setPos(winSize[0] / 2, winSize[1] / 2);
 
-    var titleTextView = new TextView("우 리 결 혼 합 니 다 1")
+    var titleTextView = new TextView("우 리 결 혼 합 니 다")
         .setAlign(CENTER, null)
         .setColor(120, 80, 80)
         .setSize(22)
@@ -299,7 +311,7 @@ function initializeWeddingContents() {
         .setSize(15)
         .setPos(-50, parentsMotherATextView.getPos().y);
 
-    spray = new Spray(30)
+    var mainTitleParticle = new Spray(30)
         .setPos(winSize[0] / 2, mainImageView.getHeight() + 170)
         .setCreateArea(50, 15)
         .setLife(100)
@@ -378,17 +390,17 @@ function initializeWeddingContents() {
         .setDelay(5)
         .setPos(0, galleryTextView.getPos().y + 50);
 
-    lineTrace = new LineTrace();
+    var lineTrace1 = new LineTrace();
     var oneSlice = (Math.PI * 2) / 30;
     for (var i = 0; i < 30; i++) {
         var xp = Math.cos(oneSlice * i) * (winSize[0] / 3.0);
         var yp = Math.sin(oneSlice * i) * (winSize[0] / 3.3);
-        lineTrace.addPoint(xp + winSize[0] / 2, yp + slideShow.getPos().y + slideShow.getHeight() / 2);
+        lineTrace1.addPoint(xp + winSize[0] / 2, yp + slideShow.getPos().y + slideShow.getHeight() / 2);
     }
-    lineTrace.inverse();
-    lineTrace.start();
+    lineTrace1.inverse();
+    lineTrace1.start();
 
-    lineTrace2 = new LineTrace();
+    var lineTrace2 = new LineTrace();
     var oneSlice = Math.PI * 2 / 30;
     for (var i = 0; i < 30; i++) {
         var xp = Math.cos(oneSlice * i) * (winSize[0] / 2.4);
@@ -397,14 +409,14 @@ function initializeWeddingContents() {
     }
     lineTrace2.start();
 
-    lineTraceSpray = new Spray(30)
+    var slideShowParticle1 = new Spray(30)
         .setPos(1000, 1000)
         .setCreateArea(10, 10)
         .setLife(150)
         .setFreq(0.04)
         .setBlur(true);
 
-    lineTraceSpray2 = new Spray(30)
+    var slideShowParticle2 = new Spray(30)
         .setPos(1000, 1000)
         .setCreateArea(10, 10)
         .setLife(150)
@@ -432,6 +444,15 @@ function initializeWeddingContents() {
         .setTextStyle(BOLD)
         .setSize(17)
         .setPos(0, rectpos2.y + 40 / 3);
+    
+    lineTraceMap = new Map();
+    lineTraceMap.set(ParticleContents.SlideShow1, lineTrace1);
+    lineTraceMap.set(ParticleContents.SlideShow2, lineTrace2);
+
+    sprayParticleMap = new Map();
+    sprayParticleMap.set(ParticleContents.MainTitle, mainTitleParticle);
+    sprayParticleMap.set(ParticleContents.SlideShow1, slideShowParticle1);
+    sprayParticleMap.set(ParticleContents.SlideShow2, slideShowParticle2);
 
     imageViewMap = new Map();
     imageViewMap.set(ImageContents.Main, mainImageView);

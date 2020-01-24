@@ -21,6 +21,13 @@ class Spray extends AbsParticle {
         }
     }
 
+    inScreen(sw, sh) {
+        if(this.__center.y > -70 && this.__center.y < sh + 70) {
+            return true;
+        }
+        return false;
+    }
+
     setupPaticle(p) {
         p.pos.x = this.__center.x + this.__posOffset.x + Math.cos(MathUtil.angle2rad(MathUtil.randInt(0, 360))) * this.__aw;
         p.pos.y = this.__center.y + this.__posOffset.y + Math.sin(MathUtil.angle2rad(MathUtil.randInt(0, 360))) * this.__ah;

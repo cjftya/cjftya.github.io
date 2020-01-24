@@ -33,6 +33,13 @@ class ImageView extends AbsView {
         //height resize = (width resize * original height size) / original width size
     }
 
+    inScreen(sw, sh) {
+        if(this.__pos.y + this.__h > -20 && this.__pos.y < sh + 20) {
+            return true;
+        }
+        return false;
+    }
+
     getWidth() {
         return this.__w;
     }

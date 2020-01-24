@@ -15,6 +15,14 @@ class TextView extends AbsView {
         this.__pos = new Vector2d();
     }
 
+    inScreen(sw, sh) {
+        if (this.__pos.y > -this.__textSize - 50 &&
+            this.__pos.y < sh + this.__textSize + 50) {
+            return true;
+        }
+        return false;
+    }
+
     setColor(r, g, b) {
         this.__color.setRed(r);
         this.__color.setGreen(g);
