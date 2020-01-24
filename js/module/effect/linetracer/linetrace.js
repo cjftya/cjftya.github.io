@@ -12,6 +12,9 @@ class LineTrace {
         this.__energy = 1;
 
         this.__isInverse = false;
+
+        this.__minY = 999999;
+        this.__maxY = -999999;
     }
 
     inverse() {
@@ -19,6 +22,12 @@ class LineTrace {
     }
 
     addPoint(x, y) {
+        if (y < this.__minY) {
+            this.__minY = y;
+        }
+        if (y > this.__maxY) {
+            this.__maxY = y;
+        }
         this.__points.push(new Vector2d().set(x, y));
         return this;
     }
