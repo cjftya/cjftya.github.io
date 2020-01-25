@@ -71,56 +71,66 @@ function draw() {
 
     fill(bubleColor);
     for (var b of bubleArr) {
+        debugCount++;
         ellipse(b.x, b.y, b.r, b.r);
     }
 
     for (var [id, view] of textViewMap.entries()) {
         if (view.inScreen(winSize[0], winSize[1])) {
             view.draw();
+            debugCount++;
         }
     }
 
     for (var [id, view] of imageViewMap.entries()) {
         if (view.inScreen(winSize[0], winSize[1])) {
             view.draw();
+            debugCount++;
         }
     }
 
     fill(100, 50);
     rect(rectpos1.x, rectpos1.y, windowWidth, 100);
+    debugCount++;
 
     slideShow.update(TimeDeltaUtil.getInstance().getDelta());
     slideShow.draw();
+    debugCount++;
 
-    for (var [id, trace] of lineTraceMap.entries()) {
-        trace.update(TimeDeltaUtil.getInstance().getDelta());
-        // trace.draw();
-    }
-
-    for (var [id, particle] of sprayParticleMap.entries()) {
-        if (id != ParticleContents.MainTitle) {
-            var trace = lineTraceMap.get(id);
-            particle.setPos(trace.getTraceX(), trace.getTraceY());
+    if (!imageViewer.isShowing()) {
+        for (var [id, trace] of lineTraceMap.entries()) {
+            trace.update(TimeDeltaUtil.getInstance().getDelta());
         }
-        if (particle.inScreen(winSize[0], winSize[1])) {
-            particle.update(TimeDeltaUtil.getInstance().getDelta());
-            particle.draw();
-            debugCount++;
+        for (var [id, particle] of sprayParticleMap.entries()) {
+            if (id != ParticleContents.MainTitle) {
+                var trace = lineTraceMap.get(id);
+                particle.setPos(trace.getTraceX(), trace.getTraceY());
+            }
+            if (particle.inScreen(winSize[0], winSize[1])) {
+                particle.update(TimeDeltaUtil.getInstance().getDelta());
+                particle.draw();
+                debugCount++;
+            }
         }
     }
 
     mapImageView.draw();
+    debugCount++;
 
     fill(120, 255);
     rect(rectpos2.x, rectpos2.y, windowWidth, 40);
+    debugCount++;
 
     imageViewer.update(TimeDeltaUtil.getInstance().getDelta());
     imageViewer.draw();
+    debugCount++;
 
     // background effect
     backgroundEffect.update(TimeDeltaUtil.getInstance().getDelta());
     backgroundEffect.draw();
+    debugCount++;
 
+    debugCount++;
     this.drawFpsCount();
 
     debugCount = 0;
@@ -162,7 +172,7 @@ function drawFpsCount() {
     noStroke();
     fill(20);
     textAlign(LEFT, TOP);
-    text("FPS : " + Math.floor(TimeDeltaUtil.getInstance().getFPS()) + ", debug : " + debugCount, 10, 10);
+    text("FPS : " + Math.floor(TimeDeltaUtil.getInstance().getFPS()) + ", draw call : " + debugCount, 10, 10);
 }
 
 function getTouchPointDist() {
