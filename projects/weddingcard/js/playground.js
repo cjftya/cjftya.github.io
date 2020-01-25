@@ -277,7 +277,7 @@ function initializeWeddingContents() {
         .setPos(45, titleTextView.getPos().y + 60)
         .setWidth(winSize[0] - 90);
 
-    var mainImageTitleTextView = new TextView("임현철 ღ 진서영")
+    var mainImageTitleTextView = new TextView("가나다 ღ 마바사")
         .setAlign(CENTER, null)
         .setColor(120, 80, 80)
         .setSize(17)
