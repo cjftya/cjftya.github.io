@@ -9,21 +9,21 @@ var lineTraceMap;
 
 var sprayParticleMap;
 
+var mapView;
 var imageViewer;
 var slideShow;
-var mapImageView;
 
 var rectpos1;
-var rectpos2;
 
 var old;
 var oldDist;
 var dragVel, dragMax;
-var mapView;
 
 var clicked;
 
 var winSize;
+
+var guideY;
 
 var debugCount = 0;
 
@@ -94,9 +94,20 @@ function draw() {
     rect(rectpos1.x, rectpos1.y, windowWidth, 100);
     debugCount++;
 
-    slideShow.update(TimeDeltaUtil.getInstance().getDelta());
-    slideShow.draw();
-    debugCount++;
+    if (mapView.inScreen(winSize[0], winSize[1])) {
+        mapView.draw();
+        debugCount++;
+    }
+
+    if(slideShow.inScreen(winSize[0], winSize[1])) {
+        slideShow.update(TimeDeltaUtil.getInstance().getDelta());
+        slideShow.draw();
+        debugCount++;
+    
+        imageViewer.update(TimeDeltaUtil.getInstance().getDelta());
+        imageViewer.draw();
+        debugCount++;
+    }
 
     if (!imageViewer.isShowing()) {
         for (var [id, trace] of lineTraceMap.entries()) {
@@ -115,18 +126,6 @@ function draw() {
         }
     }
 
-    // mapImageView.draw();
-    // debugCount++;
-
-    // fill(120, 255);
-    // rect(rectpos2.x, rectpos2.y, windowWidth, 40);
-    // debugCount++;
-    mapView.draw();
-
-    imageViewer.update(TimeDeltaUtil.getInstance().getDelta());
-    imageViewer.draw();
-    debugCount++;
-
     // background effect
     backgroundEffect.update(TimeDeltaUtil.getInstance().getDelta());
     backgroundEffect.draw();
@@ -143,9 +142,9 @@ function updateWeddingContents(vy) {
     if (guideY > 0) {
         vy += (0 - guideY) * 0.05;
         guideY += (0 - guideY) * 0.05;
-    } else if (guideY < -(mapImageView.getPos().y + mapImageView.getHeight() * 5)) {
-        vy += (-(mapImageView.getPos().y + mapImageView.getHeight() * 5) - guideY) * 0.05;
-        guideY += (-(mapImageView.getPos().y + mapImageView.getHeight() * 5) - guideY) * 0.05;
+    } else if (guideY < -mapView.getGuideEnd()) {
+        vy += (-mapView.getGuideEnd() - guideY) * 0.05;
+        guideY += (-mapView.getGuideEnd() - guideY) * 0.05;
     }
 
     for (var [id, view] of textViewMap.entries()) {
@@ -164,9 +163,8 @@ function updateWeddingContents(vy) {
         trace.addPos(0, vy);
     }
     slideShow.addPos(0, vy);
-    mapImageView.addPos(0, vy);
+    mapView.addPos(0, vy);
     rectpos1.y += vy;
-    rectpos2.y += vy;
 }
 
 function drawFpsCount() {
@@ -190,7 +188,10 @@ function mousePressed() {
     old.set(mouseX, mouseY);
     dragMax = 0;
     oldDist = this.getTouchPointDist();
-    mapImageView.onTouchDown(mouseX, mouseY);
+
+    if (mapView.inBound(mouseX, mouseY)) {
+        mapView.setMapController(true);
+    }
 }
 
 function mouseReleased() {
@@ -206,8 +207,9 @@ function mouseReleased() {
         slideShow.resume();
     }
     if (!imageViewer.isShowing() && !imageViewer.isInputDelay()) {
-        mapImageView.onTouchUp(mouseX, mouseY);
+        mapView.moveToNaverMap(mouseX, mouseY);
     }
+    mapView.setMapController(false);
 }
 
 function mouseDragged() {
@@ -223,12 +225,16 @@ function mouseDragged() {
             oldDist = newDist;
         }
     } else {
-        var absVy = vy < 0 ? -vy : vy;
-        if (dragMax < absVy) {
-            dragMax = absVy;
-            dragVel = vy * 0.6;
+        if (mapView.isMapController()) {
+            mapView.addCropSrcPos(-vx, -vy);
+        } else {
+            var absVy = vy < 0 ? -vy : vy;
+            if (dragMax < absVy) {
+                dragMax = absVy;
+                dragVel = vy * 0.6;
+            }
+            this.updateWeddingContents(vy);
         }
-        this.updateWeddingContents(vy);
     }
     old.set(mouseX, mouseY);
 }
@@ -441,24 +447,9 @@ function initializeWeddingContents() {
 
     mapView = new MapView("https://cjftya.github.io/assets/map.jpg")
         .setPos(0, locationTextView.getPos().y + 60)
-        .setCropSrcPos(200, 0)
-        .setCropSize(winSize[0], 400);
-
-    mapImageView = new ImageView("https://cjftya.github.io/assets/map.jpg")
-        .setPos(0, locationTextView.getPos().y + 60)
-        .setWidth(winSize[0])
-        .setListener(() => {
-            location.href = "https://m.map.naver.com/search2/site.nhn?query=%EA%B4%91%ED%99%94%EB%AC%B8%EC%95%84%ED%8E%A0%EA%B0%80%EB%AA%A8&sm=shistory&style=v5&code=31738014#/map";
-        });
-
-    rectpos2 = new Vector2d().set(0, mapImageView.getPos().y + mapImageView.getHeight() - 40);
-
-    var shortcutNaverTextView = new TextView("네이버지도 바로가기")
-        .setAlign(CENTER, null)
-        .setColor(190, 190, 190)
-        .setTextStyle(BOLD)
-        .setSize(17)
-        .setPos(0, rectpos2.y + 40 / 3);
+        .setCropSrcPos(200, 200)
+        .setShortcutText("네이버지도 바로가기")
+        .setCropSize(winSize[0], 250);;
     
     lineTraceMap = new Map();
     lineTraceMap.set(ParticleContents.SlideShow1, lineTrace1);
@@ -489,7 +480,6 @@ function initializeWeddingContents() {
     textViewMap.set(TextContents.InvitationLetter4, invitationLetterTextView4);
     textViewMap.set(TextContents.Gallery, galleryTextView);
     textViewMap.set(TextContents.Location, locationTextView);
-    textViewMap.set(TextContents.ShortcutNaver, shortcutNaverTextView);
 }
 
 function onLoadedResource(total, count) {

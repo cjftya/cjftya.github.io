@@ -20,6 +20,13 @@ class SlideShow {
         this.__active = true;
     }
 
+    inScreen(sw, sh) {
+        if (this.__pos.y < sh + 30 && this.__pos.y + this.__h > -30) {
+            return true;
+        }
+        return false;
+    }
+
     addPos(x, y) {
         this.__pos.x += x;
         this.__pos.y += y;
