@@ -19,6 +19,7 @@ var rectpos2;
 var old;
 var oldDist;
 var dragVel, dragMax;
+var mapView;
 
 var clicked;
 
@@ -114,12 +115,13 @@ function draw() {
         }
     }
 
-    mapImageView.draw();
-    debugCount++;
+    // mapImageView.draw();
+    // debugCount++;
 
-    fill(120, 255);
-    rect(rectpos2.x, rectpos2.y, windowWidth, 40);
-    debugCount++;
+    // fill(120, 255);
+    // rect(rectpos2.x, rectpos2.y, windowWidth, 40);
+    // debugCount++;
+    mapView.draw();
 
     imageViewer.update(TimeDeltaUtil.getInstance().getDelta());
     imageViewer.draw();
@@ -272,8 +274,6 @@ function initialize() {
 }
 
 function initializeWeddingContents() {
-    var resource = TopicManager.ready().read(RESOURCE.DATA);
-
     imageViewer = new ImageViewer()
         .setPos(winSize[0] / 2, winSize[1] / 2);
 
@@ -438,6 +438,11 @@ function initializeWeddingContents() {
         .setColor(120, 80, 80)
         .setSize(22)
         .setPos(0, slideShow.getPos().y + slideShow.getHeight() + 120);
+
+    mapView = new MapView("https://cjftya.github.io/assets/map.jpg")
+        .setPos(0, locationTextView.getPos().y + 60)
+        .setCropSrcPos(200, 0)
+        .setCropSize(winSize[0], 400);
 
     mapImageView = new ImageView("https://cjftya.github.io/assets/map.jpg")
         .setPos(0, locationTextView.getPos().y + 60)
