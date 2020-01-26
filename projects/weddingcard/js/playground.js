@@ -107,6 +107,8 @@ function draw() {
         imageViewer.update(TimeDeltaUtil.getInstance().getDelta());
         imageViewer.draw();
         debugCount++;
+    } else {
+        imageViewer.hide();
     }
 
     if (!imageViewer.isShowing()) {
