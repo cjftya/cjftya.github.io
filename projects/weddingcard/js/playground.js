@@ -334,13 +334,15 @@ function initializeWeddingContents() {
         .setFreq(0.08)
         .setBlur(true);
 
-    var weddingDateTextView = new TextView("2020. 04. 11. SAT  2:00 PM")
+        //2020. 04. 11. SAT  2:00 PM
+    var weddingDateTextView = new TextView("AAAAAAAAAAAAAAAAAAAAAAAAa")
         .setAlign(CENTER, null)
         .setColor(120, 100, 100)
         .setSize(15)
         .setPos(0, mainImageTitleTextView.getPos().y + 200);
 
-    var weddingLocationTextView = new TextView("더 케이트원타원 A동 LL층 | 아펠가모 웨딩홀")
+        //더 케이트원타원 A동 LL층 | 아펠가모 웨딩홀
+    var weddingLocationTextView = new TextView("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
         .setAlign(CENTER, null)
         .setColor(120, 100, 100)
         .setSize(15)
