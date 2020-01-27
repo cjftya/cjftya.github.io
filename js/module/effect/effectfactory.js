@@ -5,7 +5,7 @@ var EffectFactory = (function () {
         return {
             particle: function (type) {
                 var winSize = TopicManager.ready().read(DISPLAY_INFO.WINDOW_SIZE);
-                var amount = Math.sqrt(Math.pow(winSize[0], 1) + Math.pow(winSize[1], 1));
+                var amount = 28;//Math.sqrt(Math.pow(winSize[0], 1) + Math.pow(winSize[1], 1));
                 console.log("snow amount : " + amount);
                 switch (type) {
                     case Particle.Snow:
