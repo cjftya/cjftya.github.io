@@ -329,10 +329,10 @@ function initializeWeddingContents() {
         .setSize(15)
         .setPos(-50, parentsMotherATextView.getPos().y);
 
-    var mainTitleParticle = new Spray(30)
+    var mainTitleParticle = new Spray(15)
         .setPos(winSize[0] / 2, mainImageView.getHeight() + 170)
         .setCreateArea(50, 15)
-        .setLife(100)
+        .setLife(120)
         .setFreq(0.08)
         .setBlur(true);
 
@@ -429,18 +429,18 @@ function initializeWeddingContents() {
     }
     lineTrace2.start();
 
-    var slideShowParticle1 = new Spray(30)
+    var slideShowParticle1 = new Spray(20)
         .setPos(1000, 1000)
         .setCreateArea(10, 10)
-        .setLife(150)
-        .setFreq(0.04)
+        .setLife(160)
+        .setFreq(0.06)
         .setBlur(true);
 
-    var slideShowParticle2 = new Spray(30)
+    var slideShowParticle2 = new Spray(20)
         .setPos(1000, 1000)
         .setCreateArea(10, 10)
-        .setLife(150)
-        .setFreq(0.04)
+        .setLife(160)
+        .setFreq(0.06)
         .setBlur(true);
 
     var locationTextView = new TextView("Location")
