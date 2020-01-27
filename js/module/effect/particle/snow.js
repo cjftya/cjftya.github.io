@@ -1,19 +1,25 @@
 class Snow extends AbsParticle {
-    constructor(w, h, amount) {
+    constructor() {
         super(Particle.Snow);
 
-        this.__active = false;
+        this.__active = true;
+        this.__w = 0;
+        this.__h = 0;
+        this.__amount = 0;
 
-        this.__w = w;
-        this.__h = h;
         this.__windDir = new Vector2d();
         this.__windEnergy = new Vector2d();
 
-        this.__amount = amount;
         this.__particles = [];
         this.__offsets = [];
 
         this.__winSize = TopicManager.ready().read(DISPLAY_INFO.WINDOW_SIZE);
+    }
+
+    setup(w, h, amount) {
+        this.__w = w;
+        this.__h = h;
+        this.__amount = amount;
 
         var p;
         for (var i = 0; i < amount; i++) {
@@ -24,6 +30,7 @@ class Snow extends AbsParticle {
             this.__particles.push(p);
             this.__offsets.push(MathUtil.randInt(1, 50) * 0.001);
         }
+        return this;
     }
 
     setWind(wx, wy) {
@@ -37,7 +44,7 @@ class Snow extends AbsParticle {
                 this.__offsets[i] = (MathUtil.randInt(1, 50) * 0.001) * this.__windDir.x;
             }
             if (wy != 0) {
-                this.__particles[i].vel.y = ((p.getRadius() * 0.1) * this.__windDir.y) + this.__windEnergy.y;
+                this.__particles[i].vel.y = ((1 * 0.1) * this.__windDir.y) + this.__windEnergy.y;
             }
         }
         return this;
@@ -71,11 +78,11 @@ class Snow extends AbsParticle {
         this.__active = false;
     }
 
-    stop() {
-        this.__active = false;
-    }
-    
     update(delta) {
+        if(!this.__active) {
+            return;
+        }
+
         var p, offset;
         for (var i = 0; i < this.__particles.length; i++) {
             p = this.__particles[i];
@@ -96,6 +103,10 @@ class Snow extends AbsParticle {
     }
 
     draw() {
+        if(!this.__active) {
+            return;
+        }
+
         for (var i = 0; i < this.__particles.length; i++) {
             this.__particles[i].draw();
         }
