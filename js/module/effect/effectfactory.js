@@ -4,14 +4,9 @@ var EffectFactory = (function () {
     function modules() {
         return {
             particle: function (type) {
-                var winSize = TopicManager.ready().read(DISPLAY_INFO.WINDOW_SIZE);
-                var amount = 28;//Math.sqrt(Math.pow(winSize[0], 1) + Math.pow(winSize[1], 1));
-                console.log("snow amount : " + amount);
                 switch (type) {
                     case Particle.Snow:
-                        var windX = (MathUtil.randInt(2, 3) * 0.3) * (MathUtil.randInt(1, 20) <= 10 ? -1 : 1);
-                        return new Snow(winSize[0], winSize[1], amount * 2)
-                            .setWind(windX, 0);
+                        return new Snow();
                     default:
                         return null;
                 }

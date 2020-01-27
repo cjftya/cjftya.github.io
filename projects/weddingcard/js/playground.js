@@ -1,4 +1,4 @@
-﻿var backgroundEffect;
+﻿var snowPaticle;
 var bubleColor;
 var bubleArr;
 
@@ -19,8 +19,6 @@ var old;
 var oldDist;
 var dragVel, dragMax;
 
-var clicked;
-
 var winSize;
 
 var guideY;
@@ -33,7 +31,6 @@ function preload() {
         .add("https://cjftya.github.io/assets/bendlogo.jpg", ResourceType.Image)
         .add("https://cjftya.github.io/assets/mask.png", ResourceType.Image)
         .add("https://cjftya.github.io/assets/map.jpg", ResourceType.Image)
-        .add("https://cjftya.github.io/assets/mapmask.png", ResourceType.Image)
         .add("https://cjftya.github.io/assets/p1.png", ResourceType.Image)
         .add("https://cjftya.github.io/assets/p2.png", ResourceType.Image)
         .add("https://cjftya.github.io/assets/p3.png", ResourceType.Image)
@@ -129,8 +126,8 @@ function draw() {
     }
 
     // background effect
-    backgroundEffect.update(TimeDeltaUtil.getInstance().getDelta());
-    backgroundEffect.draw();
+    snowPaticle.update(TimeDeltaUtil.getInstance().getDelta());
+    snowPaticle.draw();
     debugCount++;
 
     debugCount++;
@@ -199,8 +196,8 @@ function mousePressed() {
 function mouseReleased() {
     if (!imageViewer.isShowing() && slideShow.inBound(mouseX, mouseY) && !imageViewer.isInputDelay()) {
         var resource = TopicManager.ready().read(RESOURCE.DATA);
-        imageViewer.setImage(resource.get("https://cjftya.github.io/assets/realratio/p1.png").getData());
-        imageViewer.setScaleLimit(-1, 1.1)
+        imageViewer.setImage(resource.get(slideShow.getCurrentRealRatio()).getData());
+        imageViewer.setScaleLimit(-1, 0.8)
         imageViewer.show();
         slideShow.pause();
     }
@@ -264,9 +261,10 @@ function initialize() {
 
     winSize = TopicManager.ready().read(DISPLAY_INFO.WINDOW_SIZE);
 
-    clicked = false;
-
-    backgroundEffect = EffectFactory.createParticle(Particle.Snow);
+    var windX = (MathUtil.randInt(2, 3) * 0.3) * (MathUtil.randInt(1, 20) <= 10 ? -1 : 1);
+    snowPaticle = EffectFactory.createParticle(Particle.Snow)
+        .setup(winSize[0], winSize[1], 40)
+        .setWind(windX, 0);
 
     var x, y, r;
     bubleArr = [];
@@ -400,11 +398,11 @@ function initializeWeddingContents() {
         .setPos(0, bendImageView.getPos().y + 200);
 
     slideShow = new SlideShow()
-        .addImage("https://cjftya.github.io/assets/p1.png")
-        .addImage("https://cjftya.github.io/assets/p2.png")
-        .addImage("https://cjftya.github.io/assets/p3.png")
-        .addImage("https://cjftya.github.io/assets/p4.png")
-        .addImage("https://cjftya.github.io/assets/p5.png")
+        .addImage("https://cjftya.github.io/assets/p1.png", "https://cjftya.github.io/assets/realratio/p1.png")
+        .addImage("https://cjftya.github.io/assets/p2.png", "https://cjftya.github.io/assets/realratio/p2.png")
+        .addImage("https://cjftya.github.io/assets/p3.png", "https://cjftya.github.io/assets/realratio/p3.png")
+        .addImage("https://cjftya.github.io/assets/p4.png", "https://cjftya.github.io/assets/realratio/p4.png")
+        .addImage("https://cjftya.github.io/assets/p5.png", "https://cjftya.github.io/assets/realratio/p5.png")
         .setMask("https://cjftya.github.io/assets/mask.png")
         .setWidth(winSize[0])
         .setDelay(5)
