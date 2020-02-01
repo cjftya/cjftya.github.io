@@ -1,13 +1,15 @@
 class TextView extends AbsView {
-    constructor(str) {
+    constructor() {
         super(1);
 
-        this.__textSize = 10;
-        this.__text = str;
+        this.__text = "";
         this.__color = color(0, 0, 0);
-        this.__wp = LEFT;
-        this.__hp = TOP;
+        this.__wAlign = LEFT;
+        this.__hAlign = TOP;
+        this.__textSize = 10;
         this.__textStyle = NORMAL;
+        this.__textGap = 10;
+        this.__lineCount = 0;
 
         var winSize = TopicManager.ready().read(DISPLAY_INFO.WINDOW_SIZE);
         this.__w = winSize[0];
@@ -40,14 +42,26 @@ class TextView extends AbsView {
         return this;
     }
 
-    setText(str) {
-        this.__text = str;
+    addText(str) {
+        this.__lineCount++;
+        this.__text += str + "\n";
+        return this;
+    }
+
+    setBound(w, h) {
+        this.__w = w;
+        this.__h = h;
         return this;
     }
 
     setAlign(wp, hp) {
-        this.__wp = wp;
-        this.__hp = hp;
+        this.__wAlign = wp;
+        this.__hAlign = hp;
+        return this;
+    }
+
+    setTextGap(g) {
+        this.__textGap = g;
         return this;
     }
 
@@ -76,7 +90,10 @@ class TextView extends AbsView {
         textStyle(this.__textStyle);
         noStroke();
         fill(this.__color);
-        textAlign(this.__wp, this.__hp);
+        textAlign(this.__wAlign, this.__hAlign);
+        if (this.__lineCount >= 2) {
+            textLeading(this.__textGap);
+        }
         text(this.__text, this.__pos.x, this.__pos.y, this.__w, this.__h);
     }
 }

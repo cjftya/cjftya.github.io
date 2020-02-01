@@ -2,7 +2,7 @@ class SlideShow {
     constructor() {
         this.__images = [];
         this.__paths = [];
-        this.__realRatioMap = new Map();
+        this.__realRatioPaths = [];
         this.__indexCount = 0;
 
         this.__pos = new Vector2d();
@@ -58,13 +58,17 @@ class SlideShow {
     addImage(img, real) {
         var resource = TopicManager.ready().read(RESOURCE.DATA);
         this.__paths.push(img);
-        this.__realRatioMap.set(img, real);
+        this.__realRatioPaths.push(real);
         this.__images.push(resource.get(img).getData());
         return this;
     }
 
-    getCurrentRealRatio() {
-        return this.__realRatioMap.get(this.__paths[this.__indexCount]);
+    getCurrentIndex() {
+        return this.__indexCount;
+    }
+
+    getRealRatioPaths() {
+        return this.__realRatioPaths;
     }
 
     setMask(mask) {

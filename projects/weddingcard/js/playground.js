@@ -27,20 +27,20 @@ var debugCount = 0;
 
 function preload() {
     TopicManager.ready().write(RESOURCE.DATA, new ResourceLoader()
-        .add("https://cjftya.github.io/assets/main.jpg", ResourceType.Image)
-        .add("https://cjftya.github.io/assets/bendlogo.jpg", ResourceType.Image)
-        .add("https://cjftya.github.io/assets/mask.png", ResourceType.Image)
-        .add("https://cjftya.github.io/assets/map.jpg", ResourceType.Image)
-        .add("https://cjftya.github.io/assets/p1.png", ResourceType.Image)
-        .add("https://cjftya.github.io/assets/p2.png", ResourceType.Image)
-        .add("https://cjftya.github.io/assets/p3.png", ResourceType.Image)
-        .add("https://cjftya.github.io/assets/p4.png", ResourceType.Image)
-        .add("https://cjftya.github.io/assets/p5.png", ResourceType.Image)
-        .add("https://cjftya.github.io/assets/realratio/p1.png", ResourceType.Image)
-        .add("https://cjftya.github.io/assets/realratio/p2.png", ResourceType.Image)
-        .add("https://cjftya.github.io/assets/realratio/p3.png", ResourceType.Image)
-        .add("https://cjftya.github.io/assets/realratio/p4.png", ResourceType.Image)
-        .add("https://cjftya.github.io/assets/realratio/p5.png", ResourceType.Image)
+        .add(ResourcePath.MainImage, ResourceType.Image)
+        .add(ResourcePath.BendImage, ResourceType.Image)
+        .add(ResourcePath.SlideShowMaskImage, ResourceType.Image)
+        .add(ResourcePath.MapImage, ResourceType.Image)
+        .add(ResourcePath.SlideShow1Image, ResourceType.Image)
+        .add(ResourcePath.SlideShow2Image, ResourceType.Image)
+        .add(ResourcePath.SlideShow3Image, ResourceType.Image)
+        .add(ResourcePath.SlideShow4Image, ResourceType.Image)
+        .add(ResourcePath.SlideShow5Image, ResourceType.Image)
+        .add(ResourcePath.RealRatio1Image, ResourceType.Image)
+        .add(ResourcePath.RealRatio2Image, ResourceType.Image)
+        .add(ResourcePath.RealRatio3Image, ResourceType.Image)
+        .add(ResourcePath.RealRatio4Image, ResourceType.Image)
+        .add(ResourcePath.RealRatio5Image, ResourceType.Image)
         .setListener(this.onLoadedResource)
         .load());
 }
@@ -67,11 +67,7 @@ function draw() {
     dragVel *= 0.9;
     this.updateWeddingContents(dragVel);
 
-    fill(bubleColor);
-    for (var b of bubleArr) {
-        debugCount++;
-        ellipse(b.x, b.y, b.r, b.r);
-    }
+    this.drawBackgroundShape();
 
     for (var [id, view] of textViewMap.entries()) {
         if (view.inScreen(winSize[0], winSize[1])) {
@@ -96,11 +92,11 @@ function draw() {
         debugCount++;
     }
 
-    if(slideShow.inScreen(winSize[0], winSize[1])) {
+    if (slideShow.inScreen(winSize[0], winSize[1])) {
         slideShow.update(TimeDeltaUtil.getInstance().getDelta());
         slideShow.draw();
         debugCount++;
-    
+
         imageViewer.update(TimeDeltaUtil.getInstance().getDelta());
         imageViewer.draw();
         debugCount++;
@@ -134,6 +130,14 @@ function draw() {
     this.drawFpsCount();
 
     debugCount = 0;
+}
+
+function drawBackgroundShape() {
+    fill(bubleColor);
+    for (var b of bubleArr) {
+        debugCount++;
+        ellipse(b.x, b.y, b.r, b.r);
+    }
 }
 
 function updateWeddingContents(vy) {
@@ -280,52 +284,44 @@ function initialize() {
 }
 
 function initializeWeddingContents() {
-    imageViewer = new ImageViewer()
-        .setPos(winSize[0] / 2, winSize[1] / 2);
-
-    var titleTextView = new TextView("우 리 결 혼 합 니 다")
+    var titleTextView = UiFactory.createTextView()
+        .addText("우 리 결 혼 합 니 다")
         .setAlign(CENTER, null)
         .setColor(120, 80, 80)
         .setSize(22)
         .setPos(0, 80);
 
-    var mainImageView = new ImageView("https://cjftya.github.io/assets/main.jpg")
+    var mainImageView = UiFactory.createImageView()
+        .setImagePath(ResourcePath.MainImage)
         .setPos(45, titleTextView.getPos().y + 60)
         .setWidth(winSize[0] - 90);
 
-    var mainImageTitleTextView = new TextView("가나다 ღ 마바사")
+    var mainImageTitleTextView = UiFactory.createTextView()
+        .addText("가나다 ღ 마바사")
         .setAlign(CENTER, null)
         .setColor(120, 80, 80)
         .setSize(17)
         .setPos(0, mainImageView.getHeight() + 170);
 
-    var parentsFatherATextView = new TextView("아버지 가나다")
+    var parentsATextView = UiFactory.createTextView()
+        .addText("아버지 가나다")
+        .addText("아버지 마바사")
+        .setTextGap(35)
         .setAlign(LEFT, null)
         .setColor(120, 100, 100)
         .setAlpha(180)
         .setSize(15)
         .setPos(50, mainImageTitleTextView.getPos().y + 50);
 
-    var parentsFatherBTextView = new TextView("아버지 마바사")
+    var parentsBTextView = UiFactory.createTextView()
+        .addText("어머니 가나다")
+        .addText("어머니 마바사")
+        .setTextGap(35)
         .setAlign(RIGHT, null)
         .setColor(120, 100, 100)
         .setAlpha(180)
         .setSize(15)
-        .setPos(-50, parentsFatherATextView.getPos().y);
-
-    var parentsMotherATextView = new TextView("어머니 가나다")
-        .setAlign(LEFT, null)
-        .setColor(120, 100, 100)
-        .setAlpha(180)
-        .setSize(15)
-        .setPos(50, parentsFatherBTextView.getPos().y + 40);
-
-    var parentsMotherBTextView = new TextView("어머니 마바사")
-        .setAlign(RIGHT, null)
-        .setColor(120, 100, 100)
-        .setAlpha(180)
-        .setSize(15)
-        .setPos(-50, parentsMotherATextView.getPos().y);
+        .setPos(-50, mainImageTitleTextView.getPos().y + 50);
 
     var mainTitleParticle = new Spray(15)
         .setPos(winSize[0] / 2, mainImageView.getHeight() + 170)
@@ -334,79 +330,67 @@ function initializeWeddingContents() {
         .setFreq(0.08)
         .setBlur(true);
 
-        //2020. 04. 11. SAT  2:00 PM
-    var weddingDateTextView = new TextView("AAAAAAAAAAAAAAAAAAAAAAAAa")
+    //2020. 04. 11. SAT  2:00 PM
+    //더 케이트원타원 A동 LL층 | 아펠가모 웨딩홀
+    var weddingInfoTextView = UiFactory.createTextView()
+        .addText("AAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+        .addText("VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV")
+        .setTextGap(30)
         .setAlign(CENTER, null)
         .setColor(120, 100, 100)
         .setSize(15)
         .setPos(0, mainImageTitleTextView.getPos().y + 200);
 
-        //더 케이트원타원 A동 LL층 | 아펠가모 웨딩홀
-    var weddingLocationTextView = new TextView("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
-        .setAlign(CENTER, null)
-        .setColor(120, 100, 100)
-        .setSize(15)
-        .setPos(0, weddingDateTextView.getPos().y + 30);
+    rectpos1 = new Vector2d().set(0, weddingInfoTextView.getPos().y - 30);
 
-    rectpos1 = new Vector2d().set(0, weddingDateTextView.getPos().y - 30);
-
-    var invitationTextView = new TextView("Invitation")
+    var invitationTextView = UiFactory.createTextView()
+        .addText("Invitation")
         .setAlign(CENTER, null)
         .setColor(120, 80, 80)
         .setSize(22)
-        .setPos(0, weddingLocationTextView.getPos().y + 120);
+        .setPos(0, weddingInfoTextView.getPos().y + 120);
 
-    var invitationLetterTextView1 = new TextView("너무나 사랑스럽고 지켜주고싶은 사람을 만났습니다.")
+    var invitationLetterTextView = UiFactory.createTextView()
+        .addText("너무나 사랑스럽고 지켜주고싶은 사람을 만났습니다.")
+        .addText("변치않는 마음과 믿음으로 하나가 되어 행복하게 살겠습니다.")
+        .addText("믿은과 사랑을 약속하는 귀한 날에 축복의 걸음을 하시어")
+        .addText("지켜봐주신다면 더없는 기쁨으로 담아두겠습니다.")
+        .setTextGap(45)
         .setAlign(CENTER, null)
         .setColor(120, 100, 100)
         .setAlpha(180)
-        .setSize(12)
+        .setSize(13)
         .setPos(0, invitationTextView.getPos().y + 60);
 
-    var invitationLetterTextView2 = new TextView("변치않는 마음과 믿음으로 하나가 되어 행복하게 살겠습니다.")
-        .setAlign(CENTER, null)
-        .setColor(120, 100, 100)
-        .setAlpha(180)
-        .setSize(12)
-        .setPos(0, invitationLetterTextView1.getPos().y + 30);
-
-    var invitationLetterTextView3 = new TextView("믿은과 사랑을 약속하는 귀한 날에 축복의 걸음을 하시어")
-        .setAlign(CENTER, null)
-        .setColor(120, 100, 100)
-        .setAlpha(180)
-        .setSize(12)
-        .setPos(0, invitationLetterTextView2.getPos().y + 30);
-
-    var invitationLetterTextView4 = new TextView("지켜봐주신다면 더없는 기쁨으로 담아두겠습니다.")
-        .setAlign(CENTER, null)
-        .setColor(120, 100, 100)
-        .setAlpha(180)
-        .setSize(12)
-        .setPos(0, invitationLetterTextView3.getPos().y + 30);
-
-    var bendImageView = new ImageView("https://cjftya.github.io/assets/bendlogo.jpg")
-        .setPos(0, invitationLetterTextView4.getPos().y + 140)
+    var bendImageView = UiFactory.createImageView()
+        .setImagePath(ResourcePath.BendImage)
+        .setPos(0, invitationLetterTextView.getPos().y + 230)
         .setWidth(winSize[0])
         .setCropMode(true)
         .setCropSrcPos(200, 450)
         .setCropSize(winSize[0], 100);
 
-    var galleryTextView = new TextView("Gallery")
+    var galleryTextView = UiFactory.createTextView()
+        .addText("Gallery")
         .setAlign(CENTER, null)
         .setColor(120, 80, 80)
         .setSize(22)
         .setPos(0, bendImageView.getPos().y + 200);
 
     slideShow = new SlideShow()
-        .addImage("https://cjftya.github.io/assets/p1.png", "https://cjftya.github.io/assets/realratio/p1.png")
-        .addImage("https://cjftya.github.io/assets/p2.png", "https://cjftya.github.io/assets/realratio/p2.png")
-        .addImage("https://cjftya.github.io/assets/p3.png", "https://cjftya.github.io/assets/realratio/p3.png")
-        .addImage("https://cjftya.github.io/assets/p4.png", "https://cjftya.github.io/assets/realratio/p4.png")
-        .addImage("https://cjftya.github.io/assets/p5.png", "https://cjftya.github.io/assets/realratio/p5.png")
-        .setMask("https://cjftya.github.io/assets/mask.png")
+        .addImage(ResourcePath.SlideShow1Image, ResourcePath.RealRatio1Image)
+        .addImage(ResourcePath.SlideShow2Image, ResourcePath.RealRatio2Image)
+        .addImage(ResourcePath.SlideShow3Image, ResourcePath.RealRatio3Image)
+        .addImage(ResourcePath.SlideShow4Image, ResourcePath.RealRatio4Image)
+        .addImage(ResourcePath.SlideShow5Image, ResourcePath.RealRatio5Image)
+        .setMask(ResourcePath.SlideShowMaskImage)
         .setWidth(winSize[0])
         .setDelay(5)
         .setPos(0, galleryTextView.getPos().y + 50);
+
+    imageViewer = new ImageViewer()
+        .addImageList(slideShow.getRealRatioPaths())
+        .setPos(winSize[0] / 2, winSize[1] / 2);
 
     var lineTrace1 = new LineTrace();
     var oneSlice = (Math.PI * 2) / 30;
@@ -447,12 +431,12 @@ function initializeWeddingContents() {
         .setSize(22)
         .setPos(0, slideShow.getPos().y + slideShow.getHeight() + 120);
 
-    mapView = new MapView("https://cjftya.github.io/assets/map.jpg")
+    mapView = new MapView(ResourcePath.MapImage)
         .setPos(0, locationTextView.getPos().y + 60)
         .setCropSrcPos(200, 200)
         .setShortcutText("네이버지도 바로가기")
-        .setCropSize(winSize[0], 250);;
-    
+        .setCropSize(winSize[0], 250);
+
     lineTraceMap = new Map();
     lineTraceMap.set(ParticleContents.SlideShow1, lineTrace1);
     lineTraceMap.set(ParticleContents.SlideShow2, lineTrace2);
@@ -469,17 +453,11 @@ function initializeWeddingContents() {
     textViewMap = new Map();
     textViewMap.set(TextContents.Title, titleTextView);
     textViewMap.set(TextContents.MainImageTitle, mainImageTitleTextView);
-    textViewMap.set(TextContents.ParentsFatherA, parentsFatherATextView);
-    textViewMap.set(TextContents.ParentsFatherB, parentsFatherBTextView);
-    textViewMap.set(TextContents.ParentsMotherA, parentsMotherATextView);
-    textViewMap.set(TextContents.ParentsMotherB, parentsMotherBTextView);
-    textViewMap.set(TextContents.WeddingDate, weddingDateTextView);
-    textViewMap.set(TextContents.WeddingLocation, weddingLocationTextView);
+    textViewMap.set(TextContents.ParentsA, parentsATextView);
+    textViewMap.set(TextContents.ParentsB, parentsBTextView);
+    textViewMap.set(TextContents.WeddingInfo, weddingInfoTextView);
     textViewMap.set(TextContents.Invitation, invitationTextView);
-    textViewMap.set(TextContents.InvitationLetter1, invitationLetterTextView1);
-    textViewMap.set(TextContents.InvitationLetter2, invitationLetterTextView2);
-    textViewMap.set(TextContents.InvitationLetter3, invitationLetterTextView3);
-    textViewMap.set(TextContents.InvitationLetter4, invitationLetterTextView4);
+    textViewMap.set(TextContents.InvitationLetter, invitationLetterTextView);
     textViewMap.set(TextContents.Gallery, galleryTextView);
     textViewMap.set(TextContents.Location, locationTextView);
 }
