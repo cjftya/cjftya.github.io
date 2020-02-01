@@ -2,14 +2,19 @@ class ImageViewer extends AbsViewer {
     constructor() {
         super(0);
 
-        this.__image = null;
+        this.__images = [];
         this.__pos = new Vector2d();
         this.__posOffset = new Vector2d();
+
+        this.__indexCount = 0;
 
         var winSize = TopicManager.ready().read(DISPLAY_INFO.WINDOW_SIZE);
         this.__ws = winSize[0];
         this.__hs = winSize[1];
         this.__scale = 1;
+
+        this.__prevBtn = new Vector2d();
+        this.__nextBtn = new Vector2d();
 
         this.__scaleMin = -2;
         this.__scaleMax = -2;
@@ -39,12 +44,20 @@ class ImageViewer extends AbsViewer {
         return this.__pos;
     }
 
-    setImage(img) {
-        this.__image = img;
+    addImage(path) {
+        var resource = TopicManager.ready().read(RESOURCE.DATA);
+        var img = resource.get(path).getData();
+        this.__images.push(img);
         this.__originW = img.width;
         this.__originH = img.height;
         this.setFitScreen(img);
-        console.log(this.__scale + ", " + this.__scaleMin);
+        return this;
+    }
+
+    addImageList(paths) {
+        for (var p of paths) {
+            this.addImage(p);
+        }
         return this;
     }
 
@@ -70,7 +83,6 @@ class ImageViewer extends AbsViewer {
         } else {
             s = this.__scale + a;
         }
-        console.log(this.__scale + ", " + this.__scaleMin);
         this.setScale(s);
     }
 
@@ -80,12 +92,9 @@ class ImageViewer extends AbsViewer {
         return this;
     }
 
-    getCenterX() {
-        return 0;
-    }
-
-    getCenterY() {
-        return 0;
+    setIndex(index) {
+        this.__indexCount = index;
+        return this;
     }
 
     inBound(x, y) {
@@ -143,7 +152,7 @@ class ImageViewer extends AbsViewer {
 
             if(this.__alphaCount >= 210) {
                 imageMode(CENTER);
-                image(this.__image, this.__pos.x + this.__posOffset.x, this.__pos.y + this.__posOffset.y, this.__w, this.__h);
+                image(this.__images[this.__indexCount], this.__pos.x + this.__posOffset.x, this.__pos.y + this.__posOffset.y, this.__w, this.__h);
             }
         }
     }
