@@ -156,7 +156,7 @@ function updateWeddingContents(vy) {
     for (var [id, view] of imageViewMap.entries()) {
         view.addPos(0, vy);
         if (id == ImageContents.Bend) {
-            view.addCropSrcPos(0, vy * 0.1);
+            view.addCropSrcPos(0, vy * 0.05);
         }
     }
     for (var [id, view] of sprayParticleMap.entries()) {
@@ -366,7 +366,7 @@ function initializeWeddingContents() {
         .setPos(0, invitationLetterTextView.getPos().y + 230)
         .setWidth(winSize[0])
         .setCropMode(true)
-        .setCropSrcPos(200, 450)
+        .setCropSrcPos(((1300 - winSize[0]) / 2) - 50, 500)
         .setCropSize(winSize[0], 100);
 
     var galleryTextView = UiFactory.createTextView()

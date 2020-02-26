@@ -44,13 +44,6 @@ class ImageViewer extends AbsViewer {
         return this.__pos;
     }
 
-    setup() {
-        var img = this.__images[this.__indexCount];
-        this.__originW = img.width;
-        this.__originH = img.height;
-        this.setFitScreen(img);
-    }
-
     addImagePath(path) {
         var resource = TopicManager.ready().read(RESOURCE.DATA);
         var img = resource.get(path).getData();
