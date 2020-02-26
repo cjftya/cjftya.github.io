@@ -44,20 +44,18 @@ class ImageViewer extends AbsViewer {
         return this.__pos;
     }
 
-    addImage(path) {
+    addImagePath(path) {
         var resource = TopicManager.ready().read(RESOURCE.DATA);
         var img = resource.get(path).getData();
+        this.addImage(img);
+        return this;
+    }
+
+    addImage(img) {
         this.__images.push(img);
         this.__originW = img.width;
         this.__originH = img.height;
         this.setFitScreen(img);
-        return this;
-    }
-
-    addImageList(paths) {
-        for (var p of paths) {
-            this.addImage(p);
-        }
         return this;
     }
 

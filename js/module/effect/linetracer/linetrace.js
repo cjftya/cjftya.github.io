@@ -41,11 +41,16 @@ class LineTrace {
         this.__visibleLine = v;
     }
 
-    start() {
-        this.__indexCount = MathUtil.randInt(0, this.__points.length - 1);
-        this.setupVelocity(this.__indexCount);
-        this.__pos.set(this.__points[this.__indexCount].x, this.__points[this.__indexCount].y);
+    start(index, energy) {
+        if(index < 0 || index >= this.__points.length) {
+            this.__indexCount = MathUtil.randInt(0, this.__points.length - 1);
+        } else {
+            this.__indexCount = index;    
+        }
+        this.__energy = energy;
         this.__start = true;
+        this.__pos.set(this.__points[this.__indexCount].x, this.__points[this.__indexCount].y);
+        this.setupVelocity(this.__indexCount);
     }
 
     setupVelocity(index) {

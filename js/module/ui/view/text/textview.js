@@ -18,8 +18,9 @@ class TextView extends AbsView {
     }
 
     inScreen(sw, sh) {
-        if (this.__pos.y > -this.__textSize - 50 &&
-            this.__pos.y < sh + this.__textSize + 50) {
+        var gap = this.__textSize + this.__textGap * (this.__lineCount - 1);
+        if (this.__pos.y > -gap &&
+            this.__pos.y < sh + gap) {
             return true;
         }
         return false;
