@@ -284,7 +284,7 @@ function initialize() {
 
 function initializeWeddingContents() {
     var titleTextView = UiFactory.createTextView()
-        .addText("우 리 결 혼 합 니 다")
+        .addText("우 리 결 혼 합 니 다 1")
         .setAlign(CENTER, null)
         .setColor(120, 80, 80)
         .setSize(22)
