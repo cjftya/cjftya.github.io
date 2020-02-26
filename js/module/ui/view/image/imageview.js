@@ -175,7 +175,7 @@ class ImageView extends AbsView {
     }
 
     draw() {
-        imageMode(CORNER);
+       imageMode(CORNER);
         if (this.__cropMode) {
             image(this.__image, this.__pos.x, this.__pos.y, this.__cw, this.__ch,
                 this.__cx, this.__cy, this.__cw, this.__ch);
