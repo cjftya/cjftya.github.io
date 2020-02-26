@@ -44,18 +44,17 @@ class ImageViewer extends AbsViewer {
         return this.__pos;
     }
 
-    addImagePath(path) {
-        var resource = TopicManager.ready().read(RESOURCE.DATA);
-        var img = resource.get(path).getData();
-        this.addImage(img);
-        return this;
-    }
-
-    addImage(img) {
-        this.__images.push(img);
+    setup() {
+        var img = this.__images[this.__indexCount];
         this.__originW = img.width;
         this.__originH = img.height;
         this.setFitScreen(img);
+    }
+
+    addImagePath(path) {
+        var resource = TopicManager.ready().read(RESOURCE.DATA);
+        var img = resource.get(path).getData();
+        this.__images.push(img);
         return this;
     }
 
@@ -126,6 +125,7 @@ class ImageViewer extends AbsViewer {
         this.__inputDelay = 1;
         this.__isShow = true;
         this.__alphaCount = 0;
+        this.setup();
     }
 
     update(delta) {
