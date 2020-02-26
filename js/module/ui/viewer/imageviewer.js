@@ -73,13 +73,11 @@ class ImageViewer extends AbsViewer {
     }
 
     addScale(a) {
-        var s = 0;
-        if (this.__scale + a > this.__scaleMax) {
-            s = this.__scaleMax;
-        } else if (this.__scale + a < this.__scaleMin) {
-            s = this.__scaleMin;
-        } else {
-            s = this.__scale + a;
+        var s = this.__scale + a;
+        if (s > this.__scaleMax) {
+            s = this.__scale;
+        } else if (s < this.__scaleMin) {
+            s = this.__scale;
         }
         this.setScale(s);
     }
