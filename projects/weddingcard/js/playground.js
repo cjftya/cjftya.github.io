@@ -199,8 +199,7 @@ function mousePressed() {
 
 function mouseReleased() {
     if (!imageViewer.isShowing() && slideShow.inBound(mouseX, mouseY) && !imageViewer.isInputDelay()) {
-        var resource = TopicManager.ready().read(RESOURCE.DATA);
-        imageViewer.setImage(resource.get(slideShow.getCurrentRealRatio()).getData());
+        imageViewer.setIndex(slideShow.getCurrentIndex());
         imageViewer.setScaleLimit(-1, 0.8)
         imageViewer.show();
         slideShow.pause();
@@ -378,38 +377,64 @@ function initializeWeddingContents() {
         .setPos(0, bendImageView.getPos().y + 200);
 
     slideShow = new SlideShow()
-        .addImage(ResourcePath.SlideShow1Image, ResourcePath.RealRatio1Image)
-        .addImage(ResourcePath.SlideShow2Image, ResourcePath.RealRatio2Image)
-        .addImage(ResourcePath.SlideShow3Image, ResourcePath.RealRatio3Image)
-        .addImage(ResourcePath.SlideShow4Image, ResourcePath.RealRatio4Image)
-        .addImage(ResourcePath.SlideShow5Image, ResourcePath.RealRatio5Image)
+        .addImagePath(ResourcePath.SlideShow1Image)
+        .addImagePath(ResourcePath.SlideShow2Image)
+        .addImagePath(ResourcePath.SlideShow3Image)
+        .addImagePath(ResourcePath.SlideShow4Image)
+        .addImagePath(ResourcePath.SlideShow5Image)
         .setMask(ResourcePath.SlideShowMaskImage)
         .setWidth(winSize[0])
         .setDelay(5)
         .setPos(0, galleryTextView.getPos().y + 50);
 
     imageViewer = new ImageViewer()
-        .addImageList(slideShow.getRealRatioPaths())
+        .addImagePath(ResourcePath.RealRatio1Image)
+        .addImagePath(ResourcePath.RealRatio2Image)
+        .addImagePath(ResourcePath.RealRatio3Image)
+        .addImagePath(ResourcePath.RealRatio4Image)
+        .addImagePath(ResourcePath.RealRatio5Image)
         .setPos(winSize[0] / 2, winSize[1] / 2);
+
+
+    var p1 = MathUtil.randInt(0, 29);
+    var p2, p3;
+    if (p1 + 10 > 29) {
+        p2 = (p1 + 10) - 29;
+    } else {
+        p2 = p1 + 10;
+    }
+    if (p2 + 10 > 29) {
+        p3 = (p2 + 10) - 29;
+    } else {
+        p3 = p2 + 10;
+    }
 
     var lineTrace1 = new LineTrace();
     var oneSlice = (Math.PI * 2) / 30;
     for (var i = 0; i < 30; i++) {
         var xp = Math.cos(oneSlice * i) * (winSize[0] / 3.0);
-        var yp = Math.sin(oneSlice * i) * (winSize[0] / 3.3);
+        var yp = Math.sin(oneSlice * i) * (winSize[0] / 3.0);
         lineTrace1.addPoint(xp + winSize[0] / 2, yp + slideShow.getPos().y + slideShow.getHeight() / 2);
     }
-    lineTrace1.inverse();
-    lineTrace1.start();
+    lineTrace1.start(p1, 1);
 
     var lineTrace2 = new LineTrace();
     var oneSlice = Math.PI * 2 / 30;
     for (var i = 0; i < 30; i++) {
-        var xp = Math.cos(oneSlice * i) * (winSize[0] / 2.4);
-        var yp = Math.sin(oneSlice * i) * (winSize[0] / 3.2);
+        var xp = Math.cos(oneSlice * i) * (winSize[0] / 3.0);
+        var yp = Math.sin(oneSlice * i) * (winSize[0] / 3.0);
         lineTrace2.addPoint(xp + winSize[0] / 2, yp + slideShow.getPos().y + slideShow.getHeight() / 2);
     }
-    lineTrace2.start();
+    lineTrace2.start(p2, 1);
+
+    var lineTrace3 = new LineTrace();
+    var oneSlice = Math.PI * 2 / 30;
+    for (var i = 0; i < 30; i++) {
+        var xp = Math.cos(oneSlice * i) * (winSize[0] / 3.0);
+        var yp = Math.sin(oneSlice * i) * (winSize[0] / 3.0);
+        lineTrace3.addPoint(xp + winSize[0] / 2, yp + slideShow.getPos().y + slideShow.getHeight() / 2);
+    }
+    lineTrace3.start(p3, 1);
 
     var slideShowParticle1 = new Spray(20)
         .setPos(1000, 1000)
@@ -425,6 +450,13 @@ function initializeWeddingContents() {
         .setFreq(0.06)
         .setBlur(true);
 
+    var slideShowParticle3 = new Spray(20)
+        .setPos(1000, 1000)
+        .setCreateArea(10, 10)
+        .setLife(160)
+        .setFreq(0.06)
+        .setBlur(true);
+
     var locationTextView = new TextView("Location")
         .setAlign(CENTER, null)
         .setColor(120, 80, 80)
@@ -433,18 +465,20 @@ function initializeWeddingContents() {
 
     mapView = new MapView(ResourcePath.MapImage)
         .setPos(0, locationTextView.getPos().y + 60)
-        .setCropSrcPos(200, 200)
+        .setCropSrcPos(340, 200)
         .setShortcutText("네이버지도 바로가기")
         .setCropSize(winSize[0], 250);
 
     lineTraceMap = new Map();
     lineTraceMap.set(ParticleContents.SlideShow1, lineTrace1);
     lineTraceMap.set(ParticleContents.SlideShow2, lineTrace2);
+    lineTraceMap.set(ParticleContents.SlideShow3, lineTrace3);
 
     sprayParticleMap = new Map();
     sprayParticleMap.set(ParticleContents.MainTitle, mainTitleParticle);
     sprayParticleMap.set(ParticleContents.SlideShow1, slideShowParticle1);
     sprayParticleMap.set(ParticleContents.SlideShow2, slideShowParticle2);
+    sprayParticleMap.set(ParticleContents.SlideShow3, slideShowParticle3);
 
     imageViewMap = new Map();
     imageViewMap.set(ImageContents.Main, mainImageView);

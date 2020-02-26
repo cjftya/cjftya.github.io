@@ -1,8 +1,6 @@
 class SlideShow {
     constructor() {
         this.__images = [];
-        this.__paths = [];
-        this.__realRatioPaths = [];
         this.__indexCount = 0;
 
         this.__pos = new Vector2d();
@@ -55,20 +53,14 @@ class SlideShow {
         return this;
     }
 
-    addImage(img, real) {
+    addImagePath(imgPath) {
         var resource = TopicManager.ready().read(RESOURCE.DATA);
-        this.__paths.push(img);
-        this.__realRatioPaths.push(real);
-        this.__images.push(resource.get(img).getData());
+        this.__images.push(resource.get(imgPath).getData());
         return this;
     }
 
     getCurrentIndex() {
         return this.__indexCount;
-    }
-
-    getRealRatioPaths() {
-        return this.__realRatioPaths;
     }
 
     setMask(mask) {
@@ -89,10 +81,6 @@ class SlideShow {
         if (this.__indexCount >= this.__images.length) {
             this.__indexCount = 0;
         }
-    }
-
-    getCurrentImage() {
-        return this.__paths[this.__indexCount];
     }
 
     inBound(x, y) {

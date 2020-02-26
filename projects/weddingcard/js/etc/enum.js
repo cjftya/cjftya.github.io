@@ -1,7 +1,8 @@
 var ParticleContents = {
     MainTitle: 0,
     SlideShow1: 1,
-    SlideShow2: 2
+    SlideShow2: 2,
+    SlideShow3: 3
 };
 
 var ImageContents = {
@@ -25,7 +26,7 @@ var TextContents = {
 var ResourcePath = {
     MainImage: "https://cjftya.github.io/assets/main.jpg",
     BendImage: "https://cjftya.github.io/assets/bendlogo.jpg",
-    MapImage: "https://cjftya.github.io/assets/map.jpg",
+    MapImage: "https://cjftya.github.io/assets/mapimage.jpg",
     SlideShowMaskImage: "https://cjftya.github.io/assets/mask.png",
     SlideShow1Image: "https://cjftya.github.io/assets/p1.png",
     SlideShow2Image: "https://cjftya.github.io/assets/p2.png",

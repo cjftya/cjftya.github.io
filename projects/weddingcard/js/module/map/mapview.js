@@ -107,12 +107,12 @@ class MapView {
         image(this.__map, this.__pos.x, this.__pos.y, this.__cw, this.__ch,
             this.__cp.x, this.__cp.y, this.__cw, this.__ch);
         fill(150);
-        rect(this.__pos.x, this.__pos.y + this.__ch, this.__cw, 30);
+        rect(this.__pos.x, this.__pos.y + this.__ch, this.__cw, 35);
 
         fill(240);
         noStroke();
         textAlign(CENTER, 0);
         textSize(15);
-        text(this.__text, this.__pos.x, this.__pos.y + this.__ch + 9, this.__cw, 30);
+        text(this.__text, this.__pos.x, this.__pos.y + this.__ch + 12, this.__cw, 30);
     }
 }
