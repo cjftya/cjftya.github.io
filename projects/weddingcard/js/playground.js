@@ -284,7 +284,7 @@ function initialize() {
 
 function initializeWeddingContents() {
     var titleTextView = UiFactory.createTextView()
-        .addText("우 리 결 혼 합 니 다 1")
+        .addText("우 리 결 혼 합 니 다")
         .setAlign(CENTER, null)
         .setColor(120, 80, 80)
         .setSize(22)
@@ -304,7 +304,7 @@ function initializeWeddingContents() {
 
     var parentsATextView = UiFactory.createTextView()
         .addText("아버지 가나다")
-        .addText("아버지 마바사")
+        .addText("어머니 마바사")
         .setTextGap(35)
         .setAlign(LEFT, null)
         .setColor(120, 100, 100)
@@ -313,7 +313,7 @@ function initializeWeddingContents() {
         .setPos(50, mainImageTitleTextView.getPos().y + 50);
 
     var parentsBTextView = UiFactory.createTextView()
-        .addText("어머니 가나다")
+        .addText("아버지 가나다")
         .addText("어머니 마바사")
         .setTextGap(35)
         .setAlign(RIGHT, null)
