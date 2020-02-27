@@ -278,7 +278,7 @@ function initialize() {
     bubleColor.setAlpha(8);
     for (var i = 0; i < 8; i++) {
         x = MathUtil.randInt(50, winSize[0] - 50);
-        y = MathUtil.randInt(50, winSize[1] - 50);
+        y = MathUtil.randInt(winSize[1]/2+50, winSize[1] - 50);
         r = MathUtil.randInt(250, 800);
         bubleArr.push({ x, y, r });
     }
@@ -307,7 +307,7 @@ function initializeWeddingContents() {
         .setColor(160, 110, 110)
         .setTextStyle(BOLD)
         .setSize(20)
-        .setPos(0, titleTextView.getPos().y + 90);
+        .setPos(0, titleTextView.getPos().y + 100);
 
     var mainTitleParticle = new Spray(15)
         .setPos(winSize[0] / 2, mainImageTitleTextView.getPos().y)
@@ -362,6 +362,8 @@ function initializeWeddingContents() {
 
     var invitationTextView = UiFactory.createTextView()
         .addText("❀ Invitation ❀")
+        .addText("______")
+        .setTextGap(15)
         .setAlign(CENTER, null)
         .setColor(160, 110, 110)
         .setTextStyle(BOLD)
@@ -379,7 +381,7 @@ function initializeWeddingContents() {
         .setTextStyle(BOLD)
         .setAlpha(180)
         .setSize(16)
-        .setPos(0, invitationTextView.getPos().y + 60);
+        .setPos(0, invitationTextView.getPos().y + 80);
 
     var bendImageView = UiFactory.createImageView()
         .setImagePath(ResourcePath.BendImage)
@@ -391,11 +393,13 @@ function initializeWeddingContents() {
 
     var galleryTextView = UiFactory.createTextView()
         .addText("❀ Gallery ❀")
+        .addText("______")
+        .setTextGap(15)
         .setAlign(CENTER, null)
         .setColor(160, 110, 110)
         .setTextStyle(BOLD)
         .setSize(22)
-        .setPos(0, bendImageView.getPos().y + 200);
+        .setPos(0, bendImageView.getPos().y + 210);
 
     slideShow = new SlideShow()
         .addImagePath(ResourcePath.SlideShow1Image)
@@ -482,6 +486,8 @@ function initializeWeddingContents() {
 
     var locationTextView = UiFactory.createTextView()
         .addText("❀ Location ❀")
+        .addText("______")
+        .setTextGap(15)
         .setAlign(CENTER, null)
         .setColor(160, 110, 110)
         .setTextStyle(BOLD)
@@ -489,7 +495,7 @@ function initializeWeddingContents() {
         .setPos(0, slideShow.getPos().y + slideShow.getHeight() + 120);
 
     mapView = new MapView(ResourcePath.MapImage)
-        .setPos(0, locationTextView.getPos().y + 60)
+        .setPos(0, locationTextView.getPos().y + 80)
         .setCropSrcPos(340, 200)
         .setShortcutText("네이버지도 바로가기")
         .setCropSize(winSize[0], 250);
