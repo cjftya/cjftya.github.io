@@ -40,11 +40,13 @@ function preload() {
         .add(ResourcePath.SlideShow3Image, ResourceType.Image)
         .add(ResourcePath.SlideShow4Image, ResourceType.Image)
         .add(ResourcePath.SlideShow5Image, ResourceType.Image)
+        .add(ResourcePath.SlideShow6Image, ResourceType.Image)
         .add(ResourcePath.RealRatio1Image, ResourceType.Image)
         .add(ResourcePath.RealRatio2Image, ResourceType.Image)
         .add(ResourcePath.RealRatio3Image, ResourceType.Image)
         .add(ResourcePath.RealRatio4Image, ResourceType.Image)
         .add(ResourcePath.RealRatio5Image, ResourceType.Image)
+        .add(ResourcePath.RealRatio6Image, ResourceType.Image)
         .setListener(this.onLoadedResource)
         .load());
 }
@@ -401,6 +403,7 @@ function initializeWeddingContents() {
         .addImagePath(ResourcePath.SlideShow3Image)
         .addImagePath(ResourcePath.SlideShow4Image)
         .addImagePath(ResourcePath.SlideShow5Image)
+        .addImagePath(ResourcePath.SlideShow6Image)
         .setMask(ResourcePath.SlideShowMaskImage)
         .setWidth(winSize[0])
         .setDelay(5)
@@ -412,6 +415,7 @@ function initializeWeddingContents() {
         .addImagePath(ResourcePath.RealRatio3Image)
         .addImagePath(ResourcePath.RealRatio4Image)
         .addImagePath(ResourcePath.RealRatio5Image)
+        .addImagePath(ResourcePath.RealRatio6Image)
         .setPos(winSize[0] / 2, winSize[1] / 2);
 
 

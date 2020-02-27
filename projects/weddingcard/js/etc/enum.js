@@ -36,14 +36,16 @@ var ResourcePath = {
     WomenFaceImage: "https://cjftya.github.io/assets/womenface.png",
     DayCounterImage: "https://cjftya.github.io/assets/dayCounter.jpg",
     SlideShowMaskImage: "https://cjftya.github.io/assets/mask.png",
-    SlideShow1Image: "https://cjftya.github.io/assets/p1.png",
-    SlideShow2Image: "https://cjftya.github.io/assets/p2.png",
-    SlideShow3Image: "https://cjftya.github.io/assets/p3.png",
-    SlideShow4Image: "https://cjftya.github.io/assets/p4.png",
-    SlideShow5Image: "https://cjftya.github.io/assets/p5.png",
+    SlideShow1Image: "https://cjftya.github.io/assets/s1.jpg",
+    SlideShow2Image: "https://cjftya.github.io/assets/s2.jpg",
+    SlideShow3Image: "https://cjftya.github.io/assets/s3.jpg",
+    SlideShow4Image: "https://cjftya.github.io/assets/s4.jpg",
+    SlideShow5Image: "https://cjftya.github.io/assets/s5.jpg",
+    SlideShow6Image: "https://cjftya.github.io/assets/s6.jpg",
     RealRatio1Image: "https://cjftya.github.io/assets/realratio/r1.jpg",
     RealRatio2Image: "https://cjftya.github.io/assets/realratio/r2.jpg",
     RealRatio3Image: "https://cjftya.github.io/assets/realratio/r3.jpg",
     RealRatio4Image: "https://cjftya.github.io/assets/realratio/r4.jpg",
-    RealRatio5Image: "https://cjftya.github.io/assets/realratio/r5.jpg"
+    RealRatio5Image: "https://cjftya.github.io/assets/realratio/r5.jpg",
+    RealRatio6Image: "https://cjftya.github.io/assets/realratio/r6.jpg"
 };
