@@ -334,9 +334,9 @@ function initializeWeddingContents() {
 
     var dayCounterImageView = UiFactory.createImageView()
         .setImagePath(ResourcePath.DayCounterImage)
-        .setPos(0, manFaceImageView.getPos().y + 230)
+        .setPos(0, manFaceImageView.getPos().y + 180)
         .setCropMode(true)
-        .setCropSrcPos(((800 - winSize[0]) / 2) - 50, 700)
+        .setCropSrcPos(((800 - winSize[0]) / 2) - 50, 500)
         .setCropSize(winSize[0], 300);
 
     rectpos1 = new Vector2d().set(0, weddingInfoTextView.getPos().y - 30);
