@@ -7,7 +7,10 @@ var ParticleContents = {
 
 var ImageContents = {
     Main: 0,
-    Bend: 1
+    Bend: 1,
+    ManFaceImage: 2,
+    WomenFaceImage: 3,
+    DayCounter: 4
 };
 
 var TextContents = {
@@ -18,7 +21,9 @@ var TextContents = {
     InvitationLetter: 6,
     Gallery: 7,
     Location: 8,
-    ShortcutNaver: 9
+    ShortcutNaver: 9,
+    SubwayInfo: 10,
+    BusInfo: 11
 };
 
 var ResourcePath = {
@@ -27,6 +32,7 @@ var ResourcePath = {
     MapImage: "https://cjftya.github.io/assets/mapimage.png",
     ManFaceImage: "https://cjftya.github.io/assets/manface.png",
     WomenFaceImage: "https://cjftya.github.io/assets/womenface.png",
+    DayCounterImage: "https://cjftya.github.io/assets/dayCounter.jpg",
     SlideShowMaskImage: "https://cjftya.github.io/assets/mask.png",
     SlideShow1Image: "https://cjftya.github.io/assets/p1.png",
     SlideShow2Image: "https://cjftya.github.io/assets/p2.png",

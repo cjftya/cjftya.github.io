@@ -22,6 +22,7 @@ var dragVel, dragMax;
 var winSize;
 
 var guideY;
+var endGuideLine;
 
 var debugCount = 0;
 
@@ -31,6 +32,9 @@ function preload() {
         .add(ResourcePath.BendImage, ResourceType.Image)
         .add(ResourcePath.SlideShowMaskImage, ResourceType.Image)
         .add(ResourcePath.MapImage, ResourceType.Image)
+        .add(ResourcePath.ManFaceImage, ResourceType.Image)
+        .add(ResourcePath.WomenFaceImage, ResourceType.Image)
+        .add(ResourcePath.DayCounterImage, ResourceType.Image)
         .add(ResourcePath.SlideShow1Image, ResourceType.Image)
         .add(ResourcePath.SlideShow2Image, ResourceType.Image)
         .add(ResourcePath.SlideShow3Image, ResourceType.Image)
@@ -50,12 +54,11 @@ function setup() {
     TopicManager.ready().write(DISPLAY_INFO.WINDOW_SIZE, [windowWidth, windowHeight]);
 
     this.initialize();
+    this.executeDayCounter();
 
     old = new Vector2d();
     dragVel = dragMax = 0;
     guideY = 0;
-
-    console.log("wedding card");
 }
 
 function draw() {
@@ -145,9 +148,9 @@ function updateWeddingContents(vy) {
     if (guideY > 0) {
         vy += (0 - guideY) * 0.05;
         guideY += (0 - guideY) * 0.05;
-    } else if (guideY < -mapView.getGuideEnd()) {
-        vy += (-mapView.getGuideEnd() - guideY) * 0.05;
-        guideY += (-mapView.getGuideEnd() - guideY) * 0.05;
+    } else if (guideY < -endGuideLine) {
+        vy += (-endGuideLine - guideY) * 0.05;
+        guideY += (-endGuideLine - guideY) * 0.05;
     }
 
     for (var [id, view] of textViewMap.entries()) {
@@ -289,17 +292,19 @@ function initializeWeddingContents() {
         .setWidth(winSize[0]);
 0
     var titleTextView = UiFactory.createTextView()
-        .addText("We are getting married")
+        .addText("❀ We are getting married ❀")
         .setAlign(CENTER, null)
-        .setColor(120, 80, 80)
+        .setColor(160, 110, 110)
+        .setTextStyle(BOLD)
         .setSize(22)
         .setPos(0, mainImageView.getHeight() + 60);
 
     var mainImageTitleTextView = UiFactory.createTextView()
-        .addText("가나다 ღ 마바사")
+        .addText("현 철   💗   서 영")
         .setAlign(CENTER, null)
-        .setColor(120, 80, 80)
-        .setSize(17)
+        .setColor(160, 110, 110)
+        .setTextStyle(BOLD)
+        .setSize(20)
         .setPos(0, titleTextView.getPos().y + 90);
 
     var mainTitleParticle = new Spray(15)
@@ -311,44 +316,51 @@ function initializeWeddingContents() {
 
     var manFaceImageView = UiFactory.createImageView()
         .setImagePath(ResourcePath.ManFaceImage)
-        .setPos(0, mainImageTitleTextView.getPos().y + 60)
-        .setWidth(winSize[0]);
+        .setPos(70, mainImageTitleTextView.getPos().y + 45)
+        .setScale(0.35)
 
     var womenFaceImageView = UiFactory.createImageView()
         .setImagePath(ResourcePath.WomenFaceImage)
-        .setPos(winSize[0]-100, mainImageTitleTextView.getPos().y + 60)
-        .setWidth(winSize[0]);
+        .setPos((winSize[0]-115.5)-70, mainImageTitleTextView.getPos().y + 45)
+        .setScale(0.35)
 
-    //2020. 04. 11. SAT  2:00 PM
-    //더 케이트원타원 A동 LL층 | 아펠가모 웨딩홀
     var weddingInfoTextView = UiFactory.createTextView()
-        .addText("AAAAAAAAAAAAAAAAAAAAAAAAAAAA")
-        .addText("VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV")
-        .setTextGap(30)
+        .addText("2020. 04. 11. SAT  2:00 PM")
         .setAlign(CENTER, null)
-        .setColor(120, 100, 100)
+        .setColor(190, 130, 130)
+        .setTextStyle(BOLD)
         .setSize(15)
-        .setPos(0, mainImageTitleTextView.getPos().y + 200);
+        .setPos(0, mainImageTitleTextView.getPos().y + 250);
+
+    var dayCounterImageView = UiFactory.createImageView()
+        .setImagePath(ResourcePath.DayCounterImage)
+        .setPos(0, manFaceImageView.getPos().y + 230)
+        .setWidth(winSize[0])
+        .setCropMode(true)
+        .setCropSrcPos(((140 - winSize[0]) / 2) - 50, 500)
+        .setCropSize(winSize[0], 300);
 
     rectpos1 = new Vector2d().set(0, weddingInfoTextView.getPos().y - 30);
 
     var invitationTextView = UiFactory.createTextView()
-        .addText("Invitation")
+        .addText("❀ Invitation ❀")
         .setAlign(CENTER, null)
-        .setColor(120, 80, 80)
+        .setColor(160, 110, 110)
+        .setTextStyle(BOLD)
         .setSize(22)
         .setPos(0, weddingInfoTextView.getPos().y + 120);
 
     var invitationLetterTextView = UiFactory.createTextView()
-        .addText("너무나 사랑스럽고 지켜주고싶은 사람을 만났습니다.")
-        .addText("변치않는 마음과 믿음으로 하나가 되어 행복하게 살겠습니다.")
-        .addText("믿은과 사랑을 약속하는 귀한 날에 축복의 걸음을 하시어")
-        .addText("지켜봐주신다면 더없는 기쁨으로 담아두겠습니다.")
-        .setTextGap(45)
+        .addText("행복이 피어나는 따뜻한 봄")
+        .addText("저희 두사람 새로운 출발을 하려고 합니다.")
+        .addText("서로를 향한 사랑과 믿음을 하나가 되는 자리에")
+        .addText("축복으로 함께해주시면 감사하겠습니다.")
+        .setTextGap(40)
         .setAlign(CENTER, null)
-        .setColor(120, 100, 100)
+        .setColor(190, 130, 130)
+        .setTextStyle(BOLD)
         .setAlpha(180)
-        .setSize(13)
+        .setSize(16)
         .setPos(0, invitationTextView.getPos().y + 60);
 
     var bendImageView = UiFactory.createImageView()
@@ -360,9 +372,10 @@ function initializeWeddingContents() {
         .setCropSize(winSize[0], 100);
 
     var galleryTextView = UiFactory.createTextView()
-        .addText("Gallery")
+        .addText("❀ Gallery ❀")
         .setAlign(CENTER, null)
-        .setColor(120, 80, 80)
+        .setColor(160, 110, 110)
+        .setTextStyle(BOLD)
         .setSize(22)
         .setPos(0, bendImageView.getPos().y + 200);
 
@@ -447,9 +460,11 @@ function initializeWeddingContents() {
         .setFreq(0.06)
         .setBlur(true);
 
-    var locationTextView = new TextView("Location")
+    var locationTextView = UiFactory.createTextView()
+        .addText("❀ Location ❀")
         .setAlign(CENTER, null)
-        .setColor(120, 80, 80)
+        .setColor(160, 110, 110)
+        .setTextStyle(BOLD)
         .setSize(22)
         .setPos(0, slideShow.getPos().y + slideShow.getHeight() + 120);
 
@@ -458,6 +473,38 @@ function initializeWeddingContents() {
         .setCropSrcPos(340, 200)
         .setShortcutText("네이버지도 바로가기")
         .setCropSize(winSize[0], 250);
+
+    var locationSubwayInfoTextView = UiFactory.createTextView()
+        .addText("  ▶지하철")
+        .addText("  광화문역 2번 출구 (5호선) 방향으로 나와 경북궁 방면으로 직진 후")
+        .addText("  역사박물관에서 우회전 후, 사거리에서 좌측 대각선 첫 번째 건물")
+        .addText("  경북궁역 6번 출구 (3호선) 방향으로 나와 광화문 삼거리 건넌 후")
+        .addText("  광화문 열린시민마당 건너편 건물")
+        .setTextGap(30)
+        .setAlign(LEFT, null)
+        .setColor(190, 130, 130)
+        .setTextStyle(BOLD)
+        .setAlpha(180)
+        .setSize(14)
+        .setPos(0, mapView.getPos().y + 340);
+
+    var locationBusInfoTextView = UiFactory.createTextView()
+        .addText("  ▶버  스")
+        .addText("  간선(파랑) : 103, 109, 150, 171, 272, 401, 402(심야), 406,")
+        .addText("                  408, 606, 607, 700, 704, 706, 707, 708")
+        .addText("  지선(초록) : 1020, 1711, 7016, 7018, 7022, 7212, 7025")
+        .addText("  마을버스 : 종로 09, 종로 11")
+        .addText("  ❅ 세종문화회관, KT광화문지사, 경북궁 정류장 하자")
+        .addText("     더 케이 트윈타워 LL층")
+        .setTextGap(30)
+        .setAlign(LEFT, null)
+        .setColor(190, 130, 130)
+        .setTextStyle(BOLD)
+        .setAlpha(180)
+        .setSize(14)
+        .setPos(0, locationSubwayInfoTextView.getPos().y + 170);
+
+    endGuideLine = locationBusInfoTextView.getPos().y - 200;
 
     lineTraceMap = new Map();
     lineTraceMap.set(ParticleContents.SlideShow1, lineTrace1);
@@ -475,6 +522,7 @@ function initializeWeddingContents() {
     imageViewMap.set(ImageContents.Bend, bendImageView);
     imageViewMap.set(ImageContents.ManFaceImage, manFaceImageView);
     imageViewMap.set(ImageContents.WomenFaceImage, womenFaceImageView);
+    imageViewMap.set(ImageContents.DayCounter, dayCounterImageView);
 
     textViewMap = new Map();
     textViewMap.set(TextContents.Title, titleTextView);
@@ -484,8 +532,25 @@ function initializeWeddingContents() {
     textViewMap.set(TextContents.InvitationLetter, invitationLetterTextView);
     textViewMap.set(TextContents.Gallery, galleryTextView);
     textViewMap.set(TextContents.Location, locationTextView);
+    textViewMap.set(TextContents.SubwayInfo, locationSubwayInfoTextView);
+    textViewMap.set(TextContents.BusInfo, locationBusInfoTextView);
 }
 
 function onLoadedResource(total, count) {
     console.log(total + " : " + count);
+}
+
+function executeDayCounter() {
+    var dday = new Date("Apr 11,2020,14:00:00").getTime();
+    setInterval(function () {
+        var now = new Date();
+        var distance = dday - now;
+        var d = Math.floor(distance / (1000 * 60 * 60 * 24));
+        var h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        var m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        var s = Math.floor((distance % (1000 * 60)) / 1000);
+        if (s < 10) {
+            s = '0' + s;
+        }
+    }, 1000);
 }
