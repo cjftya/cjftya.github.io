@@ -475,10 +475,11 @@ function initializeWeddingContents() {
 
     var locationSubwayInfoTextView = UiFactory.createTextView()
         .addText("  ▶지하철")
-        .addText("  광화문역 2번 출구 (5호선) 방향으로 나와 경북궁 방면으로 직진 후")
-        .addText("  역사박물관에서 우회전 후, 사거리에서 좌측 대각선 첫 번째 건물")
-        .addText("  경북궁역 6번 출구 (3호선) 방향으로 나와 광화문 삼거리 건넌 후")
-        .addText("  광화문 열린시민마당 건너편 건물")
+        .addText("  광화문역 2번 출구 (5호선) 방향으로 나와 경북궁")
+        .addText("  방면으로 직진 후 역사박물관에서 우회전 후, 사거리에서")
+        .addText("  좌측 대각선 첫 번째 건물")
+        .addText("  경북궁역 6번 출구 (3호선) 방향으로 나와 광화문")
+        .addText("  삼거리 건넌 후 광화문 열린시민마당 건너편 건물")
         .setTextGap(30)
         .setAlign(LEFT, null)
         .setColor(190, 130, 130)
@@ -489,8 +490,9 @@ function initializeWeddingContents() {
 
     var locationBusInfoTextView = UiFactory.createTextView()
         .addText("  ▶버  스")
-        .addText("  간선(파랑) : 103, 109, 150, 171, 272, 401, 402(심야), 406,")
-        .addText("                  408, 606, 607, 700, 704, 706, 707, 708")
+        .addText("  간선(파랑) : 103, 109, 150, 171, 272, 401,")
+        .addText("      402(심야), 406, 408, 606, 607, 700, 704,")
+        .addText("      706, 707, 708")
         .addText("  지선(초록) : 1020, 1711, 7016, 7018, 7022, 7212, 7025")
         .addText("  마을버스 : 종로 09, 종로 11")
         .addText("  ❅ 세종문화회관, KT광화문지사, 경북궁 정류장 하자")
@@ -501,7 +503,7 @@ function initializeWeddingContents() {
         .setTextStyle(BOLD)
         .setAlpha(180)
         .setSize(14)
-        .setPos(0, locationSubwayInfoTextView.getPos().y + 170);
+        .setPos(0, locationSubwayInfoTextView.getPos().y + 210);
 
     endGuideLine = locationBusInfoTextView.getPos().y - 200;
 
