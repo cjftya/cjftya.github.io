@@ -336,7 +336,7 @@ function initializeWeddingContents() {
         .setImagePath(ResourcePath.DayCounterImage)
         .setPos(0, manFaceImageView.getPos().y + 230)
         .setCropMode(true)
-        .setCropSrcPos(((1400 - winSize[0]) / 2) - 50, 1000)
+        .setCropSrcPos(((800 - winSize[0]) / 2) - 50, 700)
         .setCropSize(winSize[0], 300);
 
     rectpos1 = new Vector2d().set(0, weddingInfoTextView.getPos().y - 30);
