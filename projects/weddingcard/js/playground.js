@@ -335,9 +335,8 @@ function initializeWeddingContents() {
     var dayCounterImageView = UiFactory.createImageView()
         .setImagePath(ResourcePath.DayCounterImage)
         .setPos(0, manFaceImageView.getPos().y + 230)
-        .setWidth(winSize[0])
         .setCropMode(true)
-        .setCropSrcPos(((140 - winSize[0]) / 2) - 50, 500)
+        .setCropSrcPos(((1400 - winSize[0]) / 2) - 50, 1000)
         .setCropSize(winSize[0], 300);
 
     rectpos1 = new Vector2d().set(0, weddingInfoTextView.getPos().y - 30);
@@ -348,7 +347,7 @@ function initializeWeddingContents() {
         .setColor(160, 110, 110)
         .setTextStyle(BOLD)
         .setSize(22)
-        .setPos(0, weddingInfoTextView.getPos().y + 120);
+        .setPos(0, weddingInfoTextView.getPos().y + 520);
 
     var invitationLetterTextView = UiFactory.createTextView()
         .addText("행복이 피어나는 따뜻한 봄")
