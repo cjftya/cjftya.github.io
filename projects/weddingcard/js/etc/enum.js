@@ -41,9 +41,9 @@ var ResourcePath = {
     SlideShow3Image: "https://cjftya.github.io/assets/p3.png",
     SlideShow4Image: "https://cjftya.github.io/assets/p4.png",
     SlideShow5Image: "https://cjftya.github.io/assets/p5.png",
-    RealRatio1Image: "https://cjftya.github.io/assets/realratio/r1.png",
-    RealRatio2Image: "https://cjftya.github.io/assets/realratio/r2.png",
-    RealRatio3Image: "https://cjftya.github.io/assets/realratio/r3.png",
-    RealRatio4Image: "https://cjftya.github.io/assets/realratio/r4.png",
-    RealRatio5Image: "https://cjftya.github.io/assets/realratio/r5.png"
+    RealRatio1Image: "https://cjftya.github.io/assets/realratio/r1.jpg",
+    RealRatio2Image: "https://cjftya.github.io/assets/realratio/r2.jpg",
+    RealRatio3Image: "https://cjftya.github.io/assets/realratio/r3.jpg",
+    RealRatio4Image: "https://cjftya.github.io/assets/realratio/r4.jpg",
+    RealRatio5Image: "https://cjftya.github.io/assets/realratio/r5.jpg"
 };
