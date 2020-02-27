@@ -86,10 +86,6 @@ function draw() {
         }
     }
 
-    fill(100, 50);
-    rect(rectpos1.x, rectpos1.y, windowWidth, 100);
-    debugCount++;
-
     if (mapView.inScreen(winSize[0], winSize[1])) {
         mapView.draw();
         debugCount++;
@@ -161,6 +157,9 @@ function updateWeddingContents(vy) {
         if (id == ImageContents.Bend) {
             view.addCropSrcPos(0, vy * 0.05);
         }
+        if (id == ImageContents.DayCounter) {
+            view.addCropSrcPos(0, vy * 0.2);
+        }
     }
     for (var [id, view] of sprayParticleMap.entries()) {
         view.addPos(0, vy);
@@ -170,7 +169,6 @@ function updateWeddingContents(vy) {
     }
     slideShow.addPos(0, vy);
     mapView.addPos(0, vy);
-    rectpos1.y += vy;
 }
 
 function drawFpsCount() {
@@ -293,6 +291,8 @@ function initializeWeddingContents() {
 0
     var titleTextView = UiFactory.createTextView()
         .addText("❀ We are getting married ❀")
+        .addText("______")
+        .setTextGap(15)
         .setAlign(CENTER, null)
         .setColor(160, 110, 110)
         .setTextStyle(BOLD)
@@ -327,19 +327,36 @@ function initializeWeddingContents() {
     var weddingInfoTextView = UiFactory.createTextView()
         .addText("2020. 04. 11. SAT  2:00 PM")
         .setAlign(CENTER, null)
-        .setColor(190, 130, 130)
+        .setColor(250, 250, 250)
+        .setAlpha(190)
         .setTextStyle(BOLD)
-        .setSize(15)
-        .setPos(0, mainImageTitleTextView.getPos().y + 250);
+        .setSize(18)
+        .setPos(0, mainImageTitleTextView.getPos().y + 260);
+
+    var ddayLabelTextView = UiFactory.createTextView()
+        .addText("D - Day")
+        .setAlign(CENTER, null)
+        .setColor(250, 250, 250)
+        .setAlpha(210)
+        .setTextStyle(BOLD)
+        .setSize(30)
+        .setPos(0, weddingInfoTextView.getPos().y + 90);
+
+    var dayCounterTextView = UiFactory.createTextView()
+        .addText("00일 00시 00분 00초")
+        .setAlign(CENTER, null)
+        .setColor(250, 250, 250)
+        .setAlpha(230)
+        .setTextStyle(BOLD)
+        .setSize(35)
+        .setPos(0, ddayLabelTextView.getPos().y + 100);
 
     var dayCounterImageView = UiFactory.createImageView()
         .setImagePath(ResourcePath.DayCounterImage)
         .setPos(0, manFaceImageView.getPos().y + 180)
         .setCropMode(true)
-        .setCropSrcPos(((800 - winSize[0]) / 2) - 50, 500)
+        .setCropSrcPos(((800 - winSize[0]) / 2), 800)
         .setCropSize(winSize[0], 300);
-
-    rectpos1 = new Vector2d().set(0, weddingInfoTextView.getPos().y - 30);
 
     var invitationTextView = UiFactory.createTextView()
         .addText("❀ Invitation ❀")
@@ -347,7 +364,7 @@ function initializeWeddingContents() {
         .setColor(160, 110, 110)
         .setTextStyle(BOLD)
         .setSize(22)
-        .setPos(0, weddingInfoTextView.getPos().y + 520);
+        .setPos(0, weddingInfoTextView.getPos().y + 380);
 
     var invitationLetterTextView = UiFactory.createTextView()
         .addText("행복이 피어나는 따뜻한 봄")
@@ -529,6 +546,8 @@ function initializeWeddingContents() {
     textViewMap.set(TextContents.Title, titleTextView);
     textViewMap.set(TextContents.MainImageTitle, mainImageTitleTextView);
     textViewMap.set(TextContents.WeddingInfo, weddingInfoTextView);
+    textViewMap.set(TextContents.DDayLabel, ddayLabelTextView);
+    textViewMap.set(TextContents.DayCounter, dayCounterTextView);
     textViewMap.set(TextContents.Invitation, invitationTextView);
     textViewMap.set(TextContents.InvitationLetter, invitationLetterTextView);
     textViewMap.set(TextContents.Gallery, galleryTextView);
@@ -553,5 +572,8 @@ function executeDayCounter() {
         if (s < 10) {
             s = '0' + s;
         }
+        var str = TextUtil.pad(d, 2) + "일 " + TextUtil.pad(h, 2) + "시 " +
+            TextUtil.pad(m, 2) + "분 " + TextUtil.pad(s, 2) + "초";
+        textViewMap.get(TextContents.DayCounter).setText(str);
     }, 1000);
 }

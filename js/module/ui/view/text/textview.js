@@ -49,6 +49,11 @@ class TextView extends AbsView {
         return this;
     }
 
+    setText(str) {
+        this.__text = str;
+        return this;
+    }
+
     setBound(w, h) {
         this.__w = w;
         this.__h = h;

@@ -16,6 +16,8 @@ var ImageContents = {
 var TextContents = {
     Title: 0,
     MainImageTitle: 1,
+    DayCounter: 2,
+    DDayLabel: 3,
     WeddingInfo: 4,
     Invitation: 5,
     InvitationLetter: 6,
@@ -39,9 +41,9 @@ var ResourcePath = {
     SlideShow3Image: "https://cjftya.github.io/assets/p3.png",
     SlideShow4Image: "https://cjftya.github.io/assets/p4.png",
     SlideShow5Image: "https://cjftya.github.io/assets/p5.png",
-    RealRatio1Image: "https://cjftya.github.io/assets/realratio/p1.png",
-    RealRatio2Image: "https://cjftya.github.io/assets/realratio/p2.png",
-    RealRatio3Image: "https://cjftya.github.io/assets/realratio/p3.png",
-    RealRatio4Image: "https://cjftya.github.io/assets/realratio/p4.png",
-    RealRatio5Image: "https://cjftya.github.io/assets/realratio/p5.png"
+    RealRatio1Image: "https://cjftya.github.io/assets/realratio/r1.png",
+    RealRatio2Image: "https://cjftya.github.io/assets/realratio/r2.png",
+    RealRatio3Image: "https://cjftya.github.io/assets/realratio/r3.png",
+    RealRatio4Image: "https://cjftya.github.io/assets/realratio/r4.png",
+    RealRatio5Image: "https://cjftya.github.io/assets/realratio/r5.png"
 };
