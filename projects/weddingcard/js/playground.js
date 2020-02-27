@@ -69,14 +69,14 @@ function draw() {
 
     this.drawBackgroundShape();
 
-    for (var [id, view] of textViewMap.entries()) {
+    for (var [id, view] of imageViewMap.entries()) {
         if (view.inScreen(winSize[0], winSize[1])) {
             view.draw();
             debugCount++;
         }
     }
 
-    for (var [id, view] of imageViewMap.entries()) {
+    for (var [id, view] of textViewMap.entries()) {
         if (view.inScreen(winSize[0], winSize[1])) {
             view.draw();
             debugCount++;
@@ -283,51 +283,41 @@ function initialize() {
 }
 
 function initializeWeddingContents() {
+    var mainImageView = UiFactory.createImageView()
+        .setImagePath(ResourcePath.MainImage)
+        .setPos(0, 0)
+        .setWidth(winSize[0]);
+0
     var titleTextView = UiFactory.createTextView()
-        .addText("우 리 결 혼 합 니 다")
+        .addText("We are getting married")
         .setAlign(CENTER, null)
         .setColor(120, 80, 80)
         .setSize(22)
-        .setPos(0, 80);
-
-    var mainImageView = UiFactory.createImageView()
-        .setImagePath(ResourcePath.MainImage)
-        .setPos(45, titleTextView.getPos().y + 60)
-        .setWidth(winSize[0] - 90);
+        .setPos(0, mainImageView.getHeight() + 60);
 
     var mainImageTitleTextView = UiFactory.createTextView()
         .addText("가나다 ღ 마바사")
         .setAlign(CENTER, null)
         .setColor(120, 80, 80)
         .setSize(17)
-        .setPos(0, mainImageView.getHeight() + 170);
-
-    var parentsATextView = UiFactory.createTextView()
-        .addText("아버지 가나다")
-        .addText("어머니 마바사")
-        .setTextGap(35)
-        .setAlign(LEFT, null)
-        .setColor(120, 100, 100)
-        .setAlpha(180)
-        .setSize(15)
-        .setPos(50, mainImageTitleTextView.getPos().y + 50);
-
-    var parentsBTextView = UiFactory.createTextView()
-        .addText("아버지 가나다")
-        .addText("어머니 마바사")
-        .setTextGap(35)
-        .setAlign(RIGHT, null)
-        .setColor(120, 100, 100)
-        .setAlpha(180)
-        .setSize(15)
-        .setPos(-50, mainImageTitleTextView.getPos().y + 50);
+        .setPos(0, titleTextView.getPos().y + 90);
 
     var mainTitleParticle = new Spray(15)
-        .setPos(winSize[0] / 2, mainImageView.getHeight() + 170)
+        .setPos(winSize[0] / 2, mainImageTitleTextView.getPos().y)
         .setCreateArea(50, 15)
         .setLife(120)
         .setFreq(0.08)
         .setBlur(true);
+
+    var manFaceImageView = UiFactory.createImageView()
+        .setImagePath(ResourcePath.ManFaceImage)
+        .setPos(0, mainImageTitleTextView.getPos().y + 60)
+        .setWidth(winSize[0]);
+
+    var womenFaceImageView = UiFactory.createImageView()
+        .setImagePath(ResourcePath.WomenFaceImage)
+        .setPos(winSize[0]-100, mainImageTitleTextView.getPos().y + 60)
+        .setWidth(winSize[0]);
 
     //2020. 04. 11. SAT  2:00 PM
     //더 케이트원타원 A동 LL층 | 아펠가모 웨딩홀
@@ -483,12 +473,12 @@ function initializeWeddingContents() {
     imageViewMap = new Map();
     imageViewMap.set(ImageContents.Main, mainImageView);
     imageViewMap.set(ImageContents.Bend, bendImageView);
+    imageViewMap.set(ImageContents.ManFaceImage, manFaceImageView);
+    imageViewMap.set(ImageContents.WomenFaceImage, womenFaceImageView);
 
     textViewMap = new Map();
     textViewMap.set(TextContents.Title, titleTextView);
     textViewMap.set(TextContents.MainImageTitle, mainImageTitleTextView);
-    textViewMap.set(TextContents.ParentsA, parentsATextView);
-    textViewMap.set(TextContents.ParentsB, parentsBTextView);
     textViewMap.set(TextContents.WeddingInfo, weddingInfoTextView);
     textViewMap.set(TextContents.Invitation, invitationTextView);
     textViewMap.set(TextContents.InvitationLetter, invitationLetterTextView);

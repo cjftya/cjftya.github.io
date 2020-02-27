@@ -13,8 +13,6 @@ var ImageContents = {
 var TextContents = {
     Title: 0,
     MainImageTitle: 1,
-    ParentsA: 2,
-    ParentsB: 3,
     WeddingInfo: 4,
     Invitation: 5,
     InvitationLetter: 6,
@@ -27,6 +25,8 @@ var ResourcePath = {
     MainImage: "https://cjftya.github.io/assets/main.jpg",
     BendImage: "https://cjftya.github.io/assets/bend.jpg",
     MapImage: "https://cjftya.github.io/assets/mapimage.png",
+    ManFaceImage: "https://cjftya.github.io/assets/manface.png",
+    WomenFaceImage: "https://cjftya.github.io/assets/womenface.png",
     SlideShowMaskImage: "https://cjftya.github.io/assets/mask.png",
     SlideShow1Image: "https://cjftya.github.io/assets/p1.png",
     SlideShow2Image: "https://cjftya.github.io/assets/p2.png",
