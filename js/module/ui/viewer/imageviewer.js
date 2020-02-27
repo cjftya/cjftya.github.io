@@ -30,6 +30,13 @@ class ImageViewer extends AbsViewer {
         this.__isDelay = false;
     }
 
+    setup() {
+        var img = this.__images[this.__indexCount];
+        this.__originW = img.width;
+        this.__originH = img.height;
+        this.setFitScreen(img);
+    }
+
     addPos(x, y) {
         this.__posOffset.x += x;
         this.__posOffset.y += y;
