@@ -20,6 +20,8 @@ class ImageView extends AbsView {
         this.__ch = 0;
         this.__cropMode = false;
 
+        this.__imageMode = CORNER;
+
         this.__clickCount = 0;
 
         this.__listener = null;
@@ -92,6 +94,11 @@ class ImageView extends AbsView {
             this.__w = (rh * this.__w) / this.__h;
             this.__h = rh;
         }
+        return this;
+    }
+
+    setImageMode(m) {
+        this.__imageMode = m;
         return this;
     }
 
@@ -175,7 +182,7 @@ class ImageView extends AbsView {
     }
 
     draw() {
-       imageMode(CORNER);
+       imageMode(this.__imageMode);
         if (this.__cropMode) {
             image(this.__image, this.__pos.x, this.__pos.y, this.__cw, this.__ch,
                 this.__cx, this.__cy, this.__cw, this.__ch);
