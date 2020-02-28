@@ -11,7 +11,6 @@ class MapView {
         this.__ws = winSize[0];
         this.__hs = winSize[1];
 
-        this.__endline = 0;
         this.__inMapCliked = false;
     }
 
@@ -27,13 +26,8 @@ class MapView {
         return this;
     }
 
-    getGuideEnd() {
-        return this.__endline;
-    }
-
     setPos(x, y) {
         this.__pos.set(x, y);
-        this.__endline = y - 250;
         return this;
     }
 
@@ -97,7 +91,7 @@ class MapView {
     moveToNaverMap(x, y) {
         var py = this.__pos.y + this.__ch;
         if (!(x < this.__pos.x || x > this.__pos.x + this.__cw ||
-            y < py || y > py + 30)) {
+            y < py || y > py + 35)) {
             location.href = "https://m.map.naver.com/search2/site.nhn?query=%EA%B4%91%ED%99%94%EB%AC%B8%EC%95%84%ED%8E%A0%EA%B0%80%EB%AA%A8&sm=shistory&style=v5&code=31738014#/map";
         }
     }

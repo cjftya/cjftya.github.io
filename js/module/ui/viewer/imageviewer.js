@@ -5,6 +5,7 @@ class ImageViewer extends AbsViewer {
         this.__images = [];
         this.__pos = new Vector2d();
         this.__posOffset = new Vector2d();
+        this.__guide = new Vector2d();
 
         this.__indexCount = 0;
 
@@ -35,11 +36,27 @@ class ImageViewer extends AbsViewer {
         this.__originW = img.width;
         this.__originH = img.height;
         this.setFitScreen(img);
+
+        this.__scaleMin = this.__scale;
+        this.__scaleMax = this.__scale + 0.3;
+
+        this.updateGuideRap();
     }
 
     addPos(x, y) {
         this.__posOffset.x += x;
         this.__posOffset.y += y;
+
+        if (this.__posOffset.x > this.__guide.x) {
+            this.__posOffset.x = this.__guide.x;
+        } else if (this.__posOffset.x < -this.__guide.x) {
+            this.__posOffset.x = -this.__guide.x;
+        }
+        if (this.__posOffset.y > this.__guide.y) {
+            this.__posOffset.y = this.__guide.y;
+        } else if (this.__posOffset.y < -this.__guide.y) {
+            this.__posOffset.y = -this.__guide.y;
+        }
     }
 
     setPos(x, y) {
@@ -79,17 +96,19 @@ class ImageViewer extends AbsViewer {
             s = this.__scale;
         }
         this.setScale(s);
-    }
-
-    setScaleLimit(min, max) {
-        this.__scaleMax = max == -1 ? this.__scale : max;
-        this.__scaleMin = min == -1 ? this.__scale : max;
-        return this;
+        this.updateGuideRap();
     }
 
     setIndex(index) {
         this.__indexCount = index;
         return this;
+    }
+
+    updateGuideRap() {
+        var gx = this.__pos.x - (this.__w / 2);
+        var gy = this.__pos.y - (this.__h / 2);
+        gy = gy < 0 ? gy - 50 : gy;
+        this.__guide.set(Math.abs(gx) + 50, Math.abs(gy));
     }
 
     inBound(x, y) {

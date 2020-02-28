@@ -203,7 +203,6 @@ function mousePressed() {
 function mouseReleased() {
     if (!imageViewer.isShowing() && slideShow.inBound(mouseX, mouseY) && !imageViewer.isInputDelay()) {
         imageViewer.setIndex(slideShow.getCurrentIndex());
-        imageViewer.setScaleLimit(-1, 0.8)
         imageViewer.show();
         slideShow.pause();
     }
@@ -211,7 +210,7 @@ function mouseReleased() {
         imageViewer.hide();
         slideShow.resume();
     }
-    if (!imageViewer.isShowing() && !imageViewer.isInputDelay()) {
+    if (!imageViewer.isShowing()) {
         mapView.moveToNaverMap(mouseX, mouseY);
     }
     mapView.setMapController(false);
@@ -247,13 +246,13 @@ function mouseDragged() {
 // function mouseMoved() {
 // }
 
-// function keyPressed() {
-//     if (keyCode == LEFT_ARROW) {
-//         imageViewer.addScale(-0.01);
-//     } else if (keyCode == RIGHT_ARROW) {
-//         imageViewer.addScale(0.01);
-//     }
-// }
+function keyPressed() {
+    if (keyCode == LEFT_ARROW) {
+        imageViewer.addScale(-0.01);
+    } else if (keyCode == RIGHT_ARROW) {
+        imageViewer.addScale(0.01);
+    }
+}
 
 function windowResized() {
     winSize = [windowWidth, windowHeight];
@@ -318,13 +317,17 @@ function initializeWeddingContents() {
 
     var manFaceImageView = UiFactory.createImageView()
         .setImagePath(ResourcePath.ManFaceImage)
-        .setPos(70, mainImageTitleTextView.getPos().y + 45)
-        .setScale(0.35)
+        .setImageMode(CENTER)
+        .setPos(winSize[0] / 2 - (winSize[0] / 5),
+            mainImageTitleTextView.getPos().y + (winSize[0] / 5) + 20)
+        .setWidth(winSize[0] / 4)
 
     var womenFaceImageView = UiFactory.createImageView()
         .setImagePath(ResourcePath.WomenFaceImage)
-        .setPos((winSize[0]-115.5)-70, mainImageTitleTextView.getPos().y + 45)
-        .setScale(0.35)
+        .setImageMode(CENTER)
+        .setPos(winSize[0] / 2 + (winSize[0] / 5),
+            mainImageTitleTextView.getPos().y + + (winSize[0] / 5) + 20)
+        .setWidth(winSize[0] / 4)
 
     var weddingInfoTextView = UiFactory.createTextView()
         .addText("2020. 04. 11. SAT  2:00 PM")
@@ -333,7 +336,7 @@ function initializeWeddingContents() {
         .setAlpha(190)
         .setTextStyle(BOLD)
         .setSize(18)
-        .setPos(0, mainImageTitleTextView.getPos().y + 260);
+        .setPos(0, womenFaceImageView.getPos().y + 180);
 
     var ddayLabelTextView = UiFactory.createTextView()
         .addText("D - Day")
@@ -355,7 +358,7 @@ function initializeWeddingContents() {
 
     var dayCounterImageView = UiFactory.createImageView()
         .setImagePath(ResourcePath.DayCounterImage)
-        .setPos(0, manFaceImageView.getPos().y + 180)
+        .setPos(0, manFaceImageView.getPos().y + 140)
         .setCropMode(true)
         .setCropSrcPos(((800 - winSize[0]) / 2), 800)
         .setCropSize(winSize[0], 300);
