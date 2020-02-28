@@ -31,7 +31,7 @@ var TextContents = {
 var ResourcePath = {
     MainImage: "https://cjftya.github.io/assets/main.jpg",
     BendImage: "https://cjftya.github.io/assets/bend.jpg",
-    MapImage: "https://cjftya.github.io/assets/mapimage.png",
+    MapImage: "https://cjftya.github.io/assets/map.jpg",
     ManFaceImage: "https://cjftya.github.io/assets/manface.png",
     WomenFaceImage: "https://cjftya.github.io/assets/womenface.png",
     DayCounterImage: "https://cjftya.github.io/assets/dayCounter.jpg",

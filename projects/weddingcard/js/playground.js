@@ -210,7 +210,7 @@ function mouseReleased() {
         imageViewer.hide();
         slideShow.resume();
     }
-    if (!imageViewer.isShowing()) {
+    if (!imageViewer.isShowing() && !mapView.isMapController()) {
         mapView.moveToNaverMap(mouseX, mouseY);
     }
     mapView.setMapController(false);
@@ -499,7 +499,7 @@ function initializeWeddingContents() {
 
     mapView = new MapView(ResourcePath.MapImage)
         .setPos(0, locationTextView.getPos().y + 80)
-        .setCropSrcPos(340, 200)
+        .setCropSrcPos(((1560 - winSize[0]) / 2) - 50, 200)
         .setShortcutText("네이버지도 바로가기")
         .setCropSize(winSize[0], 250);
 
