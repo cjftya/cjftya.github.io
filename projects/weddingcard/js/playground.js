@@ -129,9 +129,9 @@ function draw() {
     debugCount++;
 
     debugCount++;
-    // if (activeDebugCount > 3) {
+    if (activeDebugCount > 10) {
         this.drawFpsCount();
-    // }
+    }
 
     debugCount = 0;
 }
@@ -202,7 +202,7 @@ function mousePressed() {
         mapView.setMapController(true);
     }
 
-    if(mouseY < 50) {
+    if (mouseY < 50) {
         activeDebugCount++;
     }
 }
@@ -220,7 +220,7 @@ function mouseReleased() {
     if (!imageViewer.isShowing() && !mapView.isMapController()) {
         mapView.moveToNaverMap(mouseX, mouseY);
     }
-    if(!imageViewer.isShowing()) {
+    if (!imageViewer.isShowing()) {
         slideShow.selectIndicator(mouseX, mouseY);
     }
     mapView.setMapController(false);
@@ -287,7 +287,7 @@ function initialize() {
     bubleColor.setAlpha(8);
     for (var i = 0; i < 8; i++) {
         x = MathUtil.randInt(50, winSize[0] - 50);
-        y = MathUtil.randInt(winSize[1]/2+50, winSize[1] - 50);
+        y = MathUtil.randInt(winSize[1] / 2 + 50, winSize[1] - 50);
         r = MathUtil.randInt(250, 800);
         bubleArr.push({ x, y, r });
     }
@@ -299,7 +299,7 @@ function initializeWeddingContents() {
         .setImagePath(ResourcePath.MainImage)
         .setPos(0, 0)
         .setWidth(winSize[0]);
-0
+    0
     var titleTextView = UiFactory.createTextView()
         .addText("❀ We are getting married ❀")
         .addText("______")
@@ -311,7 +311,7 @@ function initializeWeddingContents() {
         .setPos(0, mainImageView.getHeight() + 60);
 
     var mainImageTitleTextView = UiFactory.createTextView()
-        .addText("현 철   ♡   서 영")
+        .addText("현 철   💗   서 영")
         .setAlign(CENTER, null)
         .setColor(160, 110, 110)
         .setTextStyle(BOLD)
