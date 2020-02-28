@@ -4,6 +4,7 @@ class SlideShow {
         this.__indexCount = 0;
 
         this.__pos = new Vector2d();
+        this.__indicators = [];
 
         var winSize = TopicManager.ready().read(DISPLAY_INFO.WINDOW_SIZE);
         this.__ws = winSize[0];
@@ -17,6 +18,18 @@ class SlideShow {
         this.__delay = 0;
 
         this.__active = true;
+
+        this.__indicatorSelectedColor = color(210, 130, 130);
+        this.__indicatorNormalColor = color(210, 130, 130);
+        this.__indicatorNormalColor.setAlpha(80);
+
+        var pw = this.__ws - (this.__ws / 4) * 2;
+        var slice = pw / 5;
+        var ps;
+        for (var i = 0; i < 6; i++) {
+            ps = new Vector2d().set((this.__ws / 4) + (slice * i), 0);
+            this.__indicators.push(ps);
+        }
     }
 
     inScreen(sw, sh) {
@@ -93,6 +106,20 @@ class SlideShow {
         return false;
     }
 
+    selectIndicator(x, y) {
+        var py = this.__pos.y + this.__h + 20;
+        for (var i = 0; i < this.__indicators.length; i++) {
+            var dx = x - this.__indicators[i].x;
+            var dy = y - py;
+            var d = dx * dx + dy * dy;
+            if (d < 250) {
+                this.__indexCount = i;
+                this.__second = 0;
+                break;
+            }
+        }
+    }
+
     pause() {
         this.__active = false;
     }
@@ -116,6 +143,16 @@ class SlideShow {
     draw() {
         imageMode(CORNER);
         image(this.__images[this.__indexCount], this.__pos.x, this.__pos.y, this.__w, this.__h);
+
+        for (var i = 0; i < this.__images.length; i++) {
+            if (this.__indexCount == i) {
+                fill(this.__indicatorSelectedColor);
+                ellipse(this.__indicators[i].x, this.__pos.y + this.__h + 20, 13, 13);
+            } else {
+                fill(this.__indicatorNormalColor);
+                ellipse(this.__indicators[i].x, this.__pos.y + this.__h + 20, 7, 7);
+            }
+        }
         // fill(200,150);
         // ellipse(this.__pos.x + this.__w/2, this.__pos.y + this.__h/2, 200, 200);
     }

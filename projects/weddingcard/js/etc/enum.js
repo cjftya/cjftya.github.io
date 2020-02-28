@@ -25,7 +25,8 @@ var TextContents = {
     Location: 8,
     ShortcutNaver: 9,
     SubwayInfo: 10,
-    BusInfo: 11
+    BusInfo: 11,
+    Copyright: 12
 };
 
 var ResourcePath = {

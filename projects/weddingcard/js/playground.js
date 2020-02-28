@@ -24,6 +24,7 @@ var winSize;
 var guideY;
 var endGuideLine;
 
+var activeDebugCount = 0;
 var debugCount = 0;
 
 function preload() {
@@ -128,7 +129,9 @@ function draw() {
     debugCount++;
 
     debugCount++;
-    this.drawFpsCount();
+    // if (activeDebugCount > 3) {
+        this.drawFpsCount();
+    // }
 
     debugCount = 0;
 }
@@ -198,6 +201,10 @@ function mousePressed() {
     if (mapView.inBound(mouseX, mouseY)) {
         mapView.setMapController(true);
     }
+
+    if(mouseY < 50) {
+        activeDebugCount++;
+    }
 }
 
 function mouseReleased() {
@@ -212,6 +219,9 @@ function mouseReleased() {
     }
     if (!imageViewer.isShowing() && !mapView.isMapController()) {
         mapView.moveToNaverMap(mouseX, mouseY);
+    }
+    if(!imageViewer.isShowing()) {
+        slideShow.selectIndicator(mouseX, mouseY);
     }
     mapView.setMapController(false);
 }
@@ -301,7 +311,7 @@ function initializeWeddingContents() {
         .setPos(0, mainImageView.getHeight() + 60);
 
     var mainImageTitleTextView = UiFactory.createTextView()
-        .addText("현 철   💗   서 영")
+        .addText("현 철   ♡   서 영")
         .setAlign(CENTER, null)
         .setColor(160, 110, 110)
         .setTextStyle(BOLD)
@@ -535,7 +545,18 @@ function initializeWeddingContents() {
         .setSize(14)
         .setPos(0, locationSubwayInfoTextView.getPos().y + 210);
 
-    endGuideLine = locationBusInfoTextView.getPos().y - 200;
+
+    var copyRightTextView = UiFactory.createTextView()
+        .addText("______________________________________________________________________________")
+        .addText("Copyright © HyunChurl Lim")
+        .setTextGap(55)
+        .setAlign(CENTER, null)
+        .setColor(190, 130, 130)
+        .setTextStyle(BOLD)
+        .setSize(16)
+        .setPos(0, locationBusInfoTextView.getPos().y + 300);
+
+    endGuideLine = copyRightTextView.getPos().y - 450;
 
     lineTraceMap = new Map();
     lineTraceMap.set(ParticleContents.SlideShow1, lineTrace1);
@@ -567,6 +588,7 @@ function initializeWeddingContents() {
     textViewMap.set(TextContents.Location, locationTextView);
     textViewMap.set(TextContents.SubwayInfo, locationSubwayInfoTextView);
     textViewMap.set(TextContents.BusInfo, locationBusInfoTextView);
+    textViewMap.set(TextContents.Copyright, copyRightTextView);
 }
 
 function onLoadedResource(total, count) {
