@@ -6,6 +6,7 @@ class MapView {
         this.__cp = new Vector2d();
         this.__cw = 0;
         this.__ch = 0;
+        this.__sizeGap = new Vector2d();
 
         var winSize = TopicManager.ready().read(DISPLAY_INFO.WINDOW_SIZE);
         this.__ws = winSize[0];
@@ -40,6 +41,7 @@ class MapView {
     setCropSize(w, h) {
         this.__cw = w;
         this.__ch = h;
+        this.__sizeGap.set((w * 1.4) - w, (h * 1.4) - h);
         return this;
     }
 
@@ -53,13 +55,13 @@ class MapView {
         this.__cp.y += y;
         if (this.__cp.x < 0) {
             this.__cp.x = 0;
-        } else if (this.__cp.x > this.__map.width - this.__ws) {
-            this.__cp.x = this.__map.width - this.__ws;
+        } else if (this.__cp.x > this.__map.width - this.__ws - this.__sizeGap.x) {
+            this.__cp.x = this.__map.width - this.__ws - this.__sizeGap.x;
         }
         if (this.__cp.y < 0) {
             this.__cp.y = 0;
-        } else if (this.__cp.y > this.__map.height - this.__ch) {
-            this.__cp.y = this.__map.height - this.__ch;
+        } else if (this.__cp.y > this.__map.height - this.__ch - this.__sizeGap.y) {
+            this.__cp.y = this.__map.height - this.__ch - this.__sizeGap.y;
         }
         return this;
     }
@@ -99,7 +101,7 @@ class MapView {
     draw() {
         imageMode(CORNER);
         image(this.__map, this.__pos.x, this.__pos.y, this.__cw, this.__ch,
-            this.__cp.x, this.__cp.y, this.__cw, this.__ch);
+            this.__cp.x - this.__sizeGap.x / 2, this.__cp.y - this.__sizeGap.y / 2, this.__cw * 1.4, this.__ch * 1.4);
         fill(150);
         rect(this.__pos.x, this.__pos.y + this.__ch, this.__cw, 35);
 
