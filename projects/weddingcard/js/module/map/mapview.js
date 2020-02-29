@@ -42,6 +42,8 @@ class MapView {
         this.__cw = w;
         this.__ch = h;
         this.__sizeGap.set((w * 1.4) - w, (h * 1.4) - h);
+        this.__cp.x += -this.__sizeGap.x/2;
+        this.__cp.y += -this.__sizeGap.y/2;
         return this;
     }
 
@@ -101,7 +103,7 @@ class MapView {
     draw() {
         imageMode(CORNER);
         image(this.__map, this.__pos.x, this.__pos.y, this.__cw, this.__ch,
-            this.__cp.x - this.__sizeGap.x / 2, this.__cp.y - this.__sizeGap.y / 2, this.__cw * 1.4, this.__ch * 1.4);
+            this.__cp.x, this.__cp.y, this.__cw * 1.4, this.__ch * 1.4);
         fill(150);
         rect(this.__pos.x, this.__pos.y + this.__ch, this.__cw, 35);
 
