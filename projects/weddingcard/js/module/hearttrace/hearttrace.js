@@ -117,11 +117,13 @@ class HeartTrace {
 
         for (var i = 0; i < c; i++) {
             var pt = EffectFactory.createParticle(Particle.Spray)
-                .setAmount(40)
+                .setRadius(2, 8)
+                .setBlurRadiusPow(4, 8)
+                .setAmount(60)
                 .setPos(1000, 1000)
-                .setCreateArea(14, 14)
-                .setLife(180)
-                .setFreq(0.02)
+                .setCreateArea(3, 3)
+                .setLife(200)
+                .setFreq(0.03)
                 .setBlur(true);
             this.__particles.push(pt);
         }

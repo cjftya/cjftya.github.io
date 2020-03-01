@@ -53,7 +53,8 @@ class Snow extends AbsParticle {
     setupParticle(p, firstLoad) {
         p.pos.x = firstLoad ? MathUtil.randInt(0, this.__winSize[0] + 200) - 100 : MathUtil.randInt(50, this.__winSize[0] - 50);
         p.pos.y = firstLoad ? MathUtil.randInt(0, this.__winSize[1] + 500) - 500 : MathUtil.randInt(100, this.__winSize[1]) * -1;
-        p.setRadius(MathUtil.randInt(3, 10));
+        var r = MathUtil.randInt(3, 10);
+        p.setRadius3(r, r * 3, r * 5);
 
         if (this.__windEnergy.x == 0) {
             p.vel.x = (MathUtil.randInt(1, 5) * 0.1) * (MathUtil.randInt(1, 20) <= 10 ? -1 : 1);

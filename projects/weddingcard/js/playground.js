@@ -14,8 +14,10 @@ var slideShow;
 var oldMousePos;
 var dragPos, dragVel, dragMax;
 var dragScreenRap;
+var activeDrag;
 
 var winSize;
+
 
 var activeDebugCount = 0;
 var debugCount = 0;
@@ -162,6 +164,10 @@ function drawFpsCount() {
 }
 
 function mousePressed() {
+    if (!activeDrag) {
+        return;
+    }
+
     oldMousePos.set(mouseX, mouseY);
     dragMax = 0;
 
@@ -176,6 +182,10 @@ function mousePressed() {
 }
 
 function mouseReleased() {
+    if (!activeDrag) {
+        return;
+    }
+
     if (!mapView.isMapController()) {
         mapView.moveToNaverMap(mouseX, mouseY);
     }
@@ -184,7 +194,11 @@ function mouseReleased() {
 }
 
 function mouseDragged() {
-    var dy = mouseX - oldMousePos.x;
+    if (!activeDrag) {
+        return;
+    }
+
+    var dx = mouseX - oldMousePos.x;
     var dy = mouseY - oldMousePos.y;
     if (mapView.isMapController()) {
         mapView.addCropSrcPos(-dx, -dy);
@@ -213,6 +227,7 @@ function windowResized() {
 }
 
 function initialize() {
+    activeDrag = false;
     var isMobile = /Android|webOS|iPhone|iPad|iPod|Opera Mini/i.test(navigator.userAgent);
     TopicManager.ready().write(DEVICE_INFO.IS_MOBILE, isMobile);
 
@@ -242,7 +257,7 @@ function initializeWeddingContents() {
         .setImagePath(ResourcePath.MainImage)
         .setPos(0, 0)
         .setWidth(winSize[0]);
-    
+
     var titleTextView = UiFactory.createTextView()
         .addText("❀ We are getting married ❀")
         .addText("______")
@@ -262,6 +277,8 @@ function initializeWeddingContents() {
         .setPos(0, titleTextView.getPos().y + 100);
 
     var mainTitleParticle = EffectFactory.createParticle(Particle.Spray)
+        .setRadius(1, 5)
+        .setBlurRadiusPow(3, 5)
         .setAmount(15)
         .setPos(winSize[0] / 2, mainImageTitleTextView.getPos().y)
         .setCreateArea(50, 15)
@@ -463,6 +480,8 @@ function initializeWeddingContents() {
     textViewMap.set(TextContents.SubwayInfo, locationSubwayInfoTextView);
     textViewMap.set(TextContents.BusInfo, locationBusInfoTextView);
     textViewMap.set(TextContents.Copyright, copyRightTextView);
+
+    activeDrag = true;
 }
 
 function onLoadedResource(total, count) {
