@@ -10,7 +10,6 @@ var lineTraceMap;
 var sprayParticleMap;
 
 var mapView;
-var imageViewer;
 var slideShow;
 
 var rectpos1;
@@ -99,27 +98,21 @@ function draw() {
         slideShow.draw();
         debugCount++;
 
-        imageViewer.update(TimeDeltaUtil.getInstance().getDelta());
-        imageViewer.draw();
         debugCount++;
-    } else {
-        imageViewer.hide();
     }
 
-    if (!imageViewer.isShowing()) {
-        for (var [id, trace] of lineTraceMap.entries()) {
-            trace.update(TimeDeltaUtil.getInstance().getDelta());
+    for (var [id, trace] of lineTraceMap.entries()) {
+        trace.update(TimeDeltaUtil.getInstance().getDelta());
+    }
+    for (var [id, particle] of sprayParticleMap.entries()) {
+        if (id != ParticleContents.MainTitle) {
+            var trace = lineTraceMap.get(id);
+            particle.setPos(trace.getTraceX(), trace.getTraceY());
         }
-        for (var [id, particle] of sprayParticleMap.entries()) {
-            if (id != ParticleContents.MainTitle) {
-                var trace = lineTraceMap.get(id);
-                particle.setPos(trace.getTraceX(), trace.getTraceY());
-            }
-            if (particle.inScreen(winSize[0], winSize[1])) {
-                particle.update(TimeDeltaUtil.getInstance().getDelta());
-                particle.draw();
-                debugCount++;
-            }
+        if (particle.inScreen(winSize[0], winSize[1])) {
+            particle.update(TimeDeltaUtil.getInstance().getDelta());
+            particle.draw();
+            debugCount++;
         }
     }
 
@@ -132,7 +125,6 @@ function draw() {
     if (activeDebugCount > 10) {
         this.drawFpsCount();
     }
-
     debugCount = 0;
 }
 
@@ -196,7 +188,6 @@ function getTouchPointDist() {
 function mousePressed() {
     old.set(mouseX, mouseY);
     dragMax = 0;
-    oldDist = this.getTouchPointDist();
 
     if (mapView.inBound(mouseX, mouseY)) {
         mapView.setMapController(true);
@@ -208,47 +199,25 @@ function mousePressed() {
 }
 
 function mouseReleased() {
-    if (!imageViewer.isShowing() && slideShow.inBound(mouseX, mouseY) && !imageViewer.isInputDelay()) {
-        imageViewer.setIndex(slideShow.getCurrentIndex());
-        imageViewer.show();
-        slideShow.pause();
-    }
-    if (imageViewer.isShowing() && !imageViewer.inBound(mouseX, mouseY) && !imageViewer.isInputDelay()) {
-        imageViewer.hide();
-        slideShow.resume();
-    }
-    if (!imageViewer.isShowing() && !mapView.isMapController()) {
+    if (!mapView.isMapController()) {
         mapView.moveToNaverMap(mouseX, mouseY);
     }
-    if (!imageViewer.isShowing()) {
-        slideShow.selectIndicator(mouseX, mouseY);
-    }
+    slideShow.selectIndicator(mouseX, mouseY);
     mapView.setMapController(false);
 }
 
 function mouseDragged() {
     var vx = mouseX - old.x;
     var vy = mouseY - old.y;
-    if (imageViewer.isShowing()) {
-        if (touches.length < 2) {
-            imageViewer.addPos(vx, vy);
-        } else {
-            var newDist = this.getTouchPointDist();
-            var vz = newDist - oldDist;
-            imageViewer.addScale(vz * 0.00001);
-            oldDist = newDist;
-        }
+    if (mapView.isMapController()) {
+        mapView.addCropSrcPos(-vx, -vy);
     } else {
-        if (mapView.isMapController()) {
-            mapView.addCropSrcPos(-vx, -vy);
-        } else {
-            var absVy = vy < 0 ? -vy : vy;
-            if (dragMax < absVy) {
-                dragMax = absVy;
-                dragVel = vy * 0.6;
-            }
-            this.updateWeddingContents(vy);
+        var absVy = vy < 0 ? -vy : vy;
+        if (dragMax < absVy) {
+            dragMax = absVy;
+            dragVel = vy * 0.6;
         }
+        this.updateWeddingContents(vy);
     }
     old.set(mouseX, mouseY);
 }
@@ -258,9 +227,7 @@ function mouseDragged() {
 
 function keyPressed() {
     if (keyCode == LEFT_ARROW) {
-        imageViewer.addScale(-0.01);
     } else if (keyCode == RIGHT_ARROW) {
-        imageViewer.addScale(0.01);
     }
 }
 
@@ -425,16 +392,6 @@ function initializeWeddingContents() {
         .setWidth(winSize[0])
         .setDelay(5)
         .setPos(0, galleryTextView.getPos().y + 50);
-
-    imageViewer = new ImageViewer()
-        .addImagePath(ResourcePath.RealRatio1Image)
-        .addImagePath(ResourcePath.RealRatio2Image)
-        .addImagePath(ResourcePath.RealRatio3Image)
-        .addImagePath(ResourcePath.RealRatio4Image)
-        .addImagePath(ResourcePath.RealRatio5Image)
-        .addImagePath(ResourcePath.RealRatio6Image)
-        .setPos(winSize[0] / 2, winSize[1] / 2);
-
 
     var p1 = MathUtil.randInt(0, 29);
     var p2, p3;
