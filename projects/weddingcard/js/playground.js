@@ -28,28 +28,28 @@ var activeDebugCount = 0;
 var debugCount = 0;
 
 function preload() {
-    // TopicManager.ready().write(RESOURCE.DATA, new ResourceLoader()
-    //     .add(ResourcePath.MainImage, ResourceType.Image)
-    //     .add(ResourcePath.BendImage, ResourceType.Image)
-    //     .add(ResourcePath.SlideShowMaskImage, ResourceType.Image)
-    //     .add(ResourcePath.MapImage, ResourceType.Image)
-    //     .add(ResourcePath.ManFaceImage, ResourceType.Image)
-    //     .add(ResourcePath.WomenFaceImage, ResourceType.Image)
-    //     .add(ResourcePath.DayCounterImage, ResourceType.Image)
-    //     .add(ResourcePath.SlideShow1Image, ResourceType.Image)
-    //     .add(ResourcePath.SlideShow2Image, ResourceType.Image)
-    //     .add(ResourcePath.SlideShow3Image, ResourceType.Image)
-    //     .add(ResourcePath.SlideShow4Image, ResourceType.Image)
-    //     .add(ResourcePath.SlideShow5Image, ResourceType.Image)
-    //     .add(ResourcePath.SlideShow6Image, ResourceType.Image)
-    //     .add(ResourcePath.RealRatio1Image, ResourceType.Image)
-    //     .add(ResourcePath.RealRatio2Image, ResourceType.Image)
-    //     .add(ResourcePath.RealRatio3Image, ResourceType.Image)
-    //     .add(ResourcePath.RealRatio4Image, ResourceType.Image)
-    //     .add(ResourcePath.RealRatio5Image, ResourceType.Image)
-    //     .add(ResourcePath.RealRatio6Image, ResourceType.Image)
-    //     .setListener(this.onLoadedResource)
-    //     .load());
+    TopicManager.ready().write(RESOURCE.DATA, new ResourceLoader()
+        .add(ResourcePath.MainImage, ResourceType.Image)
+        .add(ResourcePath.BendImage, ResourceType.Image)
+        .add(ResourcePath.SlideShowMaskImage, ResourceType.Image)
+        .add(ResourcePath.MapImage, ResourceType.Image)
+        .add(ResourcePath.ManFaceImage, ResourceType.Image)
+        .add(ResourcePath.WomenFaceImage, ResourceType.Image)
+        .add(ResourcePath.DayCounterImage, ResourceType.Image)
+        .add(ResourcePath.SlideShow1Image, ResourceType.Image)
+        .add(ResourcePath.SlideShow2Image, ResourceType.Image)
+        .add(ResourcePath.SlideShow3Image, ResourceType.Image)
+        .add(ResourcePath.SlideShow4Image, ResourceType.Image)
+        .add(ResourcePath.SlideShow5Image, ResourceType.Image)
+        .add(ResourcePath.SlideShow6Image, ResourceType.Image)
+        .add(ResourcePath.RealRatio1Image, ResourceType.Image)
+        .add(ResourcePath.RealRatio2Image, ResourceType.Image)
+        .add(ResourcePath.RealRatio3Image, ResourceType.Image)
+        .add(ResourcePath.RealRatio4Image, ResourceType.Image)
+        .add(ResourcePath.RealRatio5Image, ResourceType.Image)
+        .add(ResourcePath.RealRatio6Image, ResourceType.Image)
+        .setListener(this.onLoadedResource)
+        .load());
 }
 
 function setup() {
@@ -57,7 +57,7 @@ function setup() {
     TopicManager.ready().write(DISPLAY_INFO.WINDOW_SIZE, [windowWidth, windowHeight]);
 
     this.initialize();
-   // this.executeDayCounter();
+    this.executeDayCounter();
 
     old = new Vector2d();
     dragVel = dragMax = 0;
@@ -70,70 +70,70 @@ function draw() {
 
     TimeDeltaUtil.getInstance().update();
 
- //   dragVel *= 0.9;
- //   this.updateWeddingContents(dragVel);
+    dragVel *= 0.9;
+    this.updateWeddingContents(dragVel);
 
     this.drawBackgroundShape();
 
-    // for (var [id, view] of imageViewMap.entries()) {
-    //     if (view.inScreen(winSize[0], winSize[1])) {
-    //         view.draw();
-    //         debugCount++;
-    //     }
-    // }
+    for (var [id, view] of imageViewMap.entries()) {
+        if (view.inScreen(winSize[0], winSize[1])) {
+            view.draw();
+            debugCount++;
+        }
+    }
 
-    // for (var [id, view] of textViewMap.entries()) {
-    //     if (view.inScreen(winSize[0], winSize[1])) {
-    //         view.draw();
-    //         debugCount++;
-    //     }
-    // }
+    for (var [id, view] of textViewMap.entries()) {
+        if (view.inScreen(winSize[0], winSize[1])) {
+            view.draw();
+            debugCount++;
+        }
+    }
 
-    // if (mapView.inScreen(winSize[0], winSize[1])) {
-    //     mapView.draw();
-    //     debugCount++;
-    // }
+    if (mapView.inScreen(winSize[0], winSize[1])) {
+        mapView.draw();
+        debugCount++;
+    }
 
-    // if (slideShow.inScreen(winSize[0], winSize[1])) {
-    //     slideShow.update(TimeDeltaUtil.getInstance().getDelta());
-    //     slideShow.draw();
-    //     debugCount++;
+    if (slideShow.inScreen(winSize[0], winSize[1])) {
+        slideShow.update(TimeDeltaUtil.getInstance().getDelta());
+        slideShow.draw();
+        debugCount++;
 
-    //     imageViewer.update(TimeDeltaUtil.getInstance().getDelta());
-    //     imageViewer.draw();
-    //     debugCount++;
-    // } else {
-    //     imageViewer.hide();
-    // }
+        imageViewer.update(TimeDeltaUtil.getInstance().getDelta());
+        imageViewer.draw();
+        debugCount++;
+    } else {
+        imageViewer.hide();
+    }
 
-    // if (!imageViewer.isShowing()) {
-    //     for (var [id, trace] of lineTraceMap.entries()) {
-    //         trace.update(TimeDeltaUtil.getInstance().getDelta());
-    //     }
-    //     for (var [id, particle] of sprayParticleMap.entries()) {
-    //         if (id != ParticleContents.MainTitle) {
-    //             var trace = lineTraceMap.get(id);
-    //             particle.setPos(trace.getTraceX(), trace.getTraceY());
-    //         }
-    //         if (particle.inScreen(winSize[0], winSize[1])) {
-    //             particle.update(TimeDeltaUtil.getInstance().getDelta());
-    //             particle.draw();
-    //             debugCount++;
-    //         }
-    //     }
-    // }
+    if (!imageViewer.isShowing()) {
+        for (var [id, trace] of lineTraceMap.entries()) {
+            trace.update(TimeDeltaUtil.getInstance().getDelta());
+        }
+        for (var [id, particle] of sprayParticleMap.entries()) {
+            if (id != ParticleContents.MainTitle) {
+                var trace = lineTraceMap.get(id);
+                particle.setPos(trace.getTraceX(), trace.getTraceY());
+            }
+            if (particle.inScreen(winSize[0], winSize[1])) {
+                particle.update(TimeDeltaUtil.getInstance().getDelta());
+                particle.draw();
+                debugCount++;
+            }
+        }
+    }
 
     // background effect
     snowPaticle.update(TimeDeltaUtil.getInstance().getDelta());
     snowPaticle.draw();
     debugCount++;
 
-    // debugCount++;
-    // if (activeDebugCount > 10) {
-    //     this.drawFpsCount();
-    // }
+    debugCount++;
+    if (activeDebugCount > 10) {
+        this.drawFpsCount();
+    }
 
-    // debugCount = 0;
+    debugCount = 0;
 }
 
 function drawBackgroundShape() {
@@ -291,7 +291,7 @@ function initialize() {
         r = MathUtil.randInt(250, 800);
         bubleArr.push({ x, y, r });
     }
-  //  this.initializeWeddingContents();
+    this.initializeWeddingContents();
 }
 
 function initializeWeddingContents() {
