@@ -7,6 +7,8 @@ var EffectFactory = (function () {
                 switch (type) {
                     case Particle.Snow:
                         return new Snow();
+                    case Particle.Spray:
+                        return new Spray();
                     default:
                         return null;
                 }
@@ -24,6 +26,9 @@ var EffectFactory = (function () {
         },
         createParticle: function (type) {
             return this.__ready().particle(type);
+        },
+        createLineTrace: function () {
+            return new LineTrace();
         }
     };
 })();
