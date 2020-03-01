@@ -3,6 +3,8 @@ class ParticleCircle {
         this.pos = new Vector2d();
         this.vel = new Vector2d();
         this.__r = 0;
+        this.__r1 = 0;
+        this.__r2 = 0;
         this.__color = color(255, 255, 255);
         this.__colorSecond = color(255, 255, 255);
         this.__colorSecond.setAlpha(15);
@@ -30,6 +32,12 @@ class ParticleCircle {
 
     setRadius(r) {
         this.__r = r;
+    }
+
+    setRadius3(r1, r2, r3) {
+        this.__r = r1;
+        this.__r1 = r2;
+        this.__r2 = r3;
     }
 
     getRadius() {
@@ -68,9 +76,9 @@ class ParticleCircle {
     draw() {
         if (this.__isBlur) {
             fill(this.__colorThird);
-            ellipse(this.pos.x, this.pos.y, this.__r * 5, this.__r * 5);
+            ellipse(this.pos.x, this.pos.y, this.__r2, this.__r2);
             fill(this.__colorSecond);
-            ellipse(this.pos.x, this.pos.y, this.__r * 3, this.__r * 3);
+            ellipse(this.pos.x, this.pos.y, this.__r1, this.__r1);
         }
         fill(this.__color);
         ellipse(this.pos.x, this.pos.y, this.__r, this.__r);

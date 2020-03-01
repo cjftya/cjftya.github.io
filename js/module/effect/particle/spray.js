@@ -8,6 +8,10 @@ class Spray extends AbsParticle {
         this.__freq = 0;
         this.__freqCount = 0;
         this.__sprayCount = 0;
+        this.__rMin = 0;
+        this.__rMax = 0;
+        this.__blurR1 = 0;
+        this.__blurR2 = 0;
 
         this.__aw = 0;
         this.__ah = 0;
@@ -25,7 +29,8 @@ class Spray extends AbsParticle {
     setupPaticle(p) {
         p.pos.x = this.__center.x + this.__posOffset.x + Math.cos(MathUtil.angle2rad(MathUtil.randInt(0, 360))) * this.__aw;
         p.pos.y = this.__center.y + this.__posOffset.y + Math.sin(MathUtil.angle2rad(MathUtil.randInt(0, 360))) * this.__ah;
-        p.setRadius(MathUtil.randInt(1, 4));
+        var r = MathUtil.randInt(this.__rMin, this.__rMax);
+        p.setRadius3(r, r * this.__blurR1, r * this.__blurR2);
 
         p.vel.x = Math.cos(MathUtil.angle2rad(MathUtil.randInt(0, 360))) * (MathUtil.randInt(1, 5) * 0.1);
         p.vel.y = Math.sin(MathUtil.angle2rad(MathUtil.randInt(0, 360))) * (MathUtil.randInt(1, 5) * 0.1);
@@ -38,7 +43,7 @@ class Spray extends AbsParticle {
         this.__amount = a;
         this.__particles = [];
         for (var i = 0; i < this.__amount; i++) {
-            this.__particles.push(new ParticleCircle().setColor(230, 110, 110));
+            this.__particles.push(new ParticleCircle().setColor(230, 130, 130));
         }
         return this;
     }
@@ -75,6 +80,18 @@ class Spray extends AbsParticle {
         for (var p of this.__particles) {
             p.setBlur(v);
         }
+        return this;
+    }
+
+    setRadius(min, max) {
+        this.__rMin = min;
+        this.__rMax = max;
+        return this;
+    }
+
+    setBlurRadiusPow(r1, r2) {
+        this.__blurR1 = r1;
+        this.__blurR2 = r2;
         return this;
     }
 
