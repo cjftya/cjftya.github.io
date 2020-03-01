@@ -1,5 +1,5 @@
 class Spray extends AbsParticle {
-    constructor(amount) {
+    constructor() {
         super(Particle.Spray);
 
         this.__center = new Vector2d();
@@ -8,21 +8,15 @@ class Spray extends AbsParticle {
         this.__freq = 0;
         this.__freqCount = 0;
         this.__sprayCount = 0;
-        
+
         this.__aw = 0;
         this.__ah = 0;
 
         this.__posOffset = new Vector2d();
-
-        this.__amount = amount;
-        this.__particles = [];
-        for (var i = 0; i < this.__amount; i++) {
-            this.__particles.push(new ParticleCircle().setColor(200, 80, 80));
-        }
     }
 
     inScreen(sw, sh) {
-        if(this.__center.y > -70 && this.__center.y < sh + 70) {
+        if (this.__center.y > -70 && this.__center.y < sh + 70) {
             return true;
         }
         return false;
@@ -31,13 +25,22 @@ class Spray extends AbsParticle {
     setupPaticle(p) {
         p.pos.x = this.__center.x + this.__posOffset.x + Math.cos(MathUtil.angle2rad(MathUtil.randInt(0, 360))) * this.__aw;
         p.pos.y = this.__center.y + this.__posOffset.y + Math.sin(MathUtil.angle2rad(MathUtil.randInt(0, 360))) * this.__ah;
-        p.setRadius(MathUtil.randInt(1, 3));
+        p.setRadius(MathUtil.randInt(1, 4));
 
         p.vel.x = Math.cos(MathUtil.angle2rad(MathUtil.randInt(0, 360))) * (MathUtil.randInt(1, 5) * 0.1);
         p.vel.y = Math.sin(MathUtil.angle2rad(MathUtil.randInt(0, 360))) * (MathUtil.randInt(1, 5) * 0.1);
 
         p.setAlpha(250);
         p.setLife(this.__life);
+    }
+
+    setAmount(a) {
+        this.__amount = a;
+        this.__particles = [];
+        for (var i = 0; i < this.__amount; i++) {
+            this.__particles.push(new ParticleCircle().setColor(230, 110, 110));
+        }
+        return this;
     }
 
     addPos(x, y) {
@@ -90,7 +93,9 @@ class Spray extends AbsParticle {
                 p.pos.x += p.vel.x;
                 p.pos.y += p.vel.y;
                 p.decreaseLife(delta * 100);
-                p.setAlpha((250 * p.getLife()) / this.__life);
+                p.setAlpha3((250 * p.getLife()) / this.__life,
+                    (15 * p.getLife()) / this.__life,
+                    (10 * p.getLife()) / this.__life);
             }
         }
     }

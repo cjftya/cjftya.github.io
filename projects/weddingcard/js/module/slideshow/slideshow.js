@@ -53,6 +53,10 @@ class SlideShow {
         return this.__pos;
     }
 
+    getWidth() {
+        return this.__w;
+    }
+
     getHeight() {
         return this.__h;
     }

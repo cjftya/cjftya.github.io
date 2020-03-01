@@ -40,6 +40,12 @@ class ParticleCircle {
         this.__color.setAlpha(a);
     }
 
+    setAlpha3(a1, a2, a3) {
+        this.__color.setAlpha(a1);
+        this.__colorSecond.setAlpha(a2);
+        this.__colorThird.setAlpha(a3);
+    }
+
     setBlur(v) {
         this.__isBlur = v;
     }

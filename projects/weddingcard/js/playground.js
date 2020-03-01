@@ -4,24 +4,18 @@ var bubleArr;
 
 var textViewMap;
 var imageViewMap;
-
-var lineTraceMap;
-
 var sprayParticleMap;
+var sprayParticleArray = [];
 
+var heartTrace;
 var mapView;
 var slideShow;
 
-var rectpos1;
-
-var old;
-var oldDist;
-var dragVel, dragMax;
+var oldMousePos;
+var dragPos, dragVel, dragMax;
+var dragScreenRap;
 
 var winSize;
-
-var guideY;
-var endGuideLine;
 
 var activeDebugCount = 0;
 var debugCount = 0;
@@ -41,12 +35,6 @@ function preload() {
         .add(ResourcePath.SlideShow4Image, ResourceType.Image)
         .add(ResourcePath.SlideShow5Image, ResourceType.Image)
         .add(ResourcePath.SlideShow6Image, ResourceType.Image)
-        .add(ResourcePath.RealRatio1Image, ResourceType.Image)
-        .add(ResourcePath.RealRatio2Image, ResourceType.Image)
-        .add(ResourcePath.RealRatio3Image, ResourceType.Image)
-        .add(ResourcePath.RealRatio4Image, ResourceType.Image)
-        .add(ResourcePath.RealRatio5Image, ResourceType.Image)
-        .add(ResourcePath.RealRatio6Image, ResourceType.Image)
         .setListener(this.onLoadedResource)
         .load());
 }
@@ -58,9 +46,8 @@ function setup() {
     this.initialize();
     this.executeDayCounter();
 
-    old = new Vector2d();
-    dragVel = dragMax = 0;
-    guideY = 0;
+    oldMousePos = new Vector2d();
+    dragPos = dragVel = dragMax = 0;
 }
 
 function draw() {
@@ -97,22 +84,22 @@ function draw() {
         slideShow.update(TimeDeltaUtil.getInstance().getDelta());
         slideShow.draw();
         debugCount++;
-
-        debugCount++;
     }
 
-    for (var [id, trace] of lineTraceMap.entries()) {
-        trace.update(TimeDeltaUtil.getInstance().getDelta());
-    }
     for (var [id, particle] of sprayParticleMap.entries()) {
-        if (id != ParticleContents.MainTitle) {
-            var trace = lineTraceMap.get(id);
-            particle.setPos(trace.getTraceX(), trace.getTraceY());
-        }
         if (particle.inScreen(winSize[0], winSize[1])) {
             particle.update(TimeDeltaUtil.getInstance().getDelta());
             particle.draw();
             debugCount++;
+        }
+    }
+
+    heartTrace.update();
+    heartTrace.draw();
+    for (var pt of heartTrace.getParticles()) {
+        if (pt.inScreen(winSize[0], winSize[1])) {
+            pt.update(TimeDeltaUtil.getInstance().getDelta());
+            pt.draw();
         }
     }
 
@@ -137,13 +124,13 @@ function drawBackgroundShape() {
 }
 
 function updateWeddingContents(vy) {
-    guideY += vy;
-    if (guideY > 0) {
-        vy += (0 - guideY) * 0.05;
-        guideY += (0 - guideY) * 0.05;
-    } else if (guideY < -endGuideLine) {
-        vy += (-endGuideLine - guideY) * 0.05;
-        guideY += (-endGuideLine - guideY) * 0.05;
+    dragPos += vy;
+    if (dragPos > 0) {
+        vy += (0 - dragPos) * 0.05;
+        dragPos += (0 - dragPos) * 0.05;
+    } else if (dragPos < -dragScreenRap) {
+        vy += (-dragScreenRap - dragPos) * 0.05;
+        dragPos += (-dragScreenRap - dragPos) * 0.05;
     }
 
     for (var [id, view] of textViewMap.entries()) {
@@ -161,11 +148,9 @@ function updateWeddingContents(vy) {
     for (var [id, view] of sprayParticleMap.entries()) {
         view.addPos(0, vy);
     }
-    for (var [id, trace] of lineTraceMap.entries()) {
-        trace.addPos(0, vy);
-    }
     slideShow.addPos(0, vy);
     mapView.addPos(0, vy);
+    heartTrace.addPos(0, vy);
 }
 
 function drawFpsCount() {
@@ -176,23 +161,15 @@ function drawFpsCount() {
     text("FPS : " + Math.floor(TimeDeltaUtil.getInstance().getFPS()) + ", draw call : " + debugCount, 10, 10);
 }
 
-function getTouchPointDist() {
-    if (touches.length >= 2) {
-        var dx = touches[1].x - touches[0].x;
-        var dy = touches[1].y - touches[0].y;
-        return dx * dx + dy * dy;
-    }
-    return 0;
-}
-
 function mousePressed() {
-    old.set(mouseX, mouseY);
+    oldMousePos.set(mouseX, mouseY);
     dragMax = 0;
 
     if (mapView.inBound(mouseX, mouseY)) {
         mapView.setMapController(true);
     }
 
+    // debug code
     if (mouseY < 50) {
         activeDebugCount++;
     }
@@ -207,27 +184,25 @@ function mouseReleased() {
 }
 
 function mouseDragged() {
-    var vx = mouseX - old.x;
-    var vy = mouseY - old.y;
+    var dy = mouseX - oldMousePos.x;
+    var dy = mouseY - oldMousePos.y;
     if (mapView.isMapController()) {
-        mapView.addCropSrcPos(-vx, -vy);
+        mapView.addCropSrcPos(-dx, -dy);
     } else {
-        var absVy = vy < 0 ? -vy : vy;
-        if (dragMax < absVy) {
-            dragMax = absVy;
-            dragVel = vy * 0.6;
+        var absDy = dy < 0 ? -dy : dy;
+        if (dragMax < absDy) {
+            dragMax = absDy;
+            dragVel = dy * 0.6;
         }
-        this.updateWeddingContents(vy);
+        this.updateWeddingContents(dy);
     }
-    old.set(mouseX, mouseY);
+    oldMousePos.set(mouseX, mouseY);
 }
-
-// function mouseMoved() {
-// }
 
 function keyPressed() {
     if (keyCode == LEFT_ARROW) {
-    } else if (keyCode == RIGHT_ARROW) {
+    }
+    else if (keyCode == RIGHT_ARROW) {
     }
 }
 
@@ -258,6 +233,7 @@ function initialize() {
         r = MathUtil.randInt(250, 800);
         bubleArr.push({ x, y, r });
     }
+
     this.initializeWeddingContents();
 }
 
@@ -266,7 +242,7 @@ function initializeWeddingContents() {
         .setImagePath(ResourcePath.MainImage)
         .setPos(0, 0)
         .setWidth(winSize[0]);
-    0
+    
     var titleTextView = UiFactory.createTextView()
         .addText("❀ We are getting married ❀")
         .addText("______")
@@ -285,7 +261,8 @@ function initializeWeddingContents() {
         .setSize(20)
         .setPos(0, titleTextView.getPos().y + 100);
 
-    var mainTitleParticle = new Spray(15)
+    var mainTitleParticle = EffectFactory.createParticle(Particle.Spray)
+        .setAmount(15)
         .setPos(winSize[0] / 2, mainImageTitleTextView.getPos().y)
         .setCreateArea(50, 15)
         .setLife(120)
@@ -393,66 +370,11 @@ function initializeWeddingContents() {
         .setDelay(5)
         .setPos(0, galleryTextView.getPos().y + 50);
 
-    var p1 = MathUtil.randInt(0, 29);
-    var p2, p3;
-    if (p1 + 10 > 29) {
-        p2 = (p1 + 10) - 29;
-    } else {
-        p2 = p1 + 10;
-    }
-    if (p2 + 10 > 29) {
-        p3 = (p2 + 10) - 29;
-    } else {
-        p3 = p2 + 10;
-    }
-
-    var lineTrace1 = new LineTrace();
-    var oneSlice = (Math.PI * 2) / 30;
-    for (var i = 0; i < 30; i++) {
-        var xp = Math.cos(oneSlice * i) * (winSize[0] / 3.0);
-        var yp = Math.sin(oneSlice * i) * (winSize[0] / 3.0);
-        lineTrace1.addPoint(xp + winSize[0] / 2, yp + slideShow.getPos().y + slideShow.getHeight() / 2);
-    }
-    lineTrace1.start(p1, 1);
-
-    var lineTrace2 = new LineTrace();
-    var oneSlice = Math.PI * 2 / 30;
-    for (var i = 0; i < 30; i++) {
-        var xp = Math.cos(oneSlice * i) * (winSize[0] / 3.0);
-        var yp = Math.sin(oneSlice * i) * (winSize[0] / 3.0);
-        lineTrace2.addPoint(xp + winSize[0] / 2, yp + slideShow.getPos().y + slideShow.getHeight() / 2);
-    }
-    lineTrace2.start(p2, 1);
-
-    var lineTrace3 = new LineTrace();
-    var oneSlice = Math.PI * 2 / 30;
-    for (var i = 0; i < 30; i++) {
-        var xp = Math.cos(oneSlice * i) * (winSize[0] / 3.0);
-        var yp = Math.sin(oneSlice * i) * (winSize[0] / 3.0);
-        lineTrace3.addPoint(xp + winSize[0] / 2, yp + slideShow.getPos().y + slideShow.getHeight() / 2);
-    }
-    lineTrace3.start(p3, 1);
-
-    var slideShowParticle1 = new Spray(20)
-        .setPos(1000, 1000)
-        .setCreateArea(10, 10)
-        .setLife(160)
-        .setFreq(0.06)
-        .setBlur(true);
-
-    var slideShowParticle2 = new Spray(20)
-        .setPos(1000, 1000)
-        .setCreateArea(10, 10)
-        .setLife(160)
-        .setFreq(0.06)
-        .setBlur(true);
-
-    var slideShowParticle3 = new Spray(20)
-        .setPos(1000, 1000)
-        .setCreateArea(10, 10)
-        .setLife(160)
-        .setFreq(0.06)
-        .setBlur(true);
+    heartTrace = new HeartTrace()
+        .setHeartSize(slideShow.getWidth(), slideShow.getHeight())
+        .setPos(slideShow.getPos().x + slideShow.getWidth() / 2,
+            slideShow.getPos().y + slideShow.getHeight() / 2)
+        .setMovePointCount(1);
 
     var locationTextView = UiFactory.createTextView()
         .addText("❀ Location ❀")
@@ -513,18 +435,13 @@ function initializeWeddingContents() {
         .setSize(16)
         .setPos(0, locationBusInfoTextView.getPos().y + 300);
 
-    endGuideLine = copyRightTextView.getPos().y - 450;
 
-    lineTraceMap = new Map();
-    lineTraceMap.set(ParticleContents.SlideShow1, lineTrace1);
-    lineTraceMap.set(ParticleContents.SlideShow2, lineTrace2);
-    lineTraceMap.set(ParticleContents.SlideShow3, lineTrace3);
+    dragScreenRap = copyRightTextView.getPos().y - 450;
 
+
+    // set map
     sprayParticleMap = new Map();
     sprayParticleMap.set(ParticleContents.MainTitle, mainTitleParticle);
-    sprayParticleMap.set(ParticleContents.SlideShow1, slideShowParticle1);
-    sprayParticleMap.set(ParticleContents.SlideShow2, slideShowParticle2);
-    sprayParticleMap.set(ParticleContents.SlideShow3, slideShowParticle3);
 
     imageViewMap = new Map();
     imageViewMap.set(ImageContents.Main, mainImageView);
