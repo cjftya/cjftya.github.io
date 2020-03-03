@@ -31,7 +31,7 @@ var TextContents = {
 
 var ResourcePath = {
     //font
-    Font1: "https://cjftya.github.io/assets/font/Caster_PERSONAL_USE_ONLY.ttf",
+    Font1: "https://cjftya.github.io/assets/fonts/Caster.ttf",
     
     //image
     MainImage: "https://cjftya.github.io/assets/main.jpg",
