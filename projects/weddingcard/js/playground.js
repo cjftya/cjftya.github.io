@@ -24,7 +24,7 @@ var debugCount = 0;
 
 function preload() {
     TopicManager.ready().write(RESOURCE.DATA, new ResourceLoader()
-//        .add(ResourcePath.Font1, ResourceType.Font)
+        .add(ResourcePath.Font2, ResourceType.Font)
         .add(ResourcePath.MainImage, ResourceType.Image)
         .add(ResourcePath.BendImage, ResourceType.Image)
         .add(ResourcePath.SlideShowMaskImage, ResourceType.Image)
@@ -40,8 +40,6 @@ function preload() {
         .add(ResourcePath.SlideShow6Image, ResourceType.Image)
         .setListener(this.onLoadedResource)
         .load());
-
-    loadFont(ResourcePath.Font1);
 }
 
 function setup() {
@@ -230,10 +228,6 @@ function windowResized() {
 }
 
 function initialize() {
-    // var resource = TopicManager.ready().read(RESOURCE.DATA);
-    // var font = resource.get(ResourcePath.Font1).getData();
-    // textFont(font);
-
     activeDrag = false;
     var isMobile = /Android|webOS|iPhone|iPad|iPod|Opera Mini/i.test(navigator.userAgent);
     TopicManager.ready().write(DEVICE_INFO.IS_MOBILE, isMobile);
@@ -260,6 +254,9 @@ function initialize() {
 }
 
 function initializeWeddingContents() {
+    var resource = TopicManager.ready().read(RESOURCE.DATA)
+    var ft = resource.get(ResourcePath.Font1).getData();
+
     var mainImageView = UiFactory.createImageView()
         .setImagePath(ResourcePath.MainImage)
         .setPos(0, 0)
@@ -272,6 +269,7 @@ function initializeWeddingContents() {
         .setAlign(CENTER, null)
         .setColor(160, 110, 110)
         .setTextStyle(BOLD)
+        .setFont(ft)
         .setSize(22)
         .setPos(0, mainImageView.getHeight() + 60);
 
