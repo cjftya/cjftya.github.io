@@ -259,19 +259,19 @@ function initializeWeddingContents() {
         .setWidth(winSize[0]);
 
     var titleTextView = UiFactory.createTextView()
-        .addText("♥ · · ·  W e d d i ng  · · · ♥")
-        .setAlign(CENTER, null)
-        .setColor(160, 110, 110)
-        .setTextStyle(BOLD)
-        .setSize(22)
-        .setPos(0, mainImageView.getHeight() + 60);
-
-    var mainImageTitleTextView = UiFactory.createTextView()
-        .addText("Hyunchurl   ღ   Seoyoung")
+        .addText("♡ · · ·  W e d d i n g  · · · ♡")
         .setAlign(CENTER, null)
         .setColor(160, 110, 110)
         .setTextStyle(BOLD)
         .setSize(20)
+        .setPos(0, mainImageView.getHeight() + 60);
+
+    var mainImageTitleTextView = UiFactory.createTextView()
+        .addText("현 철   ღ   서 영")
+        .setAlign(CENTER, null)
+        .setColor(160, 110, 110)
+        .setTextStyle(BOLD)
+        .setSize(18)
         .setPos(0, titleTextView.getPos().y + 100);
 
     var mainTitleParticle = EffectFactory.createParticle(Particle.Spray)
@@ -289,17 +289,17 @@ function initializeWeddingContents() {
         .setImageMode(CENTER)
         .setPos(winSize[0] / 2 - (winSize[0] / 5),
             mainImageTitleTextView.getPos().y + (winSize[0] / 5) + 20)
-        .setWidth(winSize[0] / 4)
+        .setWidth(winSize[0] / 3.5)
 
     var womenFaceImageView = UiFactory.createImageView()
         .setImagePath(ResourcePath.WomenFaceImage)
         .setImageMode(CENTER)
         .setPos(winSize[0] / 2 + (winSize[0] / 5),
             mainImageTitleTextView.getPos().y + + (winSize[0] / 5) + 20)
-        .setWidth(winSize[0] / 4)
+        .setWidth(winSize[0] / 3.5)
 
     var weddingInfoTextView = UiFactory.createTextView()
-        .addText("2020. 04. 11. SAT 2:00 PM")
+        .addText("2020년 04월 11일 토요일 오후 2시")
         .setAlign(CENTER, null)
         .setColor(250, 250, 250)
         .setAlpha(190)
@@ -333,36 +333,38 @@ function initializeWeddingContents() {
         .setCropSize(winSize[0], 300);
 
     var invitationTextView = UiFactory.createTextView()
-        .addText("♥ · · ·  I n v i t a t i on  · · · ♥")
+        .addText("♡ · · ·  I n v i t a t i on  · · · ♡")
         .setAlign(CENTER, null)
         .setColor(160, 110, 110)
         .setTextStyle(BOLD)
-        .setSize(22)
+        .setSize(20)
         .setPos(0, weddingInfoTextView.getPos().y + 380);
 
     var invitationLetterTextView = UiFactory.createTextView()
-        .addText("행복이 피어나는 따뜻한 봄")
-        .addText("저희 두사람 새로운 출발을 하려고 합니다.")
-        .addText("서로를 향한 사랑과 믿음을 하나가 되는 자리에")
-        .addText("축복으로 함께해주시면 감사하겠습니다.")
+        .addText("·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·")
+        .addText("·  ·  ·  행복이 피어나는 따뜻한 봄  ·  ·  ·")
+        .addText("·  ·  저희 두사람 새로운 출발을 하려고 합니다  ·  ·")
+        .addText("·  ·  서로를 향한 사랑과 믿음을 하나가 되는 자리에  ·  ·")
+        .addText("·  ·  축복으로 함께해주시면 감사하겠습니다  ·  ·")
+        .addText("·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·")
         .setTextGap(40)
         .setAlign(CENTER, null)
         .setColor(190, 130, 130)
         .setTextStyle(BOLD)
         .setAlpha(180)
-        .setSize(16)
+        .setSize(15)
         .setPos(0, invitationTextView.getPos().y + 80);
 
     var bendImageView = UiFactory.createImageView()
         .setImagePath(ResourcePath.BendImage)
-        .setPos(0, invitationLetterTextView.getPos().y + 230)
+        .setPos(0, invitationLetterTextView.getPos().y + 320)
         .setWidth(winSize[0])
         .setCropMode(true)
         .setCropSrcPos(((1300 - winSize[0]) / 2) - 50, 500)
         .setCropSize(winSize[0], 100);
 
     var bendTextView = UiFactory.createTextView()
-        .addText("“ 언제나 그대곁에... ”")
+        .addText("“ 언제나 그대곁에 · · · ”")
         .setAlign(CENTER, null)
         .setColor(240, 240, 240)
         .setAlpha(190)
@@ -370,11 +372,11 @@ function initializeWeddingContents() {
         .setPos(0, bendImageView.getPos().y + 40);
 
     var galleryTextView = UiFactory.createTextView()
-        .addText("♥ · · ·  G a l l e r y  · · · ♥")
+        .addText("♡ · · ·  G a l l e r y  · · · ♡")
         .setAlign(CENTER, null)
         .setColor(160, 110, 110)
         .setTextStyle(BOLD)
-        .setSize(22)
+        .setSize(20)
         .setPos(0, bendImageView.getPos().y + 210);
 
     slideShow = new SlideShow()
@@ -396,11 +398,11 @@ function initializeWeddingContents() {
         .setMovePointCount(1);
 
     var locationTextView = UiFactory.createTextView()
-        .addText("♥ · · ·  L o c a t i o n  · · · ♥")
+        .addText("♡ · · ·  L o c a t i o n  · · · ♡")
         .setAlign(CENTER, null)
         .setColor(160, 110, 110)
         .setTextStyle(BOLD)
-        .setSize(22)
+        .setSize(20)
         .setPos(0, slideShow.getPos().y + slideShow.getHeight() + 120);
 
     mapView = new MapView(ResourcePath.MapImage)
@@ -443,8 +445,9 @@ function initializeWeddingContents() {
 
 
     var copyRightTextView = UiFactory.createTextView()
-        .addText("_______________________________________")
+        .addText("·   ·   ·   ·   ·   ·   ·   ·   ·   ·   ·   ·   ·   ·   ·   ·   ·")
         .addText("Copyright ⓒ HyunChurl Lim")
+        .addText("·   ·   ·   ·   ·   ·   ·   ·   ·   ·   ·   ·   ·")
         .setTextGap(35)
         .setAlign(CENTER, null)
         .setColor(190, 130, 130)
@@ -453,7 +456,7 @@ function initializeWeddingContents() {
         .setPos(0, locationBusInfoTextView.getPos().y + 300);
 
 
-    dragScreenRap = copyRightTextView.getPos().y - 550;
+    dragScreenRap = copyRightTextView.getPos().y - 480;
 
 
     // set map
