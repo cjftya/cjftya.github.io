@@ -259,7 +259,7 @@ function initializeWeddingContents() {
         .setWidth(winSize[0]);
 
     var titleTextView = UiFactory.createTextView()
-        .addText("❤ · · ·  W e d d i ng  · · · ❤")
+        .addText("♥ · · ·  W e d d i ng  · · · ♥")
         .setAlign(CENTER, null)
         .setColor(160, 110, 110)
         .setTextStyle(BOLD)
@@ -333,7 +333,7 @@ function initializeWeddingContents() {
         .setCropSize(winSize[0], 300);
 
     var invitationTextView = UiFactory.createTextView()
-        .addText("❤ · · ·  I n v i t a t i on  · · · ❤")
+        .addText("♥ · · ·  I n v i t a t i on  · · · ♥")
         .setAlign(CENTER, null)
         .setColor(160, 110, 110)
         .setTextStyle(BOLD)
@@ -370,7 +370,7 @@ function initializeWeddingContents() {
         .setPos(0, bendImageView.getPos().y + 40);
 
     var galleryTextView = UiFactory.createTextView()
-        .addText("❤ · · ·  G a l l e r y  · · · ❤")
+        .addText("♥ · · ·  G a l l e r y  · · · ♥")
         .setAlign(CENTER, null)
         .setColor(160, 110, 110)
         .setTextStyle(BOLD)
@@ -396,7 +396,7 @@ function initializeWeddingContents() {
         .setMovePointCount(1);
 
     var locationTextView = UiFactory.createTextView()
-        .addText("❤ · · ·  L o c a t i o n  · · · ❤")
+        .addText("♥ · · ·  L o c a t i o n  · · · ♥")
         .setAlign(CENTER, null)
         .setColor(160, 110, 110)
         .setTextStyle(BOLD)
