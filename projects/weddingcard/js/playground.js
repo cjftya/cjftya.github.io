@@ -267,7 +267,7 @@ function initializeWeddingContents() {
         .setPos(0, mainImageView.getHeight() + 60);
 
     var mainImageTitleTextView = UiFactory.createTextView()
-        .addText("현 철   ღ   서 영")
+        .addText("Hyunchurl   ღ   Seoyoung")
         .setAlign(CENTER, null)
         .setColor(160, 110, 110)
         .setTextStyle(BOLD)
