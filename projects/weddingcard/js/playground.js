@@ -301,7 +301,7 @@ function initializeWeddingContents() {
         .setWidth(winSize[0] / 4)
 
     var weddingInfoTextView = UiFactory.createTextView()
-        .addText("2020. 04. 11. SAT  2:00 PM")
+        .addText("2020. 09. 26. SAT 2:00 PM")
         .setAlign(CENTER, null)
         .setColor(250, 250, 250)
         .setAlpha(190)
@@ -443,9 +443,9 @@ function initializeWeddingContents() {
 
 
     var copyRightTextView = UiFactory.createTextView()
-        .addText("______________________________________________________________________________")
+        .addText("_______________________________________")
         .addText("Copyright © HyunChurl Lim")
-        .setTextGap(55)
+        .setTextGap(35)
         .setAlign(CENTER, null)
         .setColor(190, 130, 130)
         .setTextStyle(BOLD)
@@ -453,7 +453,7 @@ function initializeWeddingContents() {
         .setPos(0, locationBusInfoTextView.getPos().y + 300);
 
 
-    dragScreenRap = copyRightTextView.getPos().y - 450;
+    dragScreenRap = copyRightTextView.getPos().y - 550;
 
 
     // set map
@@ -489,7 +489,7 @@ function onLoadedResource(total, count) {
 }
 
 function executeDayCounter() {
-    var dday = new Date("Apr 11,2020,14:00:00").getTime();
+    var dday = new Date("September 26,2020,14:00:00").getTime();
     setInterval(function () {
         var now = new Date();
         var distance = dday - now;
