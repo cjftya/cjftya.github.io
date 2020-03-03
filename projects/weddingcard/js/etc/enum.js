@@ -30,11 +30,6 @@ var TextContents = {
 };
 
 var ResourcePath = {
-    //font
-    Font1: "https://cjftya.github.io/assets/Caster.ttf",
-    Font2: "https://cjftya.github.io/assets/godoMaum.ttf",
-    
-    //image
     MainImage: "https://cjftya.github.io/assets/main.jpg",
     BendImage: "https://cjftya.github.io/assets/bend.jpg",
     MapImage: "https://cjftya.github.io/assets/map.jpg",
