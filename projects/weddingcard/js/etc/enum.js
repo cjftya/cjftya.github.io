@@ -26,7 +26,8 @@ var TextContents = {
     ShortcutNaver: 9,
     SubwayInfo: 10,
     BusInfo: 11,
-    Copyright: 12
+    Copyright: 12,
+    Bend: 13
 };
 
 var ResourcePath = {
@@ -42,5 +43,5 @@ var ResourcePath = {
     SlideShow3Image: "https://cjftya.github.io/assets/s3.jpg",
     SlideShow4Image: "https://cjftya.github.io/assets/s4.jpg",
     SlideShow5Image: "https://cjftya.github.io/assets/s5.jpg",
-    SlideShow6Image: "https://cjftya.github.io/assets/s6.jpg"
+    SlideShow6Image: "https://cjftya.github.io/assets/s6.jpg",
 };

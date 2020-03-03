@@ -259,9 +259,7 @@ function initializeWeddingContents() {
         .setWidth(winSize[0]);
 
     var titleTextView = UiFactory.createTextView()
-        .addText("❀ We are getting married ❀")
-        .addText("______")
-        .setTextGap(15)
+        .addText("❤ · · ·  W e d d i ng  · · · ❤")
         .setAlign(CENTER, null)
         .setColor(160, 110, 110)
         .setTextStyle(BOLD)
@@ -269,7 +267,7 @@ function initializeWeddingContents() {
         .setPos(0, mainImageView.getHeight() + 60);
 
     var mainImageTitleTextView = UiFactory.createTextView()
-        .addText("현 철   💗   서 영")
+        .addText("현 철   ღ   서 영")
         .setAlign(CENTER, null)
         .setColor(160, 110, 110)
         .setTextStyle(BOLD)
@@ -301,7 +299,7 @@ function initializeWeddingContents() {
         .setWidth(winSize[0] / 4)
 
     var weddingInfoTextView = UiFactory.createTextView()
-        .addText("2020. 09. 26. SAT 2:00 PM")
+        .addText("2020. 04. 11. SAT 2:00 PM")
         .setAlign(CENTER, null)
         .setColor(250, 250, 250)
         .setAlpha(190)
@@ -335,9 +333,7 @@ function initializeWeddingContents() {
         .setCropSize(winSize[0], 300);
 
     var invitationTextView = UiFactory.createTextView()
-        .addText("❀ Invitation ❀")
-        .addText("______")
-        .setTextGap(15)
+        .addText("❤ · · ·  I n v i t a t i on  · · · ❤")
         .setAlign(CENTER, null)
         .setColor(160, 110, 110)
         .setTextStyle(BOLD)
@@ -365,10 +361,16 @@ function initializeWeddingContents() {
         .setCropSrcPos(((1300 - winSize[0]) / 2) - 50, 500)
         .setCropSize(winSize[0], 100);
 
+    var bendTextView = UiFactory.createTextView()
+        .addText("“ 언제나 그대곁에... ”")
+        .setAlign(CENTER, null)
+        .setColor(240, 240, 240)
+        .setAlpha(190)
+        .setSize(20)
+        .setPos(0, bendImageView.getPos().y + 40);
+
     var galleryTextView = UiFactory.createTextView()
-        .addText("❀ Gallery ❀")
-        .addText("______")
-        .setTextGap(15)
+        .addText("❤ · · ·  G a l l e r y  · · · ❤")
         .setAlign(CENTER, null)
         .setColor(160, 110, 110)
         .setTextStyle(BOLD)
@@ -394,9 +396,7 @@ function initializeWeddingContents() {
         .setMovePointCount(1);
 
     var locationTextView = UiFactory.createTextView()
-        .addText("❀ Location ❀")
-        .addText("______")
-        .setTextGap(15)
+        .addText("❤ · · ·  L o c a t i o n  · · · ❤")
         .setAlign(CENTER, null)
         .setColor(160, 110, 110)
         .setTextStyle(BOLD)
@@ -444,7 +444,7 @@ function initializeWeddingContents() {
 
     var copyRightTextView = UiFactory.createTextView()
         .addText("_______________________________________")
-        .addText("Copyright © HyunChurl Lim")
+        .addText("Copyright ⓒ HyunChurl Lim")
         .setTextGap(35)
         .setAlign(CENTER, null)
         .setColor(190, 130, 130)
@@ -471,6 +471,7 @@ function initializeWeddingContents() {
     textViewMap.set(TextContents.Title, titleTextView);
     textViewMap.set(TextContents.MainImageTitle, mainImageTitleTextView);
     textViewMap.set(TextContents.WeddingInfo, weddingInfoTextView);
+    textViewMap.set(TextContents.Bend, bendTextView);
     textViewMap.set(TextContents.DDayLabel, ddayLabelTextView);
     textViewMap.set(TextContents.DayCounter, dayCounterTextView);
     textViewMap.set(TextContents.Invitation, invitationTextView);
@@ -489,7 +490,7 @@ function onLoadedResource(total, count) {
 }
 
 function executeDayCounter() {
-    var dday = new Date("September 26,2020,14:00:00").getTime();
+    var dday = new Date("April 11,2020,14:00:00").getTime();
     setInterval(function () {
         var now = new Date();
         var distance = dday - now;
