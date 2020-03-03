@@ -289,14 +289,14 @@ function initializeWeddingContents() {
         .setImageMode(CENTER)
         .setPos(winSize[0] / 2 - (winSize[0] / 5),
             mainImageTitleTextView.getPos().y + (winSize[0] / 5) + 20)
-        .setWidth(winSize[0] / 3.5)
+        .setWidth(winSize[0] / 2.8)
 
     var womenFaceImageView = UiFactory.createImageView()
         .setImagePath(ResourcePath.WomenFaceImage)
         .setImageMode(CENTER)
         .setPos(winSize[0] / 2 + (winSize[0] / 5),
             mainImageTitleTextView.getPos().y + + (winSize[0] / 5) + 20)
-        .setWidth(winSize[0] / 3.5)
+        .setWidth(winSize[0] / 2.8)
 
     var weddingInfoTextView = UiFactory.createTextView()
         .addText("2020년 04월 11일 토요일 오후 2시")
@@ -341,11 +341,11 @@ function initializeWeddingContents() {
         .setPos(0, weddingInfoTextView.getPos().y + 380);
 
     var invitationLetterTextView = UiFactory.createTextView()
-        .addText("·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·")
-        .addText("·  ·  ·  행복이 피어나는 따뜻한 봄  ·  ·  ·")
-        .addText("·  ·  저희 두사람 새로운 출발을 하려고 합니다  ·  ·")
-        .addText("·  ·  서로를 향한 사랑과 믿음을 하나가 되는 자리에  ·  ·")
-        .addText("·  ·  축복으로 함께해주시면 감사하겠습니다  ·  ·")
+        .addText("·  ·  ·  ·  ·  ·  ·  ·  ·  ·")
+        .addText("·  ·  행복이 피어나는 따뜻한 봄  ·  ·")
+        .addText("·  저희 두사람 새로운 출발을 하려고 합니다  ·")
+        .addText("·  서로를 향한 사랑과 믿음을 하나가 되는 자리에  ·")
+        .addText("·  축복으로 함께해주시면 감사하겠습니다  ·")
         .addText("·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·")
         .setTextGap(40)
         .setAlign(CENTER, null)
@@ -403,7 +403,7 @@ function initializeWeddingContents() {
         .setColor(160, 110, 110)
         .setTextStyle(BOLD)
         .setSize(20)
-        .setPos(0, slideShow.getPos().y + slideShow.getHeight() + 120);
+        .setPos(0, slideShow.getPos().y + slideShow.getHeight() + 170);
 
     mapView = new MapView(ResourcePath.MapImage)
         .setPos(0, locationTextView.getPos().y + 80)
