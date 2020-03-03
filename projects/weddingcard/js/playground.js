@@ -24,7 +24,7 @@ var debugCount = 0;
 
 function preload() {
     TopicManager.ready().write(RESOURCE.DATA, new ResourceLoader()
-        .add(ResourcePath.Font1, ResourceType.Font)
+//        .add(ResourcePath.Font1, ResourceType.Font)
         .add(ResourcePath.MainImage, ResourceType.Image)
         .add(ResourcePath.BendImage, ResourceType.Image)
         .add(ResourcePath.SlideShowMaskImage, ResourceType.Image)
@@ -40,6 +40,8 @@ function preload() {
         .add(ResourcePath.SlideShow6Image, ResourceType.Image)
         .setListener(this.onLoadedResource)
         .load());
+
+    loadFont(ResourcePath.Font1);
 }
 
 function setup() {
@@ -228,9 +230,9 @@ function windowResized() {
 }
 
 function initialize() {
-    var resource = TopicManager.ready().read(RESOURCE.DATA);
-    var font = resource.get(ResourcePath.Font1).getData();
-    textFont(font);
+    // var resource = TopicManager.ready().read(RESOURCE.DATA);
+    // var font = resource.get(ResourcePath.Font1).getData();
+    // textFont(font);
 
     activeDrag = false;
     var isMobile = /Android|webOS|iPhone|iPad|iPod|Opera Mini/i.test(navigator.userAgent);
