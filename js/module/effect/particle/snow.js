@@ -13,7 +13,7 @@ class Snow extends AbsParticle {
         this.__particles = [];
         this.__offsets = [];
 
-        this.__winSize = TopicManager.ready().read(DISPLAY_INFO.WINDOW_SIZE);
+        this.__ws = TopicManager.ready().read(DISPLAY_INFO.WINDOW_SIZE);
     }
 
     setup(w, h, amount) {
@@ -23,10 +23,9 @@ class Snow extends AbsParticle {
 
         var p;
         for (var i = 0; i < amount; i++) {
-            p = new ParticleCircle();
+            p = new BlurCircle();
             this.setupParticle(p, true);
 
-            p.setBlur(true);
             this.__particles.push(p);
             this.__offsets.push(MathUtil.randInt(1, 50) * 0.001);
         }
@@ -34,6 +33,10 @@ class Snow extends AbsParticle {
     }
 
     setWind(wx, wy) {
+        if (this.__particles.length == 0) {
+            return this;
+        }
+
         this.__windDir.set(wx < 0 ? -1 : 1, wy < 0 ? -1 : 1);
         this.__windEnergy.set(this.__windDir.x == 1 ? wx : -wx,
             this.__windDir.y == 1 ? wy : -wy);
@@ -51,10 +54,10 @@ class Snow extends AbsParticle {
     }
 
     setupParticle(p, firstLoad) {
-        p.pos.x = firstLoad ? MathUtil.randInt(0, this.__winSize[0] + 200) - 100 : MathUtil.randInt(50, this.__winSize[0] - 50);
-        p.pos.y = firstLoad ? MathUtil.randInt(0, this.__winSize[1] + 500) - 500 : MathUtil.randInt(100, this.__winSize[1]) * -1;
+        p.pos.x = firstLoad ? MathUtil.randInt(0, this.__ws[0] + 200) - 100 : MathUtil.randInt(50, this.__ws[0] - 50);
+        p.pos.y = firstLoad ? MathUtil.randInt(0, this.__ws[1] + 500) - 500 : MathUtil.randInt(100, this.__ws[1]) * -1;
         var r = MathUtil.randInt(3, 10);
-        p.setRadius3(r, r * 3, r * 5);
+        p.setRadiusWithBlur(r, r * 3, r * 5);
 
         if (this.__windEnergy.x == 0) {
             p.vel.x = (MathUtil.randInt(1, 5) * 0.1) * (MathUtil.randInt(1, 20) <= 10 ? -1 : 1);
@@ -79,8 +82,13 @@ class Snow extends AbsParticle {
         this.__active = false;
     }
 
+    updateWithDraw(delta) {
+        this.update(delta);
+        this.draw();
+    }
+
     update(delta) {
-        if(!this.__active) {
+        if (!this.__active) {
             return;
         }
 
@@ -92,22 +100,21 @@ class Snow extends AbsParticle {
             p.pos.x += p.vel.x + offset;
             p.pos.y += p.vel.y;
 
-            if (p.pos.y > this.__winSize[1] + 60) {
+            if (p.pos.y > this.__ws[1] + 60) {
                 this.setupParticle(p, false);
             }
             if (p.pos.x < -60) {
-                p.pos.x = this.__winSize[0] + 30;
-            } else if (p.pos.x > this.__winSize[0] + 60) {
+                p.pos.x = this.__ws[0] + 30;
+            } else if (p.pos.x > this.__ws[0] + 60) {
                 p.pos.x = -30;
             }
         }
     }
 
     draw() {
-        if(!this.__active) {
+        if (!this.__active) {
             return;
         }
-
         for (var i = 0; i < this.__particles.length; i++) {
             this.__particles[i].draw();
         }

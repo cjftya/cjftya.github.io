@@ -13,3 +13,8 @@ var ResourceType = {
     Font: 2,
     Sound: 3
 }
+
+var View = {
+    Text: 0,
+    Image: 1
+}

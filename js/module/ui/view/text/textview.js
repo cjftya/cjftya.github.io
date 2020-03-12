@@ -1,15 +1,15 @@
 class TextView extends AbsView {
     constructor() {
-        super(1);
+        super(View.Text);
 
         this.__text = "";
         this.__color = color(0, 0, 0);
         this.__wAlign = LEFT;
         this.__hAlign = TOP;
         this.__textSize = 10;
-        this.__textStyle = NORMAL;
         this.__textGap = 10;
         this.__lineCount = 0;
+        this.__textStyle = NORMAL;
 
         var winSize = TopicManager.ready().read(DISPLAY_INFO.WINDOW_SIZE);
         this.__w = winSize[0];
@@ -48,7 +48,7 @@ class TextView extends AbsView {
         this.__text += str + "\n";
         return this;
     }
-
+    
     setText(str) {
         this.__text = str;
         return this;
