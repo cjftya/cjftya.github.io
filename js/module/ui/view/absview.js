@@ -3,5 +3,9 @@ class AbsView {
         this.__type = type;
     }
 
+    getType() {
+        return this.__type;
+    }
+
     draw() {}
 }

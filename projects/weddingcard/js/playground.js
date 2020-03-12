@@ -1,28 +1,25 @@
-﻿var snowPaticle;
-var bubleColor;
-var bubleArr;
+﻿var backgroundDrawable;
 
 var textViewMap;
 var imageViewMap;
 var sprayParticleMap;
-var sprayParticleArray = [];
 
+var snowPaticle;
 var heartTrace;
 var mapView;
 var slideShow;
 
-var oldMousePos;
-var dragPos, dragVel, dragMax;
-var dragScreenRap;
-var activeDrag;
+var dragControl;
 
 var winSize;
-
+var isLoading;
+var deltaTime;
 
 var activeDebugCount = 0;
 var debugCount = 0;
 
 function preload() {
+    isLoading = true;
     TopicManager.ready().write(RESOURCE.DATA, new ResourceLoader()
         .add(ResourcePath.MainImage, ResourceType.Image)
         .add(ResourcePath.BendImage, ResourceType.Image)
@@ -37,7 +34,12 @@ function preload() {
         .add(ResourcePath.SlideShow4Image, ResourceType.Image)
         .add(ResourcePath.SlideShow5Image, ResourceType.Image)
         .add(ResourcePath.SlideShow6Image, ResourceType.Image)
-        .setListener(this.onLoadedResource)
+        .setListener((count, path) => {
+            console.log("Load counter [ count : " + count + ", path : " + path + " ]");
+        })
+        .setCompletedListener((total, loadTime) => {
+            console.log("Resouce load complete [ total : " + total + ", load time (sec) : " + loadTime + " ]");
+        })
         .load());
 }
 
@@ -47,9 +49,6 @@ function setup() {
 
     this.initialize();
     this.executeDayCounter();
-
-    oldMousePos = new Vector2d();
-    dragPos = dragVel = dragMax = 0;
 }
 
 function draw() {
@@ -57,11 +56,14 @@ function draw() {
     noStroke();
 
     TimeDeltaUtil.getInstance().update();
+    deltaTime = TimeDeltaUtil.getInstance().getDelta();
+    //=================================================
 
-    dragVel *= 0.9;
-    this.updateWeddingContents(dragVel);
+    dragControl.update();
+    this.updateWeddingContents(dragControl.getDragVel());
+    //=================================================
 
-    this.drawBackgroundShape();
+    backgroundDrawable.draw();
 
     for (var [id, view] of imageViewMap.entries()) {
         if (view.inScreen(winSize[0], winSize[1])) {
@@ -83,31 +85,26 @@ function draw() {
     }
 
     if (slideShow.inScreen(winSize[0], winSize[1])) {
-        slideShow.update(TimeDeltaUtil.getInstance().getDelta());
-        slideShow.draw();
+        slideShow.updateWithDraw(deltaTime);
         debugCount++;
     }
 
     for (var [id, particle] of sprayParticleMap.entries()) {
         if (particle.inScreen(winSize[0], winSize[1])) {
-            particle.update(TimeDeltaUtil.getInstance().getDelta());
-            particle.draw();
+            particle.updateWithDraw(deltaTime);
             debugCount++;
         }
     }
 
-    heartTrace.update();
-    heartTrace.draw();
+    heartTrace.updateWithDraw();
     for (var pt of heartTrace.getParticles()) {
         if (pt.inScreen(winSize[0], winSize[1])) {
-            pt.update(TimeDeltaUtil.getInstance().getDelta());
-            pt.draw();
+            pt.updateWithDraw(deltaTime);
+            debugCount++;
         }
     }
 
-    // background effect
-    snowPaticle.update(TimeDeltaUtil.getInstance().getDelta());
-    snowPaticle.draw();
+    snowPaticle.updateWithDraw(deltaTime);
     debugCount++;
 
     debugCount++;
@@ -117,22 +114,22 @@ function draw() {
     debugCount = 0;
 }
 
-function drawBackgroundShape() {
-    fill(bubleColor);
-    for (var b of bubleArr) {
-        debugCount++;
-        ellipse(b.x, b.y, b.r, b.r);
-    }
+function drawFpsCount() {
+    textSize(20);
+    noStroke();
+    fill(20);
+    textAlign(LEFT, TOP);
+    text("FPS : " + Math.floor(TimeDeltaUtil.getInstance().getFPS()) + ", draw call : " + debugCount, 10, 10);
 }
 
 function updateWeddingContents(vy) {
-    dragPos += vy;
-    if (dragPos > 0) {
-        vy += (0 - dragPos) * 0.05;
-        dragPos += (0 - dragPos) * 0.05;
-    } else if (dragPos < -dragScreenRap) {
-        vy += (-dragScreenRap - dragPos) * 0.05;
-        dragPos += (-dragScreenRap - dragPos) * 0.05;
+    dragControl.addDragPos(vy);
+    if (dragControl.getDragPos() > dragControl.getStartAreaHeigth()) {
+        vy += (dragControl.getStartAreaHeigth() - dragControl.getDragPos()) * 0.05;
+        dragControl.addDragPos((dragControl.getStartAreaHeigth() - dragControl.getDragPos()) * 0.05);
+    } else if (dragControl.getDragPos() < -dragControl.getEndAreaHeight()) {
+        vy += (-dragControl.getEndAreaHeight() - dragControl.getDragPos()) * 0.05;
+        dragControl.addDragPos((-dragControl.getEndAreaHeight() - dragControl.getDragPos()) * 0.05);
     }
 
     for (var [id, view] of textViewMap.entries()) {
@@ -155,34 +152,26 @@ function updateWeddingContents(vy) {
     heartTrace.addPos(0, vy);
 }
 
-function drawFpsCount() {
-    textSize(20);
-    noStroke();
-    fill(20);
-    textAlign(LEFT, TOP);
-    text("FPS : " + Math.floor(TimeDeltaUtil.getInstance().getFPS()) + ", draw call : " + debugCount, 10, 10);
-}
-
 function mousePressed() {
-    if (!activeDrag) {
+    if (isLoading) {
         return;
     }
 
-    oldMousePos.set(mouseX, mouseY);
-    dragMax = 0;
+    dragControl.setOldPos(mouseX, mouseY);
+    dragControl.setDragMax(0);
 
     if (mapView.inBound(mouseX, mouseY)) {
         mapView.setMapController(true);
     }
 
     // debug code
-    if (mouseY < 50) {
+    if (mouseY < 40) {
         activeDebugCount++;
     }
 }
 
 function mouseReleased() {
-    if (!activeDrag) {
+    if (isLoading) {
         return;
     }
 
@@ -194,23 +183,23 @@ function mouseReleased() {
 }
 
 function mouseDragged() {
-    if (!activeDrag) {
+    if (isLoading) {
         return;
     }
 
-    var dx = mouseX - oldMousePos.x;
-    var dy = mouseY - oldMousePos.y;
+    var dx = mouseX - dragControl.getOldPos().x
+    var dy = mouseY - dragControl.getOldPos().y;
     if (mapView.isMapController()) {
         mapView.addCropSrcPos(-dx, -dy);
     } else {
         var absDy = dy < 0 ? -dy : dy;
-        if (dragMax < absDy) {
-            dragMax = absDy;
-            dragVel = dy * 0.6;
+        if (dragControl.getDragMax() < absDy) {
+            dragControl.setDragMax(absDy);
+            dragControl.setDragVel(dy * 0.6);
         }
-        this.updateWeddingContents(dy);
+        this.updateWeddingContents(dy * 0.6);
     }
-    oldMousePos.set(mouseX, mouseY);
+    dragControl.setOldPos(mouseX, mouseY);
 }
 
 // function keyPressed() {
@@ -227,7 +216,6 @@ function windowResized() {
 }
 
 function initialize() {
-    activeDrag = false;
     var isMobile = /Android|webOS|iPhone|iPad|iPod|Opera Mini/i.test(navigator.userAgent);
     TopicManager.ready().write(DEVICE_INFO.IS_MOBILE, isMobile);
 
@@ -238,25 +226,20 @@ function initialize() {
         .setup(winSize[0], winSize[1], 40)
         .setWind(windX, 0);
 
-    var x, y, r;
-    bubleArr = [];
-    bubleColor = color(250, 190, 190);
-    bubleColor.setAlpha(8);
-    for (var i = 0; i < 8; i++) {
-        x = MathUtil.randInt(50, winSize[0] - 50);
-        y = MathUtil.randInt(winSize[1] / 2 + 50, winSize[1] - 50);
-        r = MathUtil.randInt(250, 800);
-        bubleArr.push({ x, y, r });
-    }
+    dragControl = new DragCOntrol();
+
+    backgroundDrawable = new BgBubble(winSize[0], winSize[1]);
 
     this.initializeWeddingContents();
+
+    isLoading = false;
 }
 
 function initializeWeddingContents() {
     var mainImageView = UiFactory.createImageView()
         .setImagePath(ResourcePath.MainImage)
         .setPos(0, 0)
-        .setWidth(winSize[0]);
+        .setWidth(winSize[0], true);
 
     var titleTextView = UiFactory.createTextView()
         .addText("♡ · · ·  W e d d i n g  · · · ♡")
@@ -281,22 +264,21 @@ function initializeWeddingContents() {
         .setPos(winSize[0] / 2, mainImageTitleTextView.getPos().y)
         .setCreateArea(50, 15)
         .setLife(120)
-        .setFreq(0.08)
-        .setBlur(true);
+        .setFreq(0.08);
 
     var manFaceImageView = UiFactory.createImageView()
         .setImagePath(ResourcePath.ManFaceImage)
         .setImageMode(CENTER)
         .setPos(winSize[0] / 2 - (winSize[0] / 5),
             mainImageTitleTextView.getPos().y + (winSize[0] / 5) + 20)
-        .setWidth(winSize[0] / 2.8)
+        .setWidth(winSize[0] / 2.8, true)
 
     var womenFaceImageView = UiFactory.createImageView()
         .setImagePath(ResourcePath.WomenFaceImage)
         .setImageMode(CENTER)
         .setPos(winSize[0] / 2 + (winSize[0] / 5),
             mainImageTitleTextView.getPos().y + + (winSize[0] / 5) + 20)
-        .setWidth(winSize[0] / 2.8)
+        .setWidth(winSize[0] / 2.8, true)
 
     var weddingInfoTextView = UiFactory.createTextView()
         .addText("2020년 04월 11일 토요일 오후 2시")
@@ -328,7 +310,7 @@ function initializeWeddingContents() {
     var dayCounterImageView = UiFactory.createImageView()
         .setImagePath(ResourcePath.DayCounterImage)
         .setPos(0, manFaceImageView.getPos().y + 140)
-        .setCropMode(true)
+        .setEnableCrop(true)
         .setCropSrcPos(((800 - winSize[0]) / 2), 800)
         .setCropSize(winSize[0], 300);
 
@@ -358,8 +340,8 @@ function initializeWeddingContents() {
     var bendImageView = UiFactory.createImageView()
         .setImagePath(ResourcePath.BendImage)
         .setPos(0, invitationLetterTextView.getPos().y + 320)
-        .setWidth(winSize[0])
-        .setCropMode(true)
+        .setWidth(winSize[0], true)
+        .setEnableCrop(true)
         .setCropSrcPos(((1300 - winSize[0]) / 2) - 50, 500)
         .setCropSize(winSize[0], 100);
 
@@ -456,7 +438,7 @@ function initializeWeddingContents() {
         .setPos(0, locationBusInfoTextView.getPos().y + 300);
 
 
-    dragScreenRap = copyRightTextView.getPos().y - 480;
+    dragControl.setDragAreaHeigthSize(0, copyRightTextView.getPos().y - 480);
 
 
     // set map
@@ -484,12 +466,6 @@ function initializeWeddingContents() {
     textViewMap.set(TextContents.SubwayInfo, locationSubwayInfoTextView);
     textViewMap.set(TextContents.BusInfo, locationBusInfoTextView);
     textViewMap.set(TextContents.Copyright, copyRightTextView);
-
-    activeDrag = true;
-}
-
-function onLoadedResource(total, count) {
-    console.log(total + " : " + count);
 }
 
 function executeDayCounter() {

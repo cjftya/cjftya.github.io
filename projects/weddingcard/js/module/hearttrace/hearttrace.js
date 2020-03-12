@@ -123,8 +123,7 @@ class HeartTrace {
                 .setPos(1000, 1000)
                 .setCreateArea(3, 3)
                 .setLife(200)
-                .setFreq(0.03)
-                .setBlur(true);
+                .setFreq(0.03);
             this.__particles.push(pt);
         }
 
@@ -203,6 +202,11 @@ class HeartTrace {
 
     getParticles() {
         return this.__particles;
+    }
+
+    updateWithDraw() {
+        this.update();
+        this.draw();
     }
 
     update() {

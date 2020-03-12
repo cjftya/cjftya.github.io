@@ -132,6 +132,11 @@ class SlideShow {
         this.__active = true;
     }
 
+    updateWithDraw(delta) {
+        this.update(delta);
+        this.draw();
+    }
+
     update(delta) {
         if (!this.__active) {
             return;
