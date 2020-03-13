@@ -100,7 +100,6 @@ function draw() {
     for (var pt of heartTrace.getParticles()) {
         if (pt.inScreen(winSize[0], winSize[1])) {
             pt.updateWithDraw(deltaTime);
-            debugCount++;
         }
     }
 
@@ -438,7 +437,9 @@ function initializeWeddingContents() {
         .setPos(0, locationBusInfoTextView.getPos().y + 300);
 
 
+
     dragControl.setDragAreaHeigthSize(0, copyRightTextView.getPos().y - 480);
+
 
 
     // set map
