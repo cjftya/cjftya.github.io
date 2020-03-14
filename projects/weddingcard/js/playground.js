@@ -44,11 +44,16 @@ function preload() {
 }
 
 function setup() {
+    var t0 = performance.now();
+
     createCanvas(windowWidth, windowHeight);
     TopicManager.ready().write(DISPLAY_INFO.WINDOW_SIZE, [windowWidth, windowHeight]);
 
     this.initialize();
     this.executeDayCounter();
+
+    var t1 = performance.now();
+    console.log("Initialize complete (sec) : " + (t1 - t0) / 1000);
 }
 
 function draw() {
@@ -248,8 +253,9 @@ function initializeWeddingContents() {
         .setSize(20)
         .setPos(0, mainImageView.getHeight() + 60);
 
+        //현 철   ღ   서 영
     var mainImageTitleTextView = UiFactory.createTextView()
-        .addText("현 철   ღ   서 영")
+        .addText("가 나   ღ   다 라")
         .setAlign(CENTER, null)
         .setColor(160, 110, 110)
         .setTextStyle(BOLD)
@@ -279,8 +285,9 @@ function initializeWeddingContents() {
             mainImageTitleTextView.getPos().y + + (winSize[0] / 5) + 20)
         .setWidth(winSize[0] / 2.8, true)
 
+        //2020년 04월 11일 토요일 오후 2시
     var weddingInfoTextView = UiFactory.createTextView()
-        .addText("2020년 04월 11일 토요일 오후 2시")
+        .addText("7777년 77월 77일 7요일 오후 7시")
         .setAlign(CENTER, null)
         .setColor(250, 250, 250)
         .setAlpha(190)
