@@ -1,6 +1,7 @@
 ﻿function setup() {
     this.initialize();
-    this.decidePage();
+    // this.decidePage();
+    location.href = "projects/viola/index.html";
 }
 
 function draw() {
