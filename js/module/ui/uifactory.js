@@ -8,8 +8,4 @@ class UiFactory {
     static createImageView() {
         return new ImageView();
     }
-
-    static createImageViewer() {
-        return new ImageViewer();
-    }
 }

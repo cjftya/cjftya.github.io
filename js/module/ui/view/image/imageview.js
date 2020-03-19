@@ -43,10 +43,10 @@ class ImageView extends AbsView {
         return this;
     }
 
-    setMaskPath(patb) {
+    setMaskPath(path) {
         if (this.__image != null) {
             var resource = TopicManager.ready().read(RESOURCE.DATA)
-            this.__maskImage = resource.get(patb).getData();
+            this.__maskImage = resource.get(path).getData();
             this.__image.mask(this.__maskImage);
         }
         return this;
@@ -127,14 +127,6 @@ class ImageView extends AbsView {
         this.__h = (reSizeW * this.__h) / this.__w;
         this.__w = reSizeW;
         return this;
-    }
-
-    inBound(x, y) {
-        if (x < this.__pos.x || x > this.__pos.x + this.__w ||
-            y < this.__pos.y || y > this.__pos.y + this.__h) {
-            return false;
-        }
-        return true;
     }
 
     draw() {
