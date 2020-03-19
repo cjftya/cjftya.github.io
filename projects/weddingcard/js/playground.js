@@ -52,6 +52,8 @@ function setup() {
     this.initialize();
     this.executeDayCounter();
 
+    isLoading = false;
+
     var t1 = performance.now();
     console.log("Initialize complete (sec) : " + (t1 - t0) / 1000);
 }
@@ -191,7 +193,7 @@ function mouseDragged() {
         return;
     }
 
-    var dx = mouseX - dragControl.getOldPos().x
+    var dx = mouseX - dragControl.getOldPos().x;
     var dy = mouseY - dragControl.getOldPos().y;
     if (mapView.isMapController()) {
         mapView.addCropSrcPos(-dx, -dy);
@@ -235,8 +237,6 @@ function initialize() {
     backgroundDrawable = new BgBubble(winSize[0], winSize[1]);
 
     this.initializeWeddingContents();
-
-    isLoading = false;
 }
 
 function initializeWeddingContents() {
