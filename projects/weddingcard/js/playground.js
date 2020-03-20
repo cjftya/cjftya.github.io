@@ -71,6 +71,7 @@ function draw() {
     //=================================================
 
     backgroundDrawable.draw();
+    debugCount++;
 
     for (var [id, view] of imageViewMap.entries()) {
         if (view.inScreen(winSize[0], winSize[1])) {
@@ -103,11 +104,9 @@ function draw() {
         }
     }
 
-    heartTrace.updateWithDraw();
-    for (var pt of heartTrace.getParticles()) {
-        if (pt.inScreen(winSize[0], winSize[1])) {
-            pt.updateWithDraw(deltaTime);
-        }
+    if(heartTrace.inScreen(winSize[0], winSize[1])) {
+        heartTrace.updateWithDraw();
+        debugCount++;
     }
 
     snowPaticle.updateWithDraw(deltaTime);

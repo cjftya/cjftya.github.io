@@ -22,6 +22,14 @@ class HeartTrace {
         }
     }
 
+    inScreen(sw, sh) {
+        if ((this.__points[34].y - sh - 100) < -this.__posOffset.y &&
+            this.__points[19].y + 100 > -this.__posOffset.y) {
+            return true;
+        }
+        return false;
+    }
+
     setup(cx, cy) {
         var wDivid = this.__sw / 15;
         var hDivid = this.__sh / 15;
@@ -207,6 +215,9 @@ class HeartTrace {
     updateWithDraw() {
         this.update();
         this.draw();
+        for (var pt of this.__particles) {
+            pt.updateWithDraw(deltaTime);
+        }
     }
 
     update() {
