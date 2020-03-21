@@ -233,8 +233,8 @@ class HeartTrace {
                     this.__pointIndex[i] = 0;
                 }
             }
-            this.__headVels[i].x += dx * 0.07;
-            this.__headVels[i].y += dy * 0.07;
+            this.__headVels[i].x += dx * 0.095;
+            this.__headVels[i].y += dy * 0.095;
             this.__headVels[i].x *= 0.75;
             this.__headVels[i].y *= 0.75;
             this.__headPoints[i].x += this.__headVels[i].x;
