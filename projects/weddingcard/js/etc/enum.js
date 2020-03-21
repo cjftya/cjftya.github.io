@@ -35,6 +35,7 @@ var ResourcePath = {
     BendImage: "assets/bend.jpg",
     MapImage: "assets/map.jpg",
     ManFaceImage: "assets/manface.png",
+    ManFaceMaskImage: "assets/manfacemask.png",
     WomenFaceImage: "assets/womenface.png",
     DayCounterImage: "assets/dayCounter.jpg",
     SlideShowMaskImage: "assets/mask.png",

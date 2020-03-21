@@ -26,6 +26,7 @@ function preload() {
         .add(ResourcePath.SlideShowMaskImage, ResourceType.Image)
         .add(ResourcePath.MapImage, ResourceType.Image)
         .add(ResourcePath.ManFaceImage, ResourceType.Image)
+        .add(ResourcePath.ManFaceMaskImage, ResourceType.Image)
         .add(ResourcePath.WomenFaceImage, ResourceType.Image)
         .add(ResourcePath.DayCounterImage, ResourceType.Image)
         .add(ResourcePath.SlideShow1Image, ResourceType.Image)
@@ -273,6 +274,7 @@ function initializeWeddingContents() {
     var manFaceImageView = UiFactory.createImageView()
         .setImagePath(ResourcePath.ManFaceImage)
         .setImageMode(CENTER)
+        .setMaskPath(ResourcePath.ManFaceMaskImage)
         .setPos(winSize[0] / 2 - (winSize[0] / 5),
             mainImageTitleTextView.getPos().y + (winSize[0] / 5) + 20)
         .setWidth(winSize[0] / 2.8, true)
@@ -280,6 +282,7 @@ function initializeWeddingContents() {
     var womenFaceImageView = UiFactory.createImageView()
         .setImagePath(ResourcePath.WomenFaceImage)
         .setImageMode(CENTER)
+        .setMaskPath(ResourcePath.ManFaceMaskImage)
         .setPos(winSize[0] / 2 + (winSize[0] / 5),
             mainImageTitleTextView.getPos().y + + (winSize[0] / 5) + 20)
         .setWidth(winSize[0] / 2.8, true)
