@@ -21,13 +21,22 @@ class ImageView extends AbsView {
 
         this.__imageMode = CORNER;
 
+        this.__debug = false;
+
         //width resize = (height resize * original width size) / original height size
         //height resize = (width resize * original height size) / original width size
     }
 
     inScreen(sw, sh) {
-        if (this.__pos.y + this.__h > -20 && this.__pos.y < sh + 20) {
-            return true;
+        if(this.__imageMode == CORNER) {
+            if (this.__pos.y + this.__h > -20 && this.__pos.y < sh + 20) {
+                return true;
+            }
+        } else {
+            if (this.__pos.y + (this.__h / 2) > -20 &&
+                this.__pos.y - (this.__h / 2) < sh + 20) {
+                return true;
+            }
         }
         return false;
     }
@@ -126,6 +135,11 @@ class ImageView extends AbsView {
         var reSizeW = this.__w * s;
         this.__h = (reSizeW * this.__h) / this.__w;
         this.__w = reSizeW;
+        return this;
+    }
+
+    setDebug(v) {
+        this.__debug = v;
         return this;
     }
 
