@@ -304,7 +304,7 @@ function initializeWeddingContents() {
         .setAlpha(210)
         .setTextStyle(BOLD)
         .setSize(40)
-        .setPos(0, weddingInfoTextView.getPos().y + 90);
+        .setPos(0, weddingInfoTextView.getPos().y + 190);
 
     var dayCounterTextView = UiFactory.createTextView()
         .addText("00일 00시 00분 00초")
@@ -320,7 +320,7 @@ function initializeWeddingContents() {
         .setPos(0, manFaceImageView.getPos().y + 140)
         .setEnableCrop(true)
         .setCropSrcPos(((800 - winSize[0]) / 2), 800)
-        .setCropSize(winSize[0], 300);
+        .setCropSize(winSize[0], 400);
 
     var invitationTextView = UiFactory.createTextView()
         .addText("♡ · · ·  I n v i t a t i on  · · · ♡")
@@ -328,7 +328,7 @@ function initializeWeddingContents() {
         .setColor(160, 110, 110)
         .setTextStyle(BOLD)
         .setSize(20)
-        .setPos(0, weddingInfoTextView.getPos().y + 380);
+        .setPos(0, weddingInfoTextView.getPos().y + 480);
 
     var invitationLetterTextView = UiFactory.createTextView()
         .addText("·  ·  ·  ·  ·  ·  ·  ·  ·  ·")
@@ -351,7 +351,7 @@ function initializeWeddingContents() {
         .setWidth(winSize[0], true)
         .setEnableCrop(true)
         .setCropSrcPos(((1300 - winSize[0]) / 2) - 50, 500)
-        .setCropSize(winSize[0], 100);
+        .setCropSize(winSize[0], 200);
 
     var bendTextView = UiFactory.createTextView()
         .addText("“ 언제나 그대곁에 · · · ”")
@@ -359,7 +359,7 @@ function initializeWeddingContents() {
         .setColor(240, 240, 240)
         .setAlpha(190)
         .setSize(20)
-        .setPos(0, bendImageView.getPos().y + 40);
+        .setPos(0, bendImageView.getPos().y + 90);
 
     var galleryTextView = UiFactory.createTextView()
         .addText("♡ · · ·  G a l l e r y  · · · ♡")
@@ -367,7 +367,7 @@ function initializeWeddingContents() {
         .setColor(160, 110, 110)
         .setTextStyle(BOLD)
         .setSize(20)
-        .setPos(0, bendImageView.getPos().y + 210);
+        .setPos(0, bendImageView.getPos().y + 360);
 
     slideShow = new SlideShow()
         .addImagePath(ResourcePath.SlideShow1Image)
