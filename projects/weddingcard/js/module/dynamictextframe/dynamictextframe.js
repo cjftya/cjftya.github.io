@@ -3,7 +3,7 @@ class DynamicTextFrame {
         this.__pos = new Vector2d();
 
         var resource = TopicManager.ready().read(RESOURCE.DATA)
-        this.__background = resource.get(ResourcePath.BendImage).getData();
+        this.__background = resource.get(ResourcePath.DynamicTextFrameImage).getData();
         this.__w = this.__background.width;
         this.__h = this.__background.height;
 

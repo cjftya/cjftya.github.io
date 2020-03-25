@@ -23,7 +23,7 @@ function preload() {
     isLoading = true;
     TopicManager.ready().write(RESOURCE.DATA, new ResourceLoader()
         .add(ResourcePath.MainImage, ResourceType.Image)
-        .add(ResourcePath.BendImage, ResourceType.Image)
+        .add(ResourcePath.DynamicTextFrameImage, ResourceType.Image)
         .add(ResourcePath.SlideShowMaskImage, ResourceType.Image)
         .add(ResourcePath.MapImage, ResourceType.Image)
         .add(ResourcePath.ManFaceImage, ResourceType.Image)

@@ -7,10 +7,9 @@ var ParticleContents = {
 
 var ImageContents = {
     Main: 0,
-    Bend: 1,
-    ManFaceImage: 2,
-    WomenFaceImage: 3,
-    DayCounter: 4
+    ManFaceImage: 1,
+    WomenFaceImage: 2,
+    DayCounter: 3
 };
 
 var TextContents = {
@@ -26,13 +25,12 @@ var TextContents = {
     ShortcutNaver: 9,
     SubwayInfo: 10,
     BusInfo: 11,
-    Copyright: 12,
-    Bend: 13
+    Copyright: 12
 };
 
 var ResourcePath = {
     MainImage: "assets/main.jpg",
-    BendImage: "assets/bend.jpg",
+    DynamicTextFrameImage: "assets/dynamictextframe.jpg",
     MapImage: "assets/map.jpg",
     ManFaceImage: "assets/manface.png",
     ManFaceMaskImage: "assets/manfacemask.png",
