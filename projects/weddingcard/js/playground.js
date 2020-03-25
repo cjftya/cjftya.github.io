@@ -8,6 +8,7 @@ var snowPaticle;
 var heartTrace;
 var mapView;
 var slideShow;
+var dynamicTextFrame;
 
 var dragControl;
 
@@ -105,7 +106,12 @@ function draw() {
         }
     }
 
-    if(heartTrace.inScreen(winSize[0], winSize[1])) {
+    if (dynamicTextFrame.inScreen(winSize[0], winSize[1])) {
+        dynamicTextFrame.updateWithDraw(deltaTime);
+        debugCount++;
+    }
+
+    if (heartTrace.inScreen(winSize[0], winSize[1])) {
         heartTrace.updateWithDraw();
         debugCount++;
     }
@@ -143,9 +149,6 @@ function updateWeddingContents(vy) {
     }
     for (var [id, view] of imageViewMap.entries()) {
         view.addPos(0, vy);
-        if (id == ImageContents.Bend) {
-            view.addCropSrcPos(0, vy * 0.05);
-        }
         if (id == ImageContents.DayCounter) {
             view.addCropSrcPos(0, vy * 0.2);
         }
@@ -156,6 +159,8 @@ function updateWeddingContents(vy) {
     slideShow.addPos(0, vy);
     mapView.addPos(0, vy);
     heartTrace.addPos(0, vy);
+    dynamicTextFrame.addPos(0, vy);
+    dynamicTextFrame.addCropSrcPos(0, vy * 0.1);
 }
 
 function mousePressed() {
@@ -253,7 +258,7 @@ function initializeWeddingContents() {
         .setSize(20)
         .setPos(0, mainImageView.getHeight() + 60);
 
-        //현 철   ღ   서 영
+    //현 철   ღ   서 영
     var mainImageTitleTextView = UiFactory.createTextView()
         .addText("가 나   ღ   다 라")
         .setAlign(CENTER, null)
@@ -287,7 +292,7 @@ function initializeWeddingContents() {
             mainImageTitleTextView.getPos().y + + (winSize[0] / 5) + 20)
         .setWidth(winSize[0] / 2.8, true)
 
-        //2020년 04월 11일 토요일 오후 2시
+    //2020년 04월 11일 토요일 오후 2시
     var weddingInfoTextView = UiFactory.createTextView()
         .addText("7777년 77월 77일 7요일 오후 7시")
         .setAlign(CENTER, null)
@@ -345,21 +350,13 @@ function initializeWeddingContents() {
         .setSize(15)
         .setPos(0, invitationTextView.getPos().y + 80);
 
-    var bendImageView = UiFactory.createImageView()
-        .setImagePath(ResourcePath.BendImage)
+    dynamicTextFrame = new DynamicTextFrame()
+        .setWidth(winSize[0])
         .setPos(0, invitationLetterTextView.getPos().y + 320)
-        .setWidth(winSize[0], true)
-        .setEnableCrop(true)
-        .setCropSrcPos(((1300 - winSize[0]) / 2) - 50, 500)
-        .setCropSize(winSize[0], 200);
-
-    var bendTextView = UiFactory.createTextView()
-        .addText("“ 언제나 그대곁에 · · · ”")
-        .setAlign(CENTER, null)
-        .setColor(240, 240, 240)
-        .setAlpha(190)
-        .setSize(20)
-        .setPos(0, bendImageView.getPos().y + 90);
+        .addText("“ 언제나 그대의 곁에서 · · · ”")
+        .addText("“ 사랑스런 그대의 곁에서  · · · ”")
+        .addText("“ 함깨 살아가고 싶습니다 · · · ”")
+        .setColor(240, 240, 240);
 
     var galleryTextView = UiFactory.createTextView()
         .addText("♡ · · ·  G a l l e r y  · · · ♡")
@@ -367,7 +364,7 @@ function initializeWeddingContents() {
         .setColor(160, 110, 110)
         .setTextStyle(BOLD)
         .setSize(20)
-        .setPos(0, bendImageView.getPos().y + 360);
+        .setPos(0, dynamicTextFrame.getPos().y + 560);
 
     slideShow = new SlideShow()
         .addImagePath(ResourcePath.SlideShow1Image)
@@ -457,7 +454,6 @@ function initializeWeddingContents() {
 
     imageViewMap = new Map();
     imageViewMap.set(ImageContents.Main, mainImageView);
-    imageViewMap.set(ImageContents.Bend, bendImageView);
     imageViewMap.set(ImageContents.ManFaceImage, manFaceImageView);
     imageViewMap.set(ImageContents.WomenFaceImage, womenFaceImageView);
     imageViewMap.set(ImageContents.DayCounter, dayCounterImageView);
@@ -466,7 +462,6 @@ function initializeWeddingContents() {
     textViewMap.set(TextContents.Title, titleTextView);
     textViewMap.set(TextContents.MainImageTitle, mainImageTitleTextView);
     textViewMap.set(TextContents.WeddingInfo, weddingInfoTextView);
-    textViewMap.set(TextContents.Bend, bendTextView);
     textViewMap.set(TextContents.DDayLabel, ddayLabelTextView);
     textViewMap.set(TextContents.DayCounter, dayCounterTextView);
     textViewMap.set(TextContents.Invitation, invitationTextView);
