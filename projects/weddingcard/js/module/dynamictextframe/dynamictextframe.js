@@ -26,8 +26,8 @@ class DynamicTextFrame {
 
     setPos(x, y) {
         this.__pos.set(x, y);
-        this.__textPointer.setPos(x, y);
-        this.__textPointer.setCenter(x, y);
+        this.__textPointer.setPos(x, y - 230);
+        this.__textPointer.setCenter(x, y - 230);
         return this;
     }
 
@@ -56,7 +56,6 @@ class DynamicTextFrame {
     setWidth(rw) {
         this.__h = (rw * this.__h) / this.__w;
         this.__w = rw;
-        this.__textPointer.setBound(this.__w, this.__h);
         return this;
     }
 
@@ -81,7 +80,6 @@ class DynamicTextFrame {
 
     draw() {
         imageMode(CORNER);
-        // image(this.__background, this.__pos.x, this.__pos.y, this.__w, this.__h);
         image(this.__background, this.__pos.x, this.__pos.y, this.__cw, this.__ch,
             this.__cropPos.x, this.__cropPos.y, this.__cw, this.__ch);
         this.__textPointer.draw();

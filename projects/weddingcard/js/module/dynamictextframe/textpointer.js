@@ -56,12 +56,6 @@ class TextPointer {
         return this;
     }
 
-    setBound(w, h) {
-        this.__w = w;
-        this.__h = h;
-        return this;
-    }
-
     setCenter(x, y) {
         this.__center.set(x, y);
         return this;
@@ -69,8 +63,8 @@ class TextPointer {
 
     start() {
         var radius = MathUtil.angle2rad(MathUtil.randInt(0, 360));
-        this.__pos.x = (this.__center.x + 0) + (MathUtil.randInt(1, 50) - 25);
-        this.__pos.y = (this.__center.y - 50) + (MathUtil.randInt(1, 50) - 25);
+        this.__pos.x = this.__center.x + (MathUtil.randInt(1, 50) - 25);
+        this.__pos.y = this.__center.y + (MathUtil.randInt(1, 50) - 25);
         this.__vel.x = Math.cos(radius) * (MathUtil.randInt(1, 3) * 0.07);
         this.__vel.y = Math.sin(radius) * (MathUtil.randInt(1, 3) * 0.07);
         this.__alpha = 0;

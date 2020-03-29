@@ -19,6 +19,78 @@ var deltaTime;
 var activeDebugCount = 0;
 var debugCount = 0;
 
+
+function preload() {
+    this.installSystem();
+}
+
+function setup() {
+    this.loadSystem();
+    this.initialize();
+}
+
+function draw() {
+    var system = TopicManager.ready().read(SYSTEMS.MAIN);
+    if (system != null) {
+        system.onOperate();
+    }
+}
+
+function mousePressed() {
+    var system = TopicManager.ready().read(SYSTEMS.MAIN);
+    if (system != null) {
+        system.onTouchDown(mouseX, mouseY);
+    }
+}
+
+function mouseReleased() {
+    var system = TopicManager.ready().read(SYSTEMS.MAIN);
+    if (system != null) {
+        system.onTouchUp(mouseX, mouseY);
+    }
+}
+
+function mouseDragged() {
+    var system = TopicManager.ready().read(SYSTEMS.MAIN);
+    if (system != null) {
+        system.onTouchHover(mouseX, mouseY); // mobile issue fix
+        system.onTouchMove(mouseX, mouseY);
+    }
+}
+
+function installSystem() {
+    TopicManager.ready().write(DISPLAY_INFO.WINDOW_SIZE, [windowWidth, windowHeight]);
+
+    var sysMap = new Map();
+    sysMap.set(SYSTEMS.MAIN, new MainSystem());
+    //..
+    for (var [topic, system] of sysMap.entries()) {
+        system.onPreload();
+        TopicManager.ready().write(topic, system);
+    }
+}
+
+function loadSystem() {
+    var sysArr = [];
+    sysArr.push(TopicManager.ready().read(SYSTEMS.MAIN));
+    //..
+    for(var s of sysArr) {
+        s.onCreate();
+    }
+}
+
+function windowResized() {
+    TopicManager.ready().write(DISPLAY_INFO.WINDOW_SIZE, [windowWidth, windowHeight]);
+    resizeCanvas(windowWidth, windowHeight);
+}
+
+function initialize() {
+    var isMobile = /Android|webOS|iPhone|iPad|iPod|Opera Mini/i.test(navigator.userAgent);
+    TopicManager.ready().write(DEVICE_INFO.IS_MOBILE, isMobile);
+}
+
+
+/*
 function preload() {
     isLoading = true;
     TopicManager.ready().write(RESOURCE.DATA, new ResourceLoader()
@@ -99,13 +171,6 @@ function draw() {
         debugCount++;
     }
 
-    for (var [id, particle] of sprayParticleMap.entries()) {
-        if (particle.inScreen(winSize[0], winSize[1])) {
-            particle.updateWithDraw(deltaTime);
-            debugCount++;
-        }
-    }
-
     if (dynamicTextFrame.inScreen(winSize[0], winSize[1])) {
         dynamicTextFrame.updateWithDraw(deltaTime);
         debugCount++;
@@ -114,6 +179,13 @@ function draw() {
     if (heartTrace.inScreen(winSize[0], winSize[1])) {
         heartTrace.updateWithDraw();
         debugCount++;
+    }
+
+    for (var [id, particle] of sprayParticleMap.entries()) {
+        if (particle.inScreen(winSize[0], winSize[1])) {
+            particle.updateWithDraw(deltaTime);
+            debugCount++;
+        }
     }
 
     snowPaticle.updateWithDraw(deltaTime);
@@ -212,13 +284,6 @@ function mouseDragged() {
     }
     dragControl.setOldPos(mouseX, mouseY);
 }
-
-// function keyPressed() {
-//     if (keyCode == LEFT_ARROW) {
-//     }
-//     else if (keyCode == RIGHT_ARROW) {
-//     }
-// }
 
 function windowResized() {
     winSize = [windowWidth, windowHeight];
@@ -490,3 +555,4 @@ function executeDayCounter() {
         textViewMap.get(TextContents.DayCounter).setText(str);
     }, 1000);
 }
+*/

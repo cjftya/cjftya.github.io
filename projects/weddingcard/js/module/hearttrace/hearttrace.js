@@ -212,7 +212,7 @@ class HeartTrace {
         return this.__particles;
     }
 
-    updateWithDraw() {
+    updateWithDraw(deltaTime) {
         this.update();
         this.draw();
         for (var pt of this.__particles) {
