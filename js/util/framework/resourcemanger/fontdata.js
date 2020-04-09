@@ -1,11 +1,7 @@
 class FontData extends MediaData {
     constructor(path) {
-        super(0, path);
+        super(ResourceType.Font, path);
 
-        this.__font = loadFont(path);
-    }
-
-    getData() {
-        return this.__font;
+        this.__data = loadFont(path);
     }
 }

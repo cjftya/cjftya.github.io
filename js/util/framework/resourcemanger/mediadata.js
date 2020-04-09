@@ -1,5 +1,6 @@
 class MediaData {
     constructor(type, path) {
+        this.__data = null;
         this.__type = type;
         this.__absPath = path;
     }
@@ -13,6 +14,6 @@ class MediaData {
     }
 
     getData() {
-        return null;
+        return this.__data;
     }
 }
