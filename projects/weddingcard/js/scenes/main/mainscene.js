@@ -27,7 +27,7 @@ class MainScene extends AbsScene {
     }
 
     onStart() {
-        this.executeDayCountDown("April 11,2020,14:00:00");
+        this.executeDayCountDown();
     }
 
     onUpdateWithDraw(timeDelta) {
@@ -126,6 +126,10 @@ class MainScene extends AbsScene {
     }
 
     updateObjects(vy) {
+        // this.__dragControl.update();
+
+        // var vy = this.__dragControl.getDragVel();
+
         this.__dragControl.addDragPos(vy);
         if (this.__dragControl.getDragPos() > this.__dragControl.getStartAreaHeigth()) {
             vy += (this.__dragControl.getStartAreaHeigth() - this.__dragControl.getDragPos()) * 0.05;
@@ -166,7 +170,7 @@ class MainScene extends AbsScene {
         this.__backgroundParticle = EffectFactory.createParticle(Particle.Snow)
             .setup(this.__winSize[0], this.__winSize[1], 40)
             .setWind(windX, 0);
-            
+
         this.__background = new BgBubble(this.__winSize[0], this.__winSize[1]);
 
         var objIntializer = new ObjectInitializer();
@@ -184,8 +188,9 @@ class MainScene extends AbsScene {
         this.__sprayParticleMap = objIntializer.getParticleMap();
     }
 
-    executeDayCountDown(objectDay) {
-        var dday = new Date(objectDay).getTime();
+    executeDayCountDown() {
+        var dday = new Date("April 11,2020,14:00:00").getTime();
+        var view = this.__textViewMap.get(TextContents.DayCounter);
         setInterval(function () {
             var now = new Date();
             var distance = dday - now;
@@ -196,10 +201,9 @@ class MainScene extends AbsScene {
             if (s < 10) {
                 s = '0' + s;
             }
-            console.log("098")
             var str = TextUtil.pad(d, 2) + "일 " + TextUtil.pad(h, 2) + "시 " +
                 TextUtil.pad(m, 2) + "분 " + TextUtil.pad(s, 2) + "초";
-            this.__textViewMap.get(TextContents.DayCounter).setText(str);
+            view.setText(str);
         }, 1000);
     }
 
@@ -208,8 +212,7 @@ class MainScene extends AbsScene {
         noStroke();
         fill(20);
         textAlign(LEFT, TOP);
-        text("FPS : " + Math.floor(TimeDeltaUtil.getInstance().getFPS()) + ", draw call : " + debugCount, 10, 10);
-
+        text("FPS : " + Math.floor(TimeDeltaUtil.getInstance().getFPS()) + ", draw call : " + this.__drawCallCount, 10, 10);
         this.__drawCallCount = 0;
     }
 }
