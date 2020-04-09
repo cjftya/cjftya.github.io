@@ -27,14 +27,24 @@ class ResourceLoader {
         return this.__dataMap.get(path);
     }
 
+    getData(type, path) {
+        switch (type) {
+            case ResourceType.Image:
+                return new ImageData(path);
+            case ResourceType.Font:
+                return new FontData(path);
+            case ResourceType.Video:
+                return new VideoData(path);
+            case ResourceType.Sound:
+                return new SoundData(path);
+        }
+        return null;
+    }
+
     load() {
         var t0 = performance.now();
         for (var [path, type] of this.__typeMap.entries()) {
-            if (type == ResourceType.Image) {
-                this.__dataMap.set(path, new ImageData(path));
-            } else if (type == ResourceType.Font) {
-                this.__dataMap.set(path, new FontData(path));
-            }
+            this.__dataMap.set(path, this.getData(type, path));
             this.__listener(this.__dataMap.size, path);
         }
         var t1 = performance.now();
