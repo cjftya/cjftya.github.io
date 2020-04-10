@@ -126,6 +126,7 @@ class MainScene extends AbsScene {
     }
 
     updateObjects(vy) {
+        this.__dragControl.addDragPos(vy);
         if (this.__dragControl.getDragPos() > this.__dragControl.getStartAreaHeigth()) {
             vy += (this.__dragControl.getStartAreaHeigth() - this.__dragControl.getDragPos()) * 0.05;
             this.__dragControl.addDragPos((this.__dragControl.getStartAreaHeigth() - this.__dragControl.getDragPos()) * 0.05);

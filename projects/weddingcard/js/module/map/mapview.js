@@ -111,6 +111,6 @@ class MapView {
         noStroke();
         textAlign(CENTER, 0);
         textSize(15);
-        text(this.__text, this.__pos.x, this.__pos.y + this.__ch + 19, this.__cw, 30);
+        text(this.__text, this.__pos.x, this.__pos.y + this.__ch + 12, this.__cw, 35);
     }
 }

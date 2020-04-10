@@ -2,7 +2,6 @@ class TextPointer {
     constructor() {
         this.__pos = new Vector2d();
         this.__vel = new Vector2d();
-        this.__posOffset = new Vector2d();
 
         var winSize = TopicManager.ready().read(DISPLAY_INFO.WINDOW_SIZE);
         this.__w = winSize[0];
@@ -30,8 +29,8 @@ class TextPointer {
     }
 
     addPos(x, y) {
-        this.__posOffset.x += x;
-        this.__posOffset.y += y;
+        this.__pos.x += x;
+        this.__pos.y += y;
         return this;
     }
 
@@ -99,13 +98,14 @@ class TextPointer {
     }
 
     draw() {
+        this.__color.setAlpha(this.__alpha);
+        fill(this.__color);
+
         textSize(20);
         textStyle(BOLD);
         noStroke();
-        this.__color.setAlpha(this.__alpha);
-        fill(this.__color);
-        textAlign(CENTER, CENTER);
+        textAlign(CENTER, null);
         text(this.__textArr[this.__textIndexCounter],
-            this.__pos.x + this.__posOffset.x, this.__pos.y + this.__posOffset.y, this.__w, this.__h);
+            this.__pos.x, this.__pos.y, this.__w, this.__h);
     }
 }

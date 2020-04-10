@@ -154,7 +154,7 @@ class ObjectInitializer {
             .setPos(0, invitationTextView.getPos().y + 80);
 
         this.__dynamicTextFrameModule = new DynamicTextFrame()
-            .setWidth(winSize[0])
+            .setSize(winSize[0], 200)
             .setPos(0, invitationLetterTextView.getPos().y + 320)
             .addText("“ 언제나 그대의 곁에서 · · · ”")
             .addText("“ 사랑스런 그대의 곁에서  · · · ”")

@@ -4,12 +4,10 @@ class DynamicTextFrame {
 
         var resource = TopicManager.ready().read(RESOURCE.DATA)
         this.__background = resource.get(ResourcePath.DynamicTextFrameImage).getData();
-        this.__w = this.__background.width;
-        this.__h = this.__background.height;
+        this.__cw = 0;
+        this.__ch = 0;
 
         var winSize = TopicManager.ready().read(DISPLAY_INFO.WINDOW_SIZE);
-        this.__cw = winSize[0];
-        this.__ch = 200;
         this.__cropPos = new Vector2d().set(((1300 - winSize[0]) / 2) - 50, 500);
 
         this.__debug = false;
@@ -18,7 +16,7 @@ class DynamicTextFrame {
     }
 
     inScreen(sw, sh) {
-        if(this.__pos.y + this.__h + 70 > 0 && this.__pos.y - 70 < sh) {
+        if (this.__pos.y + this.__ch + 70 > 0 && this.__pos.y - 70 < sh) {
             return true;
         }
         return false;
@@ -26,8 +24,7 @@ class DynamicTextFrame {
 
     setPos(x, y) {
         this.__pos.set(x, y);
-        this.__textPointer.setPos(x, y - 230);
-        this.__textPointer.setCenter(x, y - 230);
+        this.__textPointer.setPos(0, this.__pos.y + this.__ch / 2);
         return this;
     }
 
@@ -53,9 +50,9 @@ class DynamicTextFrame {
         return this;
     }
 
-    setWidth(rw) {
-        this.__h = (rw * this.__h) / this.__w;
-        this.__w = rw;
+    setSize(w, h) {
+        this.__cw = w;
+        this.__ch = h;
         return this;
     }
 
@@ -75,6 +72,7 @@ class DynamicTextFrame {
     }
 
     update(delta) {
+        this.__textPointer.setCenter(0, this.__pos.y + this.__ch / 2);
         this.__textPointer.update(delta);
     }
 
@@ -83,5 +81,7 @@ class DynamicTextFrame {
         image(this.__background, this.__pos.x, this.__pos.y, this.__cw, this.__ch,
             this.__cropPos.x, this.__cropPos.y, this.__cw, this.__ch);
         this.__textPointer.draw();
+
+        fill(255, 0, 0);
     }
 }
