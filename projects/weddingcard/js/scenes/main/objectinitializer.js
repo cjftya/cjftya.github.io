@@ -61,9 +61,8 @@ class ObjectInitializer {
             .setSize(20)
             .setPos(0, mainImageView.getHeight() + 60);
 
-        //현 철   ღ   서 영
         var mainImageTitleTextView = UiFactory.createTextView()
-            .addText("가 나   ღ   다 라")
+            .addText("현 철   ღ   서 영")
             .setAlign(CENTER, null)
             .setColor(160, 110, 110)
             .setTextStyle(BOLD)
@@ -95,40 +94,39 @@ class ObjectInitializer {
                 mainImageTitleTextView.getPos().y + + (winSize[0] / 5) + 20)
             .setWidth(winSize[0] / 2.8, true)
 
-        //2020년 04월 11일 토요일 오후 2시
+        var dayCounterImageView = UiFactory.createImageView()
+            .setImagePath(ResourcePath.DayCounterImage)
+            .setPos(0, manFaceImageView.getPos().y + manFaceImageView.getHeight())
+            .setWidth(winSize[0], true);
+
+        var hScale = dayCounterImageView.getHeightScale();
+
         var weddingInfoTextView = UiFactory.createTextView()
-            .addText("7777년 77월 77일 7요일 오후 7시")
+            .addText("2020년 09월 12일 토요일 오후 2시 30분")
             .setAlign(CENTER, null)
             .setColor(250, 250, 250)
             .setAlpha(190)
             .setTextStyle(BOLD)
-            .setSize(18)
-            .setPos(0, womenFaceImageView.getPos().y + 180);
+            .setSize(45 * hScale)
+            .setPos(0, womenFaceImageView.getPos().y + womenFaceImageView.getHeight() + 40);
 
         var ddayLabelTextView = UiFactory.createTextView()
             .addText("D - Day")
             .setAlign(CENTER, null)
             .setColor(250, 250, 250)
-            .setAlpha(210)
+            .setAlpha(180)
             .setTextStyle(BOLD)
-            .setSize(40)
-            .setPos(0, weddingInfoTextView.getPos().y + 190);
+            .setSize(65*hScale)
+            .setPos(0, dayCounterImageView.getPos().y + (570 * hScale));
 
         var dayCounterTextView = UiFactory.createTextView()
             .addText("00일 00시 00분 00초")
             .setAlign(CENTER, null)
             .setColor(250, 250, 250)
-            .setAlpha(230)
+            .setAlpha(180)
             .setTextStyle(BOLD)
-            .setSize(35)
-            .setPos(0, ddayLabelTextView.getPos().y + 100);
-
-        var dayCounterImageView = UiFactory.createImageView()
-            .setImagePath(ResourcePath.DayCounterImage)
-            .setPos(0, manFaceImageView.getPos().y + 140)
-            .setEnableCrop(true)
-            .setCropSrcPos(((800 - winSize[0]) / 2), 800)
-            .setCropSize(winSize[0], 400);
+            .setSize(60*hScale)
+            .setPos(0, dayCounterImageView.getPos().y + (680 * hScale));
 
         var invitationTextView = UiFactory.createTextView()
             .addText("♡ · · ·  I n v i t a t i on  · · · ♡")
@@ -136,7 +134,7 @@ class ObjectInitializer {
             .setColor(160, 110, 110)
             .setTextStyle(BOLD)
             .setSize(20)
-            .setPos(0, weddingInfoTextView.getPos().y + 480);
+            .setPos(0, weddingInfoTextView.getPos().y + dayCounterImageView.getHeight() + 100);
 
         var invitationLetterTextView = UiFactory.createTextView()
             .addText("·  ·  ·  ·  ·  ·  ·  ·  ·  ·")
@@ -159,6 +157,7 @@ class ObjectInitializer {
             .addText("“ 언제나 그대의 곁에서 · · · ”")
             .addText("“ 사랑스런 그대의 곁에서  · · · ”")
             .addText("“ 함깨 살아가고 싶습니다 · · · ”")
+            .setAlpha(180)
             .setColor(240, 240, 240);
 
         var galleryTextView = UiFactory.createTextView()
@@ -167,7 +166,7 @@ class ObjectInitializer {
             .setColor(160, 110, 110)
             .setTextStyle(BOLD)
             .setSize(20)
-            .setPos(0, this.__dynamicTextFrameModule.getPos().y + 560);
+            .setPos(0, this.__dynamicTextFrameModule.getPos().y + 440);
 
         this.__slideShowModule = new SlideShow()
             .addImagePath(ResourcePath.SlideShow1Image)
@@ -193,21 +192,22 @@ class ObjectInitializer {
             .setColor(160, 110, 110)
             .setTextStyle(BOLD)
             .setSize(20)
-            .setPos(0, this.__slideShowModule.getPos().y + this.__slideShowModule.getHeight() + 170);
+            .setPos(0, this.__slideShowModule.getPos().y + this.__slideShowModule.getHeight() + 200);
 
         this.__mapModule = new MapView(ResourcePath.MapImage)
             .setPos(0, locationTextView.getPos().y + 80)
-            .setCropSrcPos(((1560 - winSize[0]) / 2), 240)
+            .setCropSrcPos(((1483 - winSize[0]) / 2), 300)
             .setShortcutText("네이버지도 바로가기")
             .setCropSize(winSize[0], 250);
 
         var locationSubwayInfoTextView = UiFactory.createTextView()
             .addText("  ▶지하철")
-            .addText("  광화문역 2번 출구 (5호선) 방향으로 나와 경북궁")
-            .addText("  방면으로 직진 후 역사박물관에서 우회전 후, 사거리에서")
-            .addText("  좌측 대각선 첫 번째 건물")
-            .addText("  경북궁역 6번 출구 (3호선) 방향으로 나와 광화문")
-            .addText("  삼거리 건넌 후 광화문 열린시민마당 건너편 건물")
+            .addText("  강남구청역 3-1번 출구(7호선 분당선) GE코리아")
+            .addText("  좌측방향으로 600m 보도 후 좌측건물")
+            .addText("  압구정로데오역 5번 출구(분당선) 400m 보도 후 학동사거리")
+            .addText("  횡단보도 건너 50m")
+            .addText("  *셔틀버스 : 강남구청역 3번 출구 앞, 배차간격")
+            .addText("  10 ~ 15분 간격")
             .setTextGap(30)
             .setAlign(LEFT, null)
             .setColor(190, 130, 130)
@@ -218,13 +218,9 @@ class ObjectInitializer {
 
         var locationBusInfoTextView = UiFactory.createTextView()
             .addText("  ▶버  스")
-            .addText("  간선(파랑) : 103, 109, 150, 171, 272, 401,")
-            .addText("      402(심야), 406, 408, 606, 607, 700, 704,")
-            .addText("      706, 707, 708")
-            .addText("  지선(초록) : 1020, 1711, 7016, 7018, 7022, 7212, 7025")
-            .addText("  마을버스 : 종로 09, 종로 11")
-            .addText("  ❅ 세종문화회관, KT광화문지사, 경북궁 정류장 하자")
-            .addText("     더 케이 트윈타워 LL층")
+            .addText("  영동고교앞 정류장에서 하차 후 학동사거리 방면")
+            .addText("  100m내 건물")
+            .addText("  간선 : 301, 351, 472   지선 : 3011, 4412")
             .setTextGap(30)
             .setAlign(LEFT, null)
             .setColor(190, 130, 130)
@@ -233,6 +229,23 @@ class ObjectInitializer {
             .setSize(14)
             .setPos(0, locationSubwayInfoTextView.getPos().y + 210);
 
+        var locationCarInfoTextView = UiFactory.createTextView()
+            .addText("  ▶자가용")
+            .addText("  [영동대교 방면]")
+            .addText("  영동대교 남단에서 청담사거리 방면 -> 학동사기리 방면")
+            .addText("  1.5km 직진 -> 학동사거리에서 강남구청 방면으로")
+            .addText("  좌회전 후 앞 우측 건물")
+            .addText("  [성수대교 방면]")
+            .addText("  성수대교 남단에서 도산공원 방면 1.5km 직전 -> 도산공원")
+            .addText("  사거리에서 영동대교 방면 좌회전 -> 힉동사거리에서")
+            .addText("  강남구청 방면으로 우회전 후 50m 앞 우측 건물")
+            .setTextGap(30)
+            .setAlign(LEFT, null)
+            .setColor(190, 130, 130)
+            .setTextStyle(BOLD)
+            .setAlpha(180)
+            .setSize(14)
+            .setPos(0, locationBusInfoTextView.getPos().y + 130);
 
         var copyRightTextView = UiFactory.createTextView()
             .addText("·   ·   ·   ·   ·   ·   ·   ·   ·   ·   ·   ·   ·   ·   ·   ·   ·")
@@ -243,7 +256,7 @@ class ObjectInitializer {
             .setColor(190, 130, 130)
             .setTextStyle(BOLD)
             .setSize(16)
-            .setPos(0, locationBusInfoTextView.getPos().y + 300);
+            .setPos(0, locationCarInfoTextView.getPos().y + 300);
 
 
         this.__endOfScreen = copyRightTextView.getPos().y - 480;
@@ -270,6 +283,7 @@ class ObjectInitializer {
         this.__textViewMap.set(TextContents.Location, locationTextView);
         this.__textViewMap.set(TextContents.SubwayInfo, locationSubwayInfoTextView);
         this.__textViewMap.set(TextContents.BusInfo, locationBusInfoTextView);
+        this.__textViewMap.set(TextContents.CarInfo, locationCarInfoTextView);
         this.__textViewMap.set(TextContents.Copyright, copyRightTextView);
     }
 }

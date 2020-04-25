@@ -61,6 +61,11 @@ class DynamicTextFrame {
         return this;
     }
 
+    setAlpha(a) {
+        this.__textPointer.setAlpha(a);
+        return this;
+    }
+
     setDebug(v) {
         this.__debug = v;
         return this;

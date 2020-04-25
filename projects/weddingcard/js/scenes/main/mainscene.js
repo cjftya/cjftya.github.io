@@ -140,9 +140,6 @@ class MainScene extends AbsScene {
         }
         for (var [id, view] of this.__imageViewMap.entries()) {
             view.addPos(0, vy);
-            if (id == ImageContents.DayCounter) {
-                view.addCropSrcPos(0, vy * 0.2);
-            }
         }
         for (var [id, view] of this.__sprayParticleMap.entries()) {
             view.addPos(0, vy);
@@ -151,7 +148,7 @@ class MainScene extends AbsScene {
         this.__mapModule.addPos(0, vy);
         this.__traceModule.addPos(0, vy);
         this.__dynamicTextFrameModule.addPos(0, vy);
-        this.__dynamicTextFrameModule.addCropSrcPos(0, vy * 0.1);
+        this.__dynamicTextFrameModule.addCropSrcPos(0, vy * 0.05);
     }
 
     increaseDrawCall() {
@@ -185,7 +182,7 @@ class MainScene extends AbsScene {
     }
 
     executeDayCountDown() {
-        var dday = new Date("April 11,2020,14:00:00").getTime();
+        var dday = new Date("September 12,2020,14:30:00").getTime();
         var view = this.__textViewMap.get(TextContents.DayCounter);
         setInterval(function () {
             var now = new Date();

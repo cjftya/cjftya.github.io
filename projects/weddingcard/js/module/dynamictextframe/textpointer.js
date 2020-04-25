@@ -19,6 +19,7 @@ class TextPointer {
         var radius = MathUtil.angle2rad(MathUtil.randInt(0, 360));
         this.__vel.x = Math.cos(radius) * (MathUtil.randInt(1, 3) * 0.07);
         this.__vel.y = Math.sin(radius) * (MathUtil.randInt(1, 3) * 0.07);
+        this.__alphaMax = 0;
         this.__alpha = 0;
         this.__alphaOffset = 10;
     }
@@ -51,7 +52,7 @@ class TextPointer {
     }
 
     setAlpha(a) {
-        this.__color.setAlpha(a);
+        this.__alphaMax = a;
         return this;
     }
 
@@ -62,8 +63,8 @@ class TextPointer {
 
     start() {
         var radius = MathUtil.angle2rad(MathUtil.randInt(0, 360));
-        this.__pos.x = this.__center.x + (MathUtil.randInt(1, 50) - 25);
-        this.__pos.y = this.__center.y + (MathUtil.randInt(1, 50) - 25);
+        this.__pos.x = this.__center.x + (MathUtil.randInt(1, 80) - 40);
+        this.__pos.y = this.__center.y + (MathUtil.randInt(1, 80) - 40);
         this.__vel.x = Math.cos(radius) * (MathUtil.randInt(1, 3) * 0.07);
         this.__vel.y = Math.sin(radius) * (MathUtil.randInt(1, 3) * 0.07);
         this.__alpha = 0;
@@ -74,8 +75,8 @@ class TextPointer {
         this.__pos.x += this.__vel.x;
         this.__pos.y += this.__vel.y;
 
-        if (this.__alpha >= 255 && this.__alphaOffset >= 0) {
-            this.__alpha = 255;
+        if (this.__alpha >=  this.__alphaMax && this.__alphaOffset >= 0) {
+            this.__alpha =  this.__alphaMax;
             this.__alphaOffset = 0;
             this.__delayCounter += delta;
             if (this.__delayCounter >= 3) {

@@ -96,7 +96,7 @@ class MapView {
         var py = this.__pos.y + this.__ch;
         if (!(x < this.__pos.x || x > this.__pos.x + this.__cw ||
             y < py || y > py + 35)) {
-            location.href = "https://m.map.naver.com/search2/site.nhn?query=%EA%B4%91%ED%99%94%EB%AC%B8%EC%95%84%ED%8E%A0%EA%B0%80%EB%AA%A8&sm=shistory&style=v5&code=31738014#/map";
+            location.href = "https://m.map.naver.com/search2/site.nhn?query=%EB%8D%94%EC%B1%84%ED%94%8C%EC%95%B3%EC%B2%AD%EB%8B%B4&sm=hty&style=v5&code=34120522#/map";
         }
     }
 
