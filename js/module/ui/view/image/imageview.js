@@ -138,6 +138,16 @@ class ImageView extends AbsView {
         return this;
     }
 
+    getHeightScale() {
+        return this.__cropMode ? (this.__ch / this.__originH) :
+            (this.__h / this.__originH);
+    }
+
+    getWidthScale() {
+        return this.__cropMode ? (this.__cw / this.__originW) :
+        (this.__w / this.__originW);
+    }
+
     setDebug(v) {
         this.__debug = v;
         return this;
