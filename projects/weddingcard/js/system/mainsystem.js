@@ -16,14 +16,17 @@ class MainSystem extends AbsSystem {
     }
 
     onPreload() {
-        this.loadResource();
+        this.loadScene();
     }
 
     onCreate() {
         super.onCreate();
         createCanvas(windowWidth, windowHeight);
 
-        this.loadScene();
+        frameRate(60);
+
+        this.__scene.onCreate();
+        this.__scene.onStart();
 
         this.__isLoading = false;
     }
@@ -77,32 +80,6 @@ class MainSystem extends AbsSystem {
 
     loadScene() {
         this.__scene = new MainScene();
-        this.__scene.onCreate();
-        this.__scene.onStart();
-    }
-
-    loadResource() {
-        TopicManager.ready().write(RESOURCE.DATA, new ResourceLoader()
-            .add(ResourcePath.MainImage, ResourceType.Image)
-            .add(ResourcePath.DynamicTextFrameImage, ResourceType.Image)
-            .add(ResourcePath.SlideShowMaskImage, ResourceType.Image)
-            .add(ResourcePath.MapImage, ResourceType.Image)
-            .add(ResourcePath.ManFaceImage, ResourceType.Image)
-            .add(ResourcePath.ManFaceMaskImage, ResourceType.Image)
-            .add(ResourcePath.WomenFaceImage, ResourceType.Image)
-            .add(ResourcePath.DayCounterImage, ResourceType.Image)
-            .add(ResourcePath.SlideShow1Image, ResourceType.Image)
-            .add(ResourcePath.SlideShow2Image, ResourceType.Image)
-            .add(ResourcePath.SlideShow3Image, ResourceType.Image)
-            .add(ResourcePath.SlideShow4Image, ResourceType.Image)
-            .add(ResourcePath.SlideShow5Image, ResourceType.Image)
-            .add(ResourcePath.SlideShow6Image, ResourceType.Image)
-            .setListener((count, path) => {
-                console.log("Load counter [ count : " + count + ", path : " + path + " ]");
-            })
-            .setCompletedListener((total, loadTime) => {
-                console.log("Resouce load complete [ total : " + total + ", load time (sec) : " + loadTime + " ]");
-            })
-            .load());
+        this.__scene.onPreload();
     }
 }

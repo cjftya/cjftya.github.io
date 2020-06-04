@@ -1,9 +1,9 @@
 class ResourceLoader {
     constructor() {
         this.__listener = null;
-        this.__completedListener = null;
         this.__dataMap = new Map();
-        this.__typeMap = new Map();
+        this.__typeMap = [new Map(), new Map()];
+
         this.__loadedCount = 0;
         this.__totalLoadTime = 0;
     }
@@ -13,13 +13,8 @@ class ResourceLoader {
         return this;
     }
 
-    setCompletedListener(listener) {
-        this.__completedListener = listener;
-        return this;
-    }
-
-    add(path, type) {
-        this.__typeMap.set(path, type);
+    add(path, type, threadType) {
+        this.__typeMap[threadType].set(path, type);
         return this;
     }
 
@@ -41,15 +36,66 @@ class ResourceLoader {
         return null;
     }
 
-    load() {
-        var t0 = performance.now();
-        for (var [path, type] of this.__typeMap.entries()) {
-            this.__dataMap.set(path, this.getData(type, path));
-            this.__listener(this.__dataMap.size, path);
+    __loadBackground() {
+        if (this.__typeMap[ThreadType.Background].length == 0) {
+            return;
         }
-        var t1 = performance.now();
-        this.__totalLoadTime = (t1 - t0) / 1000;
-        this.__completedListener(this.__typeMap.size, this.__totalLoadTime);
+
+        const worker = new Worker("../../util/framework/resourcemanger/resourceworker.js");
+        const imgElements = document.querySelectorAll('img[data-src]');
+        imgElements.forEach(imageElement => {
+            var imgUrl = imageElement.getAttribute('data-src');
+            worker.postMessage(imgUrl);
+        })
+
+        worker.addEventListener('message', event => {
+            const imageData = event.data;
+            const imageElement = document.querySelectorAll(`img[data-src='${imageData.imgUrl}']`);
+            const objectURL = URL.createObjectURL(imageData.blob);
+
+            imageElement.onload = () => {
+                imageElement.removeAttribute("data-src");
+                URL.revokeObjectURL(objectURL);
+
+                var canvas = document.createElement("canvas");
+                canvas.width = imageElement.width;
+                canvas.height = imageElement.height;
+                canvas.getContext('2d').drawImage(imageElement, 0, 0, imageElement.width, imageElement.height);
+
+                var pixelData = canvas.getContext('2d').getImageData(0, 0, imageElement.width, imageElement.height).data;
+                var p5Image = createImage(imageElement.width, imageElement.height);
+                p5Image.loadPixels();
+                for (var i = 0; i < pixelData.length; i += 4) {
+                    p5Image.pixels[i] = pixelData[i];
+                    p5Image.pixels[i + 1] = pixelData[i + 1];
+                    p5Image.pixels[i + 2] = pixelData[i + 2];
+                    p5Image.pixels[i + 3] = pixelData[i + 3];
+                }
+                p5Image.updatePixels();
+
+                var imgData = new ImageData(null);
+                imgData.setData(ResourceType.Image, imageData.imgUrl, p5Image);
+                this.__dataMap.set(imageData.imgUrl, imgData);
+                this.__listener(path, ThreadType.Background);
+            }
+            imageElement.setAttribute('src', objectURL);
+        });
+    }
+
+    __loadMain() {
+        if (this.__typeMap[ThreadType.Main].length == 0) {
+            return;
+        }
+        
+        for (var [path, type] of this.__typeMap[ThreadType.Main].entries()) {
+            this.__dataMap.set(path, this.getData(type, path));
+            this.__listener(path, ThreadType.Main);
+        }
+    }
+
+    load() {
+        this.__loadBackground();
+        this.__loadMain();
         return this;
     }
 }

@@ -2,6 +2,8 @@ class ImageData extends MediaData {
     constructor(path) {
         super(ResourceType.Image, path);
 
-        this.__data = loadImage(path);
+        if (path != null) {
+            this.__data = loadImage(path);
+        }
     }
 }

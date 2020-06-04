@@ -44,4 +44,5 @@ var ResourcePath = {
     SlideShow4Image: "assets/slideshow/s4.jpg",
     SlideShow5Image: "assets/slideshow/s5.jpg",
     SlideShow6Image: "assets/slideshow/s6.jpg",
+    DefaultImage: "assets/defaultimage.png"
 };

@@ -18,3 +18,8 @@ var View = {
     Text: 0,
     Image: 1
 }
+
+var ThreadType = {
+    Main: 0,
+    Background: 1
+}

@@ -2,6 +2,7 @@ class AbsScene {
     constructor() {
     }
 
+    onPreload() { }
     onCreate() { }
     onPause() { }
     onStart() { }

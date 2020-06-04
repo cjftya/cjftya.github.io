@@ -21,6 +21,8 @@ class ImageView extends AbsView {
 
         this.__imageMode = CORNER;
 
+        this.__isImageLoading = true;
+
         this.__debug = false;
 
         //width resize = (height resize * original width size) / original height size
@@ -154,6 +156,10 @@ class ImageView extends AbsView {
     }
 
     draw() {
+        // if(this.__isImageLoading) {
+        //     return;
+        // }
+
         imageMode(this.__imageMode);
         if (this.__cropMode) {
             image(this.__image, this.__pos.x, this.__pos.y, this.__cw, this.__ch,

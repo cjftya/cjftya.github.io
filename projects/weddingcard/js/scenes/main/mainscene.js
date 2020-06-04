@@ -7,6 +7,8 @@ class MainScene extends AbsScene {
         this.__background = null;
         this.__backgroundParticle = null;
 
+        this.__objectInitializer = null;
+
         this.__textViewMap = null;
         this.__imageViewMap = null;
         this.__sprayParticleMap = null;
@@ -20,6 +22,28 @@ class MainScene extends AbsScene {
 
         //debug only
         this.__drawCallCount = 0;
+    }
+
+    onPreload() {
+        TopicManager.ready().write(RESOURCE.DATA, new ResourceLoader()
+            .add(ResourcePath.MainImage, ResourceType.Image, ThreadType.Main)
+            .add(ResourcePath.DynamicTextFrameImage, ResourceType.Image, ThreadType.Main)
+            .add(ResourcePath.SlideShowMaskImage, ResourceType.Image, ThreadType.Main)
+            .add(ResourcePath.MapImage, ResourceType.Image, ThreadType.Main)
+            .add(ResourcePath.ManFaceImage, ResourceType.Image, ThreadType.Main)
+            .add(ResourcePath.ManFaceMaskImage, ResourceType.Image, ThreadType.Main)
+            .add(ResourcePath.WomenFaceImage, ResourceType.Image, ThreadType.Main)
+            .add(ResourcePath.DayCounterImage, ResourceType.Image, ThreadType.Main)
+            .add(ResourcePath.SlideShow1Image, ResourceType.Image, ThreadType.Main)
+            .add(ResourcePath.SlideShow2Image, ResourceType.Image, ThreadType.Main)
+            .add(ResourcePath.SlideShow3Image, ResourceType.Image, ThreadType.Main)
+            .add(ResourcePath.SlideShow4Image, ResourceType.Image, ThreadType.Main)
+            .add(ResourcePath.SlideShow5Image, ResourceType.Image, ThreadType.Main)
+            .add(ResourcePath.SlideShow6Image, ResourceType.Image, ThreadType.Main)
+            .setListener((path, threadType) => {
+                console.log(path + ", " + threadType);
+            })
+            .load());
     }
 
     onCreate() {
@@ -166,19 +190,19 @@ class MainScene extends AbsScene {
 
         this.__background = new BgBubble(this.__winSize[0], this.__winSize[1]);
 
-        var objIntializer = new ObjectInitializer();
-        objIntializer.initializeBaseObject();
+        this.__objectInitializer = new ObjectInitializer();
+        this.__objectInitializer.initializeBaseObject();
 
-        this.__dragControl.setDragAreaHeigthSize(0, objIntializer.getEndOfScreem());
+        this.__dragControl.setDragAreaHeigthSize(0, this.__objectInitializer.getEndOfScreem());
 
-        this.__traceModule = objIntializer.getTraceModule();
-        this.__slideShowModule = objIntializer.getSlideShowModule();
-        this.__dynamicTextFrameModule = objIntializer.getDynamicTextFrameModule();
-        this.__mapModule = objIntializer.getMapModule();
+        this.__traceModule = this.__objectInitializer.getTraceModule();
+        this.__slideShowModule = this.__objectInitializer.getSlideShowModule();
+        this.__dynamicTextFrameModule = this.__objectInitializer.getDynamicTextFrameModule();
+        this.__mapModule = this.__objectInitializer.getMapModule();
 
-        this.__textViewMap = objIntializer.getTextMap();
-        this.__imageViewMap = objIntializer.getImageMap();
-        this.__sprayParticleMap = objIntializer.getParticleMap();
+        this.__textViewMap = this.__objectInitializer.getTextMap();
+        this.__imageViewMap = this.__objectInitializer.getImageMap();
+        this.__sprayParticleMap = this.__objectInitializer.getParticleMap();
     }
 
     executeDayCountDown() {
