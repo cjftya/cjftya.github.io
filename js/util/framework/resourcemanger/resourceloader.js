@@ -37,11 +37,11 @@ class ResourceLoader {
     }
 
     __loadBackground() {
-        if (this.__typeMap[ThreadType.Background].length == 0) {
+        if (this.__typeMap[ThreadType.Background].size == 0) {
             return;
         }
 
-        const worker = new Worker("../../util/framework/resourcemanger/resourceworker.js");
+        const worker = new Worker("../../js/util/framework/resourcemanger/resourceworker.js");
         const imgElements = document.querySelectorAll('img[data-src]');
         imgElements.forEach(imageElement => {
             var imgUrl = imageElement.getAttribute('data-src');
@@ -83,7 +83,7 @@ class ResourceLoader {
     }
 
     __loadMain() {
-        if (this.__typeMap[ThreadType.Main].length == 0) {
+        if (this.__typeMap[ThreadType.Main].size == 0) {
             return;
         }
         
