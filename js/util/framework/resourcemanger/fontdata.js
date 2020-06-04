@@ -2,6 +2,8 @@ class FontData extends MediaData {
     constructor(path) {
         super(ResourceType.Font, path);
 
-        this.__data = loadFont(path);
+        if (path != null) {
+            this.__data = loadFont(path);
+        }
     }
 }

@@ -16,4 +16,11 @@ class MediaData {
     getData() {
         return this.__data;
     }
+
+    setData(type, path, data) {
+        this.__type = type;
+        this.__absPath = path;
+        this.__data = data;
+        return this;
+    }
 }
