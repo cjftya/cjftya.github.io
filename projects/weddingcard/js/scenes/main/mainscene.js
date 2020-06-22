@@ -42,6 +42,9 @@ class MainScene extends AbsScene {
             .add(ResourcePath.SlideShow6Image, ResourceType.Image, ThreadType.Main)
             .setListener((path, threadType) => {
                 console.log(path + ", " + threadType);
+                if (threadType == ThreadType.Background) {
+                    
+                }
             })
             .load());
     }
@@ -139,12 +142,7 @@ class MainScene extends AbsScene {
         if (this.__mapModule.isMapController()) {
             this.__mapModule.addCropSrcPos(-dx, -dy);
         } else {
-            var absDy = dy < 0 ? -dy : dy;
-            if (this.__dragControl.getDragMax() < absDy) {
-                this.__dragControl.setDragMax(absDy);
-                this.__dragControl.setDragVel(dy * 0.6);
-            }
-            this.updateObjects(dy * 0.6);
+            this.__dragControl.addDragVel(dy * 0.15);
         }
         this.__dragControl.setOldPos(tx, ty);
     }

@@ -29,20 +29,23 @@ var TextContents = {
     Copyright: 13
 };
 
+var Test1 = false;
+var Path1 = "assets/slideshow/s1.jpg";
+
 var ResourcePath = {
-    MainImage: "assets/main.jpg",
-    DynamicTextFrameImage: "assets/dynamictextframe.jpg",
-    MapImage: "assets/map.jpg",
-    ManFaceImage: "assets/manface.png",
-    ManFaceMaskImage: "assets/manfacemask.png",
-    WomenFaceImage: "assets/womenface.png",
-    DayCounterImage: "assets/dayCounter.jpg",
-    SlideShowMaskImage: "assets/mask.png",
-    SlideShow1Image: "assets/slideshow/s1.jpg",
-    SlideShow2Image: "assets/slideshow/s2.jpg",
-    SlideShow3Image: "assets/slideshow/s3.jpg",
-    SlideShow4Image: "assets/slideshow/s4.jpg",
-    SlideShow5Image: "assets/slideshow/s5.jpg",
-    SlideShow6Image: "assets/slideshow/s6.jpg",
-    DefaultImage: "assets/defaultimage.png"
+    MainImage: Test1 ? Path1 : "assets/main.jpg",
+    DynamicTextFrameImage: Test1 ? Path1 : "assets/dynamictextframe.jpg",
+    MapImage: Test1 ? Path1 : "assets/map.jpg",
+    ManFaceImage: Test1 ? Path1 : "assets/manface.png",
+    ManFaceMaskImage: Test1 ? Path1 : "assets/manfacemask.png",
+    WomenFaceImage: Test1 ? Path1 : "assets/womenface.png",
+    DayCounterImage: Test1 ? Path1 : "assets/dayCounter.jpg",
+    SlideShowMaskImage: Test1 ? Path1 : "assets/mask.png",
+    SlideShow1Image: Test1 ? Path1 : "assets/slideshow/s1.jpg",
+    SlideShow2Image: Test1 ? Path1 : "assets/slideshow/s2.jpg",
+    SlideShow3Image: Test1 ? Path1 : "assets/slideshow/s3.jpg",
+    SlideShow4Image: Test1 ? Path1 : "assets/slideshow/s4.jpg",
+    SlideShow5Image: Test1 ? Path1 : "assets/slideshow/s5.jpg",
+    SlideShow6Image: Test1 ? Path1 : "assets/slideshow/s6.jpg",
+    DefaultImage: Test1 ? Path1 : "assets/defaultimage.png"
 };
