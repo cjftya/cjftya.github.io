@@ -96,37 +96,29 @@ class ObjectInitializer {
 
         var dayCounterImageView = UiFactory.createImageView()
             .setImagePath(ResourcePath.DayCounterImage)
-            .setPos(0, manFaceImageView.getPos().y + manFaceImageView.getHeight())
+            .setMaskPath(ResourcePath.ManFaceMaskImage)
+            .setPos(0, manFaceImageView.getPos().y + manFaceImageView.getHeight()+90)
             .setWidth(winSize[0], true);
 
         var hScale = dayCounterImageView.getHeightScale();
 
         var weddingInfoTextView = UiFactory.createTextView()
-            .addText("2020년 09월 12일 토요일 오후 2시 30분")
+            .addText("· · · · ·  2020. 09. 12 SAT. PM 2:30  · · · · ·")
+            .addText("· · ·  더채플 앳 청담 6층 채플홀  · · ·")
+            .setTextGap(40)
             .setAlign(CENTER, null)
-            .setColor(250, 250, 250)
-            .setAlpha(190)
+            .setColor(160, 110, 110)
             .setTextStyle(BOLD)
-            .setSize(45 * hScale)
-            .setPos(0, womenFaceImageView.getPos().y + womenFaceImageView.getHeight() + 40);
-
-        var ddayLabelTextView = UiFactory.createTextView()
-            .addText("D - Day")
-            .setAlign(CENTER, null)
-            .setColor(250, 250, 250)
-            .setAlpha(180)
-            .setTextStyle(BOLD)
-            .setSize(65*hScale)
-            .setPos(0, dayCounterImageView.getPos().y + (570 * hScale));
+            .setSize(40 * hScale)
+            .setPos(0, womenFaceImageView.getPos().y + womenFaceImageView.getHeight() + 30);
 
         var dayCounterTextView = UiFactory.createTextView()
-            .addText("00일 00시 00분 00초")
+            .addText("· · · · ·  00일 00시 00분 00초  · · · · ·")
             .setAlign(CENTER, null)
-            .setColor(250, 250, 250)
-            .setAlpha(180)
+            .setColor(160, 110, 110)
             .setTextStyle(BOLD)
-            .setSize(60*hScale)
-            .setPos(0, dayCounterImageView.getPos().y + (680 * hScale));
+            .setSize(45 * hScale)
+            .setPos(0, dayCounterImageView.getPos().y + (840 * hScale));
 
         var invitationTextView = UiFactory.createTextView()
             .addText("♡ · · ·  I n v i t a t i on  · · · ♡")
@@ -134,7 +126,7 @@ class ObjectInitializer {
             .setColor(160, 110, 110)
             .setTextStyle(BOLD)
             .setSize(20)
-            .setPos(0, weddingInfoTextView.getPos().y + dayCounterImageView.getHeight() + 100);
+            .setPos(0, weddingInfoTextView.getPos().y + dayCounterImageView.getHeight() + 400);
 
         var invitationLetterTextView = UiFactory.createTextView()
             .addText("·  ·  ·  ·  ·  ·  ·  ·  ·  ·")
@@ -166,7 +158,7 @@ class ObjectInitializer {
             .setColor(160, 110, 110)
             .setTextStyle(BOLD)
             .setSize(20)
-            .setPos(0, this.__dynamicTextFrameModule.getPos().y + 440);
+            .setPos(0, this.__dynamicTextFrameModule.getPos().y + 540);
 
         this.__slideShowModule = new SlideShow()
             .addImagePath(ResourcePath.SlideShow1Image)
@@ -192,11 +184,11 @@ class ObjectInitializer {
             .setColor(160, 110, 110)
             .setTextStyle(BOLD)
             .setSize(20)
-            .setPos(0, this.__slideShowModule.getPos().y + this.__slideShowModule.getHeight() + 200);
+            .setPos(0, this.__slideShowModule.getPos().y + this.__slideShowModule.getHeight() + 350);
 
         this.__mapModule = new MapView(ResourcePath.MapImage)
             .setPos(0, locationTextView.getPos().y + 80)
-            .setCropSrcPos(((1483 - winSize[0]) / 2), 300)
+            .setCropSrcPos(((1441 - winSize[0]) / 2), 300)
             .setShortcutText("네이버지도 바로가기")
             .setCropSize(winSize[0], 250);
 
@@ -227,7 +219,7 @@ class ObjectInitializer {
             .setTextStyle(BOLD)
             .setAlpha(180)
             .setSize(14)
-            .setPos(0, locationSubwayInfoTextView.getPos().y + 210);
+            .setPos(0, locationSubwayInfoTextView.getPos().y + 230);
 
         var locationCarInfoTextView = UiFactory.createTextView()
             .addText("  ▶자가용")
@@ -245,7 +237,7 @@ class ObjectInitializer {
             .setTextStyle(BOLD)
             .setAlpha(180)
             .setSize(14)
-            .setPos(0, locationBusInfoTextView.getPos().y + 130);
+            .setPos(0, locationBusInfoTextView.getPos().y + 140);
 
         var copyRightTextView = UiFactory.createTextView()
             .addText("·   ·   ·   ·   ·   ·   ·   ·   ·   ·   ·   ·   ·   ·   ·   ·   ·")
@@ -275,7 +267,6 @@ class ObjectInitializer {
         this.__textViewMap.set(TextContents.Title, titleTextView);
         this.__textViewMap.set(TextContents.MainImageTitle, mainImageTitleTextView);
         this.__textViewMap.set(TextContents.WeddingInfo, weddingInfoTextView);
-        this.__textViewMap.set(TextContents.DDayLabel, ddayLabelTextView);
         this.__textViewMap.set(TextContents.DayCounter, dayCounterTextView);
         this.__textViewMap.set(TextContents.Invitation, invitationTextView);
         this.__textViewMap.set(TextContents.InvitationLetter, invitationLetterTextView);

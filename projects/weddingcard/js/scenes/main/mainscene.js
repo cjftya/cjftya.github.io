@@ -41,9 +41,7 @@ class MainScene extends AbsScene {
             .add(ResourcePath.SlideShow5Image, ResourceType.Image, ThreadType.Main)
             .add(ResourcePath.SlideShow6Image, ResourceType.Image, ThreadType.Main)
             .setListener((path, threadType) => {
-                console.log(path + ", " + threadType);
                 if (threadType == ThreadType.Background) {
-                    
                 }
             })
             .load());
@@ -66,51 +64,42 @@ class MainScene extends AbsScene {
         //=================================================
 
         this.__background.draw();
-        this.increaseDrawCall();
 
         for (var [id, view] of this.__imageViewMap.entries()) {
             if (view.inScreen(this.__winSize[0], this.__winSize[1])) {
                 view.draw();
-                this.increaseDrawCall();
             }
         }
 
         for (var [id, view] of this.__textViewMap.entries()) {
             if (view.inScreen(this.__winSize[0], this.__winSize[1])) {
                 view.draw();
-                this.increaseDrawCall();
             }
         }
 
         if (this.__mapModule.inScreen(this.__winSize[0], this.__winSize[1])) {
             this.__mapModule.draw();
-            this.increaseDrawCall();
         }
 
         if (this.__slideShowModule.inScreen(this.__winSize[0], this.__winSize[1])) {
             this.__slideShowModule.updateWithDraw(timeDelta);
-            this.increaseDrawCall();
         }
 
         for (var [id, particle] of this.__sprayParticleMap.entries()) {
             if (particle.inScreen(this.__winSize[0], this.__winSize[1])) {
                 particle.updateWithDraw(timeDelta);
-                this.increaseDrawCall();
             }
         }
 
         if (this.__traceModule.inScreen(this.__winSize[0], this.__winSize[1])) {
             this.__traceModule.updateWithDraw(timeDelta);
-            this.increaseDrawCall();
         }
 
         if (this.__dynamicTextFrameModule.inScreen(this.__winSize[0], this.__winSize[1])) {
             this.__dynamicTextFrameModule.updateWithDraw(timeDelta);
-            this.increaseDrawCall();
         }
 
         this.__backgroundParticle.updateWithDraw(timeDelta);
-        this.increaseDrawCall();
     }
 
     onEnd() {
@@ -218,7 +207,7 @@ class MainScene extends AbsScene {
             }
             var str = TextUtil.pad(d, 2) + "일 " + TextUtil.pad(h, 2) + "시 " +
                 TextUtil.pad(m, 2) + "분 " + TextUtil.pad(s, 2) + "초";
-            view.setText(str);
+            view.setText("· · · · ·  " + str + "  · · · · ·");
         }, 1000);
     }
 
