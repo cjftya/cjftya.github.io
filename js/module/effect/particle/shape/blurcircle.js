@@ -98,11 +98,11 @@ class BlurCircle {
 
     draw() {
         // blur
-        for (var i = 1; i >= 0; i--) {
-            fill(this.__blurColor[i]);
-            // this.drawEllipse(i + 1);
-            ellipse(this.pos.x, this.pos.y, this.__blurR[i], this.__blurR[i]);
-        }
+        // for (var i = 1; i >= 0; i--) {
+        //     fill(this.__blurColor[i]);
+        //     // this.drawEllipse(i + 1);
+        //     ellipse(this.pos.x, this.pos.y, this.__blurR[i], this.__blurR[i]);
+        // }
         // point
         fill(this.__color);
         // this.drawEllipse(0);
