@@ -16,6 +16,7 @@ class MainSystem extends AbsSystem {
             tooltip: false,
             title: 0,
             toolbar: 0,
+            maxZoomRatio: 0.6
         });
 
     }
