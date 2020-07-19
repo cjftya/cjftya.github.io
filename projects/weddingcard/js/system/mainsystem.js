@@ -34,8 +34,10 @@ class MainSystem extends AbsSystem {
 
     onCreate() {
         super.onCreate();
-        createCanvas(windowWidth, windowHeight);
 
+        var winSize = TopicManager.ready().read(DISPLAY_INFO.WINDOW_SIZE);
+        createCanvas(winSize[0], winSize[1]);
+        
         this.__scene.onCreate();
         this.__scene.onStart();
 

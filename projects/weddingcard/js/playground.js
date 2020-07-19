@@ -1,10 +1,10 @@
 ﻿function preload() {
+    this.initialize();
     this.installSystem();
 }
 
 function setup() {
     this.loadSystem();
-    this.initialize();
 }
 
 function draw() {
@@ -37,8 +37,6 @@ function mouseDragged() {
 }
 
 function installSystem() {
-    TopicManager.ready().write(DISPLAY_INFO.WINDOW_SIZE, [windowWidth, windowHeight]);
-
     var sysMap = new Map();
     sysMap.set(SYSTEMS.MAIN, new MainSystem());
     //..
@@ -65,4 +63,10 @@ function windowResized() {
 function initialize() {
     var isMobile = /Android|webOS|iPhone|iPad|iPod|Opera Mini/i.test(navigator.userAgent);
     TopicManager.ready().write(DEVICE_INFO.IS_MOBILE, isMobile);
+
+    if (isMobile) {
+        TopicManager.ready().write(DISPLAY_INFO.WINDOW_SIZE, [windowWidth, windowHeight]);
+    } else {
+        TopicManager.ready().write(DISPLAY_INFO.WINDOW_SIZE, [380, 570]);
+    }
 }
