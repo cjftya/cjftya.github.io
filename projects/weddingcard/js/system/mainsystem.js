@@ -5,14 +5,26 @@ class MainSystem extends AbsSystem {
         this.__activeDebug = 0;
         this.__isLoading = true;
         this.__scene = null;
+        this.__isViewerShow = false;
+        this.__viewer = new Viewer(document.getElementById("image"), {
+            inline: false,
+            button: false,
+            navbar: false,
+            loop: false,
+            slideOnTouch: false,
+            toggleOnDblclick: false,
+            tooltip: false,
+            title: 0,
+            toolbar: 0,
+        });
+
     }
 
     registerSubscribers() {
-        // return new SubscriberInstaller()
-        //     .add(TOPICS.RESOURCE_LOAD, (topic, data) => {
-        //         this.loadResource(topic, data);
-        //     });
-        return null;
+        return new SubscriberInstaller()
+            .add(TOPICS.QUICK_VIEWER, (topic, data) => {
+                this.executeViewer(topic, data);
+            });
     }
 
     onPreload() {
@@ -32,6 +44,10 @@ class MainSystem extends AbsSystem {
     onOperate() {
         TimeDeltaUtil.getInstance().update();
 
+        if(this.__viewer.isShown){
+            return;
+        }
+
         this.__scene.onUpdateWithDraw(TimeDeltaUtil.getInstance().getDelta());
 
         if (this.isActiveDebug()) {
@@ -45,14 +61,14 @@ class MainSystem extends AbsSystem {
     }
 
     onTouchUp(mx, my) {
-        if (this.__isLoading) {
+        if (this.__isLoading || this.__viewer.isShown) {
             return;
         }
         this.__scene.onTouchUp(mx, my);
     }
 
     onTouchDown(mx, my) {
-        if (this.__isLoading) {
+        if (this.__isLoading || this.__viewer.isShown) {
             return;
         }
 
@@ -63,7 +79,7 @@ class MainSystem extends AbsSystem {
     }
 
     onTouchMove(mx, my) {
-        if (this.__isLoading) {
+        if (this.__isLoading || this.__viewer.isShown) {
             return;
         }
         this.__scene.onTouchMove(mx, my);
@@ -79,5 +95,12 @@ class MainSystem extends AbsSystem {
     loadScene() {
         this.__scene = new MainScene();
         this.__scene.onPreload();
+    }
+
+    executeViewer(topic, data) {
+        console.log(topic + " : " + data);
+        var imgElement = document.getElementById("image");
+        imgElement.setAttribute("src", data);
+        this.__viewer.show();
     }
 }

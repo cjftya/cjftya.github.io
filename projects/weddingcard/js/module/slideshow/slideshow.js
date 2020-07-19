@@ -1,6 +1,7 @@
 class SlideShow {
     constructor() {
         this.__images = [];
+        this.__imagePaths = [];
         this.__indexCount = 0;
 
         this.__pos = new Vector2d();
@@ -73,6 +74,7 @@ class SlideShow {
     addImagePath(imgPath) {
         var resource = TopicManager.ready().read(RESOURCE.DATA);
         this.__images.push(resource.get(imgPath).getData());
+        this.__imagePaths.push(imgPath);
         return this;
     }
 
@@ -91,6 +93,10 @@ class SlideShow {
     setDelay(s) {
         this.__delay = s;
         return this;
+    }
+
+    getCurrentImage() {
+        return this.__imagePaths[this.__indexCount];
     }
 
     next() {
@@ -162,7 +168,7 @@ class SlideShow {
                 ellipse(this.__indicators[i].x, this.__pos.y + this.__h + 20, 7, 7);
             }
         }
-        // fill(200,150);
+        // fill(200);
         // ellipse(this.__pos.x + this.__w/2, this.__pos.y + this.__h/2, 200, 200);
     }
 }

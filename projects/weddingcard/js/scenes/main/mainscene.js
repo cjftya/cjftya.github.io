@@ -19,9 +19,6 @@ class MainScene extends AbsScene {
         this.__dynamicTextFrameModule = null;
 
         this.__winSize = null;
-
-        //debug only
-        this.__drawCallCount = 0;
     }
 
     onPreload() {
@@ -122,6 +119,9 @@ class MainScene extends AbsScene {
             this.__mapModule.moveToNaverMap(tx, ty);
         }
         this.__slideShowModule.selectIndicator(tx, ty);
+        if (this.__slideShowModule.inBound(tx, ty)) {
+            TopicManager.ready().publish(TOPICS.QUICK_VIEWER, this.__slideShowModule.getCurrentImage());
+        }
         this.__mapModule.setMapController(false);
     }
 
@@ -216,7 +216,6 @@ class MainScene extends AbsScene {
         noStroke();
         fill(20);
         textAlign(LEFT, TOP);
-        text("FPS : " + Math.floor(TimeDeltaUtil.getInstance().getFPS()) + ", draw call : " + this.__drawCallCount, 10, 10);
-        this.__drawCallCount = 0;
+        text("FPS : " + Math.floor(TimeDeltaUtil.getInstance().getFPS()), 10, 10);
     }
 }

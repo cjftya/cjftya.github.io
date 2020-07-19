@@ -192,53 +192,6 @@ class ObjectInitializer {
             .setShortcutText("네이버지도 바로가기")
             .setCropSize(winSize[0], 250);
 
-        var locationSubwayInfoTextView = UiFactory.createTextView()
-            .addText("  ▶지하철")
-            .addText("  강남구청역 3-1번 출구(7호선 분당선) GE코리아")
-            .addText("  좌측방향으로 600m 보도 후 좌측건물")
-            .addText("  압구정로데오역 5번 출구(분당선) 400m 보도 후 학동사거리")
-            .addText("  횡단보도 건너 50m")
-            .addText("  *셔틀버스 : 강남구청역 3번 출구 앞, 배차간격")
-            .addText("  10 ~ 15분 간격")
-            .setTextGap(30)
-            .setAlign(LEFT, null)
-            .setColor(190, 130, 130)
-            .setTextStyle(BOLD)
-            .setAlpha(180)
-            .setSize(14)
-            .setPos(0, this.__mapModule.getPos().y + 340);
-
-        var locationBusInfoTextView = UiFactory.createTextView()
-            .addText("  ▶버  스")
-            .addText("  영동고교앞 정류장에서 하차 후 학동사거리 방면")
-            .addText("  100m내 건물")
-            .addText("  간선 : 301, 351, 472   지선 : 3011, 4412")
-            .setTextGap(30)
-            .setAlign(LEFT, null)
-            .setColor(190, 130, 130)
-            .setTextStyle(BOLD)
-            .setAlpha(180)
-            .setSize(14)
-            .setPos(0, locationSubwayInfoTextView.getPos().y + 230);
-
-        var locationCarInfoTextView = UiFactory.createTextView()
-            .addText("  ▶자가용")
-            .addText("  [영동대교 방면]")
-            .addText("  영동대교 남단에서 청담사거리 방면 -> 학동사기리 방면")
-            .addText("  1.5km 직진 -> 학동사거리에서 강남구청 방면으로")
-            .addText("  좌회전 후 앞 우측 건물")
-            .addText("  [성수대교 방면]")
-            .addText("  성수대교 남단에서 도산공원 방면 1.5km 직전 -> 도산공원")
-            .addText("  사거리에서 영동대교 방면 좌회전 -> 힉동사거리에서")
-            .addText("  강남구청 방면으로 우회전 후 50m 앞 우측 건물")
-            .setTextGap(30)
-            .setAlign(LEFT, null)
-            .setColor(190, 130, 130)
-            .setTextStyle(BOLD)
-            .setAlpha(180)
-            .setSize(14)
-            .setPos(0, locationBusInfoTextView.getPos().y + 140);
-
         var copyRightTextView = UiFactory.createTextView()
             .addText("·   ·   ·   ·   ·   ·   ·   ·   ·   ·   ·   ·   ·   ·   ·   ·   ·")
             .addText("Copyright ⓒ HyunChurl Lim")
@@ -248,10 +201,10 @@ class ObjectInitializer {
             .setColor(190, 130, 130)
             .setTextStyle(BOLD)
             .setSize(16)
-            .setPos(0, locationCarInfoTextView.getPos().y + 300);
+            .setPos(0, this.__mapModule.getPos().y + this.__mapModule.getHeight() + 120);
 
 
-        this.__endOfScreen = copyRightTextView.getPos().y - 480;
+        this.__endOfScreen = this.__mapModule.getPos().y + 100;
 
         // set map
         this.__particleMap = new Map();
@@ -272,9 +225,6 @@ class ObjectInitializer {
         this.__textViewMap.set(TextContents.InvitationLetter, invitationLetterTextView);
         this.__textViewMap.set(TextContents.Gallery, galleryTextView);
         this.__textViewMap.set(TextContents.Location, locationTextView);
-        this.__textViewMap.set(TextContents.SubwayInfo, locationSubwayInfoTextView);
-        this.__textViewMap.set(TextContents.BusInfo, locationBusInfoTextView);
-        this.__textViewMap.set(TextContents.CarInfo, locationCarInfoTextView);
         this.__textViewMap.set(TextContents.Copyright, copyRightTextView);
     }
 }

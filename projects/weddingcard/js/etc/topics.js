@@ -1,6 +1,6 @@
 //* topics *// 
 var TOPICS = {
-    //RESOURCE_LOAD: "topic-resurce-load"
+    QUICK_VIEWER: "topic-quick-viewer"
 };
 
 //* data key *//
