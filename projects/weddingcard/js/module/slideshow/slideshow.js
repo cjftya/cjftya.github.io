@@ -1,5 +1,8 @@
 class SlideShow {
     constructor() {
+        this.__maskImg = null;
+        this.__maskSrc = null;
+
         this.__images = [];
         this.__imagePaths = [];
         this.__indexCount = 0;
@@ -17,6 +20,7 @@ class SlideShow {
 
         this.__second = 0;
         this.__delay = 0;
+        this.__maskApplyCount = 0;
 
         this.__active = true;
 
@@ -38,6 +42,34 @@ class SlideShow {
             return true;
         }
         return false;
+    }
+
+    reload() {
+        var resData;
+        var resource = TopicManager.ready().read(RESOURCE.DATA);
+        for (var i = 0; i < this.__imagePaths.length; i++) {
+            resData = resource.get(this.__imagePaths[i]);
+            if (this.__images[i] == null && resData != null) {
+                this.__images[i] = resData.getData();
+            }
+        }
+
+        resData = resource.get(this.__maskSrc);
+        if (resData != null) {
+            var count = 0;
+            this.__maskImg = resData.getData();
+            for (var i = 0; i < this.__imagePaths.length; i++) {
+                if (this.__images[i] != null) {
+                    count++;
+                }
+            }
+            if (count == this.__imagePaths.length && this.__maskApplyCount == 0) {
+                this.__maskApplyCount++;
+                for (var i = 0; i < this.__images.length; i++) {
+                    this.__images[i].mask(this.__maskImg);
+                }
+            }
+        }
     }
 
     addPos(x, y) {
@@ -63,18 +95,26 @@ class SlideShow {
     }
 
     setWidth(w) {
-        for (var img of this.__images) {
-            this.__h = (w * img.height) / img.width;
+        var resource = TopicManager.ready().read(RESOURCE.DATA);
+        var resData = resource.get(this.__imagePaths[0]);
+        if (resData == null) {
+            var size = ImageMeta.getMeta(this.__imagePaths[0]);
+            this.__h = (w * size[1]) / size[0];
             this.__w = w;
-            this.__scale = this.__w / img.width;
+            this.__scale = this.__w / size[0];
+        } else {
+            this.__h = (w * this.__images[0].height) / this.__images[0].width;
+            this.__w = w;
+            this.__scale = this.__w / this.__images[0].width;
         }
         return this;
     }
 
     addImagePath(imgPath) {
         var resource = TopicManager.ready().read(RESOURCE.DATA);
-        this.__images.push(resource.get(imgPath).getData());
         this.__imagePaths.push(imgPath);
+        var resData = resource.get(imgPath);
+        this.__images.push(resData ? resData.getData() : null);
         return this;
     }
 
@@ -83,9 +123,16 @@ class SlideShow {
     }
 
     setMask(mask) {
+        this.__maskSrc = mask;
         var resource = TopicManager.ready().read(RESOURCE.DATA);
-        for (var img of this.__images) {
-            img.mask(resource.get(mask).getData());
+        var resData = resource.get(this.__maskSrc);
+        if (resData != null) {
+            this.__maskImg = resData.getData();
+            for (var img of this.__images) {
+                if (img != null) {
+                    img.mask(this.__maskImg);
+                }
+            }
         }
         return this;
     }
@@ -156,8 +203,10 @@ class SlideShow {
     }
 
     draw() {
-        imageMode(CORNER);
-        image(this.__images[this.__indexCount], this.__pos.x, this.__pos.y, this.__w, this.__h);
+        if (this.__images[this.__indexCount] != null) {
+            imageMode(CORNER);
+            image(this.__images[this.__indexCount], this.__pos.x, this.__pos.y, this.__w, this.__h);
+        }
 
         for (var i = 0; i < this.__images.length; i++) {
             if (this.__indexCount == i) {

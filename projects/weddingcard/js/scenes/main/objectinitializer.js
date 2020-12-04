@@ -45,6 +45,26 @@ class ObjectInitializer {
         return this.__endOfScreen;
     }
 
+    reload() {
+        if (this.__imageViewMap != null) {
+            for (var [id, view] of this.__imageViewMap.entries()) {
+                view.reload();
+            }
+        }
+
+        if (this.__dynamicTextFrameModule != null) {
+            this.__dynamicTextFrameModule.reload();
+        }
+
+        if(this.__mapModule != null) {
+            this.__mapModule.reload();
+        }
+
+        if (this.__slideShowModule != null) {
+            this.__slideShowModule.reload();
+        }
+    }
+
     initializeBaseObject() {
         var winSize = TopicManager.ready().read(DISPLAY_INFO.WINDOW_SIZE);
 
@@ -96,15 +116,15 @@ class ObjectInitializer {
 
         var dayCounterImageView = UiFactory.createImageView()
             .setImagePath(ResourcePath.DayCounterImage)
-            .setMaskPath(ResourcePath.ManFaceMaskImage)
+            .setMaskPath(ResourcePath.RingMaskImage)
             .setPos(0, manFaceImageView.getPos().y + manFaceImageView.getHeight()+90)
             .setWidth(winSize[0], true);
 
         var hScale = dayCounterImageView.getHeightScale();
 
         var weddingInfoTextView = UiFactory.createTextView()
-            .addText("· · · · ·  2020. 09. 12 SAT. PM 2:30  · · · · ·")
-            .addText("· · ·  더채플 앳 청담 6층 채플홀  · · ·")
+            .addText("2021. 03. 06 SAT. PM 12:30")
+            .addText("더채플 앳 청담 3층 커티지홀")
             .setTextGap(40)
             .setAlign(CENTER, null)
             .setColor(160, 110, 110)
@@ -113,12 +133,12 @@ class ObjectInitializer {
             .setPos(0, womenFaceImageView.getPos().y + womenFaceImageView.getHeight() + 30);
 
         var dayCounterTextView = UiFactory.createTextView()
-            .addText("· · · · ·  00일 00시 00분 00초  · · · · ·")
+            .addText("00일 00시 00분 00초")
             .setAlign(CENTER, null)
             .setColor(160, 110, 110)
             .setTextStyle(BOLD)
-            .setSize(45 * hScale)
-            .setPos(0, dayCounterImageView.getPos().y + (840 * hScale));
+            .setSize(65 * hScale)
+            .setPos(0, dayCounterImageView.getPos().y + (870 * hScale));
 
         var invitationTextView = UiFactory.createTextView()
             .addText("♡ · · ·  I n v i t a t i on  · · · ♡")
@@ -129,19 +149,20 @@ class ObjectInitializer {
             .setPos(0, weddingInfoTextView.getPos().y + dayCounterImageView.getHeight() + 400);
 
         var invitationLetterTextView = UiFactory.createTextView()
-            .addText("·  ·  ·  ·  ·  ·  ·  ·  ·  ·")
-            .addText("·  ·  행복이 피어나는 따뜻한 봄  ·  ·")
-            .addText("·  저희 두사람 새로운 출발을 하려고 합니다  ·")
-            .addText("·  서로를 향한 사랑과 믿음을 하나가 되는 자리에  ·")
-            .addText("·  축복으로 함께해주시면 감사하겠습니다  ·")
-            .addText("·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·")
-            .setTextGap(40)
+            .addText("봄의 그대는 벚꽃이었고")
+            .addText("여름의 그대는 바람이었으며")
+            .addText("가을의 그대는 하늘이 었고")
+            .addText("겨울의 그대는 하얀 눈이었다")
+            .addText("그대는 언제나")
+            .addText("행복 그 자체였다")
+            .addText("< 강현욱, 사계 >")
+            .setTextGap(35)
             .setAlign(CENTER, null)
             .setColor(190, 130, 130)
             .setTextStyle(BOLD)
             .setAlpha(180)
-            .setSize(15)
-            .setPos(0, invitationTextView.getPos().y + 80);
+            .setSize(14)
+            .setPos(0, invitationTextView.getPos().y + 60);
 
         this.__dynamicTextFrameModule = new DynamicTextFrame()
             .setSize(winSize[0], 200)
@@ -186,21 +207,18 @@ class ObjectInitializer {
             .setSize(20)
             .setPos(0, this.__slideShowModule.getPos().y + this.__slideShowModule.getHeight() + 350);
 
-        this.__mapModule = new MapView(ResourcePath.MapImage)
+        this.__mapModule = new MapView()
             .setPos(0, locationTextView.getPos().y + 80)
             .setCropSrcPos(((1441 - winSize[0]) / 2), 300)
             .setShortcutText("네이버지도 바로가기")
             .setCropSize(winSize[0], 250);
 
         var copyRightTextView = UiFactory.createTextView()
-            .addText("·   ·   ·   ·   ·   ·   ·   ·   ·   ·   ·   ·   ·   ·   ·   ·   ·")
-            .addText("Copyright ⓒ HyunChurl Lim")
-            .addText("·   ·   ·   ·   ·   ·   ·   ·   ·   ·   ·   ·   ·")
-            .setTextGap(35)
+            .addText("Thank you")
             .setAlign(CENTER, null)
             .setColor(190, 130, 130)
             .setTextStyle(BOLD)
-            .setSize(16)
+            .setSize(20)
             .setPos(0, this.__mapModule.getPos().y + this.__mapModule.getHeight() + 120);
 
 

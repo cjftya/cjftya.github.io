@@ -1,7 +1,6 @@
 class MapView {
-    constructor(mapData) {
-        var resource = TopicManager.ready().read(RESOURCE.DATA);
-        this.__map = resource.get(mapData).getData();
+    constructor() {
+        this.reload();
         this.__pos = new Vector2d();
         this.__cp = new Vector2d();
         this.__cw = 0;
@@ -20,6 +19,14 @@ class MapView {
             return true;
         }
         return false;
+    }
+
+    reload() {
+        var resource = TopicManager.ready().read(RESOURCE.DATA);
+        var resData = resource.get(ResourcePath.MapImage);
+        if (this.__map == null && resData != null) {
+            this.__map = resData.getData();
+        }
     }
 
     setShortcutText(s) {
@@ -42,8 +49,8 @@ class MapView {
         this.__cw = w;
         this.__ch = h;
         this.__sizeGap.set((w * 1.4) - w, (h * 1.4) - h);
-        this.__cp.x += -this.__sizeGap.x/2;
-        this.__cp.y += -this.__sizeGap.y/2;
+        this.__cp.x += -this.__sizeGap.x / 2;
+        this.__cp.y += -this.__sizeGap.y / 2;
         return this;
     }
 
@@ -101,9 +108,11 @@ class MapView {
     }
 
     draw() {
-        imageMode(CORNER);
-        image(this.__map, this.__pos.x, this.__pos.y, this.__cw, this.__ch,
-            this.__cp.x, this.__cp.y, this.__cw * 1.4, this.__ch * 1.4);
+        if (this.__map != null) {
+            imageMode(CORNER);
+            image(this.__map, this.__pos.x, this.__pos.y, this.__cw, this.__ch,
+                this.__cp.x, this.__cp.y, this.__cw * 1.4, this.__ch * 1.4);
+        }
         fill(150);
         rect(this.__pos.x, this.__pos.y + this.__ch, this.__cw, 35);
 

@@ -2,12 +2,12 @@ class MainScene extends AbsScene {
     constructor() {
         super();
 
+        this.__objectInitializer = new ObjectInitializer();
+
         this.__dragControl = null;
 
         this.__background = null;
         this.__backgroundParticle = null;
-
-        this.__objectInitializer = null;
 
         this.__textViewMap = null;
         this.__imageViewMap = null;
@@ -23,23 +23,27 @@ class MainScene extends AbsScene {
 
     onPreload() {
         TopicManager.ready().write(RESOURCE.DATA, new ResourceLoader()
-            .add(ResourcePath.MainImage, ResourceType.Image, ThreadType.Main)
-            .add(ResourcePath.DynamicTextFrameImage, ResourceType.Image, ThreadType.Main)
-            .add(ResourcePath.SlideShowMaskImage, ResourceType.Image, ThreadType.Main)
-            .add(ResourcePath.MapImage, ResourceType.Image, ThreadType.Main)
-            .add(ResourcePath.ManFaceImage, ResourceType.Image, ThreadType.Main)
-            .add(ResourcePath.ManFaceMaskImage, ResourceType.Image, ThreadType.Main)
-            .add(ResourcePath.WomenFaceImage, ResourceType.Image, ThreadType.Main)
-            .add(ResourcePath.DayCounterImage, ResourceType.Image, ThreadType.Main)
-            .add(ResourcePath.SlideShow1Image, ResourceType.Image, ThreadType.Main)
-            .add(ResourcePath.SlideShow2Image, ResourceType.Image, ThreadType.Main)
-            .add(ResourcePath.SlideShow3Image, ResourceType.Image, ThreadType.Main)
-            .add(ResourcePath.SlideShow4Image, ResourceType.Image, ThreadType.Main)
-            .add(ResourcePath.SlideShow5Image, ResourceType.Image, ThreadType.Main)
-            .add(ResourcePath.SlideShow6Image, ResourceType.Image, ThreadType.Main)
+            .add(ResourcePath.MainImage, ResourceType.Image, ThreadType.Background)
+            .add(ResourcePath.DynamicTextFrameImage, ResourceType.Image, ThreadType.Background)
+            .add(ResourcePath.SlideShowMaskImage, ResourceType.Image, ThreadType.Background)
+            .add(ResourcePath.MapImage, ResourceType.Image, ThreadType.Background)
+            .add(ResourcePath.ManFaceImage, ResourceType.Image, ThreadType.Background)
+            .add(ResourcePath.ManFaceMaskImage, ResourceType.Image, ThreadType.Background)
+            .add(ResourcePath.WomenFaceImage, ResourceType.Image, ThreadType.Background)
+            .add(ResourcePath.DayCounterImage, ResourceType.Image, ThreadType.Background)
+            .add(ResourcePath.RingMaskImage, ResourceType.Image, ThreadType.Background)
+            .add(ResourcePath.SlideShow1Image, ResourceType.Image, ThreadType.Background)
+            .add(ResourcePath.SlideShow2Image, ResourceType.Image, ThreadType.Background)
+            .add(ResourcePath.SlideShow3Image, ResourceType.Image, ThreadType.Background)
+            .add(ResourcePath.SlideShow4Image, ResourceType.Image, ThreadType.Background)
+            .add(ResourcePath.SlideShow5Image, ResourceType.Image, ThreadType.Background)
+            .add(ResourcePath.SlideShow6Image, ResourceType.Image, ThreadType.Background)
             .setListener((path, threadType) => {
                 if (threadType == ThreadType.Background) {
+                    this.__objectInitializer.reload();
+                    console.log("img : " + path + ", type : " + threadType);
                 }
+             //   console.log("img : " + path + ", type : " + threadType);
             })
             .load());
     }
@@ -177,7 +181,6 @@ class MainScene extends AbsScene {
 
         this.__background = new BgBubble(this.__winSize[0], this.__winSize[1]);
 
-        this.__objectInitializer = new ObjectInitializer();
         this.__objectInitializer.initializeBaseObject();
 
         this.__dragControl.setDragAreaHeigthSize(0, this.__objectInitializer.getEndOfScreem());
@@ -193,7 +196,7 @@ class MainScene extends AbsScene {
     }
 
     executeDayCountDown() {
-        var dday = new Date("September 12,2020,14:30:00").getTime();
+        var dday = new Date("March 6,2021,12:30:00").getTime();
         var view = this.__textViewMap.get(TextContents.DayCounter);
         setInterval(function () {
             var now = new Date();
@@ -207,7 +210,7 @@ class MainScene extends AbsScene {
             }
             var str = TextUtil.pad(d, 2) + "일 " + TextUtil.pad(h, 2) + "시 " +
                 TextUtil.pad(m, 2) + "분 " + TextUtil.pad(s, 2) + "초";
-            view.setText("· · · · ·  " + str + "  · · · · ·");
+            view.setText(str);
         }, 1000);
     }
 

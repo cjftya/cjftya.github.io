@@ -3,6 +3,8 @@ class AbsView {
         this.__type = type;
     }
 
+    reload() {}
+
     getType() {
         return this.__type;
     }

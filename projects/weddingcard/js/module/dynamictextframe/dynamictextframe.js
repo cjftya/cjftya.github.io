@@ -2,8 +2,7 @@ class DynamicTextFrame {
     constructor() {
         this.__pos = new Vector2d();
 
-        var resource = TopicManager.ready().read(RESOURCE.DATA)
-        this.__background = resource.get(ResourcePath.DynamicTextFrameImage).getData();
+        this.reload();
         this.__cw = 0;
         this.__ch = 0;
 
@@ -20,6 +19,14 @@ class DynamicTextFrame {
             return true;
         }
         return false;
+    }
+
+    reload() {
+        var resource = TopicManager.ready().read(RESOURCE.DATA)
+        var resData = resource.get(ResourcePath.DynamicTextFrameImage);
+        if (this.__background == null && resData != null) {
+            this.__background = resData.getData();
+        }
     }
 
     setPos(x, y) {
@@ -82,11 +89,12 @@ class DynamicTextFrame {
     }
 
     draw() {
-        imageMode(CORNER);
-        image(this.__background, this.__pos.x, this.__pos.y, this.__cw, this.__ch,
-            this.__cropPos.x, this.__cropPos.y, this.__cw, this.__ch);
-        this.__textPointer.draw();
-
+        if (this.__background != null) {
+            imageMode(CORNER);
+            image(this.__background, this.__pos.x, this.__pos.y, this.__cw, this.__ch,
+                this.__cropPos.x, this.__cropPos.y, this.__cw, this.__ch);
+            this.__textPointer.draw();
+        }
         fill(255, 0, 0);
     }
 }

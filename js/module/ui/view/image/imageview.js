@@ -7,6 +7,9 @@ class ImageView extends AbsView {
 
         this.__pos = new Vector2d();
 
+        this.__src = null;
+        this.__maskSrc = null;
+
         this.__scale = 1.0;
 
         this.__w = 0;
@@ -21,9 +24,9 @@ class ImageView extends AbsView {
 
         this.__imageMode = CORNER;
 
-        this.__isImageLoading = true;
-
         this.__debug = false;
+
+        this.__maskApplyCount = 0;
 
         //width resize = (height resize * original width size) / original height size
         //height resize = (width resize * original height size) / original width size
@@ -43,21 +46,41 @@ class ImageView extends AbsView {
         return false;
     }
 
+    reload() {
+        var resource = TopicManager.ready().read(RESOURCE.DATA);
+        if (this.__image == null && resource.get(this.__src) != null) {
+            this.__image = resource.get(this.__src).getData();
+        }
+
+        if (this.__image != null && resource.get(this.__maskSrc) != null && this.__maskApplyCount == 0) {
+            this.__maskImage = resource.get(this.__maskSrc).getData();
+            this.__image.mask(this.__maskImage);
+            this.__maskApplyCount++;
+        }
+    }
+
     setImagePath(path) {
-        var resource = TopicManager.ready().read(RESOURCE.DATA)
-        this.__image = resource.get(path).getData();
-        this.__src = path;
-        this.__w = this.__image.width;
-        this.__h = this.__image.height;
+        var resource = TopicManager.ready().read(RESOURCE.DATA);
+        if (resource.get(path) == null) {
+            var size = ImageMeta.getMeta(path);
+            this.__w = size[0];
+            this.__h = size[1];
+        } else {
+            this.__image = resource.get(path).getData();
+            this.__w = this.__image.width;
+            this.__h = this.__image.height;
+        }
         this.__originW = this.__w;
         this.__originH = this.__h;
+        this.__src = path;
         return this;
     }
 
     setMaskPath(path) {
+        this.__maskSrc = path;
         if (this.__image != null) {
             var resource = TopicManager.ready().read(RESOURCE.DATA)
-            this.__maskImage = resource.get(path).getData();
+            this.__maskImage = resource.get(this.__maskSrc).getData();
             this.__image.mask(this.__maskImage);
         }
         return this;
@@ -156,16 +179,14 @@ class ImageView extends AbsView {
     }
 
     draw() {
-        // if(this.__isImageLoading) {
-        //     return;
-        // }
-
-        imageMode(this.__imageMode);
-        if (this.__cropMode) {
-            image(this.__image, this.__pos.x, this.__pos.y, this.__cw, this.__ch,
-                this.__cropPos.x, this.__cropPos.y, this.__cw, this.__ch);
-        } else {
-            image(this.__image, this.__pos.x, this.__pos.y, this.__w, this.__h);
+        if (this.__image != null) {
+            imageMode(this.__imageMode);
+            if (this.__cropMode) {
+                image(this.__image, this.__pos.x, this.__pos.y, this.__cw, this.__ch,
+                    this.__cropPos.x, this.__cropPos.y, this.__cw, this.__ch);
+            } else {
+                image(this.__image, this.__pos.x, this.__pos.y, this.__w, this.__h);
+            }
         }
     }
 }

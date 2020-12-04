@@ -29,23 +29,47 @@ var TextContents = {
     Copyright: 13
 };
 
-var Test1 = false;
-var Path1 = "assets/slideshow/s1.jpg";
-
 var ResourcePath = {
-    MainImage: Test1 ? Path1 : "assets/main.jpg",
-    DynamicTextFrameImage: Test1 ? Path1 : "assets/dynamictextframe.jpg",
-    MapImage: Test1 ? Path1 : "assets/map.jpg",
-    ManFaceImage: Test1 ? Path1 : "assets/manface.png",
-    ManFaceMaskImage: Test1 ? Path1 : "assets/manfacemask.png",
-    WomenFaceImage: Test1 ? Path1 : "assets/womenface.png",
-    DayCounterImage: Test1 ? Path1 : "assets/dayCounter.jpg",
-    SlideShowMaskImage: Test1 ? Path1 : "assets/mask.png",
-    SlideShow1Image: Test1 ? Path1 : "assets/slideshow/s1.jpg",
-    SlideShow2Image: Test1 ? Path1 : "assets/slideshow/s2.jpg",
-    SlideShow3Image: Test1 ? Path1 : "assets/slideshow/s3.jpg",
-    SlideShow4Image: Test1 ? Path1 : "assets/slideshow/s4.jpg",
-    SlideShow5Image: Test1 ? Path1 : "assets/slideshow/s5.jpg",
-    SlideShow6Image: Test1 ? Path1 : "assets/slideshow/s6.jpg",
-    DefaultImage: Test1 ? Path1 : "assets/defaultimage.png"
+    MainImage: "https://cjftya.github.io/projects/weddingcard/assets/main.jpg",
+    DynamicTextFrameImage: "https://cjftya.github.io/projects/weddingcard/assets/dynamictextframe.jpg",
+    MapImage: "https://cjftya.github.io/projects/weddingcard/assets/map.jpg",
+    ManFaceImage: "https://cjftya.github.io/projects/weddingcard/assets/manface.png",
+    ManFaceMaskImage: "https://cjftya.github.io/projects/weddingcard/assets/manfacemask.png",
+    WomenFaceImage: "https://cjftya.github.io/projects/weddingcard/assets/womenface.png",
+    DayCounterImage: "https://cjftya.github.io/projects/weddingcard/assets/dayCounter.jpg",
+    RingMaskImage: "https://cjftya.github.io/projects/weddingcard/assets/ringmask.png",
+    SlideShowMaskImage: "https://cjftya.github.io/projects/weddingcard/assets/mask.png",
+    SlideShow1Image: "https://cjftya.github.io/projects/weddingcard/assets/slideshow/s1.jpg",
+    SlideShow2Image: "https://cjftya.github.io/projects/weddingcard/assets/slideshow/s2.jpg",
+    SlideShow3Image: "https://cjftya.github.io/projects/weddingcard/assets/slideshow/s3.jpg",
+    SlideShow4Image: "https://cjftya.github.io/projects/weddingcard/assets/slideshow/s4.jpg",
+    SlideShow5Image: "https://cjftya.github.io/projects/weddingcard/assets/slideshow/s5.jpg",
+    SlideShow6Image: "https://cjftya.github.io/projects/weddingcard/assets/slideshow/s6.jpg",
 };
+
+class __ImageMetaData {
+    constructor() {
+        this.__metaMap = new Map();
+        this.__metaMap.set(ResourcePath.MainImage, [1500, 2250]);
+        this.__metaMap.set(ResourcePath.DynamicTextFrameImage, [1300, 814]);
+        this.__metaMap.set(ResourcePath.MapImage, [1441, 909]);
+        this.__metaMap.set(ResourcePath.ManFaceImage, [480, 480]);
+        this.__metaMap.set(ResourcePath.WomenFaceImage, [480, 480]);
+        this.__metaMap.set(ResourcePath.ManFaceMaskImage, [480, 480]);
+        this.__metaMap.set(ResourcePath.DayCounterImage, [1000, 809]);
+        this.__metaMap.set(ResourcePath.RingMaskImage, [400, 400]);
+        this.__metaMap.set(ResourcePath.SlideShowMaskImage, [700, 700]);
+        this.__metaMap.set(ResourcePath.SlideShow1Image, [1000, 1000]);
+        this.__metaMap.set(ResourcePath.SlideShow2Image, [1000, 1000]);
+        this.__metaMap.set(ResourcePath.SlideShow3Image, [1000, 1000]);
+        this.__metaMap.set(ResourcePath.SlideShow4Image, [1000, 1000]);
+        this.__metaMap.set(ResourcePath.SlideShow5Image, [1000, 1000]);
+        this.__metaMap.set(ResourcePath.SlideShow6Image, [1000, 1000]);
+    }
+
+    getMeta(path) {
+        return this.__metaMap.get(path);
+    }
+}
+
+var ImageMeta = new __ImageMetaData();

@@ -50,11 +50,11 @@ class ResourceLoader {
 
         worker.addEventListener('message', event => {
             const imageData = event.data;
-            const imageElement = document.querySelectorAll(`img[data-src='${imageData.imgUrl}']`);
+            const imageElement = document.querySelector(`img[data-src='${imageData.imgUrl}']`);
             const objectURL = URL.createObjectURL(imageData.blob);
 
             imageElement.onload = () => {
-                imageElement.removeAttribute("data-src");
+                imageElement.removeAttribute('data-src');
                 URL.revokeObjectURL(objectURL);
 
                 var canvas = document.createElement("canvas");
@@ -76,7 +76,7 @@ class ResourceLoader {
                 var imgData = new ImageData(null);
                 imgData.setData(ResourceType.Image, imageData.imgUrl, p5Image);
                 this.__dataMap.set(imageData.imgUrl, imgData);
-                this.__listener(path, ThreadType.Background);
+                this.__listener(imageData.imgUrl, ThreadType.Background);
             }
             imageElement.setAttribute('src', objectURL);
         });
