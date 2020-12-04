@@ -123,8 +123,8 @@ class ObjectInitializer {
         var hScale = dayCounterImageView.getHeightScale();
 
         var weddingInfoTextView = UiFactory.createTextView()
-            .addText("2021. 03. 06 SAT. PM 12:30")
-            .addText("더채플 앳 청담 3층 커티지홀")
+            .addText("0000. 00. 00 AAA. PM 00:00")
+            .addText("더채플 앳 청담")
             .setTextGap(40)
             .setAlign(CENTER, null)
             .setColor(160, 110, 110)
