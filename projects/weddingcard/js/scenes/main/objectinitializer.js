@@ -9,6 +9,7 @@ class ObjectInitializer {
         this.__mapModule = null;
         this.__slideShowModule = null;
         this.__dynamicTextFrameModule = null;
+        this.__directions = null;
 
         this.__endOfScreen = 0;
     }
@@ -27,6 +28,10 @@ class ObjectInitializer {
 
     getDynamicTextFrameModule() {
         return this.__dynamicTextFrameModule;
+    }
+
+    getDirectionsModule() {
+        return this.__directions;
     }
 
     getTextMap() {
@@ -124,7 +129,7 @@ class ObjectInitializer {
 
         var weddingInfoTextView = UiFactory.createTextView()
             .addText("0000. 00. 00 AAA. PM 00:00")
-            .addText("더채플 앳 청담")
+            .addText("더채플앳청담")
             .setTextGap(40)
             .setAlign(CENTER, null)
             .setColor(160, 110, 110)
@@ -213,16 +218,29 @@ class ObjectInitializer {
             .setShortcutText("네이버지도 바로가기")
             .setCropSize(winSize[0], 250);
 
-        var copyRightTextView = UiFactory.createTextView()
+        var addressTextView = UiFactory.createTextView()
+            .addText("더채플앳청담")
+            .addText("서울 강남구 선릉로 757")
+            .setTextGap(25)
+            .setAlign(LEFT, null)
+            .setColor(190, 130, 130)
+            .setTextStyle(BOLD)
+            .setSize(15)
+            .setPos(10, this.__mapModule.getPos().y + this.__mapModule.getHeight() + 60);
+
+        this.__directions = new Directions()
+            .setPos(0, addressTextView.getPos().y + 120);
+
+        var thankYouTextView = UiFactory.createTextView()
             .addText("Thank you")
             .setAlign(CENTER, null)
             .setColor(190, 130, 130)
             .setTextStyle(BOLD)
             .setSize(20)
-            .setPos(0, this.__mapModule.getPos().y + this.__mapModule.getHeight() + 120);
+            .setPos(0, addressTextView.getPos().y + 380);
 
 
-        this.__endOfScreen = this.__mapModule.getPos().y + 100;
+        this.__endOfScreen = thankYouTextView.getPos().y - winSize[1] / 1.5;
 
         // set map
         this.__particleMap = new Map();
@@ -243,6 +261,7 @@ class ObjectInitializer {
         this.__textViewMap.set(TextContents.InvitationLetter, invitationLetterTextView);
         this.__textViewMap.set(TextContents.Gallery, galleryTextView);
         this.__textViewMap.set(TextContents.Location, locationTextView);
-        this.__textViewMap.set(TextContents.Copyright, copyRightTextView);
+        this.__textViewMap.set(TextContents.Address, addressTextView);
+        this.__textViewMap.set(TextContents.ThankYou, thankYouTextView);
     }
 }

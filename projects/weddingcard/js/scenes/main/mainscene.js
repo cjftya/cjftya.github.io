@@ -17,6 +17,7 @@ class MainScene extends AbsScene {
         this.__mapModule = null;
         this.__slideShowModule = null;
         this.__dynamicTextFrameModule = null;
+        this.__directionsModule = null;
 
         this.__winSize = null;
         this.__click = false;
@@ -42,7 +43,7 @@ class MainScene extends AbsScene {
             .setListener((path, threadType) => {
                 if (threadType == ThreadType.Background) {
                     this.__objectInitializer.reload();
-                    console.log("img : " + path + ", type : " + threadType);
+                    // console.log("img : " + path + ", type : " + threadType);
                 }
             })
             .load());
@@ -102,6 +103,10 @@ class MainScene extends AbsScene {
             this.__dynamicTextFrameModule.updateWithDraw(timeDelta);
         }
 
+        if(this.__directionsModule.inScreen(this.__winSize[0], this.__winSize[1])) {
+            this.__directionsModule.updateWithDraw(timeDelta);
+        }
+
         this.__backgroundParticle.updateWithDraw(timeDelta);
     }
 
@@ -132,6 +137,7 @@ class MainScene extends AbsScene {
             TopicManager.ready().publish(TOPICS.QUICK_VIEWER, this.__slideShowModule.getCurrentImage());
         }
         this.__mapModule.setMapController(false);
+       this.__directionsModule.selectDirectionInfo(tx, ty);
     }
 
     onTouchMove(tx, ty) {
@@ -174,6 +180,7 @@ class MainScene extends AbsScene {
         this.__traceModule.addPos(0, vy);
         this.__dynamicTextFrameModule.addPos(0, vy);
         this.__dynamicTextFrameModule.addCropSrcPos(0, vy * 0.05);
+        this.__directionsModule.addPos(0, vy);
     }
 
     increaseDrawCall() {
@@ -199,6 +206,7 @@ class MainScene extends AbsScene {
         this.__slideShowModule = this.__objectInitializer.getSlideShowModule();
         this.__dynamicTextFrameModule = this.__objectInitializer.getDynamicTextFrameModule();
         this.__mapModule = this.__objectInitializer.getMapModule();
+        this.__directionsModule = this.__objectInitializer.getDirectionsModule();
 
         this.__textViewMap = this.__objectInitializer.getTextMap();
         this.__imageViewMap = this.__objectInitializer.getImageMap();

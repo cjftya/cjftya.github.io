@@ -26,7 +26,8 @@ var TextContents = {
     SubwayInfo: 10,
     BusInfo: 11,
     CarInfo: 12,
-    Copyright: 13
+    ThankYou: 13,
+    Address: 14
 };
 
 var ResourcePath = {
