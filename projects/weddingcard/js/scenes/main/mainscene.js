@@ -19,6 +19,7 @@ class MainScene extends AbsScene {
         this.__dynamicTextFrameModule = null;
 
         this.__winSize = null;
+        this.__click = false;
     }
 
     onPreload() {
@@ -43,7 +44,6 @@ class MainScene extends AbsScene {
                     this.__objectInitializer.reload();
                     console.log("img : " + path + ", type : " + threadType);
                 }
-             //   console.log("img : " + path + ", type : " + threadType);
             })
             .load());
     }
@@ -60,8 +60,10 @@ class MainScene extends AbsScene {
         background(255, 255, 245);
         noStroke();
 
-        this.__dragControl.update();
-        this.updateObjects(this.__dragControl.getDragVel());
+        if (!this.__click) {
+            this.__dragControl.update();
+            this.updateObjects(this.__dragControl.getDragVel());
+        }
         //=================================================
 
         this.__background.draw();
@@ -110,6 +112,8 @@ class MainScene extends AbsScene {
     }
 
     onTouchDown(tx, ty) {
+        this.__click = true;
+        this.__dragControl.setDragVel(0);
         this.__dragControl.setOldPos(tx, ty);
         this.__dragControl.setDragMax(0);
 
@@ -119,6 +123,7 @@ class MainScene extends AbsScene {
     }
 
     onTouchUp(tx, ty) {
+        this.__click = false;
         if (!this.__mapModule.isMapController()) {
             this.__mapModule.moveToNaverMap(tx, ty);
         }
@@ -130,12 +135,17 @@ class MainScene extends AbsScene {
     }
 
     onTouchMove(tx, ty) {
-        var dx = mouseX - this.__dragControl.getOldPos().x;
-        var dy = mouseY - this.__dragControl.getOldPos().y;
+        var dx = tx - this.__dragControl.getOldPos().x;
+        var dy = ty - this.__dragControl.getOldPos().y;
         if (this.__mapModule.isMapController()) {
             this.__mapModule.addCropSrcPos(-dx, -dy);
         } else {
-            this.__dragControl.addDragVel(dy * 0.15);
+            if (Math.abs(dy) > 3) {
+                this.__dragControl.addDragVel(dy * 0.2);
+            } else {
+                this.__dragControl.setDragVel(this.__dragControl.getDragVel() * 0.7);
+            }
+            this.updateObjects(dy);
         }
         this.__dragControl.setOldPos(tx, ty);
     }
@@ -143,11 +153,11 @@ class MainScene extends AbsScene {
     updateObjects(vy) {
         this.__dragControl.addDragPos(vy);
         if (this.__dragControl.getDragPos() > this.__dragControl.getStartAreaHeigth()) {
-            vy += (this.__dragControl.getStartAreaHeigth() - this.__dragControl.getDragPos()) * 0.05;
-            this.__dragControl.addDragPos((this.__dragControl.getStartAreaHeigth() - this.__dragControl.getDragPos()) * 0.05);
+            vy += (this.__dragControl.getStartAreaHeigth() - this.__dragControl.getDragPos()) * 0.2;
+            this.__dragControl.addDragPos((this.__dragControl.getStartAreaHeigth() - this.__dragControl.getDragPos()) * 0.2);
         } else if (this.__dragControl.getDragPos() < -this.__dragControl.getEndAreaHeight()) {
-            vy += (-this.__dragControl.getEndAreaHeight() - this.__dragControl.getDragPos()) * 0.05;
-            this.__dragControl.addDragPos((-this.__dragControl.getEndAreaHeight() - this.__dragControl.getDragPos()) * 0.05);
+            vy += (-this.__dragControl.getEndAreaHeight() - this.__dragControl.getDragPos()) * 0.2;
+            this.__dragControl.addDragPos((-this.__dragControl.getEndAreaHeight() - this.__dragControl.getDragPos()) * 0.2);
         }
 
         for (var [id, view] of this.__textViewMap.entries()) {
