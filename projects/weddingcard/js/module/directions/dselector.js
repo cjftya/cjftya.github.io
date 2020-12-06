@@ -4,7 +4,7 @@ class DSelector {
         this.__size = 0;
 
         this.__color = color(230, 170, 170);
-        this.__textColor = color(245, 245, 245);
+        this.__textColor = color(250, 250, 250);
         this.__lineCount = 0;
         this.__text = "";
         this.__toggle = false;
@@ -80,8 +80,8 @@ class DSelector {
         noStroke();
         fill(this.__textColor);
         text(this.__text,
-            this.__pos.x - this.__size / 2 + 3,
-            this.__pos.y - this.__size / 2 + this.__size/2-14,
+            this.__pos.x - this.__size / 2 + 2,
+            this.__pos.y - this.__size / 2 + this.__size / 2 - 14,
             this.__size, this.__size);
     }
 }

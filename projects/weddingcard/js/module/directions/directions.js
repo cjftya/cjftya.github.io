@@ -11,6 +11,8 @@ class Directions {
         var size = (this.__w / 4) - 5;
         var rsize = size - 15;
         var space = size / 2 + 10;
+        this.__ch = rsize + 70;
+
         var s1 = new DSelector()
             .setToggle(true)
             .addText("버스")
@@ -47,7 +49,10 @@ class Directions {
     }
 
     inScreen(sw, sh) {
-        return true;
+        if (this.__pos.y + this.__ch > -40 && this.__pos.y < sh + 40) {
+            return true;
+        }
+        return false;
     }
 
     selectDirectionInfo(x, y) {

@@ -4,7 +4,6 @@ class DragCOntrol {
 
         this.__dragPos = 0;
         this.__dragVel = 0;
-        this.__dragMax = 0;
 
         this.__areaHstart = 0;
         this.__areaHend = 0;
@@ -29,14 +28,6 @@ class DragCOntrol {
 
     getEndAreaHeight() {
         return this.__areaHend;
-    }
-
-    getDragMax() {
-        return this.__dragMax;
-    }
-
-    setDragMax(a) {
-        this.__dragMax = a;
     }
 
     addDragPos(p) {

@@ -18,6 +18,7 @@ class MainScene extends AbsScene {
         this.__slideShowModule = null;
         this.__dynamicTextFrameModule = null;
         this.__directionsModule = null;
+        this.__dayCountModule = null;
 
         this.__winSize = null;
         this.__click = false;
@@ -32,7 +33,7 @@ class MainScene extends AbsScene {
             .add(ResourcePath.ManFaceImage, ResourceType.Image, ThreadType.Background)
             .add(ResourcePath.ManFaceMaskImage, ResourceType.Image, ThreadType.Background)
             .add(ResourcePath.WomenFaceImage, ResourceType.Image, ThreadType.Background)
-            .add(ResourcePath.DayCounterImage, ResourceType.Image, ThreadType.Background)
+            .add(ResourcePath.RingImage, ResourceType.Image, ThreadType.Background)
             .add(ResourcePath.RingMaskImage, ResourceType.Image, ThreadType.Background)
             .add(ResourcePath.SlideShow1Image, ResourceType.Image, ThreadType.Background)
             .add(ResourcePath.SlideShow2Image, ResourceType.Image, ThreadType.Background)
@@ -54,7 +55,6 @@ class MainScene extends AbsScene {
     }
 
     onStart() {
-        this.executeDayCountDown();
     }
 
     onUpdateWithDraw(timeDelta) {
@@ -103,6 +103,10 @@ class MainScene extends AbsScene {
             this.__dynamicTextFrameModule.updateWithDraw(timeDelta);
         }
 
+        if (this.__dayCountModule.inScreen(this.__winSize[0], this.__winSize[1])) {
+            this.__dayCountModule.updateWithDraw(timeDelta);
+        }
+
         if(this.__directionsModule.inScreen(this.__winSize[0], this.__winSize[1])) {
             this.__directionsModule.updateWithDraw(timeDelta);
         }
@@ -120,7 +124,6 @@ class MainScene extends AbsScene {
         this.__click = true;
         this.__dragControl.setDragVel(0);
         this.__dragControl.setOldPos(tx, ty);
-        this.__dragControl.setDragMax(0);
 
         if (this.__mapModule.inBound(tx, ty)) {
             this.__mapModule.setMapController(true);
@@ -181,6 +184,7 @@ class MainScene extends AbsScene {
         this.__dynamicTextFrameModule.addPos(0, vy);
         this.__dynamicTextFrameModule.addCropSrcPos(0, vy * 0.05);
         this.__directionsModule.addPos(0, vy);
+        this.__dayCountModule.addPos(0, vy);
     }
 
     increaseDrawCall() {
@@ -207,29 +211,11 @@ class MainScene extends AbsScene {
         this.__dynamicTextFrameModule = this.__objectInitializer.getDynamicTextFrameModule();
         this.__mapModule = this.__objectInitializer.getMapModule();
         this.__directionsModule = this.__objectInitializer.getDirectionsModule();
+        this.__dayCountModule = this.__objectInitializer.getDayCountModule();
 
         this.__textViewMap = this.__objectInitializer.getTextMap();
         this.__imageViewMap = this.__objectInitializer.getImageMap();
         this.__sprayParticleMap = this.__objectInitializer.getParticleMap();
-    }
-
-    executeDayCountDown() {
-        var dday = new Date("March 6,2021,12:30:00").getTime();
-        var view = this.__textViewMap.get(TextContents.DayCounter);
-        setInterval(function () {
-            var now = new Date();
-            var distance = dday - now;
-            var d = Math.floor(distance / (1000 * 60 * 60 * 24));
-            var h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            var m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            var s = Math.floor((distance % (1000 * 60)) / 1000);
-            if (s < 10) {
-                s = '0' + s;
-            }
-            var str = TextUtil.pad(d, 2) + "일 " + TextUtil.pad(h, 2) + "시 " +
-                TextUtil.pad(m, 2) + "분 " + TextUtil.pad(s, 2) + "초";
-            view.setText(str);
-        }, 1000);
     }
 
     drawDebug() {

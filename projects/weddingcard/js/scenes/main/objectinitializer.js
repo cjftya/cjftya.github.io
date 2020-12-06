@@ -1,5 +1,4 @@
 class ObjectInitializer {
-
     constructor() {
         this.__textViewMap = null;
         this.__imageViewMap = null;
@@ -9,7 +8,8 @@ class ObjectInitializer {
         this.__mapModule = null;
         this.__slideShowModule = null;
         this.__dynamicTextFrameModule = null;
-        this.__directions = null;
+        this.__directionsModule = null;
+        this.__dayCountModule = null;
 
         this.__endOfScreen = 0;
     }
@@ -31,7 +31,11 @@ class ObjectInitializer {
     }
 
     getDirectionsModule() {
-        return this.__directions;
+        return this.__directionsModule;
+    }
+
+    getDayCountModule() {
+        return this.__dayCountModule;
     }
 
     getTextMap() {
@@ -61,7 +65,7 @@ class ObjectInitializer {
             this.__dynamicTextFrameModule.reload();
         }
 
-        if(this.__mapModule != null) {
+        if (this.__mapModule != null) {
             this.__mapModule.reload();
         }
 
@@ -113,19 +117,19 @@ class ObjectInitializer {
 
         var womenFaceImageView = UiFactory.createImageView()
             .setImagePath(ResourcePath.WomenFaceImage)
-            .setImageMode(CENTER)
             .setMaskPath(ResourcePath.ManFaceMaskImage)
+            .setImageMode(CENTER)
             .setPos(winSize[0] / 2 + (winSize[0] / 5),
                 mainImageTitleTextView.getPos().y + + (winSize[0] / 5) + 20)
-            .setWidth(winSize[0] / 2.8, true)
+            .setWidth(winSize[0] / 2.8, true);
 
-        var dayCounterImageView = UiFactory.createImageView()
-            .setImagePath(ResourcePath.DayCounterImage)
+        var ringImageView = UiFactory.createImageView()
+            .setImagePath(ResourcePath.RingImage)
             .setMaskPath(ResourcePath.RingMaskImage)
-            .setPos(0, manFaceImageView.getPos().y + manFaceImageView.getHeight()+90)
+            .setPos(0, manFaceImageView.getPos().y + manFaceImageView.getHeight() + 90)
             .setWidth(winSize[0], true);
 
-        var hScale = dayCounterImageView.getHeightScale();
+        var hScale = ringImageView.getHeightScale();
 
         var weddingInfoTextView = UiFactory.createTextView()
             .addText("0000. 00. 00 AAA. PM 00:00")
@@ -134,16 +138,11 @@ class ObjectInitializer {
             .setAlign(CENTER, null)
             .setColor(160, 110, 110)
             .setTextStyle(BOLD)
-            .setSize(40 * hScale)
+            .setSize(47 * hScale)
             .setPos(0, womenFaceImageView.getPos().y + womenFaceImageView.getHeight() + 30);
 
-        var dayCounterTextView = UiFactory.createTextView()
-            .addText("00일 00시 00분 00초")
-            .setAlign(CENTER, null)
-            .setColor(160, 110, 110)
-            .setTextStyle(BOLD)
-            .setSize(65 * hScale)
-            .setPos(0, dayCounterImageView.getPos().y + (870 * hScale));
+        this.__dayCountModule = new DayCount()
+            .setPos(0, ringImageView.getPos().y + ringImageView.getHeight());
 
         var invitationTextView = UiFactory.createTextView()
             .addText("♡ · · ·  I n v i t a t i on  · · · ♡")
@@ -151,7 +150,7 @@ class ObjectInitializer {
             .setColor(160, 110, 110)
             .setTextStyle(BOLD)
             .setSize(20)
-            .setPos(0, weddingInfoTextView.getPos().y + dayCounterImageView.getHeight() + 400);
+            .setPos(0, weddingInfoTextView.getPos().y + ringImageView.getHeight() + 400);
 
         var invitationLetterTextView = UiFactory.createTextView()
             .addText("봄의 그대는 벚꽃이었고")
@@ -228,7 +227,7 @@ class ObjectInitializer {
             .setSize(15)
             .setPos(10, this.__mapModule.getPos().y + this.__mapModule.getHeight() + 60);
 
-        this.__directions = new Directions()
+        this.__directionsModule = new Directions()
             .setPos(0, addressTextView.getPos().y + 120);
 
         var thankYouTextView = UiFactory.createTextView()
@@ -248,15 +247,14 @@ class ObjectInitializer {
 
         this.__imageViewMap = new Map();
         this.__imageViewMap.set(ImageContents.Main, mainImageView);
-        this.__imageViewMap.set(ImageContents.ManFaceImage, manFaceImageView);
-        this.__imageViewMap.set(ImageContents.WomenFaceImage, womenFaceImageView);
-        this.__imageViewMap.set(ImageContents.DayCounter, dayCounterImageView);
+        this.__imageViewMap.set(ImageContents.ManFace, manFaceImageView);
+        this.__imageViewMap.set(ImageContents.WomenFace, womenFaceImageView);
+        this.__imageViewMap.set(ImageContents.Ring, ringImageView);
 
         this.__textViewMap = new Map();
         this.__textViewMap.set(TextContents.Title, titleTextView);
         this.__textViewMap.set(TextContents.MainImageTitle, mainImageTitleTextView);
         this.__textViewMap.set(TextContents.WeddingInfo, weddingInfoTextView);
-        this.__textViewMap.set(TextContents.DayCounter, dayCounterTextView);
         this.__textViewMap.set(TextContents.Invitation, invitationTextView);
         this.__textViewMap.set(TextContents.InvitationLetter, invitationLetterTextView);
         this.__textViewMap.set(TextContents.Gallery, galleryTextView);

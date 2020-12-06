@@ -1,33 +1,25 @@
 var ParticleContents = {
-    MainTitle: 0,
-    SlideShow1: 1,
-    SlideShow2: 2,
-    SlideShow3: 3
+    MainTitle: 0
 };
 
 var ImageContents = {
     Main: 0,
-    ManFaceImage: 1,
-    WomenFaceImage: 2,
-    DayCounter: 3
+    ManFace: 1,
+    WomenFace: 2,
+    Ring: 3
 };
 
 var TextContents = {
     Title: 0,
     MainImageTitle: 1,
-    DayCounter: 2,
-    DDayLabel: 3,
-    WeddingInfo: 4,
-    Invitation: 5,
-    InvitationLetter: 6,
-    Gallery: 7,
-    Location: 8,
-    ShortcutNaver: 9,
-    SubwayInfo: 10,
-    BusInfo: 11,
-    CarInfo: 12,
-    ThankYou: 13,
-    Address: 14
+    WeddingInfo: 2,
+    Invitation: 3,
+    InvitationLetter: 4,
+    Gallery: 5,
+    Location: 6,
+    ShortcutNaver: 7,
+    ThankYou: 8,
+    Address: 9
 };
 
 var ResourcePath = {
@@ -37,7 +29,7 @@ var ResourcePath = {
     ManFaceImage: "https://cjftya.github.io/projects/weddingcard/assets/face1.png",
     ManFaceMaskImage: "https://cjftya.github.io/projects/weddingcard/assets/mask/face_mask.png",
     WomenFaceImage: "https://cjftya.github.io/projects/weddingcard/assets/face2.png",
-    DayCounterImage: "https://cjftya.github.io/projects/weddingcard/assets/ring.jpg",
+    RingImage: "https://cjftya.github.io/projects/weddingcard/assets/ring.jpg",
     RingMaskImage: "https://cjftya.github.io/projects/weddingcard/assets/mask/ring_mask.png",
     SlideShowMaskImage: "https://cjftya.github.io/projects/weddingcard/assets/mask/slideshow_mask.png",
     SlideShow1Image: "https://cjftya.github.io/projects/weddingcard/assets/slideshow/s1.jpg",
@@ -57,7 +49,7 @@ class __ImageMetaData {
         this.__metaMap.set(ResourcePath.ManFaceImage, [480, 480]);
         this.__metaMap.set(ResourcePath.WomenFaceImage, [480, 480]);
         this.__metaMap.set(ResourcePath.ManFaceMaskImage, [480, 480]);
-        this.__metaMap.set(ResourcePath.DayCounterImage, [1000, 809]);
+        this.__metaMap.set(ResourcePath.RingImage, [1000, 809]);
         this.__metaMap.set(ResourcePath.RingMaskImage, [400, 400]);
         this.__metaMap.set(ResourcePath.SlideShowMaskImage, [700, 700]);
         this.__metaMap.set(ResourcePath.SlideShow1Image, [1000, 1000]);
