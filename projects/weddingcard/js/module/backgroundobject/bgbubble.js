@@ -1,7 +1,7 @@
 class BgBubble {
     constructor(w, h) {
         this.__bubleColor = color(250, 190, 190);
-        this.__bubleColor.setAlpha(8);
+        this.__bubleColor.setAlpha(0);
 
         this.__bubleArr = [];
 

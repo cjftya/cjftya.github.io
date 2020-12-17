@@ -13,9 +13,9 @@ class DayCount {
         this.__pos = new Vector2d();
         this.__boardList = [];
 
-        var bw = 40;
-        var bh = 40;
-        var space = 5;
+        var bw = 35;
+        var bh = 35;
+        var space = 2;
         var size = this.__w - (bw * 5 + space * 4) - 0;
         this.__ch = bh;
         var b1 = new NumberBoard()

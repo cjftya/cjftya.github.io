@@ -5,6 +5,7 @@ class NumberBoard {
         this.__h = 0;
 
         this.__color = color(200, 150, 150);
+        this.__color.setAlpha(130);
         this.__charColor = color(250, 250, 250);
         this.__char = "";
         this.__isBackground = true;
@@ -64,15 +65,15 @@ class NumberBoard {
     draw() {
         if (this.__isBackground) {
             fill(this.__color);
-            rect(this.__pos.x, this.__pos.y, this.__w, this.__h, 17);
+            rect(this.__pos.x, this.__pos.y, this.__w, this.__h, 14);
         }
-        textSize(20);
+        textSize(15);
         textStyle(BOLD);
         textAlign(CENTER, null);
         noStroke();
         fill(this.__charColor);
         text(this.__char,
-            this.__pos.x + 3, this.__pos.y + this.__h / 2 - 10,
+            this.__pos.x + 3, this.__pos.y + this.__h / 2 - 7,
             this.__w, this.__h);
     }
 }

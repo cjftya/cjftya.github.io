@@ -26,6 +26,7 @@ class MainScene extends AbsScene {
 
     onPreload() {
         TopicManager.ready().write(RESOURCE.DATA, new ResourceLoader()
+            .add(ResourcePath.UserFont, ResourceType.Font, ThreadType.Main)
             .add(ResourcePath.MainImage, ResourceType.Image, ThreadType.Background)
             .add(ResourcePath.DynamicTextFrameImage, ResourceType.Image, ThreadType.Background)
             .add(ResourcePath.SlideShowMaskImage, ResourceType.Image, ThreadType.Background)
@@ -67,7 +68,7 @@ class MainScene extends AbsScene {
         }
         //=================================================
 
-        this.__background.draw();
+      //  this.__background.draw();
 
         for (var [id, view] of this.__imageViewMap.entries()) {
             if (view.inScreen(this.__winSize[0], this.__winSize[1])) {
@@ -111,7 +112,7 @@ class MainScene extends AbsScene {
             this.__directionsModule.updateWithDraw(timeDelta);
         }
 
-        this.__backgroundParticle.updateWithDraw(timeDelta);
+     //   this.__backgroundParticle.updateWithDraw(timeDelta);
     }
 
     onEnd() {
@@ -192,6 +193,10 @@ class MainScene extends AbsScene {
     }
 
     initializeObject() {
+        var resource = TopicManager.ready().read(RESOURCE.DATA);
+        var userFont = resource.get(ResourcePath.UserFont).getData();
+        textFont(userFont);
+
         this.__winSize = TopicManager.ready().read(DISPLAY_INFO.WINDOW_SIZE);
 
         this.__dragControl = new DragCOntrol();

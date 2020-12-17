@@ -99,6 +99,7 @@ class Directions {
         for (var s of this.__selectorList) {
             s.draw();
         }
+        textStyle(NORMAL);
         if (this.__selectedIndex >= 0) {
             textSize(14);
             textLeading(20);

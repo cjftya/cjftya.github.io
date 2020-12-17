@@ -23,21 +23,25 @@ var TextContents = {
 };
 
 var ResourcePath = {
-    MainImage: "https://cjftya.github.io/projects/weddingcard/assets/main.jpg",
-    DynamicTextFrameImage: "https://cjftya.github.io/projects/weddingcard/assets/dynamictextframe.jpg",
-    MapImage: "https://cjftya.github.io/projects/weddingcard/assets/map.jpg",
-    ManFaceImage: "https://cjftya.github.io/projects/weddingcard/assets/face1.png",
-    ManFaceMaskImage: "https://cjftya.github.io/projects/weddingcard/assets/mask/face_mask.png",
-    WomenFaceImage: "https://cjftya.github.io/projects/weddingcard/assets/face2.png",
-    RingImage: "https://cjftya.github.io/projects/weddingcard/assets/ring.jpg",
-    RingMaskImage: "https://cjftya.github.io/projects/weddingcard/assets/mask/ring_mask.png",
-    SlideShowMaskImage: "https://cjftya.github.io/projects/weddingcard/assets/mask/slideshow_mask.png",
-    SlideShow1Image: "https://cjftya.github.io/projects/weddingcard/assets/slideshow/s1.jpg",
-    SlideShow2Image: "https://cjftya.github.io/projects/weddingcard/assets/slideshow/s2.jpg",
-    SlideShow3Image: "https://cjftya.github.io/projects/weddingcard/assets/slideshow/s3.jpg",
-    SlideShow4Image: "https://cjftya.github.io/projects/weddingcard/assets/slideshow/s4.jpg",
-    SlideShow5Image: "https://cjftya.github.io/projects/weddingcard/assets/slideshow/s5.jpg",
-    SlideShow6Image: "https://cjftya.github.io/projects/weddingcard/assets/slideshow/s6.jpg",
+    // image
+    MainImage: "https://cjftya.github.io/projects/weddingcard/assets/image/main.jpg",
+    DynamicTextFrameImage: "https://cjftya.github.io/projects/weddingcard/assets/image/dynamictextframe.jpg",
+    MapImage: "https://cjftya.github.io/projects/weddingcard/assets/image/map.jpg",
+    ManFaceImage: "https://cjftya.github.io/projects/weddingcard/assets/image/face1.png",
+    ManFaceMaskImage: "https://cjftya.github.io/projects/weddingcard/assets/image/mask/face_mask.png",
+    WomenFaceImage: "https://cjftya.github.io/projects/weddingcard/assets/image/face2.png",
+    RingImage: "https://cjftya.github.io/projects/weddingcard/assets/image/ring.jpg",
+    RingMaskImage: "https://cjftya.github.io/projects/weddingcard/assets/image/mask/ring_mask.png",
+    SlideShowMaskImage: "https://cjftya.github.io/projects/weddingcard/assets/image/mask/slideshow_mask.png",
+    SlideShow1Image: "https://cjftya.github.io/projects/weddingcard/assets/image/slideshow/s1.jpg",
+    SlideShow2Image: "https://cjftya.github.io/projects/weddingcard/assets/image/slideshow/s2.jpg",
+    SlideShow3Image: "https://cjftya.github.io/projects/weddingcard/assets/image/slideshow/s3.jpg",
+    SlideShow4Image: "https://cjftya.github.io/projects/weddingcard/assets/image/slideshow/s4.jpg",
+    SlideShow5Image: "https://cjftya.github.io/projects/weddingcard/assets/image/slideshow/s5.jpg",
+    SlideShow6Image: "https://cjftya.github.io/projects/weddingcard/assets/image/slideshow/s6.jpg",
+
+    // font
+    UserFont: "assets/font/Milea.ttf"
 };
 
 class __ImageMetaData {

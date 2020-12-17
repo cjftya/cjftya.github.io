@@ -102,7 +102,7 @@ class TextPointer {
         this.__color.setAlpha(this.__alpha);
         fill(this.__color);
 
-        textSize(20);
+        textSize(17);
         textStyle(BOLD);
         noStroke();
         textAlign(CENTER, null);

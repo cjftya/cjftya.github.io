@@ -83,19 +83,19 @@ class ObjectInitializer {
             .setWidth(winSize[0], true);
 
         var titleTextView = UiFactory.createTextView()
-            .addText("♡ · · ·  W e d d i n g  · · · ♡")
+            .addText("W e d d i n g")
             .setAlign(CENTER, null)
             .setColor(160, 110, 110)
             .setTextStyle(BOLD)
-            .setSize(20)
+            .setSize(16)
             .setPos(0, mainImageView.getHeight() + 60);
 
         var mainImageTitleTextView = UiFactory.createTextView()
-            .addText("현 철   ღ   서 영")
+            .addText("현 철   •   서 영")
             .setAlign(CENTER, null)
             .setColor(160, 110, 110)
             .setTextStyle(BOLD)
-            .setSize(18)
+            .setSize(16)
             .setPos(0, titleTextView.getPos().y + 100);
 
         var mainTitleParticle = EffectFactory.createParticle(Particle.Spray)
@@ -112,7 +112,7 @@ class ObjectInitializer {
             .setImageMode(CENTER)
             .setMaskPath(ResourcePath.ManFaceMaskImage)
             .setPos(winSize[0] / 2 - (winSize[0] / 5),
-                mainImageTitleTextView.getPos().y + (winSize[0] / 5) + 20)
+                mainImageTitleTextView.getPos().y + (winSize[0] / 5) + 30)
             .setWidth(winSize[0] / 2.8, true)
 
         var womenFaceImageView = UiFactory.createImageView()
@@ -120,7 +120,7 @@ class ObjectInitializer {
             .setMaskPath(ResourcePath.ManFaceMaskImage)
             .setImageMode(CENTER)
             .setPos(winSize[0] / 2 + (winSize[0] / 5),
-                mainImageTitleTextView.getPos().y + + (winSize[0] / 5) + 20)
+                mainImageTitleTextView.getPos().y + + (winSize[0] / 5) + 30)
             .setWidth(winSize[0] / 2.8, true);
 
         var ringImageView = UiFactory.createImageView()
@@ -134,22 +134,22 @@ class ObjectInitializer {
         var weddingInfoTextView = UiFactory.createTextView()
             .addText("0000. 00. 00 AAA. PM 00:00")
             .addText("더채플앳청담")
-            .setTextGap(40)
+            .setTextGap(30)
             .setAlign(CENTER, null)
             .setColor(160, 110, 110)
-            .setTextStyle(BOLD)
-            .setSize(47 * hScale)
+            // .setTextStyle(BOLD)
+            .setSize(40 * hScale)
             .setPos(0, womenFaceImageView.getPos().y + womenFaceImageView.getHeight() + 30);
 
         this.__dayCountModule = new DayCount()
             .setPos(0, ringImageView.getPos().y + ringImageView.getHeight());
 
         var invitationTextView = UiFactory.createTextView()
-            .addText("♡ · · ·  I n v i t a t i on  · · · ♡")
+            .addText("I n v i t a t i o n")
             .setAlign(CENTER, null)
             .setColor(160, 110, 110)
             .setTextStyle(BOLD)
-            .setSize(20)
+            .setSize(16)
             .setPos(0, weddingInfoTextView.getPos().y + ringImageView.getHeight() + 400);
 
         var invitationLetterTextView = UiFactory.createTextView()
@@ -160,13 +160,12 @@ class ObjectInitializer {
             .addText("그대는 언제나")
             .addText("행복 그 자체였다")
             .addText("< 강현욱, 사계 >")
-            .setTextGap(35)
+            .setTextGap(40)
             .setAlign(CENTER, null)
             .setColor(190, 130, 130)
-            .setTextStyle(BOLD)
             .setAlpha(180)
             .setSize(14)
-            .setPos(0, invitationTextView.getPos().y + 60);
+            .setPos(0, invitationTextView.getPos().y + 90);
 
         this.__dynamicTextFrameModule = new DynamicTextFrame()
             .setSize(winSize[0], 200)
@@ -178,11 +177,11 @@ class ObjectInitializer {
             .setColor(240, 240, 240);
 
         var galleryTextView = UiFactory.createTextView()
-            .addText("♡ · · ·  G a l l e r y  · · · ♡")
+            .addText("G a l l e r y")
             .setAlign(CENTER, null)
             .setColor(160, 110, 110)
             .setTextStyle(BOLD)
-            .setSize(20)
+            .setSize(16)
             .setPos(0, this.__dynamicTextFrameModule.getPos().y + 540);
 
         this.__slideShowModule = new SlideShow()
@@ -195,7 +194,7 @@ class ObjectInitializer {
             .setMask(ResourcePath.SlideShowMaskImage)
             .setWidth(winSize[0])
             .setDelay(5)
-            .setPos(0, galleryTextView.getPos().y + 50);
+            .setPos(0, galleryTextView.getPos().y + 70);
 
         this.__traceModule = new HeartTrace()
             .setHeartSize(this.__slideShowModule.getWidth(), this.__slideShowModule.getHeight())
@@ -204,11 +203,11 @@ class ObjectInitializer {
             .setMovePointCount(1);
 
         var locationTextView = UiFactory.createTextView()
-            .addText("♡ · · ·  L o c a t i o n  · · · ♡")
+            .addText("L o c a t i o n")
             .setAlign(CENTER, null)
             .setColor(160, 110, 110)
             .setTextStyle(BOLD)
-            .setSize(20)
+            .setSize(16)
             .setPos(0, this.__slideShowModule.getPos().y + this.__slideShowModule.getHeight() + 350);
 
         this.__mapModule = new MapView()
@@ -220,10 +219,9 @@ class ObjectInitializer {
         var addressTextView = UiFactory.createTextView()
             .addText("더채플앳청담")
             .addText("서울 강남구 선릉로 757")
-            .setTextGap(25)
+            .setTextGap(30)
             .setAlign(LEFT, null)
             .setColor(190, 130, 130)
-            .setTextStyle(BOLD)
             .setSize(15)
             .setPos(10, this.__mapModule.getPos().y + this.__mapModule.getHeight() + 60);
 
@@ -235,7 +233,7 @@ class ObjectInitializer {
             .setAlign(CENTER, null)
             .setColor(190, 130, 130)
             .setTextStyle(BOLD)
-            .setSize(20)
+            .setSize(16)
             .setPos(0, addressTextView.getPos().y + 380);
 
 
