@@ -73,7 +73,7 @@ class NumberBoard {
         noStroke();
         fill(this.__charColor);
         text(this.__char,
-            this.__pos.x + 3, this.__pos.y + this.__h / 2 - 7,
+            this.__pos.x + 3, this.__pos.y + this.__h / 2 + 6,
             this.__w, this.__h);
     }
 }

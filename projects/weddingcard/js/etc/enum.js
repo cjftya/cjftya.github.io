@@ -41,7 +41,7 @@ var ResourcePath = {
     SlideShow6Image: "https://cjftya.github.io/projects/weddingcard/assets/image/slideshow/s6.jpg",
 
     // font
-    UserFont: "assets/font/Milea.ttf"
+    UserFont: "assets/font/DXLBaB-KSCpc-EUC-H.ttf"
 };
 
 class __ImageMetaData {

@@ -15,7 +15,7 @@ class DayCount {
 
         var bw = 35;
         var bh = 35;
-        var space = 2;
+        var space = 4;
         var size = this.__w - (bw * 5 + space * 4) - 0;
         this.__ch = bh;
         var b1 = new NumberBoard()

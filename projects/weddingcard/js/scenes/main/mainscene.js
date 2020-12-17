@@ -6,7 +6,7 @@ class MainScene extends AbsScene {
 
         this.__dragControl = null;
 
-        this.__background = null;
+        this.__backgroundBlock = null;
         this.__backgroundParticle = null;
 
         this.__textViewMap = null;
@@ -68,7 +68,9 @@ class MainScene extends AbsScene {
         }
         //=================================================
 
-      //  this.__background.draw();
+        for(var block of this.__backgroundBlock) {
+            block.updateWithDraw();
+        }
 
         for (var [id, view] of this.__imageViewMap.entries()) {
             if (view.inScreen(this.__winSize[0], this.__winSize[1])) {
@@ -170,6 +172,9 @@ class MainScene extends AbsScene {
             this.__dragControl.addDragPos((-this.__dragControl.getEndAreaHeight() - this.__dragControl.getDragPos()) * 0.2);
         }
 
+        for (var block of this.__backgroundBlock) {
+            block.addPos(0, vy);
+        }
         for (var [id, view] of this.__textViewMap.entries()) {
             view.addPos(0, vy);
         }
@@ -205,9 +210,9 @@ class MainScene extends AbsScene {
             .setup(this.__winSize[0], this.__winSize[1], 40)
             .setWind(windX, 0);
 
-        this.__background = new BgBubble(this.__winSize[0], this.__winSize[1]);
-
         this.__objectInitializer.initializeBaseObject();
+
+        this.__backgroundBlock = this.__objectInitializer.getBackgroundBlock();
 
         this.__dragControl.setDragAreaHeigthSize(0, this.__objectInitializer.getEndOfScreem());
 

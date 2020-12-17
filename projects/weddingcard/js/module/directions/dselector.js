@@ -81,7 +81,7 @@ class DSelector {
         fill(this.__textColor);
         text(this.__text,
             this.__pos.x - this.__size / 2 + 2,
-            this.__pos.y - this.__size / 2 + this.__size / 2 - 14,
+            this.__pos.y - 6,
             this.__size, this.__size);
     }
 }

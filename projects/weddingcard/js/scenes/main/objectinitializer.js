@@ -10,8 +10,13 @@ class ObjectInitializer {
         this.__dynamicTextFrameModule = null;
         this.__directionsModule = null;
         this.__dayCountModule = null;
+        this.__backgroundBlock = null;
 
         this.__endOfScreen = 0;
+    }
+
+    getBackgroundBlock() {
+        return this.__backgroundBlock;
     }
 
     getTraceModule() {
@@ -83,7 +88,7 @@ class ObjectInitializer {
             .setWidth(winSize[0], true);
 
         var titleTextView = UiFactory.createTextView()
-            .addText("W e d d i n g")
+            .addText("W  e  d  d  i  n  g")
             .setAlign(CENTER, null)
             .setColor(160, 110, 110)
             .setTextStyle(BOLD)
@@ -123,29 +128,31 @@ class ObjectInitializer {
                 mainImageTitleTextView.getPos().y + + (winSize[0] / 5) + 30)
             .setWidth(winSize[0] / 2.8, true);
 
-        var ringImageView = UiFactory.createImageView()
-            .setImagePath(ResourcePath.RingImage)
-            .setMaskPath(ResourcePath.RingMaskImage)
-            .setPos(0, manFaceImageView.getPos().y + manFaceImageView.getHeight() + 90)
-            .setWidth(winSize[0], true);
-
-        var hScale = ringImageView.getHeightScale();
+        var bgRect1 = new BgRect()
+            .setPos(0, womenFaceImageView.getPos().y + womenFaceImageView.getHeight() + 10)
+            .setHeight(1300)
+            .setColor(253, 253, 238);
 
         var weddingInfoTextView = UiFactory.createTextView()
-            .addText("0000. 00. 00 AAA. PM 00:00")
-            .addText("더채플앳청담")
+            .addText("2021. 03. 06. SAT PM 12:30")
+            .addText("더채플앳청담 3층 커티지홀")
             .setTextGap(30)
             .setAlign(CENTER, null)
             .setColor(160, 110, 110)
-            // .setTextStyle(BOLD)
-            .setSize(40 * hScale)
-            .setPos(0, womenFaceImageView.getPos().y + womenFaceImageView.getHeight() + 30);
+            .setSize(16)
+            .setPos(0, womenFaceImageView.getPos().y + womenFaceImageView.getHeight() + 120);
+
+        var ringImageView = UiFactory.createImageView()
+            .setImagePath(ResourcePath.RingImage)
+            .setMaskPath(ResourcePath.RingMaskImage)
+            .setPos(0, weddingInfoTextView.getPos().y + 50)
+            .setWidth(winSize[0], true);
 
         this.__dayCountModule = new DayCount()
             .setPos(0, ringImageView.getPos().y + ringImageView.getHeight());
 
         var invitationTextView = UiFactory.createTextView()
-            .addText("I n v i t a t i o n")
+            .addText("I  n  v  i  t  a  t  i  o  n")
             .setAlign(CENTER, null)
             .setColor(160, 110, 110)
             .setTextStyle(BOLD)
@@ -176,8 +183,18 @@ class ObjectInitializer {
             .setAlpha(180)
             .setColor(240, 240, 240);
 
+        var bgRect2 = new BgRect()
+            .setPos(0, this.__dynamicTextFrameModule.getPos().y + 200)
+            .setHeight(1300)
+            .setColor(255, 247, 242);
+
+        var bgRect3 = new BgRect()
+            .setPos(0, bgRect2.getPos().y + bgRect2.getHeight())
+            .setHeight(1000)
+            .setColor(255, 250, 248);
+
         var galleryTextView = UiFactory.createTextView()
-            .addText("G a l l e r y")
+            .addText("G  a  l  l  e  r  y")
             .setAlign(CENTER, null)
             .setColor(160, 110, 110)
             .setTextStyle(BOLD)
@@ -203,7 +220,7 @@ class ObjectInitializer {
             .setMovePointCount(1);
 
         var locationTextView = UiFactory.createTextView()
-            .addText("L o c a t i o n")
+            .addText("L  o  c  a  t  i  o  n")
             .setAlign(CENTER, null)
             .setColor(160, 110, 110)
             .setTextStyle(BOLD)
@@ -223,13 +240,13 @@ class ObjectInitializer {
             .setAlign(LEFT, null)
             .setColor(190, 130, 130)
             .setSize(15)
-            .setPos(10, this.__mapModule.getPos().y + this.__mapModule.getHeight() + 60);
+            .setPos(20, this.__mapModule.getPos().y + this.__mapModule.getHeight() + 70);
 
         this.__directionsModule = new Directions()
             .setPos(0, addressTextView.getPos().y + 120);
 
         var thankYouTextView = UiFactory.createTextView()
-            .addText("Thank you")
+            .addText("T h a n k   y o u")
             .setAlign(CENTER, null)
             .setColor(190, 130, 130)
             .setTextStyle(BOLD)
@@ -259,5 +276,10 @@ class ObjectInitializer {
         this.__textViewMap.set(TextContents.Location, locationTextView);
         this.__textViewMap.set(TextContents.Address, addressTextView);
         this.__textViewMap.set(TextContents.ThankYou, thankYouTextView);
+
+        this.__backgroundBlock = [];
+        this.__backgroundBlock.push(bgRect1);
+        this.__backgroundBlock.push(bgRect2);
+        this.__backgroundBlock.push(bgRect3);
     }
 }
