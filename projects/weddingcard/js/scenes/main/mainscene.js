@@ -29,13 +29,9 @@ class MainScene extends AbsScene {
             .add(ResourcePath.UserFont, ResourceType.Font, ThreadType.Main)
             .add(ResourcePath.MainImage, ResourceType.Image, ThreadType.Background)
             .add(ResourcePath.DynamicTextFrameImage, ResourceType.Image, ThreadType.Background)
-            .add(ResourcePath.SlideShowMaskImage, ResourceType.Image, ThreadType.Background)
             .add(ResourcePath.MapImage, ResourceType.Image, ThreadType.Background)
-            .add(ResourcePath.ManFaceImage, ResourceType.Image, ThreadType.Background)
-            .add(ResourcePath.ManFaceMaskImage, ResourceType.Image, ThreadType.Background)
-            .add(ResourcePath.WomenFaceImage, ResourceType.Image, ThreadType.Background)
             .add(ResourcePath.RingImage, ResourceType.Image, ThreadType.Background)
-            .add(ResourcePath.RingMaskImage, ResourceType.Image, ThreadType.Background)
+            .add(ResourcePath.SlideShowMaskImage, ResourceType.Image, ThreadType.Background)
             .add(ResourcePath.SlideShow1Image, ResourceType.Image, ThreadType.Background)
             .add(ResourcePath.SlideShow2Image, ResourceType.Image, ThreadType.Background)
             .add(ResourcePath.SlideShow3Image, ResourceType.Image, ThreadType.Background)
@@ -45,7 +41,7 @@ class MainScene extends AbsScene {
             .setListener((path, threadType) => {
                 if (threadType == ThreadType.Background) {
                     this.__objectInitializer.reload();
-                    // console.log("img : " + path + ", type : " + threadType);
+                    //console.log("img : " + path + ", type : " + threadType);
                 }
             })
             .load());

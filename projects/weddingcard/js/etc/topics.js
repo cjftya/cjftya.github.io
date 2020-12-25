@@ -1,6 +1,7 @@
 //* topics *// 
 var TOPICS = {
-    QUICK_VIEWER: "topic-quick-viewer"
+    QUICK_VIEWER: "topic-quick-viewer",
+    TEST_SET: "test-set"
 };
 
 //* data key *//

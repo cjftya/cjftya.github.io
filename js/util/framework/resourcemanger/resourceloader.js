@@ -36,16 +36,100 @@ class ResourceLoader {
         return null;
     }
 
+    __loadBackground3() {
+        document.addEventListener("DOMContentLoaded", function () {
+            var lazyloadImages = document.querySelectorAll("img.lazy");
+            var lazyloadThrottleTimeout;
+            console.log(lazyloadImages)
+
+            function lazyload() {
+                if (lazyloadThrottleTimeout) {
+                    clearTimeout(lazyloadThrottleTimeout);
+                }
+
+                lazyloadThrottleTimeout = setTimeout(function () {
+                    var scrollTop = window.pageYOffset;
+                    lazyloadImages.forEach(function (img) {
+                        if (img.offsetTop < (window.innerHeight + scrollTop)) {
+                            img.src = img.dataset.src;
+                            img.classList.remove('lazy');
+                        }
+                    });
+                    if (lazyloadImages.length == 0) {
+                        document.removeEventListener("scroll", lazyload);
+                        window.removeEventListener("resize", lazyload);
+                        window.removeEventListener("orientationChange", lazyload);
+                    }
+                }, 20);
+            }
+            document.addEventListener("scroll", lazyload);
+            window.addEventListener("resize", lazyload);
+            window.addEventListener("orientationChange", lazyload);
+        });
+    }
+
+    __loadBackground2() {
+        const worker = new Worker("../../js/util/framework/resourcemanger/testworker.js");
+        const el = document.querySelector(`img[tag-set]`);
+        const list = this.__listener;
+        const map = this.__dataMap;
+
+        const observer = lozad('.lozad', {
+            loaded: function(el) {
+                console.log(el);
+            //    el.setAttribute('style', 'display: none;');
+                var canvas = document.createElement("canvas");
+                canvas.width = el.width;
+                canvas.height = el.height;
+                canvas.getContext('2d').drawImage(el, 0, 0, el.width, el.height);
+                var url = el.getAttribute('data-src');
+                console.log(url);
+                // alert("aaa");
+
+                var p5Image = createImage(el.width, el.height);
+                // alert(el.width);
+                el.setAttribute('style', 'display: none;');
+                worker.postMessage(null);
+                worker.addEventListener('message', event => {
+                    let start = new Date();
+                    var pixelData = canvas.getContext('2d').getImageData(0, 0, el.width, el.height).data;
+                    console.log(pixelData.length);
+
+                    p5Image.loadPixels();
+                    for (var i = 0; i < pixelData.length; i += 4) {
+                        p5Image.pixels[i] = pixelData[i];
+                        p5Image.pixels[i + 1] = pixelData[i + 1];
+                        p5Image.pixels[i + 2] = pixelData[i + 2];
+                        p5Image.pixels[i + 3] = pixelData[i + 3];
+                    }
+                    // p5Image.pixels = pixelData;
+                    p5Image.updatePixels();
+
+                    let end = new Date();
+                    console.log("time : " + (end - start));
+                    TopicManager.ready().publish(TOPICS.TEST_SET, "asdsad");
+
+                    var imgData = new ImageData(null);
+                    imgData.setData(ResourceType.Image, url, p5Image);
+                    map.set(url, imgData);
+                    list(url, ThreadType.Background);
+                });
+            }
+        });
+        observer.observe();
+    }
+
     __loadBackground() {
         if (this.__typeMap[ThreadType.Background].size == 0) {
             return;
         }
-
         const worker = new Worker("../../js/util/framework/resourcemanger/resourceworker.js");
         const imgElements = document.querySelectorAll('img[data-src]');
         imgElements.forEach(imageElement => {
             var imgUrl = imageElement.getAttribute('data-src');
-            worker.postMessage(imgUrl);
+            if (this.__typeMap[ThreadType.Background].get(imgUrl) != null) {
+                worker.postMessage(imgUrl);
+            }
         })
 
         worker.addEventListener('message', event => {
@@ -53,15 +137,19 @@ class ResourceLoader {
             const imageElement = document.querySelector(`img[data-src='${imageData.imgUrl}']`);
             const objectURL = URL.createObjectURL(imageData.blob);
 
+            var canvas = document.createElement("canvas");
             imageElement.onload = () => {
                 imageElement.removeAttribute('data-src');
                 URL.revokeObjectURL(objectURL);
 
-                var canvas = document.createElement("canvas");
                 canvas.width = imageElement.width;
                 canvas.height = imageElement.height;
-                canvas.getContext('2d').drawImage(imageElement, 0, 0, imageElement.width, imageElement.height);
 
+                console.log(canvas.width +", " + imageData.imgUrl);
+
+                // var cv = document.createElement("canvas");
+                // const offscreenCanvas = cv.transferControlToOffscreen();
+                canvas.getContext('2d').drawImage(imageElement, 0, 0, imageElement.width, imageElement.height);
                 var pixelData = canvas.getContext('2d').getImageData(0, 0, imageElement.width, imageElement.height).data;
                 var p5Image = createImage(imageElement.width, imageElement.height);
                 p5Image.loadPixels();
@@ -94,6 +182,7 @@ class ResourceLoader {
     }
 
     load() {
+        // this.__loadBackground();
         this.__loadBackground();
         this.__loadMain();
         return this;

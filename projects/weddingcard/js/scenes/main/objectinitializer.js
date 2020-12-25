@@ -112,27 +112,6 @@ class ObjectInitializer {
             .setLife(120)
             .setFreq(0.08);
 
-        var manFaceImageView = UiFactory.createImageView()
-            .setImagePath(ResourcePath.ManFaceImage)
-            .setImageMode(CENTER)
-            .setMaskPath(ResourcePath.ManFaceMaskImage)
-            .setPos(winSize[0] / 2 - (winSize[0] / 5),
-                mainImageTitleTextView.getPos().y + (winSize[0] / 5) + 30)
-            .setWidth(winSize[0] / 2.8, true)
-
-        var womenFaceImageView = UiFactory.createImageView()
-            .setImagePath(ResourcePath.WomenFaceImage)
-            .setMaskPath(ResourcePath.ManFaceMaskImage)
-            .setImageMode(CENTER)
-            .setPos(winSize[0] / 2 + (winSize[0] / 5),
-                mainImageTitleTextView.getPos().y + + (winSize[0] / 5) + 30)
-            .setWidth(winSize[0] / 2.8, true);
-
-        var bgRect1 = new BgRect()
-            .setPos(0, womenFaceImageView.getPos().y + womenFaceImageView.getHeight() + 10)
-            .setHeight(1300)
-            .setColor(253, 253, 238);
-
         var weddingInfoTextView = UiFactory.createTextView()
             .addText("2021. 03. 06. SAT PM 12:30")
             .addText("더채플앳청담 3층 커티지홀")
@@ -140,16 +119,16 @@ class ObjectInitializer {
             .setAlign(CENTER, null)
             .setColor(160, 110, 110)
             .setSize(16)
-            .setPos(0, womenFaceImageView.getPos().y + womenFaceImageView.getHeight() + 120);
+            .setPos(0, mainImageTitleTextView.getPos().y + 120);
 
         var ringImageView = UiFactory.createImageView()
             .setImagePath(ResourcePath.RingImage)
-            .setMaskPath(ResourcePath.RingMaskImage)
+          //  .setMaskPath(ResourcePath.RingMaskImage)
             .setPos(0, weddingInfoTextView.getPos().y + 50)
             .setWidth(winSize[0], true);
 
         this.__dayCountModule = new DayCount()
-            .setPos(0, ringImageView.getPos().y + ringImageView.getHeight());
+            .setPos(0, ringImageView.getPos().y + ringImageView.getHeight() + 40);
 
         var invitationTextView = UiFactory.createTextView()
             .addText("I  n  v  i  t  a  t  i  o  n")
@@ -262,8 +241,6 @@ class ObjectInitializer {
 
         this.__imageViewMap = new Map();
         this.__imageViewMap.set(ImageContents.Main, mainImageView);
-        this.__imageViewMap.set(ImageContents.ManFace, manFaceImageView);
-        this.__imageViewMap.set(ImageContents.WomenFace, womenFaceImageView);
         this.__imageViewMap.set(ImageContents.Ring, ringImageView);
 
         this.__textViewMap = new Map();
@@ -278,7 +255,7 @@ class ObjectInitializer {
         this.__textViewMap.set(TextContents.ThankYou, thankYouTextView);
 
         this.__backgroundBlock = [];
-        this.__backgroundBlock.push(bgRect1);
+        // this.__backgroundBlock.push(bgRect1);
         this.__backgroundBlock.push(bgRect2);
         this.__backgroundBlock.push(bgRect3);
     }

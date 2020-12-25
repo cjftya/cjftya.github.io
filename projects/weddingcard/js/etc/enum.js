@@ -27,11 +27,7 @@ var ResourcePath = {
     MainImage: "https://cjftya.github.io/projects/weddingcard/assets/image/main.jpg",
     DynamicTextFrameImage: "https://cjftya.github.io/projects/weddingcard/assets/image/dynamictextframe.jpg",
     MapImage: "https://cjftya.github.io/projects/weddingcard/assets/image/map.jpg",
-    ManFaceImage: "https://cjftya.github.io/projects/weddingcard/assets/image/face1.png",
-    ManFaceMaskImage: "https://cjftya.github.io/projects/weddingcard/assets/image/mask/face_mask.png",
-    WomenFaceImage: "https://cjftya.github.io/projects/weddingcard/assets/image/face2.png",
     RingImage: "https://cjftya.github.io/projects/weddingcard/assets/image/ring.jpg",
-    RingMaskImage: "https://cjftya.github.io/projects/weddingcard/assets/image/mask/ring_mask.png",
     SlideShowMaskImage: "https://cjftya.github.io/projects/weddingcard/assets/image/mask/slideshow_mask.png",
     SlideShow1Image: "https://cjftya.github.io/projects/weddingcard/assets/image/slideshow/s1.jpg",
     SlideShow2Image: "https://cjftya.github.io/projects/weddingcard/assets/image/slideshow/s2.jpg",
@@ -47,21 +43,18 @@ var ResourcePath = {
 class __ImageMetaData {
     constructor() {
         this.__metaMap = new Map();
-        this.__metaMap.set(ResourcePath.MainImage, [1500, 2250]);
-        this.__metaMap.set(ResourcePath.DynamicTextFrameImage, [1300, 814]);
+        this.__metaMap.set(ResourcePath.MainImage, [450, 675]);
+        this.__metaMap.set(ResourcePath.DynamicTextFrameImage, [405, 698]);
         this.__metaMap.set(ResourcePath.MapImage, [1441, 909]);
-        this.__metaMap.set(ResourcePath.ManFaceImage, [480, 480]);
-        this.__metaMap.set(ResourcePath.WomenFaceImage, [480, 480]);
         this.__metaMap.set(ResourcePath.ManFaceMaskImage, [480, 480]);
-        this.__metaMap.set(ResourcePath.RingImage, [1000, 809]);
-        this.__metaMap.set(ResourcePath.RingMaskImage, [400, 400]);
-        this.__metaMap.set(ResourcePath.SlideShowMaskImage, [700, 700]);
-        this.__metaMap.set(ResourcePath.SlideShow1Image, [1000, 1000]);
-        this.__metaMap.set(ResourcePath.SlideShow2Image, [1000, 1000]);
-        this.__metaMap.set(ResourcePath.SlideShow3Image, [1000, 1000]);
-        this.__metaMap.set(ResourcePath.SlideShow4Image, [1000, 1000]);
-        this.__metaMap.set(ResourcePath.SlideShow5Image, [1000, 1000]);
-        this.__metaMap.set(ResourcePath.SlideShow6Image, [1000, 1000]);
+        this.__metaMap.set(ResourcePath.RingImage, [400, 226]);
+        this.__metaMap.set(ResourcePath.SlideShowMaskImage, [500, 500]);
+        this.__metaMap.set(ResourcePath.SlideShow1Image, [500, 500]);
+        this.__metaMap.set(ResourcePath.SlideShow2Image, [500, 500]);
+        this.__metaMap.set(ResourcePath.SlideShow3Image, [500, 500]);
+        this.__metaMap.set(ResourcePath.SlideShow4Image, [500, 500]);
+        this.__metaMap.set(ResourcePath.SlideShow5Image, [500, 500]);
+        this.__metaMap.set(ResourcePath.SlideShow6Image, [500, 500]);
     }
 
     getMeta(path) {

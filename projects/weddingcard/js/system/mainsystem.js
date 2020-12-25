@@ -25,6 +25,9 @@ class MainSystem extends AbsSystem {
         return new SubscriberInstaller()
             .add(TOPICS.QUICK_VIEWER, (topic, data) => {
                 this.executeViewer(topic, data);
+            })
+            .add(TOPICS.TEST_SET, (topic, data) => {
+                console.log("asdasd123");
             });
     }
 

@@ -7,7 +7,7 @@ class DynamicTextFrame {
         this.__ch = 0;
 
         var winSize = TopicManager.ready().read(DISPLAY_INFO.WINDOW_SIZE);
-        this.__cropPos = new Vector2d().set(((1300 - winSize[0]) / 2) - 50, 500);
+        this.__cropPos = new Vector2d().set(0, 350);
 
         this.__debug = false;
 
