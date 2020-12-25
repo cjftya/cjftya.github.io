@@ -47,7 +47,7 @@ class __ImageMetaData {
         this.__metaMap.set(ResourcePath.DynamicTextFrameImage, [405, 698]);
         this.__metaMap.set(ResourcePath.MapImage, [1441, 909]);
         this.__metaMap.set(ResourcePath.ManFaceMaskImage, [480, 480]);
-        this.__metaMap.set(ResourcePath.RingImage, [400, 226]);
+        this.__metaMap.set(ResourcePath.RingImage, [420, 204]);
         this.__metaMap.set(ResourcePath.SlideShowMaskImage, [500, 500]);
         this.__metaMap.set(ResourcePath.SlideShow1Image, [500, 500]);
         this.__metaMap.set(ResourcePath.SlideShow2Image, [500, 500]);

@@ -124,7 +124,7 @@ class ObjectInitializer {
         var ringImageView = UiFactory.createImageView()
             .setImagePath(ResourcePath.RingImage)
           //  .setMaskPath(ResourcePath.RingMaskImage)
-            .setPos(0, weddingInfoTextView.getPos().y + 50)
+            .setPos(0, weddingInfoTextView.getPos().y + 80)
             .setWidth(winSize[0], true);
 
         this.__dayCountModule = new DayCount()
