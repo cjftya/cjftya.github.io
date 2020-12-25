@@ -113,6 +113,9 @@ class ImageView extends AbsView {
             this.__h = (rw * this.__h) / this.__w;
         }
         this.__w = rw;
+        if(this.__src == ResourcePath.MainImage) {
+            // alert(this.__w);
+        }
         return this;
     }
 
