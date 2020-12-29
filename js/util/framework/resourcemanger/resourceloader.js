@@ -144,11 +144,6 @@ class ResourceLoader {
 
                 canvas.width = imageElement.width;
                 canvas.height = imageElement.height;
-
-                console.log(canvas.width +", " + imageData.imgUrl);
-
-                // var cv = document.createElement("canvas");
-                // const offscreenCanvas = cv.transferControlToOffscreen();
                 canvas.getContext('2d').drawImage(imageElement, 0, 0, imageElement.width, imageElement.height);
                 var pixelData = canvas.getContext('2d').getImageData(0, 0, imageElement.width, imageElement.height).data;
                 var p5Image = createImage(imageElement.width, imageElement.height);
@@ -182,7 +177,6 @@ class ResourceLoader {
     }
 
     load() {
-        // this.__loadBackground();
         this.__loadBackground();
         this.__loadMain();
         return this;

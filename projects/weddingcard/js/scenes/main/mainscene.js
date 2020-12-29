@@ -64,7 +64,7 @@ class MainScene extends AbsScene {
         }
         //=================================================
 
-        for(var block of this.__backgroundBlock) {
+        for (var block of this.__backgroundBlock) {
             block.updateWithDraw();
         }
 
@@ -106,11 +106,11 @@ class MainScene extends AbsScene {
             this.__dayCountModule.updateWithDraw(timeDelta);
         }
 
-        if(this.__directionsModule.inScreen(this.__winSize[0], this.__winSize[1])) {
+        if (this.__directionsModule.inScreen(this.__winSize[0], this.__winSize[1])) {
             this.__directionsModule.updateWithDraw(timeDelta);
         }
 
-     //   this.__backgroundParticle.updateWithDraw(timeDelta);
+        //   this.__backgroundParticle.updateWithDraw(timeDelta);
     }
 
     onEnd() {
@@ -135,11 +135,11 @@ class MainScene extends AbsScene {
             this.__mapModule.moveToNaverMap(tx, ty);
         }
         this.__slideShowModule.selectIndicator(tx, ty);
-        if (this.__slideShowModule.inBound(tx, ty)) {
-            TopicManager.ready().publish(TOPICS.QUICK_VIEWER, this.__slideShowModule.getCurrentImage());
-        }
+        // if (this.__slideShowModule.inBound(tx, ty)) {
+        //     TopicManager.ready().publish(TOPICS.QUICK_VIEWER, this.__slideShowModule.getCurrentImage());
+        // }
         this.__mapModule.setMapController(false);
-       this.__directionsModule.selectDirectionInfo(tx, ty);
+        this.__directionsModule.selectDirectionInfo(tx, ty);
     }
 
     onTouchMove(tx, ty) {
