@@ -123,7 +123,7 @@ class ObjectInitializer {
 
         var ringImageView = UiFactory.createImageView()
             .setImagePath(ResourcePath.RingImage)
-          //  .setMaskPath(ResourcePath.RingMaskImage)
+            //  .setMaskPath(ResourcePath.RingMaskImage)
             .setPos(0, weddingInfoTextView.getPos().y + 80)
             .setWidth(winSize[0], true);
 
@@ -208,7 +208,7 @@ class ObjectInitializer {
 
         this.__mapModule = new MapView()
             .setPos(0, locationTextView.getPos().y + 80)
-            .setCropSrcPos(((1665 - winSize[0]) / 2), 300)
+            .setCropSrcPos(((1665 - winSize[0]) / 2) - 150, 300)
             .setShortcutText("네이버지도 바로가기")
             .setCropSize(winSize[0], 250);
 
