@@ -208,7 +208,7 @@ class ObjectInitializer {
 
         this.__mapModule = new MapView()
             .setPos(0, locationTextView.getPos().y + 80)
-            .setCropSrcPos(((1441 - winSize[0]) / 2), 300)
+            .setCropSrcPos(((1665 - winSize[0]) / 2), 300)
             .setShortcutText("네이버지도 바로가기")
             .setCropSize(winSize[0], 250);
 
