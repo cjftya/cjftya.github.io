@@ -125,9 +125,9 @@ class HeartTrace {
 
         for (var i = 0; i < c; i++) {
             var pt = EffectFactory.createParticle(Particle.Spray)
-                .setRadius(2, 7)
+                .setRadius(2, 4)
                 .setBlurRadiusPow(8, 17)
-                .setAmount(60)
+                .setAmount(30)
                 .setPos(1000, 1000)
                 .setCreateArea(3, 3)
                 .setLife(150)
@@ -233,8 +233,8 @@ class HeartTrace {
                     this.__pointIndex[i] = 0;
                 }
             }
-            this.__headVels[i].x += dx * 0.095;
-            this.__headVels[i].y += dy * 0.095;
+            this.__headVels[i].x += dx * 0.025;
+            this.__headVels[i].y += dy * 0.025;
             this.__headVels[i].x *= 0.75;
             this.__headVels[i].y *= 0.75;
             this.__headPoints[i].x += this.__headVels[i].x;

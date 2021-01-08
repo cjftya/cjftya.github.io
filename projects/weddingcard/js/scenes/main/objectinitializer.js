@@ -196,7 +196,7 @@ class ObjectInitializer {
             .setHeartSize(this.__slideShowModule.getWidth(), this.__slideShowModule.getHeight())
             .setPos(this.__slideShowModule.getPos().x + this.__slideShowModule.getWidth() / 2,
                 this.__slideShowModule.getPos().y + this.__slideShowModule.getHeight() / 2)
-            .setMovePointCount(1);
+            .setMovePointCount(2);
 
         var locationTextView = UiFactory.createTextView()
             .addText("L  o  c  a  t  i  o  n")

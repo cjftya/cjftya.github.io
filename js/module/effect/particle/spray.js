@@ -43,7 +43,7 @@ class Spray extends AbsParticle {
         this.__amount = a;
         this.__particles = [];
         for (var i = 0; i < this.__amount; i++) {
-            this.__particles.push(new BlurCircle().setColor(230, 130, 130));
+            this.__particles.push(new BlurCircle().setColor(250, 250, 250));
         }
         return this;
     }
