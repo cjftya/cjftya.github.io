@@ -12,6 +12,7 @@ class Spray extends AbsParticle {
         this.__rMax = 0;
         this.__blurR1 = 0;
         this.__blurR2 = 0;
+        this.__color = color(255, 255, 255);
 
         this.__aw = 0;
         this.__ah = 0;
@@ -37,6 +38,13 @@ class Spray extends AbsParticle {
 
         p.setAlpha(250);
         p.setLife(this.__life);
+    }
+
+    setColor(r, g, b) {
+        for (var i = 0; i < this.__particles.length; i++) {
+            this.__particles[i].setColor(r, g, b);
+        }
+        return this;
     }
 
     setAmount(a) {
