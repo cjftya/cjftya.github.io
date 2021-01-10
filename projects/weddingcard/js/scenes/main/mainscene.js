@@ -193,6 +193,25 @@ class MainScene extends AbsScene {
         this.__drawCallCount++;
     }
 
+    executeDayCounter() {
+        var dday = new Date("March 6,2021,12:30:00").getTime();
+        var counter = this.__dayCountModule;
+        setInterval(function () {
+            var now = new Date();
+            var distance = dday - now;
+            var d = Math.floor(distance / (1000 * 60 * 60 * 24));
+            var h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            var m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            var s = Math.floor((distance % (1000 * 60)) / 1000);
+            if (s < 10) {
+                s = '0' + s;
+            }
+            var count = TextUtil.pad(h, 2) + " : " + TextUtil.pad(m, 2) + " : " + TextUtil.pad(s, 2);
+            counter.setDay("D - " + TextUtil.pad(d, 3));
+            counter.setCounter(count);
+        }, 1000);
+    }
+
     initializeObject() {
         var resource = TopicManager.ready().read(RESOURCE.DATA);
         var userFont = resource.get(ResourcePath.UserFont).getData();
@@ -222,6 +241,8 @@ class MainScene extends AbsScene {
         this.__textViewMap = this.__objectInitializer.getTextMap();
         this.__imageViewMap = this.__objectInitializer.getImageMap();
         this.__sprayParticleMap = this.__objectInitializer.getParticleMap();
+
+        this.executeDayCounter();
     }
 
     drawDebug() {

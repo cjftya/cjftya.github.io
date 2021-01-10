@@ -125,9 +125,10 @@ class HeartTrace {
 
         for (var i = 0; i < c; i++) {
             var pt = EffectFactory.createParticle(Particle.Spray)
+                .setAmount(30)
+                .setColor(250, 250, 250)
                 .setRadius(2, 4)
                 .setBlurRadiusPow(8, 17)
-                .setAmount(30)
                 .setPos(1000, 1000)
                 .setCreateArea(3, 3)
                 .setLife(150)

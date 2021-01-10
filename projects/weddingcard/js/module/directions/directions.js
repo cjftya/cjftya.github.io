@@ -8,7 +8,7 @@ class Directions {
         this.__selectedIndex = 0;
         this.__selectorList = [];
 
-        var size = (this.__w / 4) - 5;
+        var size = 80;
         var rsize = size - 15;
         var space = size / 2 + 10;
         this.__ch = rsize + 70;

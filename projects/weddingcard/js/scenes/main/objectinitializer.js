@@ -104,9 +104,10 @@ class ObjectInitializer {
             .setPos(0, titleTextView.getPos().y + 100);
 
         var mainTitleParticle = EffectFactory.createParticle(Particle.Spray)
+            .setAmount(15)
+            .setColor(230, 130, 130)
             .setRadius(1, 5)
             .setBlurRadiusPow(3, 5)
-            .setAmount(15)
             .setPos(winSize[0] / 2, mainImageTitleTextView.getPos().y)
             .setCreateArea(50, 15)
             .setLife(120)
@@ -123,12 +124,13 @@ class ObjectInitializer {
 
         var ringImageView = UiFactory.createImageView()
             .setImagePath(ResourcePath.RingImage)
-            //  .setMaskPath(ResourcePath.RingMaskImage)
             .setPos(0, weddingInfoTextView.getPos().y + 80)
             .setWidth(winSize[0], true);
 
         this.__dayCountModule = new DayCount()
-            .setPos(0, ringImageView.getPos().y + ringImageView.getHeight() + 40);
+            .setPos(0, ringImageView.getPos().y)
+            .setSize(ringImageView.getWidth(), ringImageView.getHeight())
+            .setTextColor(250, 250, 250);
 
         var invitationTextView = UiFactory.createTextView()
             .addText("I  n  v  i  t  a  t  i  o  n")
@@ -150,7 +152,7 @@ class ObjectInitializer {
             .setAlign(CENTER, null)
             .setColor(190, 130, 130)
             .setAlpha(180)
-            .setSize(14)
+            .setSize(15)
             .setPos(0, invitationTextView.getPos().y + 90);
 
         this.__dynamicTextFrameModule = new DynamicTextFrame()
@@ -161,16 +163,6 @@ class ObjectInitializer {
             .addText("“ 함깨 살아가고 싶습니다 · · · ”")
             .setAlpha(180)
             .setColor(240, 240, 240);
-
-        var bgRect2 = new BgRect()
-            .setPos(0, this.__dynamicTextFrameModule.getPos().y + 200)
-            .setHeight(1300)
-            .setColor(255, 247, 242);
-
-        var bgRect3 = new BgRect()
-            .setPos(0, bgRect2.getPos().y + bgRect2.getHeight())
-            .setHeight(1000)
-            .setColor(255, 250, 248);
 
         var galleryTextView = UiFactory.createTextView()
             .addText("G  a  l  l  e  r  y")
@@ -211,6 +203,16 @@ class ObjectInitializer {
             .setCropSrcPos(((1665 - winSize[0]) / 2) - 150, 300)
             .setShortcutText("네이버지도 바로가기")
             .setCropSize(winSize[0], 250);
+
+        var bgRect2 = new BgRect()
+            .setPos(0, this.__dynamicTextFrameModule.getPos().y)
+            .setHeight(this.__mapModule.getPos().y - this.__dynamicTextFrameModule.getPos().y)
+            .setColor(255, 247, 242);
+
+        var bgRect3 = new BgRect()
+            .setPos(0, bgRect2.getPos().y + bgRect2.getHeight())
+            .setHeight(1500)
+            .setColor(255, 250, 248);
 
         var addressTextView = UiFactory.createTextView()
             .addText("더채플앳청담")
