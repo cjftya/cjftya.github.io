@@ -19,6 +19,7 @@ class MainScene extends AbsScene {
         this.__dynamicTextFrameModule = null;
         this.__directionsModule = null;
         this.__dayCountModule = null;
+        this.__bankAccountModule = null;
 
         this.__winSize = null;
         this.__click = false;
@@ -110,6 +111,10 @@ class MainScene extends AbsScene {
             this.__directionsModule.updateWithDraw(timeDelta);
         }
 
+        if (this.__bankAccountModule.inScreen(this.__winSize[0], this.__winSize[1])) {
+            this.__bankAccountModule.updateWithDraw(timeDelta);
+        }
+
         //   this.__backgroundParticle.updateWithDraw(timeDelta);
     }
 
@@ -127,6 +132,8 @@ class MainScene extends AbsScene {
         if (this.__mapModule.inBound(tx, ty)) {
             this.__mapModule.setMapController(true);
         }
+
+        this.__bankAccountModule.inBound(tx, ty);
     }
 
     onTouchUp(tx, ty) {
@@ -140,6 +147,7 @@ class MainScene extends AbsScene {
         // }
         this.__mapModule.setMapController(false);
         this.__directionsModule.selectDirectionInfo(tx, ty);
+        this.__bankAccountModule.inBound(tx, ty);
     }
 
     onTouchMove(tx, ty) {
@@ -187,6 +195,7 @@ class MainScene extends AbsScene {
         this.__dynamicTextFrameModule.addCropSrcPos(0, vy * 0.05);
         this.__directionsModule.addPos(0, vy);
         this.__dayCountModule.addPos(0, vy);
+        this.__bankAccountModule.addPos(0, vy);
     }
 
     increaseDrawCall() {
@@ -237,6 +246,7 @@ class MainScene extends AbsScene {
         this.__mapModule = this.__objectInitializer.getMapModule();
         this.__directionsModule = this.__objectInitializer.getDirectionsModule();
         this.__dayCountModule = this.__objectInitializer.getDayCountModule();
+        this.__bankAccountModule = this.__objectInitializer.getBankAccountModule();
 
         this.__textViewMap = this.__objectInitializer.getTextMap();
         this.__imageViewMap = this.__objectInitializer.getImageMap();

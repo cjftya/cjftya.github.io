@@ -10,6 +10,7 @@ class ObjectInitializer {
         this.__dynamicTextFrameModule = null;
         this.__directionsModule = null;
         this.__dayCountModule = null;
+        this.__bankAccountModule = null;
         this.__backgroundBlock = null;
 
         this.__endOfScreen = 0;
@@ -41,6 +42,10 @@ class ObjectInitializer {
 
     getDayCountModule() {
         return this.__dayCountModule;
+    }
+
+    getBankAccountModule() {
+        return this.__bankAccountModule;
     }
 
     getTextMap() {
@@ -226,13 +231,29 @@ class ObjectInitializer {
         this.__directionsModule = new Directions()
             .setPos(0, addressTextView.getPos().y + 120);
 
+        var noticeTextView = UiFactory.createTextView()
+            .addText("N  o  t  i  c  e")
+            .setAlign(CENTER, null)
+            .setColor(160, 110, 110)
+            .setTextStyle(BOLD)
+            .setSize(16)
+            .setPos(0, this.__directionsModule.getPos().y + 350);
+
+        this.__bankAccountModule = new BankAccount()
+            .setPos(0, noticeTextView.getPos().y + 90)
+            .setSize(winSize[0], 500)
+            .addTitle("코로나로 인해 요청이 많아 추가하였습니다")
+            .addTitle("( 아래 항목을 누르면 계좌가 복사됩니다 )")
+            .addBackInfo("임현철", "새마을금고", "9003-2232-4693-9")
+            .addBackInfo("가나다", "새마을금고", "9003-2232-4693-9");
+
         var thankYouTextView = UiFactory.createTextView()
             .addText("T h a n k   y o u")
             .setAlign(CENTER, null)
             .setColor(190, 130, 130)
             .setTextStyle(BOLD)
             .setSize(16)
-            .setPos(0, addressTextView.getPos().y + 380);
+            .setPos(0, noticeTextView.getPos().y + 500);
 
 
         this.__endOfScreen = thankYouTextView.getPos().y - winSize[1] / 1.5;
@@ -254,6 +275,7 @@ class ObjectInitializer {
         this.__textViewMap.set(TextContents.Gallery, galleryTextView);
         this.__textViewMap.set(TextContents.Location, locationTextView);
         this.__textViewMap.set(TextContents.Address, addressTextView);
+        this.__textViewMap.set(TextContents.Notice, noticeTextView);
         this.__textViewMap.set(TextContents.ThankYou, thankYouTextView);
 
         this.__backgroundBlock = [];

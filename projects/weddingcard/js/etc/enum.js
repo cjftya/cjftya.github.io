@@ -19,7 +19,8 @@ var TextContents = {
     Location: 6,
     ShortcutNaver: 7,
     ThankYou: 8,
-    Address: 9
+    Address: 9,
+    Notice: 10
 };
 
 var ResourcePath = {

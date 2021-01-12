@@ -20,6 +20,11 @@ class DayCount {
                 .setAlpha(230);
             this.__panelList.push(panel);
         }
+        this.__panelList[0].setAlphaIncreaseRate(1.2, 0.4);
+        this.__panelList[1].setAlphaIncreaseRate(1, 0.6);
+        this.__panelList[2].setAlphaIncreaseRate(0.8, 0.8);
+        this.__panelList[3].setAlphaIncreaseRate(0.6, 1);
+        this.__panelList[4].setAlphaIncreaseRate(0.4, 1.2);
     }
 
     inScreen(sw, sh) {
@@ -35,9 +40,9 @@ class DayCount {
         for (var i = 0; i < this.__panelList.length; i++) {
             this.__panelList[i].addPos(x, y);
             if (this.__pos.y < this.__startLine && y < 0) {
-                this.__panelList[i].addAlpha(y * 1.5 - (this.__panelList.length - i) * 2);
-            } else if (this.__pos.y > this.__startLine && y > 0) {
-                this.__panelList[i].addAlpha(y * 2 + i * 3);
+                this.__panelList[i].addAlpha(y * 2);
+            } else if (this.__pos.y + this.__h > this.__startLine && y > 0) {
+                this.__panelList[i].addAlpha(y * 2);
             }
         }
         this.__textColor.setAlpha(this.__panelList[0].getAlpha());

@@ -4,7 +4,7 @@ class BlockPanel {
         this.__w = 0;
         this.__h = 0;
 
-        this.__alphaRate = 1;
+        this.__alphaRate = [];
         this.__alpha = 255;
         this.__color = color(255, 255, 255);
     }
@@ -14,7 +14,7 @@ class BlockPanel {
     }
 
     addAlpha(a) {
-        this.__alpha += a * this.__alphaRate;
+        this.__alpha += a * this.__alphaRate[a > 0 ? 1 : 0];
         if (this.__alpha > 230) {
             this.__alpha = 230;
         } else if (this.__alpha < 0) {
@@ -23,8 +23,9 @@ class BlockPanel {
         return this;
     }
 
-    setAlphaIncreaseRate(r) {
-        this.__alphaRate = r;
+    setAlphaIncreaseRate(r1, r2) {
+        this.__alphaRate.push(r1);
+        this.__alphaRate.push(r2);
         return this;
     }
 
