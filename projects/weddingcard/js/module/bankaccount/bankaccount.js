@@ -23,21 +23,13 @@ class BankAccount {
         return false;
     }
 
-    inBound(x, y) {
+    pick(x, y) {
         for (var i = 0; i < this.__bankInfo.length; i++) {
             if (this.__bankInfo[i].inBound(x, y)) {
-                if (this.__selectedIndex != -1) {
-                    if (this.__selectedIndex == i) {
-                        this.copyNumber(i);
-                    }
-                    this.__selectedIndex = -1;
-                } else {
-                    this.__selectedIndex = i
-                }
-                return true;
+                this.copyNumber(i);
+                break;
             }
         }
-        return false;
     }
 
     copyNumber(index) {

@@ -1,5 +1,6 @@
 var ParticleContents = {
-    MainTitle: 0
+    MainTitle: 0,
+    GalleryFrame: 1
 };
 
 var ImageContents = {

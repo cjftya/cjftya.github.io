@@ -17,6 +17,8 @@ class Spray extends AbsParticle {
         this.__aw = 0;
         this.__ah = 0;
 
+        this.__alpha = 250;
+
         this.__posOffset = new Vector2d();
     }
 
@@ -36,13 +38,21 @@ class Spray extends AbsParticle {
         p.vel.x = Math.cos(MathUtil.angle2rad(MathUtil.randInt(0, 360))) * (MathUtil.randInt(1, 5) * 0.1);
         p.vel.y = Math.sin(MathUtil.angle2rad(MathUtil.randInt(0, 360))) * (MathUtil.randInt(1, 5) * 0.1);
 
-        p.setAlpha(250);
+        // p.setAlpha(250);
         p.setLife(this.__life);
     }
 
     setColor(r, g, b) {
         for (var i = 0; i < this.__particles.length; i++) {
             this.__particles[i].setColor(r, g, b);
+        }
+        return this;
+    }
+
+    setAlpha(a) {
+        this.__alpha = a;
+        for (var i = 0; i < this.__particles.length; i++) {
+            this.__particles[i].setAlpha(a);
         }
         return this;
     }
@@ -116,7 +126,7 @@ class Spray extends AbsParticle {
                 p.pos.x += p.vel.x;
                 p.pos.y += p.vel.y;
                 p.addLife(delta * -100);
-                p.setAlphaWithBlur((250 * p.getLife()) / this.__life,
+                p.setAlphaWithBlur((this.__alpha * p.getLife()) / this.__life,
                     (15 * p.getLife()) / this.__life,
                     (10 * p.getLife()) / this.__life);
             }

@@ -11,6 +11,15 @@ class GalleryFrame {
         this.__indexCount = 0;
         this.__images = [];
         this.__imagePaths = [];
+
+        this.__selectAreaColor = color(255, 255, 255);
+        this.__selectAreaColor.setAlpha(80);
+        this.__selectAreaWidth = 0;
+        this.__selectAreaHeight = 0;
+        this.__selectPos = [];
+
+        this.__delay = 3;
+        this.__delayCount = 0;
     }
 
     inScreen(sw, sh) {
@@ -31,13 +40,33 @@ class GalleryFrame {
         }
     }
 
-    inBound(x, y) {
-        return false;
+    pick(x, y) {
+        for (var i = 0; i < this.__selectPos.length; i++) {
+            if (this.inBound(i, x, y)) {
+                this.__indexCount = i + 1;
+                this.__delayCount = 0;
+                break;
+            }
+        }
+    }
+
+    inBound(i, x, y) {
+        if (x < this.__selectPos[i].x || x > this.__selectPos[i].x + this.__selectAreaWidth) {
+            return false;
+        }
+        if (y < this.__selectPos[i].y || y > this.__selectPos[i].y + this.__selectAreaHeight) {
+            return false;
+        }
+        return true;
     }
 
     addPos(x, y) {
         this.__pos.x += x;
         this.__pos.y += y;
+        for (var i = 0; i < this.__selectPos.length; i++) {
+            this.__selectPos[i].x += x;
+            this.__selectPos[i].y += y;
+        }
         return this;
     }
 
@@ -66,7 +95,15 @@ class GalleryFrame {
         return this;
     }
 
-    setMainImage() {
+    getWidth() {
+        return this.__w;
+    }
+
+    getHeight() {
+        return this.__h;
+    }
+
+    setMainImage(img) {
         var resource = TopicManager.ready().read(RESOURCE.DATA);
         var resData = resource.get(img);
         this.__imagePaths.push(img);
@@ -82,9 +119,12 @@ class GalleryFrame {
         return this;
     }
 
-    setSize(w, h) {
-        this.__w = w;
-        this.__h = h;
+    initializeArea() {
+        this.__selectAreaWidth = this.__w / (this.__images.length - 1);
+        this.__selectAreaHeight = this.__h;
+        for (var i = 0; i < this.__images.length; i++) {
+            this.__selectPos.push(new Vector2d().set(i * this.__selectAreaWidth, this.__pos.y));
+        }
         return this;
     }
 
@@ -94,12 +134,24 @@ class GalleryFrame {
     }
 
     update(deltaTime) {
+        if (this.__indexCount > 0) {
+            this.__delayCount += deltaTime;
+            if (this.__delayCount >= this.__delay) {
+                this.__delayCount = 0;
+                this.__indexCount = 0;
+            }
+        }
     }
 
     draw() {
         if (this.__images[this.__indexCount] != null) {
             imageMode(CORNER);
             image(this.__images[this.__indexCount], this.__pos.x, this.__pos.y, this.__w, this.__h);
+        }
+        if (this.__indexCount > 0) {
+            fill(this.__selectAreaColor);
+            rect(this.__selectPos[this.__indexCount - 1].x, this.__selectPos[this.__indexCount - 1].y,
+                this.__selectAreaWidth, this.__selectAreaHeight);
         }
     }
 }

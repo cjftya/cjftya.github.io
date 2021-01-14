@@ -22,6 +22,8 @@ class MainScene extends AbsScene {
 
         this.__winSize = null;
         this.__click = false;
+
+        this.__skipPickOffset = 0;
     }
 
     onPreload() {
@@ -123,22 +125,27 @@ class MainScene extends AbsScene {
         this.__click = true;
         this.__dragControl.setDragVel(0);
         this.__dragControl.setOldPos(tx, ty);
-
+        
         if (this.__mapModule.inBound(tx, ty)) {
             this.__mapModule.setMapController(true);
         }
-
-        this.__bankAccountModule.inBound(tx, ty);
+        this.__skipPickOffset = ty;
     }
 
     onTouchUp(tx, ty) {
         this.__click = false;
+        this.__mapModule.setMapController(false);
+        
+        if (Math.abs(ty - this.__skipPickOffset) > 20) {
+            return;
+        }
+        
         if (!this.__mapModule.isMapController()) {
             this.__mapModule.moveToNaverMap(tx, ty);
         }
-        this.__mapModule.setMapController(false);
         this.__directionsModule.selectDirectionInfo(tx, ty);
-        this.__bankAccountModule.inBound(tx, ty);
+        this.__bankAccountModule.pick(tx, ty);
+        this.__galleryFrameModule.pick(tx, ty);
     }
 
     onTouchMove(tx, ty) {
