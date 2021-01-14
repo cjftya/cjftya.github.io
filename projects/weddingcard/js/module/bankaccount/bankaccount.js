@@ -102,7 +102,7 @@ class BankAccount {
         noStroke();
         textAlign(CENTER, null);
         textSize(16);
-        textLeading(25);
+        textLeading(30);
         text(this.__title, this.__pos.x, this.__pos.y, this.__w, this.__h);
 
         for (var i = 0; i < this.__bankInfo.length; i++) {
