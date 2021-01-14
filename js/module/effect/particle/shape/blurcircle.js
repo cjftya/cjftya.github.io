@@ -63,6 +63,7 @@ class BlurCircle {
 
     setAlpha(a) {
         this.__color.setAlpha(a);
+        return this;
     }
 
     setAlphaWithBlur(a, bA1, bA2) {
