@@ -5,7 +5,12 @@ class BankInfo {
         this.__owner = owner;
         this.__bank = bank;
         this.__number = number;
-        this.__onlyNum = owner;
+        this.__onlyNum = "";
+        for (var i = 0; i < number.length; i++) {
+            if (number[i] >= '0' && number[i] <= '9') {
+                this.__onlyNum += number[i];
+            }
+        }
 
         this.__text = "• " + this.__owner + "  " + this.__bank + "  " + this.__number;
 
@@ -40,8 +45,11 @@ class BankInfo {
         this.__textColor.setRed(r);
         this.__textColor.setGreen(g);
         this.__textColor.setBlue(b);
-        this.__textColor.setAlpha(200);
         return this;
+    }
+
+    getOwner() {
+        return this.__owner;
     }
 
     getNumber() {
@@ -52,7 +60,7 @@ class BankInfo {
         if (x < this.__pos.x || x > this.__pos.x + this.__w) {
             return false;
         }
-        if (y < this.__pos.y-15 || y > this.__pos.y + 15) {
+        if (y < this.__pos.y - 15 || y > this.__pos.y + 15) {
             return false;
         }
         return true;

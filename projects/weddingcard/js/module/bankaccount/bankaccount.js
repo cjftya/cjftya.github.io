@@ -10,6 +10,10 @@ class BankAccount {
         this.__bankInfo = [];
         this.__selectedIndex = -1;
         this.__titleColor = color(190, 130, 130);
+
+        this.__popupInfo = new PopupInfo()
+            .setPos(0, this.__winSize[1] / 2 - 35)
+            .setSize(this.__winSize[0], 35);
     }
 
     inScreen(sw, sh) {
@@ -37,7 +41,19 @@ class BankAccount {
     }
 
     copyNumber(index) {
-        console.log("copy : " + this.__bankInfo[index].getNumber());
+        if (!this.__popupInfo.isShowing()) {
+            var textArea = document.createElement("textarea");
+            textArea.value = this.__bankInfo[index].getNumber();
+            document.body.appendChild(textArea);
+            textArea.select();
+            textArea.setSelectionRange(0, 9999);
+            document.execCommand("copy");
+            document.body.removeChild(textArea);
+
+            this.__popupInfo
+                .setText(this.__bankInfo[index].getOwner() + "님의 계좌가 복사되었습니다")
+                .show();
+        }
     }
 
     addTitle(str) {
@@ -81,11 +97,12 @@ class BankAccount {
     }
 
     updateWithDraw(deltaTime) {
-        this.update();
+        this.update(deltaTime);
         this.draw();
-    } 
+    }
 
-    update() {
+    update(deltaTime) {
+        this.__popupInfo.update(deltaTime);
     }
 
     draw() {
@@ -99,5 +116,7 @@ class BankAccount {
         for (var i = 0; i < this.__bankInfo.length; i++) {
             this.__bankInfo[i].draw();
         }
+
+        this.__popupInfo.draw();
     }
 }

@@ -13,9 +13,8 @@ class MainScene extends AbsScene {
         this.__imageViewMap = null;
         this.__sprayParticleMap = null;
 
-        this.__traceModule = null;
         this.__mapModule = null;
-        this.__slideShowModule = null;
+        this.__galleryFrameModule = null;
         this.__dynamicTextFrameModule = null;
         this.__directionsModule = null;
         this.__dayCountModule = null;
@@ -32,7 +31,7 @@ class MainScene extends AbsScene {
             .add(ResourcePath.DynamicTextFrameImage, ResourceType.Image, ThreadType.Background)
             .add(ResourcePath.MapImage, ResourceType.Image, ThreadType.Background)
             .add(ResourcePath.RingImage, ResourceType.Image, ThreadType.Background)
-            .add(ResourcePath.SlideShowMaskImage, ResourceType.Image, ThreadType.Background)
+            .add(ResourcePath.GalleryFrameImage, ResourceType.Image, ThreadType.Background)
             .add(ResourcePath.SlideShow1Image, ResourceType.Image, ThreadType.Background)
             .add(ResourcePath.SlideShow2Image, ResourceType.Image, ThreadType.Background)
             .add(ResourcePath.SlideShow3Image, ResourceType.Image, ThreadType.Background)
@@ -85,18 +84,14 @@ class MainScene extends AbsScene {
             this.__mapModule.draw();
         }
 
-        if (this.__slideShowModule.inScreen(this.__winSize[0], this.__winSize[1])) {
-            this.__slideShowModule.updateWithDraw(timeDelta);
+        if (this.__galleryFrameModule.inScreen(this.__winSize[0], this.__winSize[1])) {
+            this.__galleryFrameModule.updateWithDraw(timeDelta);
         }
 
         for (var [id, particle] of this.__sprayParticleMap.entries()) {
             if (particle.inScreen(this.__winSize[0], this.__winSize[1])) {
                 particle.updateWithDraw(timeDelta);
             }
-        }
-
-        if (this.__traceModule.inScreen(this.__winSize[0], this.__winSize[1])) {
-            this.__traceModule.updateWithDraw(timeDelta);
         }
 
         if (this.__dynamicTextFrameModule.inScreen(this.__winSize[0], this.__winSize[1])) {
@@ -141,10 +136,6 @@ class MainScene extends AbsScene {
         if (!this.__mapModule.isMapController()) {
             this.__mapModule.moveToNaverMap(tx, ty);
         }
-        this.__slideShowModule.selectIndicator(tx, ty);
-        // if (this.__slideShowModule.inBound(tx, ty)) {
-        //     TopicManager.ready().publish(TOPICS.QUICK_VIEWER, this.__slideShowModule.getCurrentImage());
-        // }
         this.__mapModule.setMapController(false);
         this.__directionsModule.selectDirectionInfo(tx, ty);
         this.__bankAccountModule.inBound(tx, ty);
@@ -188,9 +179,8 @@ class MainScene extends AbsScene {
         for (var [id, view] of this.__sprayParticleMap.entries()) {
             view.addPos(0, vy);
         }
-        this.__slideShowModule.addPos(0, vy);
+        this.__galleryFrameModule.addPos(0, vy);
         this.__mapModule.addPos(0, vy);
-        this.__traceModule.addPos(0, vy);
         this.__dynamicTextFrameModule.addPos(0, vy);
         this.__dynamicTextFrameModule.addCropSrcPos(0, vy * 0.05);
         this.__directionsModule.addPos(0, vy);
@@ -240,8 +230,7 @@ class MainScene extends AbsScene {
 
         this.__dragControl.setDragAreaHeigthSize(0, this.__objectInitializer.getEndOfScreem());
 
-        this.__traceModule = this.__objectInitializer.getTraceModule();
-        this.__slideShowModule = this.__objectInitializer.getSlideShowModule();
+        this.__galleryFrameModule = this.__objectInitializer.getGalleryFrameModule();
         this.__dynamicTextFrameModule = this.__objectInitializer.getDynamicTextFrameModule();
         this.__mapModule = this.__objectInitializer.getMapModule();
         this.__directionsModule = this.__objectInitializer.getDirectionsModule();

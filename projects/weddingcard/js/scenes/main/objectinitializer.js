@@ -4,9 +4,8 @@ class ObjectInitializer {
         this.__imageViewMap = null;
         this.__particleMap = null;
 
-        this.__traceModule = null;
         this.__mapModule = null;
-        this.__slideShowModule = null;
+        this.__galleryFrameModule = null;
         this.__dynamicTextFrameModule = null;
         this.__directionsModule = null;
         this.__dayCountModule = null;
@@ -20,16 +19,12 @@ class ObjectInitializer {
         return this.__backgroundBlock;
     }
 
-    getTraceModule() {
-        return this.__traceModule;
-    }
-
     getMapModule() {
         return this.__mapModule;
     }
 
-    getSlideShowModule() {
-        return this.__slideShowModule;
+    getGalleryFrameModule() {
+        return this.__galleryFrameModule;
     }
 
     getDynamicTextFrameModule() {
@@ -177,23 +172,15 @@ class ObjectInitializer {
             .setSize(16)
             .setPos(0, this.__dynamicTextFrameModule.getPos().y + 540);
 
-        this.__slideShowModule = new SlideShow()
-            .addImagePath(ResourcePath.SlideShow1Image)
-            .addImagePath(ResourcePath.SlideShow2Image)
-            .addImagePath(ResourcePath.SlideShow3Image)
-            .addImagePath(ResourcePath.SlideShow4Image)
-            .addImagePath(ResourcePath.SlideShow5Image)
-            .addImagePath(ResourcePath.SlideShow6Image)
-            .setMask(ResourcePath.SlideShowMaskImage)
+        this.__galleryFrameModule = new GalleryFrame()
+            .addImage(ResourcePath.SlideShow1Image)
+            .addImage(ResourcePath.SlideShow2Image)
+            .addImage(ResourcePath.SlideShow3Image)
+            .addImage(ResourcePath.SlideShow4Image)
+            .addImage(ResourcePath.SlideShow5Image)
+            .addImage(ResourcePath.SlideShow6Image)
             .setWidth(winSize[0])
-            .setDelay(5)
             .setPos(0, galleryTextView.getPos().y + 70);
-
-        this.__traceModule = new HeartTrace()
-            .setHeartSize(this.__slideShowModule.getWidth(), this.__slideShowModule.getHeight())
-            .setPos(this.__slideShowModule.getPos().x + this.__slideShowModule.getWidth() / 2,
-                this.__slideShowModule.getPos().y + this.__slideShowModule.getHeight() / 2)
-            .setMovePointCount(2);
 
         var locationTextView = UiFactory.createTextView()
             .addText("L  o  c  a  t  i  o  n")
@@ -201,7 +188,7 @@ class ObjectInitializer {
             .setColor(160, 110, 110)
             .setTextStyle(BOLD)
             .setSize(16)
-            .setPos(0, this.__slideShowModule.getPos().y + this.__slideShowModule.getHeight() + 350);
+            .setPos(0, this.__galleryFrameModule.getPos().y + 600);
 
         this.__mapModule = new MapView()
             .setPos(0, locationTextView.getPos().y + 80)
@@ -244,8 +231,8 @@ class ObjectInitializer {
             .setSize(winSize[0], 500)
             .addTitle("코로나로 인해 요청이 많아 추가하였습니다")
             .addTitle("( 아래 항목을 누르면 계좌가 복사됩니다 )")
-            .addBackInfo("임현철", "새마을금고", "9003-2232-4693-9")
-            .addBackInfo("가나다", "새마을금고", "9003-2232-4693-9");
+            .addBackInfo("임현철", "새마을금고", "9003 - 2232 - 4693 - 9")
+            .addBackInfo("가나다", "새마을금고", "9003 - 2232 - 4693 - 9");
 
         var thankYouTextView = UiFactory.createTextView()
             .addText("T h a n k   y o u")
