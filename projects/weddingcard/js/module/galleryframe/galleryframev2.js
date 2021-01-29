@@ -35,9 +35,7 @@ class GalleryFrameV2 {
     pick(x, y) {
         for (var i = 0; i < this.__selectPos.length; i++) {
             if (this.inBound(i, x, y)) {
-                var name = "thumb" + (i + 1) + ".jpg";
-                var url = "https://cjftya.github.io/projects/weddingcard/assets/viewer/" + name;
-                TopicManager.ready().publish(TOPICS.QUICK_VIEWER, url);
+                TopicManager.ready().publish(TOPICS.QUICK_VIEWER, i);
                 break;
             }
         }
