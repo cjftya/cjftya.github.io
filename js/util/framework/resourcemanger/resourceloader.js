@@ -40,7 +40,6 @@ class ResourceLoader {
         document.addEventListener("DOMContentLoaded", function () {
             var lazyloadImages = document.querySelectorAll("img.lazy");
             var lazyloadThrottleTimeout;
-            console.log(lazyloadImages)
 
             function lazyload() {
                 if (lazyloadThrottleTimeout) {
@@ -140,7 +139,6 @@ class ResourceLoader {
             imageElement.onload = () => {
                 imageElement.removeAttribute('data-src');
                 URL.revokeObjectURL(objectURL);
-                console.log(imageElement);
 
                 if (imageData.imgUrl.indexOf("https://cjftya.github.io/projects/weddingcard/assets/image/viewer") < 0) {
                     var canvas = document.createElement("canvas");
