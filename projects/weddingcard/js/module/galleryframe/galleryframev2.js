@@ -131,9 +131,9 @@ class GalleryFrameV2 {
             image(this.__image, this.__pos.x, this.__pos.y, this.__w, this.__h);
         }
         
-        fill(this.__color);
-        for (var i = 0; i < this.__selectPos.length; i++) {
-            rect(this.__selectPos[i].x, this.__selectPos[i].y, this.__selectAreaWidth, this.__selectAreaHeight);
-        }
+        // fill(this.__color);
+        // for (var i = 0; i < this.__selectPos.length; i++) {
+        //     rect(this.__selectPos[i].x, this.__selectPos[i].y, this.__selectAreaWidth, this.__selectAreaHeight);
+        // }
     }
 }

@@ -164,29 +164,13 @@ class ObjectInitializer {
             .setAlpha(180)
             .setColor(240, 240, 240);
 
-        var noticeTextView = UiFactory.createTextView()
-            .addText("N  o  t  i  c  e")
-            .setAlign(CENTER, null)
-            .setColor(160, 110, 110)
-            .setTextStyle(BOLD)
-            .setSize(16)
-            .setPos(0, this.__dynamicTextFrameModule.getPos().y + 480);
-
-        this.__bankAccountModule = new BankAccount()
-            .setPos(0, noticeTextView.getPos().y + 90)
-            .setSize(winSize[0], 500)
-            .addTitle("코로나로 인해 요청이 많아 추가하였습니다")
-            .addTitle("( 아래 항목을 누르면 계좌가 복사됩니다 )")
-            .addBackInfo("임현철", "새마을금고", "9003 - 2232 - 4693 - 9")
-            .addBackInfo("진서영", "신한은행", "110 - 318 - 523800");
-
         var galleryTextView = UiFactory.createTextView()
             .addText("G  a  l  l  e  r  y")
             .setAlign(CENTER, null)
             .setColor(160, 110, 110)
             .setTextStyle(BOLD)
             .setSize(16)
-            .setPos(0, this.__bankAccountModule.getPos().y + 460);
+            .setPos(0, this.__dynamicTextFrameModule.getPos().y + 460);
 
         this.__galleryFrameModule = new GalleryFrameV2() 
             .setImage(ResourcePath.GalleryMainImage)
@@ -200,7 +184,7 @@ class ObjectInitializer {
             .setColor(160, 110, 110)
             .setTextStyle(BOLD)
             .setSize(16)
-            .setPos(0, this.__galleryFrameModule.getPos().y + this.__galleryFrameModule.getHeight() + 630);
+            .setPos(0, this.__galleryFrameModule.getPos().y + this.__galleryFrameModule.getHeight() + 360);
 
         this.__mapModule = new MapView()
             .setPos(0, locationTextView.getPos().y + 80)
@@ -225,13 +209,29 @@ class ObjectInitializer {
         this.__directionsModule = new Directions()
             .setPos(0, addressTextView.getPos().y + 120);
 
+        var noticeTextView = UiFactory.createTextView()
+            .addText("N  o  t  i  c  e")
+            .setAlign(CENTER, null)
+            .setColor(160, 110, 110)
+            .setTextStyle(BOLD)
+            .setSize(16)
+            .setPos(0, this.__directionsModule.getPos().y + 580);
+
+        this.__bankAccountModule = new BankAccount()
+            .setPos(0, noticeTextView.getPos().y + 90)
+            .setSize(winSize[0], 500)
+            .addTitle("코로나로 인해 요청이 많아 추가하였습니다")
+            .addTitle("( 아래 항목을 누르면 계좌가 복사됩니다 )")
+            .addBackInfo("임현철", "새마을금고", "9003 - 2232 - 4693 - 9")
+            .addBackInfo("진서영", "신한은행", "110 - 318 - 523800");
+
         var thankYouTextView = UiFactory.createTextView()
             .addText("T h a n k   y o u")
             .setAlign(CENTER, null)
             .setColor(190, 130, 130)
             .setTextStyle(BOLD)
             .setSize(16)
-            .setPos(0, this.__directionsModule.getPos().y + 300);
+            .setPos(0, this.__bankAccountModule.getPos().y + 300);
 
         var bgRect2 = new BgRect()
             .setPos(0, bgRect.getPos().y + bgRect.getHeight())

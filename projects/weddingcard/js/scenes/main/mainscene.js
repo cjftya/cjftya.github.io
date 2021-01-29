@@ -122,12 +122,15 @@ class MainScene extends AbsScene {
         this.__posManager.clear();
         this.__dragControl.setDragVel(0);
         this.__dragControl.setOldPos(tx, ty);
-        this.__mapModule.inBound(tx, ty);
+        if(this.__mapModule.inBound(tx, ty)) {
+            this.__mapModule.setMapController(true);
+        }
         this.__skipPickOffset = ty;
     }
 
     onTouchUp(tx, ty) {
         this.__click = false;
+        this.__mapModule.setMapController(false);
 
         if (Math.abs(ty - this.__skipPickOffset) > 20) {
             return;
