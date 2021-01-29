@@ -51,6 +51,6 @@ class DragCOntrol {
     }
 
     update() {
-        this.__dragVel *= 0.95;
+        this.__dragVel *= 0.975;
     }
 }

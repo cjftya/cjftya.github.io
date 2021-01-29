@@ -4,6 +4,8 @@ class MainScene extends AbsScene {
 
         this.__objectInitializer = new ObjectInitializer();
 
+        this.__posManager = new PositionManager();
+
         this.__dragControl = null;
 
         this.__backgroundBlock = null;
@@ -123,26 +125,25 @@ class MainScene extends AbsScene {
 
     onTouchDown(tx, ty) {
         this.__click = true;
+        this.__posManager.clear();
         this.__dragControl.setDragVel(0);
         this.__dragControl.setOldPos(tx, ty);
         
-        if (this.__mapModule.inBound(tx, ty)) {
-            this.__mapModule.setMapController(true);
+        if(this.__mapModule.inBound(tx, ty)) {
+            TopicManager.ready().publish(TOPICS.QUICK_VIEWER, ResourcePath.MapImage)
         }
+
         this.__skipPickOffset = ty;
     }
 
     onTouchUp(tx, ty) {
         this.__click = false;
-        this.__mapModule.setMapController(false);
         
         if (Math.abs(ty - this.__skipPickOffset) > 20) {
             return;
         }
         
-        if (!this.__mapModule.isMapController()) {
-            this.__mapModule.moveToNaverMap(tx, ty);
-        }
+        this.__mapModule.moveToNaverMap(tx, ty);
         this.__directionsModule.selectDirectionInfo(tx, ty);
         this.__bankAccountModule.pick(tx, ty);
         this.__galleryFrameModule.pick(tx, ty);
@@ -154,11 +155,10 @@ class MainScene extends AbsScene {
         if (this.__mapModule.isMapController()) {
             this.__mapModule.addCropSrcPos(-dx, -dy);
         } else {
-            if (Math.abs(dy) > 3) {
-                this.__dragControl.addDragVel(dy * 0.2);
-            } else {
-                this.__dragControl.setDragVel(this.__dragControl.getDragVel() * 0.7);
-            }
+            this.__posManager.add(dy);
+            var tv = this.__posManager.getAverage();
+            tv = tv == 0 ? dy : tv;
+            this.__dragControl.setDragVel(tv);
             this.updateObjects(dy);
         }
         this.__dragControl.setOldPos(tx, ty);

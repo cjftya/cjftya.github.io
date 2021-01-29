@@ -28,7 +28,7 @@ var ResourcePath = {
     DynamicTextFrameImage: "https://cjftya.github.io/projects/weddingcard/assets/image/dynamictextframe.jpg",
     MapImage: "https://cjftya.github.io/projects/weddingcard/assets/image/map.jpg",
     RingImage: "https://cjftya.github.io/projects/weddingcard/assets/image/ring.jpg",
-    GalleryMainImage: "https://cjftya.github.io/projects/weddingcard/assets/image/gallery_main.jpg",
+    GalleryMainImage: "https://cjftya.github.io/projects/weddingcard/assets/image/gallery_main.png",
     SlideShow1Image: "https://cjftya.github.io/projects/weddingcard/assets/image/slideshow/s1.jpg",
     SlideShow2Image: "https://cjftya.github.io/projects/weddingcard/assets/image/slideshow/s2.jpg",
     SlideShow3Image: "https://cjftya.github.io/projects/weddingcard/assets/image/slideshow/s3.jpg",
@@ -47,7 +47,7 @@ class __ImageMetaData {
         this.__metaMap.set(ResourcePath.DynamicTextFrameImage, [405, 698]);
         this.__metaMap.set(ResourcePath.MapImage, [1665, 890]);
         this.__metaMap.set(ResourcePath.RingImage, [420, 204]);
-        this.__metaMap.set(ResourcePath.GalleryMainImage, [600, 500]);
+        this.__metaMap.set(ResourcePath.GalleryMainImage, [500, 653]);
         this.__metaMap.set(ResourcePath.SlideShow1Image, [600, 500]);
         this.__metaMap.set(ResourcePath.SlideShow2Image, [600, 500]);
         this.__metaMap.set(ResourcePath.SlideShow3Image, [600, 500]);

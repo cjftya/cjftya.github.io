@@ -19,6 +19,8 @@ class BankAccount {
     inScreen(sw, sh) {
         if (this.__pos.y + this.__h > -40 && this.__pos.y < sh + 40) {
             return true;
+        } else {
+            this.__popupInfo.hide();
         }
         return false;
     }

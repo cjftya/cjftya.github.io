@@ -36,6 +36,10 @@ class PopupInfo {
         return this;
     }
 
+    hide() {
+        this.__isStart = false;
+    }
+
     show() {
         this.__counter = 0;
         this.__isStart = true;
@@ -51,8 +55,8 @@ class PopupInfo {
         }
 
         this.__counter += deltaTime;
-        if (this.__counter >= 2) {
-            this.__counter = 2;
+        if (this.__counter >= 1) {
+            this.__counter = 1;
             this.__isStart = false;
         }
     }

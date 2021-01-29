@@ -6,17 +6,17 @@ class MainSystem extends AbsSystem {
         this.__isLoading = true;
         this.__scene = null;
         this.__isViewerShow = false;
-        this.__viewer = new Viewer(document.getElementById("image"), {
+        this.__viewer = new Viewer(document.getElementById("images"), {
             inline: false,
-            button: false,
-            navbar: false,
-            loop: false,
+            button: true,
+            navbar: true,
+            loop: true,
             slideOnTouch: false,
-            toggleOnDblclick: false,
+            toggleOnDblclick: true,
             tooltip: false,
             title: 0,
             toolbar: 0,
-            maxZoomRatio: 0.6
+            maxZoomRatio: 0.9
         });
 
     }
@@ -26,9 +26,6 @@ class MainSystem extends AbsSystem {
             .add(TOPICS.QUICK_VIEWER, (topic, data) => {
                 this.executeViewer(topic, data);
             })
-            .add(TOPICS.TEST_SET, (topic, data) => {
-                console.log("asdasd123");
-            });
     }
 
     onPreload() {
@@ -104,9 +101,10 @@ class MainSystem extends AbsSystem {
     }
 
     executeViewer(topic, data) {
-        console.log(topic + " : " + data);
-        var imgElement = document.getElementById("image");
-        imgElement.setAttribute("src", data);
+        // console.log(topic + " : " + data);
+        // var imgElement = document.getElementById("image");
+        // imgElement.setAttribute("src", data);
+        this.__viewer.view(2);
         this.__viewer.show();
     }
 }
