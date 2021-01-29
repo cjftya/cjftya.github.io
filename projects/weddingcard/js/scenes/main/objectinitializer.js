@@ -193,28 +193,6 @@ class ObjectInitializer {
             .setWidth(winSize[0])
             .setPos(0, galleryTextView.getPos().y + 80)
             .initializeArea();
-        
-        // this.__galleryFrameModule = new GalleryFrame()
-        //     .setMainImage(ResourcePath.GalleryMainImage)
-        //     .addImage(ResourcePath.SlideShow1Image)
-        //     .addImage(ResourcePath.SlideShow2Image)
-        //     .addImage(ResourcePath.SlideShow3Image)
-        //     .addImage(ResourcePath.SlideShow4Image)
-        //     .addImage(ResourcePath.SlideShow5Image)
-        //     .addImage(ResourcePath.SlideShow6Image)
-        //     .setWidth(winSize[0])
-        //     .setPos(0, galleryTextView.getPos().y + 80)
-        //     .initializeArea();
-
-        // var galleryFrameParticle = EffectFactory.createParticle(Particle.Spray)
-        //     .setAmount(50)
-        //     .setColor(255, 255, 240)
-        //     .setAlpha(25)
-        //     .setRadius(2, 110)
-        //     .setPos(winSize[0] / 2, this.__galleryFrameModule.getPos().y + this.__galleryFrameModule.getHeight() / 2)
-        //     .setCreateArea(winSize[0] / 2, this.__galleryFrameModule.getHeight() / 2)
-        //     .setLife(250)
-        //     .setFreq(0.08);
 
         var locationTextView = UiFactory.createTextView()
             .addText("L  o  c  a  t  i  o  n")
@@ -265,7 +243,6 @@ class ObjectInitializer {
         // set map
         this.__particleMap = new Map();
         this.__particleMap.set(ParticleContents.MainTitle, mainTitleParticle);
-        // this.__particleMap.set(ParticleContents.GalleryFrame, galleryFrameParticle);
 
         this.__imageViewMap = new Map();
         this.__imageViewMap.set(ImageContents.Main, mainImageView);

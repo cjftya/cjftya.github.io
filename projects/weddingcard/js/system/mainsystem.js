@@ -101,10 +101,8 @@ class MainSystem extends AbsSystem {
     }
 
     executeViewer(topic, data) {
-        // console.log(topic + " : " + data);
-        // var imgElement = document.getElementById("image");
-        // imgElement.setAttribute("src", data);
-        this.__viewer.view(2);
+        console.log(topic + " : " + data);
+        this.__viewer.view(data);
         this.__viewer.show();
     }
 }

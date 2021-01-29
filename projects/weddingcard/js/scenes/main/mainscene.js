@@ -36,12 +36,6 @@ class MainScene extends AbsScene {
             .add(ResourcePath.MapImage, ResourceType.Image, ThreadType.Background)
             .add(ResourcePath.RingImage, ResourceType.Image, ThreadType.Background)
             .add(ResourcePath.GalleryMainImage, ResourceType.Image, ThreadType.Background)
-            .add(ResourcePath.SlideShow1Image, ResourceType.Image, ThreadType.Background)
-            .add(ResourcePath.SlideShow2Image, ResourceType.Image, ThreadType.Background)
-            .add(ResourcePath.SlideShow3Image, ResourceType.Image, ThreadType.Background)
-            .add(ResourcePath.SlideShow4Image, ResourceType.Image, ThreadType.Background)
-            .add(ResourcePath.SlideShow5Image, ResourceType.Image, ThreadType.Background)
-            .add(ResourcePath.SlideShow6Image, ResourceType.Image, ThreadType.Background)
             .setListener((path, threadType) => {
                 if (threadType == ThreadType.Background) {
                     this.__objectInitializer.reload();
@@ -128,11 +122,7 @@ class MainScene extends AbsScene {
         this.__posManager.clear();
         this.__dragControl.setDragVel(0);
         this.__dragControl.setOldPos(tx, ty);
-        
-        if(this.__mapModule.inBound(tx, ty)) {
-            TopicManager.ready().publish(TOPICS.QUICK_VIEWER, ResourcePath.MapImage)
-        }
-
+        this.__mapModule.inBound(tx, ty);
         this.__skipPickOffset = ty;
     }
 
