@@ -128,11 +128,11 @@ class MainScene extends AbsScene {
 
     onTouchUp(tx, ty) {
         this.__click = false;
-        
+
         if (Math.abs(ty - this.__skipPickOffset) > 20) {
             return;
         }
-        
+
         this.__mapModule.moveToNaverMap(tx, ty);
         this.__directionsModule.selectDirectionInfo(tx, ty);
         this.__bankAccountModule.pick(tx, ty);

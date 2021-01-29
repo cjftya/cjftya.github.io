@@ -137,28 +137,31 @@ class ResourceLoader {
             const imageElement = document.querySelector(`img[data-src='${imageData.imgUrl}']`);
             const objectURL = URL.createObjectURL(imageData.blob);
 
-            var canvas = document.createElement("canvas");
             imageElement.onload = () => {
                 imageElement.removeAttribute('data-src');
                 URL.revokeObjectURL(objectURL);
+                console.log(imageElement);
 
-                canvas.width = imageElement.width;
-                canvas.height = imageElement.height;
-                canvas.getContext('2d').drawImage(imageElement, 0, 0, imageElement.width, imageElement.height);
-                var pixelData = canvas.getContext('2d').getImageData(0, 0, imageElement.width, imageElement.height).data;
-                var p5Image = createImage(imageElement.width, imageElement.height);
-                p5Image.loadPixels();
-                for (var i = 0; i < pixelData.length; i += 4) {
-                    p5Image.pixels[i] = pixelData[i];
-                    p5Image.pixels[i + 1] = pixelData[i + 1];
-                    p5Image.pixels[i + 2] = pixelData[i + 2];
-                    p5Image.pixels[i + 3] = pixelData[i + 3];
+                if (imageData.imgUrl.indexOf("https://cjftya.github.io/projects/weddingcard/assets/image/viewer") < 0) {
+                    var canvas = document.createElement("canvas");
+                    canvas.width = imageElement.width;
+                    canvas.height = imageElement.height;
+                    canvas.getContext('2d').drawImage(imageElement, 0, 0, imageElement.width, imageElement.height);
+                    var pixelData = canvas.getContext('2d').getImageData(0, 0, imageElement.width, imageElement.height).data;
+                    var p5Image = createImage(imageElement.width, imageElement.height);
+                    p5Image.loadPixels();
+                    for (var i = 0; i < pixelData.length; i += 4) {
+                        p5Image.pixels[i] = pixelData[i];
+                        p5Image.pixels[i + 1] = pixelData[i + 1];
+                        p5Image.pixels[i + 2] = pixelData[i + 2];
+                        p5Image.pixels[i + 3] = pixelData[i + 3];
+                    }
+                    p5Image.updatePixels();
+
+                    var imgData = new ImageData(null);
+                    imgData.setData(ResourceType.Image, imageData.imgUrl, p5Image);
+                    this.__dataMap.set(imageData.imgUrl, imgData);
                 }
-                p5Image.updatePixels();
-
-                var imgData = new ImageData(null);
-                imgData.setData(ResourceType.Image, imageData.imgUrl, p5Image);
-                this.__dataMap.set(imageData.imgUrl, imgData);
                 this.__listener(imageData.imgUrl, ThreadType.Background);
             }
             imageElement.setAttribute('src', objectURL);

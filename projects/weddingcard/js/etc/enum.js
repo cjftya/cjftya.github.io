@@ -1,5 +1,5 @@
 var ParticleContents = {
-    MainTitle: 0
+    MainTitle: 0,
 };
 
 var ImageContents = {
@@ -28,6 +28,18 @@ var ResourcePath = {
     MapImage: "https://cjftya.github.io/projects/weddingcard/assets/image/map.jpg",
     RingImage: "https://cjftya.github.io/projects/weddingcard/assets/image/ring.jpg",
     GalleryMainImage: "https://cjftya.github.io/projects/weddingcard/assets/image/gallery_main.png",
+    Thumbnail1: "https://cjftya.github.io/projects/weddingcard/assets/image/viewer/thumb1.jpg",
+    Thumbnail2: "https://cjftya.github.io/projects/weddingcard/assets/image/viewer/thumb2.jpg",
+    Thumbnail3: "https://cjftya.github.io/projects/weddingcard/assets/image/viewer/thumb3.jpg",
+    Thumbnail4: "https://cjftya.github.io/projects/weddingcard/assets/image/viewer/thumb4.jpg",
+    Thumbnail5: "https://cjftya.github.io/projects/weddingcard/assets/image/viewer/thumb5.jpg",
+    Thumbnail6: "https://cjftya.github.io/projects/weddingcard/assets/image/viewer/thumb6.jpg",
+    Thumbnail7: "https://cjftya.github.io/projects/weddingcard/assets/image/viewer/thumb7.jpg",
+    Thumbnail8: "https://cjftya.github.io/projects/weddingcard/assets/image/viewer/thumb8.jpg",
+    Thumbnail9: "https://cjftya.github.io/projects/weddingcard/assets/image/viewer/thumb9.jpg",
+    Thumbnail10: "https://cjftya.github.io/projects/weddingcard/assets/image/viewer/thumb10.jpg",
+    Thumbnail11: "https://cjftya.github.io/projects/weddingcard/assets/image/viewer/thumb11.jpg",
+    Thumbnail12: "https://cjftya.github.io/projects/weddingcard/assets/image/viewer/thumb12.jpg",
 
     // font
     UserFont: "assets/font/DXLBaB-KSCpc-EUC-H.ttf"
