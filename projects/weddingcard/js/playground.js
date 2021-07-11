@@ -4,7 +4,6 @@
 }
 
 function setup() {
-    frameRate(60);
     this.loadSystem();
 }
 

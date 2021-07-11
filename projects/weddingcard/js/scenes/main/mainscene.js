@@ -39,8 +39,9 @@ class MainScene extends AbsScene {
             .setListener((path, threadType) => {
                 if (threadType == ThreadType.Background) {
                     this.__objectInitializer.reload();
-                    // console.log("img : " + path + ", type : " + threadType);
                 }
+                let type = threadType == ThreadType.Background ? "Bg" : "Main";
+                console.log("img : " + path + ", type : " + type);
             })
             .load());
     }
@@ -198,15 +199,15 @@ class MainScene extends AbsScene {
         setInterval(function () {
             var now = new Date();
             var distance = dday - now;
-            var d = Math.floor(distance / (1000 * 60 * 60 * 24));
-            var h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            var m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            var s = Math.floor((distance % (1000 * 60)) / 1000);
+            var d = Math.abs(Math.floor(distance / (1000 * 60 * 60 * 24)));
+            var h = Math.abs(Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)));
+            var m = Math.abs(Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)));
+            var s = Math.abs(Math.floor((distance % (1000 * 60)) / 1000));
             if (s < 10) {
                 s = '0' + s;
             }
             var count = TextUtil.pad(h, 2) + " : " + TextUtil.pad(m, 2) + " : " + TextUtil.pad(s, 2);
-            counter.setDay("D - " + TextUtil.pad(d, 3));
+            counter.setDay("D + " + TextUtil.pad(d, 3));
             counter.setCounter(count);
         }, 1000);
     }
@@ -242,13 +243,5 @@ class MainScene extends AbsScene {
         this.__sprayParticleMap = this.__objectInitializer.getParticleMap();
 
         this.executeDayCounter();
-    }
-
-    drawDebug() {
-        textSize(20);
-        noStroke();
-        fill(20);
-        textAlign(LEFT, TOP);
-        text("FPS : " + Math.floor(TimeDeltaUtil.getInstance().getFPS()), 10, 10);
     }
 }

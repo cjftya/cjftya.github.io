@@ -1,3 +1,8 @@
+var FrameCounter = {
+    Fps60: 0,
+    Fps120: 1
+};
+
 var ParticleContents = {
     MainTitle: 0,
 };

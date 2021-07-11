@@ -1,7 +1,8 @@
 //* topics *// 
 var TOPICS = {
     QUICK_VIEWER: "topic-quick-viewer",
-    TEST_SET: "test-set"
+    TEST_SET: "test-set",
+    FRAME_RATE_CHANGE: "frame-rate-change"
 };
 
 //* data key *//
