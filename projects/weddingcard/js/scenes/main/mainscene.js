@@ -123,7 +123,7 @@ class MainScene extends AbsScene {
         this.__posManager.clear();
         this.__dragControl.setDragVel(0);
         this.__dragControl.setOldPos(tx, ty);
-        if(this.__mapModule.inBound(tx, ty)) {
+        if (this.__mapModule.inBound(tx, ty)) {
             this.__mapModule.setMapController(true);
         }
         this.__skipPickOffset = ty;
@@ -198,7 +198,8 @@ class MainScene extends AbsScene {
         var counter = this.__dayCountModule;
         setInterval(function () {
             var now = new Date();
-            var distance = dday - now;
+            var mark = dday - now < 0 ? ' + ' : ' - ';
+            var distance = Math.abs(dday - now);
             var d = Math.abs(Math.floor(distance / (1000 * 60 * 60 * 24)));
             var h = Math.abs(Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)));
             var m = Math.abs(Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)));
@@ -207,7 +208,7 @@ class MainScene extends AbsScene {
                 s = '0' + s;
             }
             var count = TextUtil.pad(h, 2) + " : " + TextUtil.pad(m, 2) + " : " + TextUtil.pad(s, 2);
-            counter.setDay("D + " + TextUtil.pad(d, 3));
+            counter.setDay("D" + mark + (d < 100 ? TextUtil.pad(d, 3) : d));
             counter.setCounter(count);
         }, 1000);
     }
