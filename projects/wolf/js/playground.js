@@ -34,7 +34,7 @@ function createPixiContext() {
         width: w,
         height: h,
         antialias: true,
-        backgroundColor: COLOR.BACKGROUND, resolution: window.devicePixelRatio || 1
+        backgroundColor: COLOR.BACKGROUND
     });
 }
 
