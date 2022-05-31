@@ -29,7 +29,7 @@ class TitleScene extends AbsScene {
         this.__testObject.beginFill(0xffFF00, 0.5);
 
         this.__testObject.moveTo(0, 0);
-        this.__testObject.lineTo(100, 100);
+        this.__testObject.lineTo(this.__size.width / 4, this.__size.height / 4);
         this.__testObject.closePath();
 
         this.__testObject.rotation = this.__count * 0.1;
