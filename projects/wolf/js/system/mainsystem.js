@@ -8,12 +8,11 @@ class MainSystem extends AbsSystem {
         this.__scene = null;
 
         const style = new PIXI.TextStyle({
-            fontSize: 10,
-            fill: '#000000'
+            fontSize: 18,
+            fill: '#ffffff'
         });
         this.__fpsTextView = new PIXI.Text("", style);
-        this.__fpsTextView.x = 5;
-        this.__fpsTextView.y = 5;
+        this.__fpsTextView.position.set(5, 5);
         this.getContext().stage.addChild(this.__fpsTextView);
     }
 
@@ -33,6 +32,9 @@ class MainSystem extends AbsSystem {
     }
 
     onOperate(delta) {
+        if (this.__isLoading) {
+            return;
+        }
         if (this.isActiveDebug()) {
             this.drawDebug();
         }
@@ -86,8 +88,15 @@ class MainSystem extends AbsSystem {
                 view = new MainScene(this.getContext());
                 break;
         }
-        this.__scene = view;
-        this.__scene.onCreate();
-        console.log("loadScene : " + this.__scene.getName());
+        if (this.__scene != null) {
+            this.__scene.onDestroy();
+        }
+        if (view != null) {
+            this.__scene = view;
+            this.__scene.onCreate();
+            console.log("loadScene : " + this.__scene.getName());
+        } else {
+            console.log("view is null : " + key);
+        }
     }
 }
