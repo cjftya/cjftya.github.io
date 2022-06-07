@@ -1,23 +1,13 @@
-class AbsScene {
+class AbsScene extends ViewGroup {
     constructor(context) {
-        this.__context = context;
+        super(context);
     }
 
     getName() {
         return "AbsScene";
     }
 
-    getContext() {
-        return this.__context;
-    }
-
-    onCreate() { }
-    onPause() { }
-    onStart() { }
-    onUpdateWithDraw(delta) { }
-    onDestroy() { }
-
-    onTouchDown(event) { }
-    onTouchUp(event) { }
-    onTouchMove(event) { }
+    // addChild(view) {
+    //     this.getContext().stage.addChild(view);
+    // }
 }

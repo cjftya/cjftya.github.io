@@ -26,8 +26,8 @@ function createPixiContext() {
     var isMobile = this.isMobileSystem();
     TopicManager.ready().write(DEVICE_INFO.IS_MOBILE, isMobile);
 
-    var w = isMobile ? window.innerWidth : 380;
-    var h = isMobile ? window.innerHeight : 570;
+    var w = isMobile ? window.innerWidth : 500;
+    var h = isMobile ? window.innerHeight : 630;
     TopicManager.ready().write(DISPLAY_INFO.WINDOW_SIZE, { width: w, height: h });
 
     return new PIXI.Application({

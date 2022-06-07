@@ -1,5 +1,5 @@
 var COLOR = {
-    BACKGROUND: 0xeeeeee
+    BACKGROUND: 0x111119
 };
 
 var SCENE = {
