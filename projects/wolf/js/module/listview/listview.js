@@ -12,6 +12,7 @@ class ListView extends ViewGroup {
         this.__adapter = null;
         this.__views = [];
 
+        this.__pos = new PIXI.Point();
         this.__oldPos = new PIXI.Point();
         this.__vel = new PIXI.Point();
 
@@ -52,8 +53,8 @@ class ListView extends ViewGroup {
     }
 
     onItemClicked(view, dataPosition) {
-        console.log("clicked : " + dataPosition);
         view.setColor(0xff00ff);
+        console.log("clicked : " + dataPosition);
     }
 
     onUpdateWithDraw(delta) {
@@ -79,13 +80,14 @@ class ListView extends ViewGroup {
 
     onTouchDown(event) {
         this.__click = true;
+        this.__pos.set(event.data.global.x, event.data.global.y);
         this.__oldPos.set(event.data.global.x, event.data.global.y);
         this.__vel.set(0, 0);
         this.__clickIndex = this.checkBound(event.data.global.x, event.data.global.y);
     }
 
     onTouchMove(event) {
-        if (this.__click) {
+        if (this.__click && Math.abs(event.data.global.y - this.__pos.y) > 2) {
             this.__clickIndex = -1;
             this.__vel.y = this.getScrollSpeed(event.data.global.y - this.__oldPos.y);
             this.__oldPos.set(event.data.global.x, event.data.global.y);
