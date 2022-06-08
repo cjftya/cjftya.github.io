@@ -9,7 +9,7 @@ class MainSystem extends AbsSystem {
 
         const style = new PIXI.TextStyle({
             fontSize: 18,
-            fill: '#ffff00'
+            fill: '#000000'
         });
         this.__fpsTextView = new PIXI.Text("", style);
         this.__fpsTextView.position.set(5, 5);
