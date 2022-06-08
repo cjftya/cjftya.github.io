@@ -5,7 +5,7 @@ class ListItem extends View {
         this.__size = TopicManager.ready().read(DISPLAY_INFO.WINDOW_SIZE);
         this.__halfHeight = this.__size.height / 2;
 
-        this.__minTextScale = 0.2;
+        this.__minTextScale = 0.1;
         this.__maxTextScale = 1.0;
 
         this.__container = new PIXI.Container();
