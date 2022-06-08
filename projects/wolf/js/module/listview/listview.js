@@ -3,6 +3,7 @@ class ListView extends ViewGroup {
         super(context);
 
         this.__listItemGap = 35;
+        this.__maxScrollSpeed = 70;
 
         this.__clickIndex = -1;
         this.__click = false;
@@ -11,8 +12,9 @@ class ListView extends ViewGroup {
         this.__adapter = null;
         this.__views = [];
 
-        this.__oldPos = new Vector2d();
-        this.__vel = new Vector2d();
+        this.__pos = new PIXI.Point();
+        this.__oldPos = new PIXI.Point();
+        this.__vel = new PIXI.Point();
 
         this.__firstListIndex = 0;
         this.__lastListIndex = -1;
@@ -55,7 +57,7 @@ class ListView extends ViewGroup {
     }
 
     onUpdateWithDraw(delta) {
-        this.__vel.mul(0.99);
+        this.__vel.y *= 0.99;
         for (var i = 0; i < this.__views.length; i++) {
             if (!this.__click) {
                 this.__views[i].add(0, this.__vel.y * delta);
@@ -77,24 +79,27 @@ class ListView extends ViewGroup {
 
     onTouchDown(event) {
         this.__click = true;
+        this.__pos.set(event.data.global.x, event.data.global.y);
         this.__oldPos.set(event.data.global.x, event.data.global.y);
+        this.__vel.set(0, 0);
         this.__clickIndex = this.checkBound(event.data.global.x, event.data.global.y);
     }
 
     onTouchMove(event) {
-        if (this.__click) {
+        if (this.__click && Math.abs(event.data.global.y - this.__pos.y) > 10) {
             this.__clickIndex = -1;
-            var dx = event.data.global.x - this.__oldPos.x;
-            var dy = event.data.global.y - this.__oldPos.y;
-
-            this.__vel.y = dy;
-
+            this.__vel.y = this.getScrollSpeed(event.data.global.y - this.__oldPos.y);
             this.__oldPos.set(event.data.global.x, event.data.global.y);
 
             for (var i = 0; i < this.__views.length; i++) {
                 this.__views[i].add(0, this.__vel.y);
             }
         }
+    }
+
+    getScrollSpeed(v) {
+        return v > this.__maxScrollSpeed ? this.__maxScrollSpeed :
+            (v < -this.__maxScrollSpeed ? -this.__maxScrollSpeed : v);
     }
 
     updateArea() {
