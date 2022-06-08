@@ -53,6 +53,7 @@ class ListView extends ViewGroup {
 
     onItemClicked(view, dataPosition) {
         console.log("clicked : " + dataPosition);
+        view.setColor(0xff00ff);
     }
 
     onUpdateWithDraw(delta) {
