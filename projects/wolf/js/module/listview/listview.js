@@ -30,7 +30,7 @@ class ListView extends ViewGroup {
                 }
             }
         }
-        console.log(dataCount)
+        console.log("create view item : " + this.__views.length);
     }
 
     onCreate() {
@@ -55,10 +55,10 @@ class ListView extends ViewGroup {
     }
 
     onUpdateWithDraw(delta) {
-        this.__vel.mul(0.995);
+        this.__vel.mul(0.99);
         for (var i = 0; i < this.__views.length; i++) {
             if (!this.__click) {
-                this.__views[i].add(0, this.__vel.y);
+                this.__views[i].add(0, this.__vel.y * delta);
             }
             this.__views[i].onUpdateWithDraw(delta);
         }
