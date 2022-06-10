@@ -16,12 +16,12 @@ class ListItem extends View {
         this.__h = 60;
 
         const style = new PIXI.TextStyle({
-            fontFamily: "\"Comic Sans MS\", cursive, sans-serif",
-            fontWeight: "lighter",
+            fontFamily: "Helvetica",
+            fontVariant: "small-caps",
             fontSize: 16,
             fill: '#000000'
         });
-        this.__outLine = new PIXI.Graphics();
+        this.__outLine = null; // new PIXI.Graphics();
         this.__textView = new PIXI.Text('', style);
         this.__textView.anchor.set(0.5);
         this.__textView.x += this.__w / 2;
