@@ -5,26 +5,32 @@ class ListItem extends View {
         this.__size = TopicManager.ready().read(DISPLAY_INFO.WINDOW_SIZE);
         this.__halfHeight = this.__size.height / 2;
 
-        this.__minTextScale = 0.1;
-        this.__maxTextScale = 1.0;
+        this.__minValueRate = 0.05;
+        this.__maxValueRate = 1.0;
 
         this.__container = new PIXI.Container();
 
         this.__offsetPosition = new PIXI.Point();
 
-        this.__w = 150;
+        this.__w = 250;
         this.__h = 60;
 
-        this.__outLine = null; //new PIXI.Graphics();
-        this.__textView = new PIXI.Text('');
+        const style = new PIXI.TextStyle({
+            fontFamily: "\"Comic Sans MS\", cursive, sans-serif",
+            fontWeight: "lighter",
+            fontSize: 16,
+            fill: '#000000'
+        });
+        this.__outLine = new PIXI.Graphics();
+        this.__textView = new PIXI.Text('', style);
         this.__textView.anchor.set(0.5);
         this.__textView.x += this.__w / 2;
         this.__textView.y += this.__h / 2;
 
-        this.__container.addChild(this.__textView);
         if (this.__outLine != null) {
             this.__container.addChild(this.__outLine);
         }
+        this.__container.addChild(this.__textView);
         this.__dataPosition = -1;
     }
 
@@ -37,7 +43,7 @@ class ListItem extends View {
     }
 
     isBound(x, y) {
-        if (this.__textView.scale.x < 0.6) {
+        if (this.__container.alpha < 0.5) {
             return false;
         }
 
@@ -107,23 +113,24 @@ class ListItem extends View {
     setColor(color) {
         this.__textView.style.fill = color;
         if (this.__outLine != null) {
-            this.__outLine.beginFill(0xffffff, 0);
+            this.__outLine.clear();
+            this.__outLine.beginFill(0xf4f4f4, 0);
             this.__outLine.lineStyle(1, color);
-            this.__outLine.drawRoundedRect(0, 0, this.__w, this.__h, 10);
+            this.__outLine.drawRoundedRect(0, 0, this.__w, this.__h, 6);
             this.__outLine.endFill();
         }
     }
 
     onUpdateWithDraw(delta) {
         if (this.__container.y <= this.__halfHeight) {
-            this.setTextScale(Math.max((this.__container.y * this.__maxTextScale) / this.__halfHeight, this.__minTextScale));
+            this.setValueRate(Math.max((this.__container.y * this.__maxValueRate) / this.__halfHeight, this.__minValueRate));
         } else {
-            this.setTextScale(Math.max(((this.__size.height - this.__container.y) * this.__maxTextScale) / this.__halfHeight, this.__minTextScale));
+            this.setValueRate(Math.max(((this.__size.height - this.__container.y) * this.__maxValueRate) / this.__halfHeight, this.__minValueRate));
         }
     }
 
-    setTextScale(s) {
-        this.__textView.scale.x = s;
-        this.__textView.scale.y = s;
+    setValueRate(s) {
+        // this.__textView.alpha = s;
+        this.__container.alpha = s;
     }
 }
