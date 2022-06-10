@@ -27,6 +27,10 @@ class ViewGroup extends View {
         }
     }
 
+    addChildPixiContainer(v) {
+        this.__container.addChild(v);
+    }
+
     onDetach() {
         this.getContext().removeChild(this.__container);
     }
