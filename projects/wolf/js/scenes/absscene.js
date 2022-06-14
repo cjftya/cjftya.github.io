@@ -6,8 +6,4 @@ class AbsScene extends ViewGroup {
     getName() {
         return "AbsScene";
     }
-
-    // addChild(view) {
-    //     this.getContext().stage.addChild(view);
-    // }
 }

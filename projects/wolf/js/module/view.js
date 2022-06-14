@@ -14,10 +14,9 @@ class View {
     onCreate() {
     }
 
-    onPause() {
-    }
-
+    // Call super
     onDestroy() {
+        this.__context = null;
     }
 
     onUpdateWithDraw(delta) {

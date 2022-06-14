@@ -13,7 +13,7 @@ class MainSystem extends AbsSystem {
         });
         this.__fpsTextView = new PIXI.Text("", style);
         this.__fpsTextView.position.set(5, 5);
-        this.getContext().stage.addChild(this.__fpsTextView);
+        this.addChild(this.__fpsTextView);
     }
 
     registerSubscribers() {
@@ -27,7 +27,6 @@ class MainSystem extends AbsSystem {
         super.onCreate();
 
         TopicManager.ready().publish(TOPICS.LOAD_SCENE, SCENE.TITLE);
-
         this.__isLoading = false;
     }
 

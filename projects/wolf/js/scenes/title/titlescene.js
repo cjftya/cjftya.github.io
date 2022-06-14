@@ -10,9 +10,12 @@ class TitleScene extends AbsScene {
 
         this.__adapter = new ListAdapter();
         this.__adapter.setData(dataSet);
-        this.__listView = new ListView(context, dataSet.length);
+        this.__listView = new ListView(context);
         this.__listView.setAdapter(this.__adapter);
         this.addChild(this.__listView);
+
+        this.__pointEffect = new PointerEffect(context);
+        this.addChild(this.__pointEffect);
     }
 
     getName() {
@@ -21,16 +24,19 @@ class TitleScene extends AbsScene {
 
     onUpdateWithDraw(delta) {
         this.__listView.onUpdateWithDraw(delta);
+        this.__pointEffect.onUpdateWithDraw(delta);
     }
 
     onTouchDown(event) {
         this.__click = true;
         this.__listView.onTouchDown(event);
+        this.__pointEffect.onTouchDown(event);
     }
 
     onTouchUp(event) {
         this.__click = false;
         this.__listView.onTouchUp(event);
+        this.__pointEffect.onTouchUp(event);
     }
 
     onTouchMove(event) {
@@ -44,35 +50,32 @@ class TitleScene extends AbsScene {
         sprite.alpha = 1;
         sprite.width = this.__size.width;
         sprite.height = this.__size.height;
-        this.addChildPixiContainer(sprite);
+        this.addChild(sprite);
 
         const graphics = new PIXI.Graphics();
 
         graphics.beginFill(0x000000, 1);
-        graphics.drawEllipse(this.__size.width/2, this.__size.height, this.__size.width/1.8, this.__size.width/6);
+        graphics.drawEllipse(this.__size.width / 2, this.__size.height, this.__size.width / 1.8, this.__size.width / 6);
         graphics.endFill();
 
         for (var i = 0; i < 90; i++) {
             graphics.beginFill(0xfcfcfc, 0.8);
-            graphics.drawCircle(MathUtil.randInt(0, this.__size.width), MathUtil.randInt(50, this.__size.height / 1.3), 
+            graphics.drawCircle(MathUtil.randInt(0, this.__size.width), MathUtil.randInt(50, this.__size.height / 1.3),
                 MathUtil.randInt(2, 3) / 3);
             graphics.endFill();
         }
 
-        this.addChildPixiContainer(graphics);
+        this.addChild(graphics);
     }
 
     createGradTexture() {
-        // adjust it if somehow you need better quality for very very big images
         const canvas = document.createElement('canvas');
         canvas.width = this.__size.width;
         canvas.height = this.__size.height;
 
         const ctx = canvas.getContext('2d');
 
-        // use canvas2d API to create gradient
         var grd = ctx.createRadialGradient(this.__size.width / 2, this.__size.height, 0, this.__size.width / 2, this.__size.height, this.__size.width / 1.2);
-        //createRadialGradient( x1, y1, 첫번째 원의 반지름 r1, x2, y2, 두번째 원의 반지름 r2 )  
         grd.addColorStop(0, 'hsla(349, 94%, 75%, 1)');
         grd.addColorStop(0.12, 'hsla(342, 49%, 62%, 1)');
         grd.addColorStop(0.18, 'hsla(328, 37%, 56%, 1)');

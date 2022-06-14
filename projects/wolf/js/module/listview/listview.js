@@ -1,5 +1,5 @@
 class ListView extends ViewGroup {
-    constructor(context, dataCount) {
+    constructor(context) {
         super(context);
 
         this.__listItemGap = 35;
@@ -21,7 +21,7 @@ class ListView extends ViewGroup {
 
         var limitCount = 0;
         for (var i = 0; ; i++) {
-            this.__views.push(new ListItem(this.getContext()));
+            this.__views.push(new ListItem(context));
             this.addChild(this.__views[i]);
             if ((this.__views[i].getHeight() + this.__listItemGap) * (i + 1) > this.__size.height) {
                 if (++limitCount > 2) {
@@ -66,6 +66,11 @@ class ListView extends ViewGroup {
             this.__views[i].onUpdateWithDraw(delta);
         }
         this.updateArea();
+    }
+
+    onDestroy() {
+        super.onDestroy();
+        this.__views.clear();
     }
 
     onTouchUp(event) {
