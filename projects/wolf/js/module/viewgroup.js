@@ -10,6 +10,7 @@ class ViewGroup extends View {
         return this.__container;
     }
 
+    // Call super
     onCreate() {
         for (let child of this.__groups) {
             child.onCreate();
@@ -24,20 +25,17 @@ class ViewGroup extends View {
         if (v instanceof View) {
             this.__groups.push(v);
             this.__container.addChild(v.getPixiView());
+        } else if (v instanceof PIXI.DisplayObject) {
+            this.__container.addChild(v);
         }
     }
 
-    addChildPixiContainer(v) {
-        this.__container.addChild(v);
-    }
-
-    onDetach() {
-        this.getContext().removeChild(this.__container);
-    }
-
+    // Call super
     onDestroy() {
+        super.onDestroy();
         for (let child of this.__groups) {
             child.onDestroy();
         }
+        this.__container.destroy();
     }
 }

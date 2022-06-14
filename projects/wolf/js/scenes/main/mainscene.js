@@ -10,6 +10,7 @@ class MainScene extends AbsScene {
     }
 
     onCreate() {
+        super.onCreate();
     }
 
     onUpdateWithDraw(timeDelta) {
@@ -17,6 +18,7 @@ class MainScene extends AbsScene {
     }
 
     onDestroy() {
+        super.onDestroy();
     }
 
     onTouchDown(event) {

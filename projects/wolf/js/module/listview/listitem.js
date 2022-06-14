@@ -56,9 +56,6 @@ class ListItem extends View {
         return true;
     }
 
-    recycle() {
-    }
-
     getPixiView() {
         return this.__container;
     }
@@ -130,7 +127,11 @@ class ListItem extends View {
     }
 
     setValueRate(s) {
-        // this.__textView.alpha = s;
         this.__container.alpha = s;
+    }
+
+    onDestroy() {
+        super.onDestroy();
+        this.__container.destroy();
     }
 }

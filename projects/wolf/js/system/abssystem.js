@@ -8,6 +8,10 @@ class AbsSystem {
         return this.__context;
     }
 
+    addChild(v) {
+        this.__context.stage.addChild(v);
+    }
+
     onCreate() {
         this.__subscribers = this.registerSubscribers();
         if (this.__subscribers != null) {
