@@ -5,6 +5,7 @@ class TitleScene extends AbsScene {
         this.__click = false;
 
         this.__size = TopicManager.ready().read(DISPLAY_INFO.WINDOW_SIZE);
+        this.__pos = new PIXI.Point();
 
         this.bindBackground();
 
@@ -29,6 +30,7 @@ class TitleScene extends AbsScene {
 
     onTouchDown(event) {
         this.__click = true;
+        this.__pos.set(event.data.global.x, event.data.global.y);
         this.__listView.onTouchDown(event);
         this.__pointEffect.onTouchDown(event);
     }
@@ -36,7 +38,9 @@ class TitleScene extends AbsScene {
     onTouchUp(event) {
         this.__click = false;
         this.__listView.onTouchUp(event);
-        this.__pointEffect.onTouchUp(event);
+        if (this.isMoved(event)) {
+            this.__pointEffect.onTouchUp(event);
+        }
     }
 
     onTouchMove(event) {
@@ -91,5 +95,10 @@ class TitleScene extends AbsScene {
         ctx.fill();
 
         return PIXI.Texture.from(canvas);
+    }
+
+    isMoved(event) {
+        return Math.abs(event.data.global.x - this.__pos.x) <= 2 ||
+            Math.abs(event.data.global.y - this.__pos.y) <= 2;
     }
 }
