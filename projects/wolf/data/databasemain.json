@@ -1,0 +1,14 @@
+[
+    {
+        "listdata": [
+            {
+                "name": "test1",
+                "color": "0xfcfcfc"
+            },
+            {
+                "name": "test2",
+                "color": "0xfcfcfc"
+            }
+        ]
+    }
+]
