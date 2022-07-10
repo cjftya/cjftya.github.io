@@ -6,6 +6,8 @@ import * as Topic from "../../etc/topic";
 import { ListItem } from "./listitem";
 import { ListAdapter } from "./listadapter";
 import { IListView } from "./ilistview";
+import { Message } from "../../etc/message";
+import { Events } from "../../etc/events";
 
 export class ListView extends ViewGroup implements IListView {
 
@@ -55,8 +57,28 @@ export class ListView extends ViewGroup implements IListView {
         return position * height + (position * this.listItemGap);
     }
 
+    public getAdaper(): ListAdapter {
+        return this.adapter;
+    }
+
     public setAdapter(adapter: ListAdapter) {
         this.adapter = adapter;
+    }
+
+    public sendMessage(e: Message): void {
+        if (!this.handleEvent(e)) {
+            console.log("not found message : " + e.getEvent());
+        }
+    }
+
+    private handleEvent(e: Message): boolean {
+        switch (e.getEvent()) {
+            case Events.NOTIFY:
+                this.update();
+                return true;
+            default:
+                return false;
+        }
     }
 
     public onItemClicked(view: ListItem, dataPosition: number): void {
@@ -150,7 +172,7 @@ export class ListView extends ViewGroup implements IListView {
         return -1;
     }
 
-    public notify(): void {
+    private update(): void {
         this.firstListIndex = 0;
         this.lastListIndex = this.createdItemViewCount;
         this.pos.set(0, 0);

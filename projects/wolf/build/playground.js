@@ -44027,8 +44027,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _etc_topic__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(52);
 /* harmony import */ var _abssystem__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(57);
 /* harmony import */ var _scenes_title_titlescene__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(58);
-/* harmony import */ var _scenes_main_mainscene__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(71);
-/* harmony import */ var _database_database__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(72);
+/* harmony import */ var _scenes_main_mainscene__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(73);
+/* harmony import */ var _database_database__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(74);
 
 
 
@@ -44243,7 +44243,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _absscene__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(59);
 /* harmony import */ var _util_mathUtil__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(67);
 /* harmony import */ var _module_listview_listview__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(68);
-/* harmony import */ var _module_listview_listadapter__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(70);
+/* harmony import */ var _module_listview_listadapter__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(71);
 
 
 
@@ -44259,13 +44259,13 @@ class TitleScene extends _absscene__WEBPACK_IMPORTED_MODULE_3__.AbsScene {
         this.dragPointer = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Point();
         this.bindBackground();
         this.listView = new _module_listview_listview__WEBPACK_IMPORTED_MODULE_5__.ListView(context, topicManager);
-        this.listView.setAdapter(new _module_listview_listadapter__WEBPACK_IMPORTED_MODULE_6__.ListAdapter(this.getMediaData()));
+        this.listView.setAdapter(new _module_listview_listadapter__WEBPACK_IMPORTED_MODULE_6__.ListAdapter(this.listView, this.getMediaData()));
         this.addChild(this.listView);
         // this.__pointEffect = new PointerEffect(context);
         // this.addChild(this.__pointEffect);
     }
     onBind() {
-        this.listView.notify();
+        this.listView.getAdaper().notify();
     }
     getName() {
         return "TitleScene";
@@ -44702,6 +44702,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _viewgroup__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(60);
 /* harmony import */ var _etc_topic__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(52);
 /* harmony import */ var _listitem__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(69);
+/* harmony import */ var _etc_events__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(70);
+
 
 
 
@@ -44742,8 +44744,25 @@ class ListView extends _viewgroup__WEBPACK_IMPORTED_MODULE_1__.ViewGroup {
     getPositionFromViewPosition(position, height) {
         return position * height + (position * this.listItemGap);
     }
+    getAdaper() {
+        return this.adapter;
+    }
     setAdapter(adapter) {
         this.adapter = adapter;
+    }
+    sendMessage(e) {
+        if (!this.handleEvent(e)) {
+            console.log("not found message : " + e.getEvent());
+        }
+    }
+    handleEvent(e) {
+        switch (e.getEvent()) {
+            case _etc_events__WEBPACK_IMPORTED_MODULE_4__.Events.NOTIFY:
+                this.update();
+                return true;
+            default:
+                return false;
+        }
     }
     onItemClicked(view, dataPosition) {
         view.setColor(0xff00ff);
@@ -44827,7 +44846,7 @@ class ListView extends _viewgroup__WEBPACK_IMPORTED_MODULE_1__.ViewGroup {
         }
         return -1;
     }
-    notify() {
+    update() {
         this.firstListIndex = 0;
         this.lastListIndex = this.createdItemViewCount;
         this.pos.set(0, 0);
@@ -44977,17 +44996,33 @@ class ListItem extends _view__WEBPACK_IMPORTED_MODULE_2__.View {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Events": () => (/* binding */ Events)
+/* harmony export */ });
+class Events {
+}
+Events.NOTIFY = 0;
+
+
+/***/ }),
+/* 71 */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "ListAdapter": () => (/* binding */ ListAdapter)
 /* harmony export */ });
+/* harmony import */ var _etc_message__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(72);
+/* harmony import */ var _etc_events__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(70);
+
+
 class ListAdapter {
-    constructor(data) {
+    constructor(view, data) {
+        this.view = view;
         this.data = data;
     }
-    setView(view) {
-        this.view = view;
-    }
     notify() {
-        this.view.notify();
+        this.view.sendMessage(_etc_message__WEBPACK_IMPORTED_MODULE_0__.Message.obtain(_etc_events__WEBPACK_IMPORTED_MODULE_1__.Events.NOTIFY));
     }
     bindItem(view, position) {
         const it = this.data.getRead(position);
@@ -45005,7 +45040,33 @@ class ListAdapter {
 
 
 /***/ }),
-/* 71 */
+/* 72 */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Message": () => (/* binding */ Message)
+/* harmony export */ });
+class Message {
+    constructor(e, d) {
+        this.event = e;
+        this.data = d;
+    }
+    getEvent() {
+        return this.event;
+    }
+    getData() {
+        return this.data;
+    }
+    static obtain(event, data) {
+        return new Message(event, data);
+    }
+}
+
+
+/***/ }),
+/* 73 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -45048,7 +45109,7 @@ class MainScene extends _absscene__WEBPACK_IMPORTED_MODULE_1__.AbsScene {
 
 
 /***/ }),
-/* 72 */
+/* 74 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -45081,24 +45142,24 @@ class DataBase {
     }
     loadTitleData(topic, data) {
         console.log("loadTitleData");
-        this.topicManager.publish(_etc_topic__WEBPACK_IMPORTED_MODULE_1__.MEDIA_DATA_TITLE, __webpack_require__(73));
+        this.topicManager.publish(_etc_topic__WEBPACK_IMPORTED_MODULE_1__.MEDIA_DATA_TITLE, __webpack_require__(75));
     }
     loadMainData(topic, data) {
         console.log("loadMainData");
-        this.topicManager.publish(_etc_topic__WEBPACK_IMPORTED_MODULE_1__.MEDIA_DATA_MAIN, __webpack_require__(74));
+        this.topicManager.publish(_etc_topic__WEBPACK_IMPORTED_MODULE_1__.MEDIA_DATA_MAIN, __webpack_require__(76));
     }
 }
 
 
 /***/ }),
-/* 73 */
+/* 75 */
 /***/ ((module) => {
 
 "use strict";
 module.exports = JSON.parse('{"listdata":[{"name":"Collision line to circle","color":"0xfcfcfc"},{"name":"Collision line to circle v2","color":"0xfcfcfc"},{"name":"Collision circle to circle","color":"0xfcfcfc"},{"name":"Collision circle to capsule","color":"0xfcfcfc"},{"name":"Collision poly to circle","color":"0xfcfcfc"},{"name":"Collision poly to poly","color":"0xfcfcfc"},{"name":"Particle flow","color":"0xfcfcfc"},{"name":"Particle connection","color":"0xfcfcfc"},{"name":"Particle g force","color":"0xfcfcfc"},{"name":"Particle lightning","color":"0xfcfcfc"},{"name":"Particle speed Tail","color":"0xfcfcfc"},{"name":"Particle dragging","color":"0xfcfcfc"},{"name":"Particle dragging force","color":"0xfcfcfc"},{"name":"Particle circle area","color":"0xfcfcfc"},{"name":"Particle force area","color":"0xfcfcfc"},{"name":"Particle reality snow","color":"0xfcfcfc"}]}');
 
 /***/ }),
-/* 74 */
+/* 76 */
 /***/ ((module) => {
 
 "use strict";

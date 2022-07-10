@@ -5,6 +5,10 @@ export class Pointer extends View {
     constructor(context: PIXI.Application) {
         super(context);
     }
+
+    public getPixiView(): PIXI.DisplayObject {
+        return null;
+    }
 }
 
 // class Pointer extends View {

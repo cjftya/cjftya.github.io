@@ -27,7 +27,7 @@ export class TitleScene extends AbsScene {
         this.bindBackground();
 
         this.listView = new ListView(context, topicManager);
-        this.listView.setAdapter(new ListAdapter(this.getMediaData()));
+        this.listView.setAdapter(new ListAdapter(this.listView, this.getMediaData()));
         this.addChild(this.listView);
 
         // this.__pointEffect = new PointerEffect(context);
@@ -35,7 +35,7 @@ export class TitleScene extends AbsScene {
     }
 
     public onBind(): void {
-        this.listView.notify();
+        this.listView.getAdaper().notify();
     }
 
     public getName(): string {

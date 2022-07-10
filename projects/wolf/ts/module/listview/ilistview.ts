@@ -1,4 +1,6 @@
+import { Message } from "../../etc/message";
+
 export interface IListView {
 
-    notify(): void;
+    sendMessage(e: Message): void;
 }
