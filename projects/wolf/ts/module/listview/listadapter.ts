@@ -1,22 +1,21 @@
 import { ListItem } from "./listitem";
 import { MediaData } from "../../database/mediadata";
 import { IListView } from "./ilistview";
+import { Message } from "../../etc/message";
+import { Events } from "../../etc/events";
 
 export class ListAdapter {
 
     private data: MediaData;
     private view: IListView;
 
-    constructor(data: MediaData) {
+    constructor(view: IListView, data: MediaData) {
+        this.view = view;
         this.data = data;
     }
 
-    public setView(view: IListView) {
-        this.view = view;
-    }
-
     public notify(): void {
-        this.view.notify();
+        this.view.sendMessage(Message.obtain(Events.NOTIFY));
     }
 
     public bindItem(view: ListItem, position: number): void {
