@@ -1,13 +1,13 @@
 import * as PIXI from "pixi.js";
 import { SubscriberInstaller } from "../framework/subscriberinstaller";
 import { TopicManager } from "../framework/topicmanager";
-import * as Constant from "../etc/constant";
-import * as Topic from "../etc/topic";
 import { AbsSystem } from "./abssystem";
 import { AbsScene } from "../scenes/absscene";
 import { TitleScene } from "../scenes/title/titlescene";
 import { MainScene } from "../scenes/main/mainscene";
 import { DataBase } from "../database/database";
+import { TopicKey } from "../etc/topickey";
+import { L } from "../etc/constlinker";
 
 export class MainSystem extends AbsSystem {
 
@@ -34,7 +34,7 @@ export class MainSystem extends AbsSystem {
 
     protected registerSubscribers(): SubscriberInstaller {
         return new SubscriberInstaller()
-            .add(Topic.LOAD_SCENE, (topic, data) => {
+            .add(TopicKey.LOAD_SCENE, (topic, data) => {
                 this.loadScene(data);
             });
     }
@@ -42,7 +42,7 @@ export class MainSystem extends AbsSystem {
     public onCreate(): void {
         super.onCreate();
 
-        this.getTopicManager().publish(Topic.LOAD_SCENE, Constant.TITLE);
+        this.getTopicManager().publish(TopicKey.LOAD_SCENE, L.values.title_key);
         this.isLoading = false;
     }
 
@@ -105,10 +105,10 @@ export class MainSystem extends AbsSystem {
     private loadScene(key: number): void {
         let view: AbsScene;
         switch (key) {
-            case Constant.TITLE:
+            case L.values.title_key:
                 view = new TitleScene(this.getContext(), this.getTopicManager());
                 break;
-            case Constant.MAIN:
+            case L.values.main_key:
                 view = new MainScene(this.getContext(), this.getTopicManager());
                 break;
         }
@@ -126,10 +126,10 @@ export class MainSystem extends AbsSystem {
     }
 
     private getDataKey(key: number): string {
-        if (key == Constant.TITLE) {
-            return Topic.DATABASE_TITLE;
-        } else if (key == Constant.MAIN) {
-            return Topic.DATABASE_MAIN
+        if (key == L.values.title_key) {
+            return TopicKey.DATABASE_TITLE;
+        } else if (key == L.values.main_key) {
+            return TopicKey.DATABASE_MAIN
         }
         return "null";
     }

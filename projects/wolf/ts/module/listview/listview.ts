@@ -1,13 +1,13 @@
 import * as PIXI from "pixi.js";
 import { TopicManager } from "../../framework/topicmanager";
-import { Size } from "../../util/size";
+import { Size } from "../../support/size";
 import { ViewGroup } from "../viewgroup";
-import * as Topic from "../../etc/topic";
 import { ListItem } from "./listitem";
 import { ListAdapter } from "./listadapter";
 import { IListView } from "./ilistview";
-import { Message } from "../../etc/message";
-import { Events } from "../../etc/events";
+import { Message } from "../../support/message";
+import { Events } from "../../support/events";
+import { TopicKey } from "../../etc/topickey";
 
 export class ListView extends ViewGroup implements IListView {
 
@@ -32,7 +32,7 @@ export class ListView extends ViewGroup implements IListView {
     constructor(context: PIXI.Application, topicManger: TopicManager) {
         super(context);
 
-        this.winSize = topicManger.read(Topic.WINDOW_SIZE);
+        this.winSize = topicManger.read(TopicKey.WINDOW_SIZE);
 
         var limitCount = 0;
         this.views = Array<ListItem>();

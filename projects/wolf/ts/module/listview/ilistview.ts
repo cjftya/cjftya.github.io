@@ -1,4 +1,4 @@
-import { Message } from "../../etc/message";
+import { Message } from "../../support/message";
 
 export interface IListView {
 

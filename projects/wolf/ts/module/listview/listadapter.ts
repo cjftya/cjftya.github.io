@@ -1,8 +1,8 @@
 import { ListItem } from "./listitem";
 import { MediaData } from "../../database/mediadata";
 import { IListView } from "./ilistview";
-import { Message } from "../../etc/message";
-import { Events } from "../../etc/events";
+import { Message } from "../../support/message";
+import { Events } from "../../support/events";
 
 export class ListAdapter {
 

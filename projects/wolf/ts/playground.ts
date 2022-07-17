@@ -1,10 +1,10 @@
 import * as PIXI from "pixi.js";
-import * as Constant from "./etc/constant";
-import * as Topic from "./etc/topic";
-import { Size } from "./util/size";
+import { Size } from "./support/size";
 import { TopicManager } from "./framework/topicmanager";
 import { MainSystem } from "./system/mainsystem";
 import { AbsSystem } from "./system/abssystem";
+import { TopicKey } from "./etc/topickey";
+import { L } from "./etc/constlinker";
 
 initialize();
 
@@ -12,7 +12,7 @@ function initialize(): void {
     const topicManager: TopicManager = new TopicManager();
     const app = createPixiContext(topicManager);
 
-    topicManager.write(Topic.CONTEXT, app);
+    topicManager.write(TopicKey.CONTEXT, app);
 
     let systemView: AbsSystem = new MainSystem(app, topicManager);
     app.stage.interactive = true;
@@ -33,17 +33,17 @@ function initialize(): void {
 
 function createPixiContext(topicManager: TopicManager): PIXI.Application {
     const isMobile = isMobileSystem();
-    topicManager.write(Topic.IS_MOBILE, isMobile);
+    topicManager.write(TopicKey.IS_MOBILE, isMobile);
 
     const w = isMobile ? window.innerWidth : 500;
     const h = isMobile ? window.innerHeight : 630;
-    topicManager.write(Topic.WINDOW_SIZE, new Size(w, h));
+    topicManager.write(TopicKey.WINDOW_SIZE, new Size(w, h));
 
     return new PIXI.Application({
         width: w,
         height: h,
         antialias: true,
-        backgroundColor: Constant.BACKGROUND
+        backgroundColor: L.colors.basic_background_color
     });
 }
 

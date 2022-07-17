@@ -1,7 +1,7 @@
 import * as PIXI from "pixi.js";
-import * as Const from "../../etc/constant";
 import { AbsScene } from "../absscene";
 import { TopicManager } from "../../framework/topicmanager";
+import { L } from "../../etc/constlinker";
 
 export class MainScene extends AbsScene {
 
@@ -16,7 +16,7 @@ export class MainScene extends AbsScene {
     }
 
     public getKey(): number {
-        return Const.MAIN;
+        return L.values.main_key;
     }
 
     public onCreate(): void {

@@ -1,12 +1,12 @@
 import * as PIXI from "pixi.js";
-import * as Const from "../../etc/constant";
-import * as Topic from "../../etc/topic";
 import { AbsScene } from "../absscene"
-import { MathUtil } from "../../util/mathUtil";
+import { MathUtil } from "../../support/mathUtil";
 import { TopicManager } from "../../framework/topicmanager";
-import { Size } from "../../util/size";
+import { Size } from "../../support/size";
 import { ListView } from "../../module/listview/listview";
 import { ListAdapter } from "../../module/listview/listadapter";
+import { TopicKey } from "../../etc/topickey";
+import { L } from "../../etc/constlinker";
 
 export class TitleScene extends AbsScene {
 
@@ -20,7 +20,7 @@ export class TitleScene extends AbsScene {
     constructor(context: PIXI.Application, topicManager: TopicManager) {
         super(context, topicManager);
 
-        this.winSize = this.getTopicManager().read(Topic.WINDOW_SIZE);
+        this.winSize = this.getTopicManager().read(TopicKey.WINDOW_SIZE);
 
         this.dragPointer = new PIXI.Point();
 
@@ -43,7 +43,7 @@ export class TitleScene extends AbsScene {
     }
 
     public getKey(): number {
-        return Const.TITLE;
+        return L.values.title_key;
     }
 
     public onUpdateWithDraw(delta: number): void {
