@@ -1,8 +1,8 @@
 import * as PIXI from "pixi.js";
-import * as Topic from "../../etc/topic";
 import { View } from "../view";
 import { TopicManager } from "../../framework/topicmanager";
-import { Size } from "../../util/size";
+import { Size } from "../../support/size";
+import { TopicKey } from "../../etc/topickey";
 
 export class ListItem extends View {
 
@@ -23,7 +23,7 @@ export class ListItem extends View {
     constructor(context: PIXI.Application, topicManager: TopicManager) {
         super(context);
 
-        this.winSize = <Size>topicManager.read(Topic.WINDOW_SIZE);
+        this.winSize = <Size>topicManager.read(TopicKey.WINDOW_SIZE);
 
         this.container = new PIXI.Container();
 

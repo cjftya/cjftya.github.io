@@ -1,6 +1,6 @@
 import { TopicManager } from "../framework/topicmanager";
 import { SubscriberInstaller } from "../framework/subscriberinstaller";
-import * as Topic from "../etc/topic";
+import { TopicKey } from "../etc/topickey";
 
 export class DataBase {
 
@@ -25,17 +25,17 @@ export class DataBase {
     }
 
     private registerDataSubscriber(): void {
-        this.subsciber.add(Topic.DATABASE_TITLE, (t, d) => this.loadTitleData(t, d));
-        this.subsciber.add(Topic.DATABASE_MAIN, (t, d) => this.loadMainData(t, d));
+        this.subsciber.add(TopicKey.DATABASE_TITLE, (t, d) => this.loadTitleData(t, d));
+        this.subsciber.add(TopicKey.DATABASE_MAIN, (t, d) => this.loadMainData(t, d));
     }
 
     private loadTitleData(topic: string, data: any): void {
         console.log("loadTitleData");
-        this.topicManager.publish(Topic.MEDIA_DATA_TITLE, require("../../data/databasetitle.json"));
+        this.topicManager.publish(TopicKey.MEDIA_DATA_TITLE, require("../../data/databasetitle.json"));
     }
 
     private loadMainData(topic: string, data: any): void {
         console.log("loadMainData");
-        this.topicManager.publish(Topic.MEDIA_DATA_MAIN, require("../../data/databasemain.json"));
+        this.topicManager.publish(TopicKey.MEDIA_DATA_MAIN, require("../../data/databasemain.json"));
     }
 }

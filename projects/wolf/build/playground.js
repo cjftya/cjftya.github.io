@@ -43864,57 +43864,6 @@ var AnimatedSprite = /** @class */ (function (_super) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "BACKGROUND": () => (/* binding */ BACKGROUND),
-/* harmony export */   "MAIN": () => (/* binding */ MAIN),
-/* harmony export */   "TITLE": () => (/* binding */ TITLE)
-/* harmony export */ });
-//* Basic color *// 
-const BACKGROUND = 0x1d1d39;
-//* Scene info *//
-const TITLE = 0;
-const MAIN = 1;
-
-
-/***/ }),
-/* 52 */
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "CONTEXT": () => (/* binding */ CONTEXT),
-/* harmony export */   "DATABASE_MAIN": () => (/* binding */ DATABASE_MAIN),
-/* harmony export */   "DATABASE_TITLE": () => (/* binding */ DATABASE_TITLE),
-/* harmony export */   "IS_MOBILE": () => (/* binding */ IS_MOBILE),
-/* harmony export */   "LOAD_SCENE": () => (/* binding */ LOAD_SCENE),
-/* harmony export */   "MEDIA_DATA_MAIN": () => (/* binding */ MEDIA_DATA_MAIN),
-/* harmony export */   "MEDIA_DATA_TITLE": () => (/* binding */ MEDIA_DATA_TITLE),
-/* harmony export */   "WINDOW_SIZE": () => (/* binding */ WINDOW_SIZE)
-/* harmony export */ });
-const AND = "+";
-//* topics *// 
-const LOAD_SCENE = "load-scene";
-//* data key *//
-const WINDOW_SIZE = "display-win-size";
-const IS_MOBILE = "device-info-is-mobile";
-const CONTEXT = "app_context";
-//* database key *//
-const DATABASE_LOAD = "database-load";
-const DATABASE_TITLE = DATABASE_LOAD + "/title";
-const DATABASE_MAIN = DATABASE_LOAD + "/main";
-//* media data key *//
-const MEDIA_DATA_LOAD = "mediadata-load";
-const MEDIA_DATA_TITLE = MEDIA_DATA_LOAD + "/title";
-const MEDIA_DATA_MAIN = MEDIA_DATA_LOAD + "/main";
-
-
-/***/ }),
-/* 53 */
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "Size": () => (/* binding */ Size)
 /* harmony export */ });
 class Size {
@@ -43943,7 +43892,7 @@ class Size {
 
 
 /***/ }),
-/* 54 */
+/* 52 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -44013,7 +43962,7 @@ class TopicManager {
 
 
 /***/ }),
-/* 55 */
+/* 53 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -44022,13 +43971,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "MainSystem": () => (/* binding */ MainSystem)
 /* harmony export */ });
 /* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
-/* harmony import */ var _framework_subscriberinstaller__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(56);
-/* harmony import */ var _etc_constant__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(51);
-/* harmony import */ var _etc_topic__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(52);
-/* harmony import */ var _abssystem__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(57);
-/* harmony import */ var _scenes_title_titlescene__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(58);
-/* harmony import */ var _scenes_main_mainscene__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(73);
-/* harmony import */ var _database_database__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(74);
+/* harmony import */ var _framework_subscriberinstaller__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(54);
+/* harmony import */ var _abssystem__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(55);
+/* harmony import */ var _scenes_title_titlescene__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(56);
+/* harmony import */ var _scenes_main_mainscene__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(75);
+/* harmony import */ var _database_database__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(76);
+/* harmony import */ var _etc_topickey__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(68);
+/* harmony import */ var _etc_constlinker__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(65);
 
 
 
@@ -44037,12 +43986,12 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-class MainSystem extends _abssystem__WEBPACK_IMPORTED_MODULE_4__.AbsSystem {
+class MainSystem extends _abssystem__WEBPACK_IMPORTED_MODULE_2__.AbsSystem {
     constructor(context, topicManager) {
         super(context, topicManager);
         this.activeDebug = 0;
         this.isLoading = true;
-        this.database = new _database_database__WEBPACK_IMPORTED_MODULE_7__.DataBase(topicManager);
+        this.database = new _database_database__WEBPACK_IMPORTED_MODULE_5__.DataBase(topicManager);
         const style = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.TextStyle({
             fontSize: 18,
             fill: '#ffffff'
@@ -44053,13 +44002,13 @@ class MainSystem extends _abssystem__WEBPACK_IMPORTED_MODULE_4__.AbsSystem {
     }
     registerSubscribers() {
         return new _framework_subscriberinstaller__WEBPACK_IMPORTED_MODULE_1__.SubscriberInstaller()
-            .add(_etc_topic__WEBPACK_IMPORTED_MODULE_3__.LOAD_SCENE, (topic, data) => {
+            .add(_etc_topickey__WEBPACK_IMPORTED_MODULE_6__.TopicKey.LOAD_SCENE, (topic, data) => {
             this.loadScene(data);
         });
     }
     onCreate() {
         super.onCreate();
-        this.getTopicManager().publish(_etc_topic__WEBPACK_IMPORTED_MODULE_3__.LOAD_SCENE, _etc_constant__WEBPACK_IMPORTED_MODULE_2__.TITLE);
+        this.getTopicManager().publish(_etc_topickey__WEBPACK_IMPORTED_MODULE_6__.TopicKey.LOAD_SCENE, _etc_constlinker__WEBPACK_IMPORTED_MODULE_7__.L.values.title_key);
         this.isLoading = false;
     }
     onOperate(delta) {
@@ -44112,11 +44061,11 @@ class MainSystem extends _abssystem__WEBPACK_IMPORTED_MODULE_4__.AbsSystem {
     loadScene(key) {
         let view;
         switch (key) {
-            case _etc_constant__WEBPACK_IMPORTED_MODULE_2__.TITLE:
-                view = new _scenes_title_titlescene__WEBPACK_IMPORTED_MODULE_5__.TitleScene(this.getContext(), this.getTopicManager());
+            case _etc_constlinker__WEBPACK_IMPORTED_MODULE_7__.L.values.title_key:
+                view = new _scenes_title_titlescene__WEBPACK_IMPORTED_MODULE_3__.TitleScene(this.getContext(), this.getTopicManager());
                 break;
-            case _etc_constant__WEBPACK_IMPORTED_MODULE_2__.MAIN:
-                view = new _scenes_main_mainscene__WEBPACK_IMPORTED_MODULE_6__.MainScene(this.getContext(), this.getTopicManager());
+            case _etc_constlinker__WEBPACK_IMPORTED_MODULE_7__.L.values.main_key:
+                view = new _scenes_main_mainscene__WEBPACK_IMPORTED_MODULE_4__.MainScene(this.getContext(), this.getTopicManager());
                 break;
         }
         if (this.scene != null) {
@@ -44133,11 +44082,11 @@ class MainSystem extends _abssystem__WEBPACK_IMPORTED_MODULE_4__.AbsSystem {
         this.database.open(this.getDataKey(key));
     }
     getDataKey(key) {
-        if (key == _etc_constant__WEBPACK_IMPORTED_MODULE_2__.TITLE) {
-            return _etc_topic__WEBPACK_IMPORTED_MODULE_3__.DATABASE_TITLE;
+        if (key == _etc_constlinker__WEBPACK_IMPORTED_MODULE_7__.L.values.title_key) {
+            return _etc_topickey__WEBPACK_IMPORTED_MODULE_6__.TopicKey.DATABASE_TITLE;
         }
-        else if (key == _etc_constant__WEBPACK_IMPORTED_MODULE_2__.MAIN) {
-            return _etc_topic__WEBPACK_IMPORTED_MODULE_3__.DATABASE_MAIN;
+        else if (key == _etc_constlinker__WEBPACK_IMPORTED_MODULE_7__.L.values.main_key) {
+            return _etc_topickey__WEBPACK_IMPORTED_MODULE_6__.TopicKey.DATABASE_MAIN;
         }
         return "null";
     }
@@ -44145,7 +44094,7 @@ class MainSystem extends _abssystem__WEBPACK_IMPORTED_MODULE_4__.AbsSystem {
 
 
 /***/ }),
-/* 56 */
+/* 54 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -44182,7 +44131,7 @@ class SubscriberInstaller {
 
 
 /***/ }),
-/* 57 */
+/* 55 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -44229,7 +44178,7 @@ class AbsSystem {
 
 
 /***/ }),
-/* 58 */
+/* 56 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -44238,12 +44187,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "TitleScene": () => (/* binding */ TitleScene)
 /* harmony export */ });
 /* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
-/* harmony import */ var _etc_constant__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(51);
-/* harmony import */ var _etc_topic__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(52);
-/* harmony import */ var _absscene__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(59);
-/* harmony import */ var _util_mathUtil__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(67);
-/* harmony import */ var _module_listview_listview__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(68);
-/* harmony import */ var _module_listview_listadapter__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(71);
+/* harmony import */ var _absscene__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(57);
+/* harmony import */ var _support_mathUtil__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(69);
+/* harmony import */ var _module_listview_listview__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(70);
+/* harmony import */ var _module_listview_listadapter__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(73);
+/* harmony import */ var _etc_topickey__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(68);
+/* harmony import */ var _etc_constlinker__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(65);
 
 
 
@@ -44251,15 +44200,15 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-class TitleScene extends _absscene__WEBPACK_IMPORTED_MODULE_3__.AbsScene {
+class TitleScene extends _absscene__WEBPACK_IMPORTED_MODULE_1__.AbsScene {
     constructor(context, topicManager) {
         super(context, topicManager);
         this.click = false;
-        this.winSize = this.getTopicManager().read(_etc_topic__WEBPACK_IMPORTED_MODULE_2__.WINDOW_SIZE);
+        this.winSize = this.getTopicManager().read(_etc_topickey__WEBPACK_IMPORTED_MODULE_5__.TopicKey.WINDOW_SIZE);
         this.dragPointer = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Point();
         this.bindBackground();
-        this.listView = new _module_listview_listview__WEBPACK_IMPORTED_MODULE_5__.ListView(context, topicManager);
-        this.listView.setAdapter(new _module_listview_listadapter__WEBPACK_IMPORTED_MODULE_6__.ListAdapter(this.listView, this.getMediaData()));
+        this.listView = new _module_listview_listview__WEBPACK_IMPORTED_MODULE_3__.ListView(context, topicManager);
+        this.listView.setAdapter(new _module_listview_listadapter__WEBPACK_IMPORTED_MODULE_4__.ListAdapter(this.listView, this.getMediaData()));
         this.addChild(this.listView);
         // this.__pointEffect = new PointerEffect(context);
         // this.addChild(this.__pointEffect);
@@ -44271,7 +44220,7 @@ class TitleScene extends _absscene__WEBPACK_IMPORTED_MODULE_3__.AbsScene {
         return "TitleScene";
     }
     getKey() {
-        return _etc_constant__WEBPACK_IMPORTED_MODULE_1__.TITLE;
+        return _etc_constlinker__WEBPACK_IMPORTED_MODULE_6__.L.values.title_key;
     }
     onUpdateWithDraw(delta) {
         this.listView.onUpdateWithDraw(delta);
@@ -44307,7 +44256,7 @@ class TitleScene extends _absscene__WEBPACK_IMPORTED_MODULE_3__.AbsScene {
         graphics.endFill();
         for (var i = 0; i < 90; i++) {
             graphics.beginFill(0xfcfcfc, 0.8);
-            graphics.drawCircle(_util_mathUtil__WEBPACK_IMPORTED_MODULE_4__.MathUtil.randInt(0, this.winSize.getWidth()), _util_mathUtil__WEBPACK_IMPORTED_MODULE_4__.MathUtil.randInt(50, this.winSize.getHeigth() / 1.3), _util_mathUtil__WEBPACK_IMPORTED_MODULE_4__.MathUtil.randInt(2, 3) / 3);
+            graphics.drawCircle(_support_mathUtil__WEBPACK_IMPORTED_MODULE_2__.MathUtil.randInt(0, this.winSize.getWidth()), _support_mathUtil__WEBPACK_IMPORTED_MODULE_2__.MathUtil.randInt(50, this.winSize.getHeigth() / 1.3), _support_mathUtil__WEBPACK_IMPORTED_MODULE_2__.MathUtil.randInt(2, 3) / 3);
             graphics.endFill();
         }
         this.addChild(graphics);
@@ -44341,7 +44290,7 @@ class TitleScene extends _absscene__WEBPACK_IMPORTED_MODULE_3__.AbsScene {
 
 
 /***/ }),
-/* 59 */
+/* 57 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -44349,8 +44298,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "AbsScene": () => (/* binding */ AbsScene)
 /* harmony export */ });
-/* harmony import */ var _module_viewgroup__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(60);
-/* harmony import */ var _database_mediadatafactory__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(62);
+/* harmony import */ var _module_viewgroup__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(58);
+/* harmony import */ var _database_mediadatafactory__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(60);
 
 
 class AbsScene extends _module_viewgroup__WEBPACK_IMPORTED_MODULE_0__.ViewGroup {
@@ -44387,7 +44336,7 @@ class AbsScene extends _module_viewgroup__WEBPACK_IMPORTED_MODULE_0__.ViewGroup 
 
 
 /***/ }),
-/* 60 */
+/* 58 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -44396,7 +44345,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "ViewGroup": () => (/* binding */ ViewGroup)
 /* harmony export */ });
 /* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
-/* harmony import */ var _view__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(61);
+/* harmony import */ var _view__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(59);
 
 
 class ViewGroup extends _view__WEBPACK_IMPORTED_MODULE_1__.View {
@@ -44443,7 +44392,7 @@ class ViewGroup extends _view__WEBPACK_IMPORTED_MODULE_1__.View {
 
 
 /***/ }),
-/* 61 */
+/* 59 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -44476,7 +44425,7 @@ class View {
 
 
 /***/ }),
-/* 62 */
+/* 60 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -44484,10 +44433,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "MediaDataFactory": () => (/* binding */ MediaDataFactory)
 /* harmony export */ });
-/* harmony import */ var _etc_constant__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(51);
-/* harmony import */ var _etc_topic__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(52);
-/* harmony import */ var _mediadatatitle__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(63);
-/* harmony import */ var _mediadatamain__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(66);
+/* harmony import */ var _mediadatatitle__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(61);
+/* harmony import */ var _mediadatamain__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(64);
+/* harmony import */ var _etc_constlinker__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(65);
+/* harmony import */ var _etc_topickey__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(68);
 
 
 
@@ -44495,10 +44444,10 @@ __webpack_require__.r(__webpack_exports__);
 class MediaDataFactory {
     static cretae(key, topicManager) {
         switch (key) {
-            case _etc_constant__WEBPACK_IMPORTED_MODULE_0__.TITLE:
-                return new _mediadatatitle__WEBPACK_IMPORTED_MODULE_2__.MediaDataTitle(_etc_topic__WEBPACK_IMPORTED_MODULE_1__.MEDIA_DATA_TITLE, topicManager);
-            case _etc_constant__WEBPACK_IMPORTED_MODULE_0__.MAIN:
-                return new _mediadatamain__WEBPACK_IMPORTED_MODULE_3__.MediaDataMain(_etc_topic__WEBPACK_IMPORTED_MODULE_1__.MEDIA_DATA_MAIN, topicManager);
+            case _etc_constlinker__WEBPACK_IMPORTED_MODULE_2__.L.values.title_key:
+                return new _mediadatatitle__WEBPACK_IMPORTED_MODULE_0__.MediaDataTitle(_etc_topickey__WEBPACK_IMPORTED_MODULE_3__.TopicKey.MEDIA_DATA_TITLE, topicManager);
+            case _etc_constlinker__WEBPACK_IMPORTED_MODULE_2__.L.values.main_key:
+                return new _mediadatamain__WEBPACK_IMPORTED_MODULE_1__.MediaDataMain(_etc_topickey__WEBPACK_IMPORTED_MODULE_3__.TopicKey.MEDIA_DATA_MAIN, topicManager);
             default:
                 return null;
         }
@@ -44507,7 +44456,7 @@ class MediaDataFactory {
 
 
 /***/ }),
-/* 63 */
+/* 61 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -44515,8 +44464,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "MediaDataTitle": () => (/* binding */ MediaDataTitle)
 /* harmony export */ });
-/* harmony import */ var _mediadata__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(64);
-/* harmony import */ var _mediaitem__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(65);
+/* harmony import */ var _mediadata__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(62);
+/* harmony import */ var _mediaitem__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(63);
 
 
 class MediaDataTitle extends _mediadata__WEBPACK_IMPORTED_MODULE_0__.MediaData {
@@ -44579,7 +44528,7 @@ class MediaDataTitle extends _mediadata__WEBPACK_IMPORTED_MODULE_0__.MediaData {
 
 
 /***/ }),
-/* 64 */
+/* 62 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -44622,7 +44571,7 @@ class MediaData {
 
 
 /***/ }),
-/* 65 */
+/* 63 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -44647,7 +44596,7 @@ class MediaItem {
 
 
 /***/ }),
-/* 66 */
+/* 64 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -44655,14 +44604,88 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "MediaDataMain": () => (/* binding */ MediaDataMain)
 /* harmony export */ });
-/* harmony import */ var _mediadata__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(64);
+/* harmony import */ var _mediadata__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(62);
 
 class MediaDataMain extends _mediadata__WEBPACK_IMPORTED_MODULE_0__.MediaData {
 }
 
 
 /***/ }),
+/* 65 */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "L": () => (/* binding */ L)
+/* harmony export */ });
+/* harmony import */ var _colors__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(66);
+/* harmony import */ var _values__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(67);
+
+
+var L;
+(function (L) {
+    L.colors = _colors__WEBPACK_IMPORTED_MODULE_0__.Colors;
+    L.values = _values__WEBPACK_IMPORTED_MODULE_1__.Values;
+})(L || (L = {}));
+
+
+/***/ }),
+/* 66 */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Colors": () => (/* binding */ Colors)
+/* harmony export */ });
+const Colors = {
+    basic_background_color: 0x1d1d39
+};
+
+
+/***/ }),
 /* 67 */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Values": () => (/* binding */ Values)
+/* harmony export */ });
+const Values = {
+    title_key: 0,
+    main_key: 1
+};
+
+
+/***/ }),
+/* 68 */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "TopicKey": () => (/* binding */ TopicKey)
+/* harmony export */ });
+const TopicKey = {
+    //* topics *// 
+    LOAD_SCENE: "load-scene",
+    //* data key *//
+    WINDOW_SIZE: "display-win-size",
+    IS_MOBILE: "device-info-is-mobile",
+    CONTEXT: "app_context",
+    //* database key *//
+    DATABASE_TITLE: "database-load/title",
+    DATABASE_MAIN: "database-load/main",
+    //* media data key *//
+    MEDIA_DATA_TITLE: "mediadata-load/title",
+    MEDIA_DATA_MAIN: "mediadata-load/main"
+};
+
+
+/***/ }),
+/* 69 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -44690,7 +44713,7 @@ class MathUtil {
 
 
 /***/ }),
-/* 68 */
+/* 70 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -44699,10 +44722,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "ListView": () => (/* binding */ ListView)
 /* harmony export */ });
 /* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
-/* harmony import */ var _viewgroup__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(60);
-/* harmony import */ var _etc_topic__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(52);
-/* harmony import */ var _listitem__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(69);
-/* harmony import */ var _etc_events__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(70);
+/* harmony import */ var _viewgroup__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(58);
+/* harmony import */ var _listitem__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(71);
+/* harmony import */ var _support_events__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(72);
+/* harmony import */ var _etc_topickey__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(68);
 
 
 
@@ -44721,11 +44744,11 @@ class ListView extends _viewgroup__WEBPACK_IMPORTED_MODULE_1__.ViewGroup {
         this.pos = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Point();
         this.oldPos = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Point();
         this.vel = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Point();
-        this.winSize = topicManger.read(_etc_topic__WEBPACK_IMPORTED_MODULE_2__.WINDOW_SIZE);
+        this.winSize = topicManger.read(_etc_topickey__WEBPACK_IMPORTED_MODULE_4__.TopicKey.WINDOW_SIZE);
         var limitCount = 0;
         this.views = Array();
         for (let i = 0;; i++) {
-            this.views.push(new _listitem__WEBPACK_IMPORTED_MODULE_3__.ListItem(context, topicManger));
+            this.views.push(new _listitem__WEBPACK_IMPORTED_MODULE_2__.ListItem(context, topicManger));
             this.addChild(this.views[i]);
             if ((this.views[i].getHeight() + this.listItemGap) * (i + 1) > this.winSize.getHeigth()) {
                 if (++limitCount > 2) {
@@ -44757,7 +44780,7 @@ class ListView extends _viewgroup__WEBPACK_IMPORTED_MODULE_1__.ViewGroup {
     }
     handleEvent(e) {
         switch (e.getEvent()) {
-            case _etc_events__WEBPACK_IMPORTED_MODULE_4__.Events.NOTIFY:
+            case _support_events__WEBPACK_IMPORTED_MODULE_3__.Events.NOTIFY:
                 this.update();
                 return true;
             default:
@@ -44861,7 +44884,7 @@ class ListView extends _viewgroup__WEBPACK_IMPORTED_MODULE_1__.ViewGroup {
 
 
 /***/ }),
-/* 69 */
+/* 71 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -44870,18 +44893,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "ListItem": () => (/* binding */ ListItem)
 /* harmony export */ });
 /* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
-/* harmony import */ var _etc_topic__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(52);
-/* harmony import */ var _view__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(61);
+/* harmony import */ var _view__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(59);
+/* harmony import */ var _etc_topickey__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(68);
 
 
 
-class ListItem extends _view__WEBPACK_IMPORTED_MODULE_2__.View {
+class ListItem extends _view__WEBPACK_IMPORTED_MODULE_1__.View {
     constructor(context, topicManager) {
         super(context);
         this.minValueRate = 0.05;
         this.maxValueRate = 1.0;
         this.dataPosition = -1;
-        this.winSize = topicManager.read(_etc_topic__WEBPACK_IMPORTED_MODULE_1__.WINDOW_SIZE);
+        this.winSize = topicManager.read(_etc_topickey__WEBPACK_IMPORTED_MODULE_2__.TopicKey.WINDOW_SIZE);
         this.container = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container();
         this.offsetPosition = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Point();
         this.size = { width: 250, height: 60 };
@@ -44990,7 +45013,7 @@ class ListItem extends _view__WEBPACK_IMPORTED_MODULE_2__.View {
 
 
 /***/ }),
-/* 70 */
+/* 72 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -45004,7 +45027,7 @@ Events.NOTIFY = 0;
 
 
 /***/ }),
-/* 71 */
+/* 73 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -45012,8 +45035,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "ListAdapter": () => (/* binding */ ListAdapter)
 /* harmony export */ });
-/* harmony import */ var _etc_message__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(72);
-/* harmony import */ var _etc_events__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(70);
+/* harmony import */ var _support_message__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(74);
+/* harmony import */ var _support_events__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(72);
 
 
 class ListAdapter {
@@ -45022,7 +45045,7 @@ class ListAdapter {
         this.data = data;
     }
     notify() {
-        this.view.sendMessage(_etc_message__WEBPACK_IMPORTED_MODULE_0__.Message.obtain(_etc_events__WEBPACK_IMPORTED_MODULE_1__.Events.NOTIFY));
+        this.view.sendMessage(_support_message__WEBPACK_IMPORTED_MODULE_0__.Message.obtain(_support_events__WEBPACK_IMPORTED_MODULE_1__.Events.NOTIFY));
     }
     bindItem(view, position) {
         const it = this.data.getRead(position);
@@ -45040,7 +45063,7 @@ class ListAdapter {
 
 
 /***/ }),
-/* 72 */
+/* 74 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -45066,7 +45089,7 @@ class Message {
 
 
 /***/ }),
-/* 73 */
+/* 75 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -45074,11 +45097,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "MainScene": () => (/* binding */ MainScene)
 /* harmony export */ });
-/* harmony import */ var _etc_constant__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(51);
-/* harmony import */ var _absscene__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(59);
+/* harmony import */ var _absscene__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(57);
+/* harmony import */ var _etc_constlinker__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(65);
 
 
-class MainScene extends _absscene__WEBPACK_IMPORTED_MODULE_1__.AbsScene {
+class MainScene extends _absscene__WEBPACK_IMPORTED_MODULE_0__.AbsScene {
     constructor(context, topicManager) {
         super(context, topicManager);
         this.click = false;
@@ -45087,7 +45110,7 @@ class MainScene extends _absscene__WEBPACK_IMPORTED_MODULE_1__.AbsScene {
         return "MainScene";
     }
     getKey() {
-        return _etc_constant__WEBPACK_IMPORTED_MODULE_0__.MAIN;
+        return _etc_constlinker__WEBPACK_IMPORTED_MODULE_1__.L.values.main_key;
     }
     onCreate() {
         super.onCreate();
@@ -45109,7 +45132,7 @@ class MainScene extends _absscene__WEBPACK_IMPORTED_MODULE_1__.AbsScene {
 
 
 /***/ }),
-/* 74 */
+/* 76 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -45117,8 +45140,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "DataBase": () => (/* binding */ DataBase)
 /* harmony export */ });
-/* harmony import */ var _framework_subscriberinstaller__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(56);
-/* harmony import */ var _etc_topic__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(52);
+/* harmony import */ var _framework_subscriberinstaller__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(54);
+/* harmony import */ var _etc_topickey__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(68);
 
 
 class DataBase {
@@ -45137,29 +45160,29 @@ class DataBase {
         this.topicManager = null;
     }
     registerDataSubscriber() {
-        this.subsciber.add(_etc_topic__WEBPACK_IMPORTED_MODULE_1__.DATABASE_TITLE, (t, d) => this.loadTitleData(t, d));
-        this.subsciber.add(_etc_topic__WEBPACK_IMPORTED_MODULE_1__.DATABASE_MAIN, (t, d) => this.loadMainData(t, d));
+        this.subsciber.add(_etc_topickey__WEBPACK_IMPORTED_MODULE_1__.TopicKey.DATABASE_TITLE, (t, d) => this.loadTitleData(t, d));
+        this.subsciber.add(_etc_topickey__WEBPACK_IMPORTED_MODULE_1__.TopicKey.DATABASE_MAIN, (t, d) => this.loadMainData(t, d));
     }
     loadTitleData(topic, data) {
         console.log("loadTitleData");
-        this.topicManager.publish(_etc_topic__WEBPACK_IMPORTED_MODULE_1__.MEDIA_DATA_TITLE, __webpack_require__(75));
+        this.topicManager.publish(_etc_topickey__WEBPACK_IMPORTED_MODULE_1__.TopicKey.MEDIA_DATA_TITLE, __webpack_require__(77));
     }
     loadMainData(topic, data) {
         console.log("loadMainData");
-        this.topicManager.publish(_etc_topic__WEBPACK_IMPORTED_MODULE_1__.MEDIA_DATA_MAIN, __webpack_require__(76));
+        this.topicManager.publish(_etc_topickey__WEBPACK_IMPORTED_MODULE_1__.TopicKey.MEDIA_DATA_MAIN, __webpack_require__(78));
     }
 }
 
 
 /***/ }),
-/* 75 */
+/* 77 */
 /***/ ((module) => {
 
 "use strict";
 module.exports = JSON.parse('{"listdata":[{"name":"Collision line to circle","color":"0xfcfcfc"},{"name":"Collision line to circle v2","color":"0xfcfcfc"},{"name":"Collision circle to circle","color":"0xfcfcfc"},{"name":"Collision circle to capsule","color":"0xfcfcfc"},{"name":"Collision poly to circle","color":"0xfcfcfc"},{"name":"Collision poly to poly","color":"0xfcfcfc"},{"name":"Particle flow","color":"0xfcfcfc"},{"name":"Particle connection","color":"0xfcfcfc"},{"name":"Particle g force","color":"0xfcfcfc"},{"name":"Particle lightning","color":"0xfcfcfc"},{"name":"Particle speed Tail","color":"0xfcfcfc"},{"name":"Particle dragging","color":"0xfcfcfc"},{"name":"Particle dragging force","color":"0xfcfcfc"},{"name":"Particle circle area","color":"0xfcfcfc"},{"name":"Particle force area","color":"0xfcfcfc"},{"name":"Particle reality snow","color":"0xfcfcfc"}]}');
 
 /***/ }),
-/* 76 */
+/* 78 */
 /***/ ((module) => {
 
 "use strict";
@@ -45264,11 +45287,11 @@ var __webpack_exports__ = {};
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
-/* harmony import */ var _etc_constant__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(51);
-/* harmony import */ var _etc_topic__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(52);
-/* harmony import */ var _util_size__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(53);
-/* harmony import */ var _framework_topicmanager__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(54);
-/* harmony import */ var _system_mainsystem__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(55);
+/* harmony import */ var _support_size__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(51);
+/* harmony import */ var _framework_topicmanager__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(52);
+/* harmony import */ var _system_mainsystem__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(53);
+/* harmony import */ var _etc_topickey__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(68);
+/* harmony import */ var _etc_constlinker__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(65);
 
 
 
@@ -45277,10 +45300,10 @@ __webpack_require__.r(__webpack_exports__);
 
 initialize();
 function initialize() {
-    const topicManager = new _framework_topicmanager__WEBPACK_IMPORTED_MODULE_4__.TopicManager();
+    const topicManager = new _framework_topicmanager__WEBPACK_IMPORTED_MODULE_2__.TopicManager();
     const app = createPixiContext(topicManager);
-    topicManager.write(_etc_topic__WEBPACK_IMPORTED_MODULE_2__.CONTEXT, app);
-    let systemView = new _system_mainsystem__WEBPACK_IMPORTED_MODULE_5__.MainSystem(app, topicManager);
+    topicManager.write(_etc_topickey__WEBPACK_IMPORTED_MODULE_4__.TopicKey.CONTEXT, app);
+    let systemView = new _system_mainsystem__WEBPACK_IMPORTED_MODULE_3__.MainSystem(app, topicManager);
     app.stage.interactive = true;
     // window.app = app;
     app.renderer.plugins.interaction.on('pointerdown', (e) => systemView.onTouchDown(e));
@@ -45295,15 +45318,15 @@ function initialize() {
 }
 function createPixiContext(topicManager) {
     const isMobile = isMobileSystem();
-    topicManager.write(_etc_topic__WEBPACK_IMPORTED_MODULE_2__.IS_MOBILE, isMobile);
+    topicManager.write(_etc_topickey__WEBPACK_IMPORTED_MODULE_4__.TopicKey.IS_MOBILE, isMobile);
     const w = isMobile ? window.innerWidth : 500;
     const h = isMobile ? window.innerHeight : 630;
-    topicManager.write(_etc_topic__WEBPACK_IMPORTED_MODULE_2__.WINDOW_SIZE, new _util_size__WEBPACK_IMPORTED_MODULE_3__.Size(w, h));
+    topicManager.write(_etc_topickey__WEBPACK_IMPORTED_MODULE_4__.TopicKey.WINDOW_SIZE, new _support_size__WEBPACK_IMPORTED_MODULE_1__.Size(w, h));
     return new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Application({
         width: w,
         height: h,
         antialias: true,
-        backgroundColor: _etc_constant__WEBPACK_IMPORTED_MODULE_1__.BACKGROUND
+        backgroundColor: _etc_constlinker__WEBPACK_IMPORTED_MODULE_5__.L.colors.basic_background_color
     });
 }
 function isMobileSystem() {
