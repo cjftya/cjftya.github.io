@@ -40,27 +40,27 @@ export class MediaDataTitle extends MediaData {
 
     private compare(a: MediaItem, b: MediaItem): boolean {
         return a.getName() == b.getName() &&
-            a.getColor() == b.getColor();
+            a.getColor() == b.getColor() &&
+            a.getStageId() == b.getStageId();
     }
 
-    private createMediaItem(title: string, color: number): MediaItem {
+    private createMediaItem(data: any): MediaItem {
         const item = new MediaItem();
-        item.setName(title);
-        item.setColor(color);
+        item.setName(data.name);
+        item.setColor(data.color);
+        item.setStageId(data.stage_id);
         return item;
     }
 
     private loadData(table: Array<MediaItem>, data: any): void {
-        const listData: Array<{ name: string, color: number }> = data.listdata;
-        for (const v of listData) {
-            table.push(this.createMediaItem(v.name, v.color));
+        for (const v of data.listdata) {
+            table.push(this.createMediaItem(v));
         }
     }
 
     protected swap(data: any): void {
         let newData = Array<MediaItem>();
         this.loadData(newData, data);
-
         if (!this.compareData(newData)) {
             this.listData = newData;
             this.notify();

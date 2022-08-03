@@ -1,6 +1,7 @@
 import { TopicManager } from "../framework/topicmanager";
 import { SubscriberInstaller } from "../framework/subscriberinstaller";
-import { TopicKey } from "../etc/topickey";
+import { AddressKey } from "../etc/addresskey";
+import { DataRequest } from "../etc/datakey";
 
 export class DataBase {
 
@@ -15,7 +16,7 @@ export class DataBase {
     }
 
     public open(key: string): void {
-        this.topicManager.publish(key, null);
+        this.topicManager.publish(DataRequest.getDataBaseKey(key), key);
     }
 
     public close(): void {
@@ -25,17 +26,17 @@ export class DataBase {
     }
 
     private registerDataSubscriber(): void {
-        this.subsciber.add(TopicKey.DATABASE_TITLE, (t, d) => this.loadTitleData(t, d));
-        this.subsciber.add(TopicKey.DATABASE_MAIN, (t, d) => this.loadMainData(t, d));
+        this.subsciber.add(DataRequest.getDataBaseKey(AddressKey.Title), (t, d) => this.loadTitleData(t, d));
+        this.subsciber.add(DataRequest.getDataBaseKey(AddressKey.Main), (t, d) => this.loadMainData(t, d));
     }
 
-    private loadTitleData(topic: string, data: any): void {
+    private loadTitleData(topic: string, key: string): void {
         console.log("loadTitleData");
-        this.topicManager.publish(TopicKey.MEDIA_DATA_TITLE, require("../../data/databasetitle.json"));
+        this.topicManager.publish(DataRequest.getMediaDataKey(key), require("../../data/databasetitle.json"));
     }
 
-    private loadMainData(topic: string, data: any): void {
+    private loadMainData(topic: string, key: string): void {
         console.log("loadMainData");
-        this.topicManager.publish(TopicKey.MEDIA_DATA_MAIN, require("../../data/databasemain.json"));
+        this.topicManager.publish(DataRequest.getMediaDataKey(key), require("../../data/databasemain.json"));
     }
 }

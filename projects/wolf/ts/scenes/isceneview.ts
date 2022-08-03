@@ -2,7 +2,9 @@ import { MediaData } from "../database/mediadata";
 import { TopicManager } from "../framework/topicmanager";
 
 export interface ISceneView {
-    getKey(): number;
+    getAddress(): string;
+
+    getName(): string;
 
     getTopicManager(): TopicManager;
 

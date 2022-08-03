@@ -3,6 +3,7 @@ import { MediaData } from "../../database/mediadata";
 import { IListView } from "./ilistview";
 import { Message } from "../../support/message";
 import { Events } from "../../support/events";
+import { MediaItem } from "../../database/mediaitem";
 
 export class ListAdapter {
 
@@ -23,6 +24,10 @@ export class ListAdapter {
         view.setText(it.getName());
         view.setColor(it.getColor());
         view.setDataPosition(position);
+    }
+
+    public getItem(index: number): MediaItem {
+        return this.data.getRead(index);
     }
 
     public getCount(): number {

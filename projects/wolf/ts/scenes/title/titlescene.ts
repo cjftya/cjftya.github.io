@@ -7,6 +7,10 @@ import { ListView } from "../../module/listview/listview";
 import { ListAdapter } from "../../module/listview/listadapter";
 import { TopicKey } from "../../etc/topickey";
 import { L } from "../../etc/constlinker";
+import { MediaItem } from "../../database/mediaitem";
+import { AddressBuilder } from "../../framework/addressbuilder";
+import { AddressKey } from "../../etc/addresskey";
+import { ArgsKey } from "../../etc/argumentkey";
 
 export class TitleScene extends AbsScene {
 
@@ -17,8 +21,8 @@ export class TitleScene extends AbsScene {
 
     private winSize: Size;
 
-    constructor(context: PIXI.Application, topicManager: TopicManager) {
-        super(context, topicManager);
+    constructor(address: string, context: PIXI.Application, topicManager: TopicManager) {
+        super(address, context, topicManager);
 
         this.winSize = this.getTopicManager().read(TopicKey.WINDOW_SIZE);
 
@@ -28,10 +32,20 @@ export class TitleScene extends AbsScene {
 
         this.listView = new ListView(context, topicManager);
         this.listView.setAdapter(new ListAdapter(this.listView, this.getMediaData()));
+        this.listView.setOnItemClickListener((item, pos) => this.onItemClicked(item, pos));
         this.addChild(this.listView);
 
         // this.__pointEffect = new PointerEffect(context);
         // this.addChild(this.__pointEffect);
+    }
+
+    private onItemClicked(item: MediaItem, dataPosition: number): void {
+        console.log("name : " + item.getName() + ", clicked : " + dataPosition);
+
+        const key = new AddressBuilder(AddressKey.Main)
+            .appendArg(ArgsKey.StageId, item.getStageId())
+            .build();
+        this.getTopicManager().publish(TopicKey.LOAD_SCENE, key);
     }
 
     public onBind(): void {
@@ -40,10 +54,6 @@ export class TitleScene extends AbsScene {
 
     public getName(): string {
         return "TitleScene";
-    }
-
-    public getKey(): number {
-        return L.values.title_key;
     }
 
     public onUpdateWithDraw(delta: number): void {

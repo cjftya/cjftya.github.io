@@ -2,19 +2,17 @@ import { MediaData } from "./mediadata";
 import { MediaDataTitle } from "./mediadatatitle";
 import { MediaDataMain } from "./mediadatamain";
 import { TopicManager } from "../framework/topicmanager";
-import { L } from "../etc/constlinker";
-import { TopicKey } from "../etc/topickey";
+import { DataRequest } from "../etc/datakey";
+import { AddressKey } from "../etc/addresskey";
 
 export class MediaDataFactory {
 
-    public static cretae(key: number, topicManager: TopicManager): MediaData {
-        switch (key) {
-            case L.values.title_key:
-                return new MediaDataTitle(TopicKey.MEDIA_DATA_TITLE, topicManager);
-            case L.values.main_key:
-                return new MediaDataMain(TopicKey.MEDIA_DATA_MAIN, topicManager);
-            default:
-                return null;
+    public static create(key: string, topicManager: TopicManager): MediaData {
+        if (key == DataRequest.getMediaDataKey(AddressKey.Title)) {
+            return new MediaDataTitle(key, topicManager);
+        } else if (key == DataRequest.getMediaDataKey(AddressKey.Main)) {
+            return new MediaDataMain(key, topicManager);
         }
+        return null;
     }
 }
