@@ -43974,10 +43974,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _framework_subscriberinstaller__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(54);
 /* harmony import */ var _abssystem__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(55);
 /* harmony import */ var _scenes_title_titlescene__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(56);
-/* harmony import */ var _scenes_main_mainscene__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(75);
-/* harmony import */ var _database_database__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(76);
-/* harmony import */ var _etc_topickey__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(68);
-/* harmony import */ var _etc_constlinker__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(65);
+/* harmony import */ var _scenes_main_mainscene__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(76);
+/* harmony import */ var _database_database__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(77);
+/* harmony import */ var _etc_topickey__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(71);
+/* harmony import */ var _etc_addresskey__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(66);
+/* harmony import */ var _framework_addressbuilder__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(67);
+
 
 
 
@@ -44008,7 +44010,7 @@ class MainSystem extends _abssystem__WEBPACK_IMPORTED_MODULE_2__.AbsSystem {
     }
     onCreate() {
         super.onCreate();
-        this.getTopicManager().publish(_etc_topickey__WEBPACK_IMPORTED_MODULE_6__.TopicKey.LOAD_SCENE, _etc_constlinker__WEBPACK_IMPORTED_MODULE_7__.L.values.title_key);
+        this.getTopicManager().publish(_etc_topickey__WEBPACK_IMPORTED_MODULE_6__.TopicKey.LOAD_SCENE, _etc_addresskey__WEBPACK_IMPORTED_MODULE_7__.AddressKey.Title);
         this.isLoading = false;
     }
     onOperate(delta) {
@@ -44059,13 +44061,14 @@ class MainSystem extends _abssystem__WEBPACK_IMPORTED_MODULE_2__.AbsSystem {
         this.fpsTextView.text = this.getContext().ticker.FPS;
     }
     loadScene(key) {
+        const address = _framework_addressbuilder__WEBPACK_IMPORTED_MODULE_8__.AddressUtil.getAddress(key);
         let view;
-        switch (key) {
-            case _etc_constlinker__WEBPACK_IMPORTED_MODULE_7__.L.values.title_key:
-                view = new _scenes_title_titlescene__WEBPACK_IMPORTED_MODULE_3__.TitleScene(this.getContext(), this.getTopicManager());
+        switch (address) {
+            case _etc_addresskey__WEBPACK_IMPORTED_MODULE_7__.AddressKey.Title:
+                view = new _scenes_title_titlescene__WEBPACK_IMPORTED_MODULE_3__.TitleScene(key, this.getContext(), this.getTopicManager());
                 break;
-            case _etc_constlinker__WEBPACK_IMPORTED_MODULE_7__.L.values.main_key:
-                view = new _scenes_main_mainscene__WEBPACK_IMPORTED_MODULE_4__.MainScene(this.getContext(), this.getTopicManager());
+            case _etc_addresskey__WEBPACK_IMPORTED_MODULE_7__.AddressKey.Main:
+                view = new _scenes_main_mainscene__WEBPACK_IMPORTED_MODULE_4__.MainScene(key, this.getContext(), this.getTopicManager());
                 break;
         }
         if (this.scene != null) {
@@ -44079,16 +44082,7 @@ class MainSystem extends _abssystem__WEBPACK_IMPORTED_MODULE_2__.AbsSystem {
         else {
             console.log("view is null : " + key);
         }
-        this.database.open(this.getDataKey(key));
-    }
-    getDataKey(key) {
-        if (key == _etc_constlinker__WEBPACK_IMPORTED_MODULE_7__.L.values.title_key) {
-            return _etc_topickey__WEBPACK_IMPORTED_MODULE_6__.TopicKey.DATABASE_TITLE;
-        }
-        else if (key == _etc_constlinker__WEBPACK_IMPORTED_MODULE_7__.L.values.main_key) {
-            return _etc_topickey__WEBPACK_IMPORTED_MODULE_6__.TopicKey.DATABASE_MAIN;
-        }
-        return "null";
+        this.database.open(address);
     }
 }
 
@@ -44188,11 +44182,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
 /* harmony import */ var _absscene__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(57);
-/* harmony import */ var _support_mathUtil__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(69);
-/* harmony import */ var _module_listview_listview__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(70);
+/* harmony import */ var _support_mathUtil__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(68);
+/* harmony import */ var _module_listview_listview__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(69);
 /* harmony import */ var _module_listview_listadapter__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(73);
-/* harmony import */ var _etc_topickey__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(68);
-/* harmony import */ var _etc_constlinker__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(65);
+/* harmony import */ var _etc_topickey__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(71);
+/* harmony import */ var _framework_addressbuilder__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(67);
+/* harmony import */ var _etc_addresskey__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(66);
+/* harmony import */ var _etc_argumentkey__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(75);
+
+
 
 
 
@@ -44201,26 +44199,31 @@ __webpack_require__.r(__webpack_exports__);
 
 
 class TitleScene extends _absscene__WEBPACK_IMPORTED_MODULE_1__.AbsScene {
-    constructor(context, topicManager) {
-        super(context, topicManager);
+    constructor(address, context, topicManager) {
+        super(address, context, topicManager);
         this.click = false;
         this.winSize = this.getTopicManager().read(_etc_topickey__WEBPACK_IMPORTED_MODULE_5__.TopicKey.WINDOW_SIZE);
         this.dragPointer = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Point();
         this.bindBackground();
         this.listView = new _module_listview_listview__WEBPACK_IMPORTED_MODULE_3__.ListView(context, topicManager);
         this.listView.setAdapter(new _module_listview_listadapter__WEBPACK_IMPORTED_MODULE_4__.ListAdapter(this.listView, this.getMediaData()));
+        this.listView.setOnItemClickListener((item, pos) => this.onItemClicked(item, pos));
         this.addChild(this.listView);
         // this.__pointEffect = new PointerEffect(context);
         // this.addChild(this.__pointEffect);
+    }
+    onItemClicked(item, dataPosition) {
+        console.log("name : " + item.getName() + ", clicked : " + dataPosition);
+        const key = new _framework_addressbuilder__WEBPACK_IMPORTED_MODULE_6__.AddressBuilder(_etc_addresskey__WEBPACK_IMPORTED_MODULE_7__.AddressKey.Main)
+            .appendArg(_etc_argumentkey__WEBPACK_IMPORTED_MODULE_8__.ArgsKey.StageId, item.getStageId())
+            .build();
+        this.getTopicManager().publish(_etc_topickey__WEBPACK_IMPORTED_MODULE_5__.TopicKey.LOAD_SCENE, key);
     }
     onBind() {
         this.listView.getAdaper().notify();
     }
     getName() {
         return "TitleScene";
-    }
-    getKey() {
-        return _etc_constlinker__WEBPACK_IMPORTED_MODULE_6__.L.values.title_key;
     }
     onUpdateWithDraw(delta) {
         this.listView.onUpdateWithDraw(delta);
@@ -44300,20 +44303,26 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _module_viewgroup__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(58);
 /* harmony import */ var _database_mediadatafactory__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(60);
+/* harmony import */ var _etc_datakey__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(65);
+/* harmony import */ var _framework_addressbuilder__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(67);
+
+
 
 
 class AbsScene extends _module_viewgroup__WEBPACK_IMPORTED_MODULE_0__.ViewGroup {
-    constructor(context, topicManger) {
+    constructor(address, context, topicManger) {
         super(context);
+        this.address = address;
         this.topicManger = topicManger;
-        this.mediaData = _database_mediadatafactory__WEBPACK_IMPORTED_MODULE_1__.MediaDataFactory.cretae(this.getKey(), topicManger);
+        const key = _framework_addressbuilder__WEBPACK_IMPORTED_MODULE_3__.AddressUtil.getAddress(address);
+        this.mediaData = _database_mediadatafactory__WEBPACK_IMPORTED_MODULE_1__.MediaDataFactory.create(_etc_datakey__WEBPACK_IMPORTED_MODULE_2__.DataRequest.getMediaDataKey(key), topicManger);
         this.mediaData.setListener(() => this.dataChanged());
+    }
+    getAddress() {
+        return this.address;
     }
     getName() {
         return "AbsScene";
-    }
-    getKey() {
-        return -1;
     }
     getTopicManager() {
         return this.topicManger;
@@ -44366,10 +44375,6 @@ class ViewGroup extends _view__WEBPACK_IMPORTED_MODULE_1__.View {
     }
     getChildCount() {
         return this.container.children.length;
-    }
-    addChildView(v) {
-        this.groups.push(v);
-        this.container.addChild(v.getPixiView());
     }
     addChild(v) {
         if (v instanceof _view__WEBPACK_IMPORTED_MODULE_1__.View) {
@@ -44435,22 +44440,21 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _mediadatatitle__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(61);
 /* harmony import */ var _mediadatamain__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(64);
-/* harmony import */ var _etc_constlinker__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(65);
-/* harmony import */ var _etc_topickey__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(68);
+/* harmony import */ var _etc_datakey__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(65);
+/* harmony import */ var _etc_addresskey__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(66);
 
 
 
 
 class MediaDataFactory {
-    static cretae(key, topicManager) {
-        switch (key) {
-            case _etc_constlinker__WEBPACK_IMPORTED_MODULE_2__.L.values.title_key:
-                return new _mediadatatitle__WEBPACK_IMPORTED_MODULE_0__.MediaDataTitle(_etc_topickey__WEBPACK_IMPORTED_MODULE_3__.TopicKey.MEDIA_DATA_TITLE, topicManager);
-            case _etc_constlinker__WEBPACK_IMPORTED_MODULE_2__.L.values.main_key:
-                return new _mediadatamain__WEBPACK_IMPORTED_MODULE_1__.MediaDataMain(_etc_topickey__WEBPACK_IMPORTED_MODULE_3__.TopicKey.MEDIA_DATA_MAIN, topicManager);
-            default:
-                return null;
+    static create(key, topicManager) {
+        if (key == _etc_datakey__WEBPACK_IMPORTED_MODULE_2__.DataRequest.getMediaDataKey(_etc_addresskey__WEBPACK_IMPORTED_MODULE_3__.AddressKey.Title)) {
+            return new _mediadatatitle__WEBPACK_IMPORTED_MODULE_0__.MediaDataTitle(key, topicManager);
         }
+        else if (key == _etc_datakey__WEBPACK_IMPORTED_MODULE_2__.DataRequest.getMediaDataKey(_etc_addresskey__WEBPACK_IMPORTED_MODULE_3__.AddressKey.Main)) {
+            return new _mediadatamain__WEBPACK_IMPORTED_MODULE_1__.MediaDataMain(key, topicManager);
+        }
+        return null;
     }
 }
 
@@ -44498,18 +44502,19 @@ class MediaDataTitle extends _mediadata__WEBPACK_IMPORTED_MODULE_0__.MediaData {
     }
     compare(a, b) {
         return a.getName() == b.getName() &&
-            a.getColor() == b.getColor();
+            a.getColor() == b.getColor() &&
+            a.getStageId() == b.getStageId();
     }
-    createMediaItem(title, color) {
+    createMediaItem(data) {
         const item = new _mediaitem__WEBPACK_IMPORTED_MODULE_1__.MediaItem();
-        item.setName(title);
-        item.setColor(color);
+        item.setName(data.name);
+        item.setColor(data.color);
+        item.setStageId(data.stage_id);
         return item;
     }
     loadData(table, data) {
-        const listData = data.listdata;
-        for (const v of listData) {
-            table.push(this.createMediaItem(v.name, v.color));
+        for (const v of data.listdata) {
+            table.push(this.createMediaItem(v));
         }
     }
     swap(data) {
@@ -44592,6 +44597,12 @@ class MediaItem {
     getColor() {
         return this.color;
     }
+    setStageId(id) {
+        this.stageId = id;
+    }
+    getStageId() {
+        return this.stageId;
+    }
 }
 
 
@@ -44617,17 +44628,18 @@ class MediaDataMain extends _mediadata__WEBPACK_IMPORTED_MODULE_0__.MediaData {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "L": () => (/* binding */ L)
+/* harmony export */   "DataRequest": () => (/* binding */ DataRequest)
 /* harmony export */ });
-/* harmony import */ var _colors__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(66);
-/* harmony import */ var _values__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(67);
-
-
-var L;
-(function (L) {
-    L.colors = _colors__WEBPACK_IMPORTED_MODULE_0__.Colors;
-    L.values = _values__WEBPACK_IMPORTED_MODULE_1__.Values;
-})(L || (L = {}));
+class DataRequest {
+    static getDataBaseKey(key) {
+        return this.DATABASE_REQUEST + key;
+    }
+    static getMediaDataKey(key) {
+        return this.MEDIADATA_REQUEST + key;
+    }
+}
+DataRequest.DATABASE_REQUEST = "database-request/";
+DataRequest.MEDIADATA_REQUEST = "mediadata-request/";
 
 
 /***/ }),
@@ -44637,10 +44649,11 @@ var L;
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Colors": () => (/* binding */ Colors)
+/* harmony export */   "AddressKey": () => (/* binding */ AddressKey)
 /* harmony export */ });
-const Colors = {
-    basic_background_color: 0x1d1d39
+const AddressKey = {
+    Main: "address-main",
+    Title: "address-title"
 };
 
 
@@ -44651,41 +44664,48 @@ const Colors = {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Values": () => (/* binding */ Values)
+/* harmony export */   "AddressBuilder": () => (/* binding */ AddressBuilder),
+/* harmony export */   "AddressUtil": () => (/* binding */ AddressUtil)
 /* harmony export */ });
-const Values = {
-    title_key: 0,
-    main_key: 1
-};
+class AddressBuilder {
+    constructor(address) {
+        this.address = address + '@';
+    }
+    appendArg(key, value) {
+        this.address += '/' + key + '?' + value;
+        return this;
+    }
+    build() {
+        return this.address;
+    }
+}
+class AddressUtil {
+    static getAddress(key) {
+        const v = key.split('@');
+        return v.length > 1 ? v[0] : key;
+    }
+    static getArg(key, argKey, def) {
+        const args = this.getArgs(key);
+        for (let t in args) {
+            let v = t.split('?');
+            if (v[0] == argKey) {
+                return v[1];
+            }
+        }
+        return def;
+    }
+    static getArgs(key) {
+        const objs = key.split('@');
+        if (objs.length > 2) {
+            return objs[0].split('/');
+        }
+        return [];
+    }
+}
 
 
 /***/ }),
 /* 68 */
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "TopicKey": () => (/* binding */ TopicKey)
-/* harmony export */ });
-const TopicKey = {
-    //* topics *// 
-    LOAD_SCENE: "load-scene",
-    //* data key *//
-    WINDOW_SIZE: "display-win-size",
-    IS_MOBILE: "device-info-is-mobile",
-    CONTEXT: "app_context",
-    //* database key *//
-    DATABASE_TITLE: "database-load/title",
-    DATABASE_MAIN: "database-load/main",
-    //* media data key *//
-    MEDIA_DATA_TITLE: "mediadata-load/title",
-    MEDIA_DATA_MAIN: "mediadata-load/main"
-};
-
-
-/***/ }),
-/* 69 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -44713,7 +44733,7 @@ class MathUtil {
 
 
 /***/ }),
-/* 70 */
+/* 69 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -44723,9 +44743,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
 /* harmony import */ var _viewgroup__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(58);
-/* harmony import */ var _listitem__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(71);
+/* harmony import */ var _listitem__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(70);
 /* harmony import */ var _support_events__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(72);
-/* harmony import */ var _etc_topickey__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(68);
+/* harmony import */ var _etc_topickey__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(71);
 
 
 
@@ -44787,9 +44807,14 @@ class ListView extends _viewgroup__WEBPACK_IMPORTED_MODULE_1__.ViewGroup {
                 return false;
         }
     }
-    onItemClicked(view, dataPosition) {
-        view.setColor(0xff00ff);
-        console.log("clicked : " + dataPosition);
+    setOnItemClickListener(listener) {
+        this.itemClickListener = listener;
+    }
+    onItemClicked(view, item, dataPosition) {
+        view.setColor(0xff00ff); // test code
+        if (this.itemClickListener != null) {
+            this.itemClickListener(item, dataPosition);
+        }
     }
     onUpdateWithDraw(delta) {
         this.vel.y *= 0.99;
@@ -44806,12 +44831,14 @@ class ListView extends _viewgroup__WEBPACK_IMPORTED_MODULE_1__.ViewGroup {
         this.adapter.destroy();
         this.adapter = null;
         this.views = null;
+        this.itemClickListener = null;
     }
     onTouchUp(event) {
         this.click = false;
         if (this.clickIndex != -1) {
             if (this.checkBound(event.data.global.x, event.data.global.y) == this.clickIndex) {
-                this.onItemClicked(this.views[this.clickIndex], this.views[this.clickIndex].getDataPosition());
+                const pos = this.views[this.clickIndex].getDataPosition();
+                this.onItemClicked(this.views[this.clickIndex], this.adapter.getItem(pos), pos);
             }
             this.clickIndex = -1;
         }
@@ -44884,7 +44911,7 @@ class ListView extends _viewgroup__WEBPACK_IMPORTED_MODULE_1__.ViewGroup {
 
 
 /***/ }),
-/* 71 */
+/* 70 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -44894,7 +44921,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
 /* harmony import */ var _view__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(59);
-/* harmony import */ var _etc_topickey__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(68);
+/* harmony import */ var _etc_topickey__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(71);
 
 
 
@@ -45013,6 +45040,25 @@ class ListItem extends _view__WEBPACK_IMPORTED_MODULE_1__.View {
 
 
 /***/ }),
+/* 71 */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "TopicKey": () => (/* binding */ TopicKey)
+/* harmony export */ });
+const TopicKey = {
+    //* topics *// 
+    LOAD_SCENE: "load-scene",
+    //* data key *//
+    WINDOW_SIZE: "display-win-size",
+    IS_MOBILE: "device-info-is-mobile",
+    CONTEXT: "app_context"
+};
+
+
+/***/ }),
 /* 72 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
@@ -45052,6 +45098,9 @@ class ListAdapter {
         view.setText(it.getName());
         view.setColor(it.getColor());
         view.setDataPosition(position);
+    }
+    getItem(index) {
+        return this.data.getRead(index);
     }
     getCount() {
         return this.data.getCount();
@@ -45095,22 +45144,31 @@ class Message {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "ArgsKey": () => (/* binding */ ArgsKey)
+/* harmony export */ });
+const ArgsKey = {
+    StageId: "arg-stage-id"
+};
+
+
+/***/ }),
+/* 76 */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "MainScene": () => (/* binding */ MainScene)
 /* harmony export */ });
 /* harmony import */ var _absscene__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(57);
-/* harmony import */ var _etc_constlinker__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(65);
-
 
 class MainScene extends _absscene__WEBPACK_IMPORTED_MODULE_0__.AbsScene {
-    constructor(context, topicManager) {
-        super(context, topicManager);
+    constructor(address, context, topicManager) {
+        super(address, context, topicManager);
         this.click = false;
     }
     getName() {
         return "MainScene";
-    }
-    getKey() {
-        return _etc_constlinker__WEBPACK_IMPORTED_MODULE_1__.L.values.main_key;
     }
     onCreate() {
         super.onCreate();
@@ -45132,7 +45190,7 @@ class MainScene extends _absscene__WEBPACK_IMPORTED_MODULE_0__.AbsScene {
 
 
 /***/ }),
-/* 76 */
+/* 77 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -45141,7 +45199,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "DataBase": () => (/* binding */ DataBase)
 /* harmony export */ });
 /* harmony import */ var _framework_subscriberinstaller__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(54);
-/* harmony import */ var _etc_topickey__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(68);
+/* harmony import */ var _etc_addresskey__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(66);
+/* harmony import */ var _etc_datakey__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(65);
+
 
 
 class DataBase {
@@ -45152,7 +45212,7 @@ class DataBase {
         this.subsciber.install(this.topicManager);
     }
     open(key) {
-        this.topicManager.publish(key, null);
+        this.topicManager.publish(_etc_datakey__WEBPACK_IMPORTED_MODULE_2__.DataRequest.getDataBaseKey(key), key);
     }
     close() {
         this.subsciber.unInstall(this.topicManager);
@@ -45160,33 +45220,79 @@ class DataBase {
         this.topicManager = null;
     }
     registerDataSubscriber() {
-        this.subsciber.add(_etc_topickey__WEBPACK_IMPORTED_MODULE_1__.TopicKey.DATABASE_TITLE, (t, d) => this.loadTitleData(t, d));
-        this.subsciber.add(_etc_topickey__WEBPACK_IMPORTED_MODULE_1__.TopicKey.DATABASE_MAIN, (t, d) => this.loadMainData(t, d));
+        this.subsciber.add(_etc_datakey__WEBPACK_IMPORTED_MODULE_2__.DataRequest.getDataBaseKey(_etc_addresskey__WEBPACK_IMPORTED_MODULE_1__.AddressKey.Title), (t, d) => this.loadTitleData(t, d));
+        this.subsciber.add(_etc_datakey__WEBPACK_IMPORTED_MODULE_2__.DataRequest.getDataBaseKey(_etc_addresskey__WEBPACK_IMPORTED_MODULE_1__.AddressKey.Main), (t, d) => this.loadMainData(t, d));
     }
-    loadTitleData(topic, data) {
+    loadTitleData(topic, key) {
         console.log("loadTitleData");
-        this.topicManager.publish(_etc_topickey__WEBPACK_IMPORTED_MODULE_1__.TopicKey.MEDIA_DATA_TITLE, __webpack_require__(77));
+        this.topicManager.publish(_etc_datakey__WEBPACK_IMPORTED_MODULE_2__.DataRequest.getMediaDataKey(key), __webpack_require__(78));
     }
-    loadMainData(topic, data) {
+    loadMainData(topic, key) {
         console.log("loadMainData");
-        this.topicManager.publish(_etc_topickey__WEBPACK_IMPORTED_MODULE_1__.TopicKey.MEDIA_DATA_MAIN, __webpack_require__(78));
+        this.topicManager.publish(_etc_datakey__WEBPACK_IMPORTED_MODULE_2__.DataRequest.getMediaDataKey(key), __webpack_require__(79));
     }
 }
 
-
-/***/ }),
-/* 77 */
-/***/ ((module) => {
-
-"use strict";
-module.exports = JSON.parse('{"listdata":[{"name":"Collision line to circle","color":"0xfcfcfc"},{"name":"Collision line to circle v2","color":"0xfcfcfc"},{"name":"Collision circle to circle","color":"0xfcfcfc"},{"name":"Collision circle to capsule","color":"0xfcfcfc"},{"name":"Collision poly to circle","color":"0xfcfcfc"},{"name":"Collision poly to poly","color":"0xfcfcfc"},{"name":"Particle flow","color":"0xfcfcfc"},{"name":"Particle connection","color":"0xfcfcfc"},{"name":"Particle g force","color":"0xfcfcfc"},{"name":"Particle lightning","color":"0xfcfcfc"},{"name":"Particle speed Tail","color":"0xfcfcfc"},{"name":"Particle dragging","color":"0xfcfcfc"},{"name":"Particle dragging force","color":"0xfcfcfc"},{"name":"Particle circle area","color":"0xfcfcfc"},{"name":"Particle force area","color":"0xfcfcfc"},{"name":"Particle reality snow","color":"0xfcfcfc"}]}');
 
 /***/ }),
 /* 78 */
 /***/ ((module) => {
 
 "use strict";
+module.exports = JSON.parse('{"listdata":[{"name":"Collision line to circle","color":"0xfcfcfc","stage_id":1},{"name":"Collision line to circle v2","color":"0xfcfcfc","stage_id":2},{"name":"Collision circle to circle","color":"0xfcfcfc","stage_id":3},{"name":"Collision circle to capsule","color":"0xfcfcfc","stage_id":4},{"name":"Collision poly to circle","color":"0xfcfcfc","stage_id":5},{"name":"Collision poly to poly","color":"0xfcfcfc","stage_id":6},{"name":"Particle flow","color":"0xfcfcfc","stage_id":7},{"name":"Particle connection","color":"0xfcfcfc","stage_id":8},{"name":"Particle g force","color":"0xfcfcfc","stage_id":9},{"name":"Particle lightning","color":"0xfcfcfc","stage_id":10},{"name":"Particle speed Tail","color":"0xfcfcfc","stage_id":11},{"name":"Particle dragging","color":"0xfcfcfc","stage_id":12},{"name":"Particle dragging force","color":"0xfcfcfc","stage_id":13},{"name":"Particle circle area","color":"0xfcfcfc","stage_id":14},{"name":"Particle force area","color":"0xfcfcfc","stage_id":15},{"name":"Particle reality snow","color":"0xfcfcfc","stage_id":16}]}');
+
+/***/ }),
+/* 79 */
+/***/ ((module) => {
+
+"use strict";
 module.exports = JSON.parse('[{"listdata":[{"name":"test1","color":"0xfcfcfc"},{"name":"test2","color":"0xfcfcfc"}]}]');
+
+/***/ }),
+/* 80 */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "L": () => (/* binding */ L)
+/* harmony export */ });
+/* harmony import */ var _colors__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(81);
+/* harmony import */ var _values__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(82);
+
+
+var L;
+(function (L) {
+    L.colors = _colors__WEBPACK_IMPORTED_MODULE_0__.Colors;
+    L.values = _values__WEBPACK_IMPORTED_MODULE_1__.Values;
+})(L || (L = {}));
+
+
+/***/ }),
+/* 81 */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Colors": () => (/* binding */ Colors)
+/* harmony export */ });
+const Colors = {
+    basic_background_color: 0x1d1d39
+};
+
+
+/***/ }),
+/* 82 */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Values": () => (/* binding */ Values)
+/* harmony export */ });
+const Values = {};
+
 
 /***/ })
 /******/ 	]);
@@ -45290,8 +45396,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _support_size__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(51);
 /* harmony import */ var _framework_topicmanager__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(52);
 /* harmony import */ var _system_mainsystem__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(53);
-/* harmony import */ var _etc_topickey__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(68);
-/* harmony import */ var _etc_constlinker__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(65);
+/* harmony import */ var _etc_topickey__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(71);
+/* harmony import */ var _etc_constlinker__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(80);
 
 
 

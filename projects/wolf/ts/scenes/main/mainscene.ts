@@ -7,16 +7,12 @@ export class MainScene extends AbsScene {
 
     private click: boolean = false;
 
-    constructor(context: PIXI.Application, topicManager: TopicManager) {
-        super(context, topicManager);
+    constructor(address: string, context: PIXI.Application, topicManager: TopicManager) {
+        super(address, context, topicManager);
     }
 
     public getName(): string {
         return "MainScene";
-    }
-
-    public getKey(): number {
-        return L.values.main_key;
     }
 
     public onCreate(): void {

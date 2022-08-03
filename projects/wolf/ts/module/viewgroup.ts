@@ -28,11 +28,6 @@ export class ViewGroup extends View {
         return this.container.children.length;
     }
 
-    protected addChildView(v: View): void {
-        this.groups.push(v);
-        this.container.addChild(v.getPixiView());
-    }
-
     protected addChild(v: PIXI.DisplayObject | View) {
         if (v instanceof View) {
             this.groups.push(v);

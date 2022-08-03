@@ -8,6 +8,7 @@ import { IListView } from "./ilistview";
 import { Message } from "../../support/message";
 import { Events } from "../../support/events";
 import { TopicKey } from "../../etc/topickey";
+import { MediaItem } from "../../database/mediaitem";
 
 export class ListView extends ViewGroup implements IListView {
 
@@ -28,6 +29,8 @@ export class ListView extends ViewGroup implements IListView {
     private pos: PIXI.Point = new PIXI.Point();
     private oldPos: PIXI.Point = new PIXI.Point();
     private vel: PIXI.Point = new PIXI.Point();
+
+    private itemClickListener?: onItemClickListener;
 
     constructor(context: PIXI.Application, topicManger: TopicManager) {
         super(context);
@@ -81,9 +84,15 @@ export class ListView extends ViewGroup implements IListView {
         }
     }
 
-    public onItemClicked(view: ListItem, dataPosition: number): void {
-        view.setColor(0xff00ff);
-        console.log("clicked : " + dataPosition);
+    public setOnItemClickListener(listener: onItemClickListener) {
+        this.itemClickListener = listener;
+    }
+
+    private onItemClicked(view: ListItem, item: MediaItem, dataPosition: number): void {
+        view.setColor(0xff00ff);  // test code
+        if (this.itemClickListener != null) {
+            this.itemClickListener(item, dataPosition);
+        }
     }
 
     public onUpdateWithDraw(delta: number): void {
@@ -102,13 +111,15 @@ export class ListView extends ViewGroup implements IListView {
         this.adapter.destroy();
         this.adapter = null;
         this.views = null;
+        this.itemClickListener = null;
     }
 
     public onTouchUp(event: PIXI.InteractionEvent): void {
         this.click = false;
         if (this.clickIndex != -1) {
             if (this.checkBound(event.data.global.x, event.data.global.y) == this.clickIndex) {
-                this.onItemClicked(this.views[this.clickIndex], this.views[this.clickIndex].getDataPosition());
+                const pos = this.views[this.clickIndex].getDataPosition();
+                this.onItemClicked(this.views[this.clickIndex], this.adapter.getItem(pos), pos);
             }
             this.clickIndex = -1;
         }
@@ -184,4 +195,8 @@ export class ListView extends ViewGroup implements IListView {
             this.adapter.bindItem(this.views[i], i);
         }
     }
+}
+
+interface onItemClickListener {
+    (item: MediaItem, position: number): void
 }

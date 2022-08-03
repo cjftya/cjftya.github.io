@@ -8,6 +8,8 @@ import { MainScene } from "../scenes/main/mainscene";
 import { DataBase } from "../database/database";
 import { TopicKey } from "../etc/topickey";
 import { L } from "../etc/constlinker";
+import { AddressKey } from "../etc/addresskey";
+import { AddressUtil } from "../framework/addressbuilder";
 
 export class MainSystem extends AbsSystem {
 
@@ -42,7 +44,7 @@ export class MainSystem extends AbsSystem {
     public onCreate(): void {
         super.onCreate();
 
-        this.getTopicManager().publish(TopicKey.LOAD_SCENE, L.values.title_key);
+        this.getTopicManager().publish(TopicKey.LOAD_SCENE, AddressKey.Title);
         this.isLoading = false;
     }
 
@@ -102,14 +104,16 @@ export class MainSystem extends AbsSystem {
         this.fpsTextView.text = this.getContext().ticker.FPS;
     }
 
-    private loadScene(key: number): void {
+    private loadScene(key: string): void {
+        const address = AddressUtil.getAddress(key);
+
         let view: AbsScene;
-        switch (key) {
-            case L.values.title_key:
-                view = new TitleScene(this.getContext(), this.getTopicManager());
+        switch (address) {
+            case AddressKey.Title:
+                view = new TitleScene(key, this.getContext(), this.getTopicManager());
                 break;
-            case L.values.main_key:
-                view = new MainScene(this.getContext(), this.getTopicManager());
+            case AddressKey.Main:
+                view = new MainScene(key, this.getContext(), this.getTopicManager());
                 break;
         }
         if (this.scene != null) {
@@ -122,15 +126,6 @@ export class MainSystem extends AbsSystem {
         } else {
             console.log("view is null : " + key);
         }
-        this.database.open(this.getDataKey(key));
-    }
-
-    private getDataKey(key: number): string {
-        if (key == L.values.title_key) {
-            return TopicKey.DATABASE_TITLE;
-        } else if (key == L.values.main_key) {
-            return TopicKey.DATABASE_MAIN
-        }
-        return "null";
+        this.database.open(address);
     }
 }
