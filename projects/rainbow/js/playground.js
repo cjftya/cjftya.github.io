@@ -10,7 +10,7 @@ function initialize() {
       for (var i = 0; i < list.length; i++) {
          addhtml += "<tr align=\"center\"></tr>"
          addhtml += "<th>" + i + "</th><th>" + list[i][0] + "</th><th>" + list[i][1]
-            + "</th><th>" + list[i][2] + "</th><th><a href=" + list[i][3] + " target=\"_blank\">==></a></th></tr>"
+            + "</th><th>" + list[i][2] + "</th><th><a href=" + list[i][3] + " target=\"_blank\">Show</a></th></tr>"
       }
       document.getElementById("table_box").innerHTML = addhtml
 
