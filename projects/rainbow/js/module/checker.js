@@ -70,8 +70,10 @@ class Checker {
         return []
     }
 
+    // "https://www.binance.com/en/trade/" + urlSymbol + "?theme=dark&type=spot"
+    // "https://kr.tradingview.com/chart/?symbol=BINANCE%3A" + urlSymbol + "USDTPERP"
     getResults(symbol, tier, arr) {
-        var urlSymbol = symbol.replace('/', '_')
-        return [symbol, tier, "stop(1) " + arr[3][3] + "\nstop(2) " + arr[1][3], "https://www.binance.com/en/trade/" + urlSymbol + "?theme=dark&type=spot"]
+        var urlSymbol = symbol.replace("/USDT", "")
+        return [symbol, tier, "stop(1) " + arr[3][3] + "\nstop(2) " + arr[1][3], "https://kr.tradingview.com/chart/?symbol=BINANCE%3A" + urlSymbol + "USDTPERP"]
     }
 }
