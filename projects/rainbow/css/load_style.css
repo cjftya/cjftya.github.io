@@ -1,0 +1,19 @@
+.load-box {
+    flex-direction: column;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 90vh;
+}
+
+.load-rate {
+    text-align: center;
+    font-size: 15px;
+    color: white;
+    padding-top: 20px;
+}
+
+svg path,
+svg rect {
+    fill: white;
+}

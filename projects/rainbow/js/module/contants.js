@@ -1,0 +1,1 @@
+const STOP_MARKET_LIST = ["FTT", "SRM", "CVC", "BTS", "SC", "TLM", "RAY", "BAL"]

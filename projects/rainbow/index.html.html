@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="./css/load_style.css" rel="stylesheet">
+    <link href="./css/table_style.css" rel="stylesheet">
+</head>
+
+<body>
+    <div id="data_table" class="table-box">
+        <table class="s-table">
+            <caption>Symbols</caption>
+            <thead>
+                <tr align="center">
+                    <th>#</th>
+                    <th>Symbol</th>
+                    <th>Tier</th>
+                    <th>Stop</th>
+                    <th>View</th>
+                </tr>
+            </thead>
+            <tbody id="table_box"></tbody>
+        </table>
+    </div>
+
+    <div id="load_bar" class="load-box">
+        <div>
+            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px"
+                y="0px" width="24px" height="30px" viewBox="0 0 24 30" style="enable-background:new 0 0 50 50;"
+                xml:space="preserve">
+                <rect x="0" y="0" width="4" height="10" fill="#333">
+                    <animateTransform attributeType="xml" attributeName="transform" type="translate"
+                        values="0 0; 0 20; 0 0" begin="0" dur="0.6s" repeatCount="indefinite" />
+                </rect>
+                <rect x="10" y="0" width="4" height="10" fill="#333">
+                    <animateTransform attributeType="xml" attributeName="transform" type="translate"
+                        values="0 0; 0 20; 0 0" begin="0.2s" dur="0.6s" repeatCount="indefinite" />
+                </rect>
+                <rect x="20" y="0" width="4" height="10" fill="#333">
+                    <animateTransform attributeType="xml" attributeName="transform" type="translate"
+                        values="0 0; 0 20; 0 0" begin="0.4s" dur="0.6s" repeatCount="indefinite" />
+                </rect>
+            </svg>
+        </div>
+        <div>
+            <span id="load_text" class="load-rate">0</span>
+        </div>
+    </div>
+
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/ccxt@2.2.72/dist/ccxt.browser.js"></script>
+
+    <script type="text/javascript" src="js/module/contants.js"></script>
+    <script type="text/javascript" src="js/module/marketinfo.js"></script>
+    <script type="text/javascript" src="js/module/checker.js"></script>
+
+    <script type="text/javascript" src="js/playground.js"></script>
+</body>
+
+</html>
