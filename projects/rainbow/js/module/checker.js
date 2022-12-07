@@ -74,7 +74,6 @@ class Checker {
     // "https://kr.tradingview.com/chart/?symbol=BINANCE%3A" + urlSymbol + "USDTPERP"
     getResults(symbol, tier, arr) {
         var urlSymbol = symbol.replace("/USDT", "")
-        var onlyChrome = "#Intent;scheme=http;package=com.android.chrome;end"
-        return [symbol, tier, "stop(1) " + arr[3][3] + "\nstop(2) " + arr[1][3], "https://kr.tradingview.com/chart/?symbol=BINANCE%3A" + urlSymbol + "USDTPERP" + onlyChrome]
+        return [symbol, tier, "stop(1) " + arr[3][3] + "\nstop(2) " + arr[1][3], "https://kr.tradingview.com/chart/?symbol=BINANCE%3A" + urlSymbol + "USDTPERP"]
     }
 }
