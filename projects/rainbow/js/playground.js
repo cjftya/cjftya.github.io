@@ -4,6 +4,7 @@ function initialize() {
    var checker = new Checker()
    var marketInfo = new MarketInfo()
 
+   document.addEventListener("DOMContentLoaded", ready)
 
    this.loadClassifiedData(checker, marketInfo).then(list => {
       var addhtml = ""
@@ -16,6 +17,17 @@ function initialize() {
 
       this.showTable()
    })
+}
+
+function ready() {
+   var Agent = navigator.userAgent.toLowerCase();
+   var isMobile = /Android|webOS|iPhone|iPad|iPod|Opera Mini/i.test(navigator.userAgent);
+   if (isMobile && Agent.includes("kakao")) {
+      if (!navigator.userAgent.match(/iPhone|iPad/i)) {
+         location.href = 'kakaotalk://inappbrowser/close';
+         location.href = 'intent://' + location.href.replace(/https?:\/\//i, '') + '#Intent;scheme=http;package=com.android.chrome;end';
+      }
+   }
 }
 
 function showTable() {
