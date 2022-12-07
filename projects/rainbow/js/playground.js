@@ -10,7 +10,7 @@ function initialize() {
       var addhtml = ""
       for (var i = 0; i < list.length; i++) {
          addhtml += "<tr align=\"center\"></tr>"
-         addhtml += "<th>" + i + "</th><th>" + list[i][0] + "</th><th>" + list[i][1]
+         addhtml += "<th>" + (i + 1) + "</th><th>" + list[i][0] + "</th><th>" + list[i][1]
             + "</th><th>" + list[i][2] + "</th><th><a href=" + list[i][3] + " target=\"_blank\">Show</a></th></tr>"
       }
       document.getElementById("table_box").innerHTML = addhtml
@@ -57,11 +57,16 @@ async function loadClassifiedData(checker, marketInfo) {
             resultList.push(result)
          }
       }
-      var rate = ((++i) * 100) / usdtMarkets.length
-      loadBarLabel.textContent = Math.floor(rate)
+      var rate = Math.floor(((++i) * 100) / usdtMarkets.length)
+      loadBarLabel.textContent = this.getRate(rate, 3) + " %"
    }
    resultList.sort(function (a, b) {
       return a[1] - b[1]
    })
    return resultList
-} 
+}
+
+function getRate(n, w) {
+   n = n + '';
+   return n.length >= w ? n : new Array(w - n.length + 1).join('0') + n;
+}
