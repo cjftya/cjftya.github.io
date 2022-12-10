@@ -3,7 +3,6 @@ this.initialize()
 function initialize() {
    var checker = new Checker()
    var marketInfo = new MarketInfo()
-
    document.addEventListener("DOMContentLoaded", ready)
 
    this.loadClassifiedData(checker, marketInfo).then(list => {
@@ -49,27 +48,40 @@ async function loadClassifiedData(checker, marketInfo) {
       }
    }
    //=========
-
    var i = 0
+   var currentPriceArray = await marketInfo.getCurrentDataArray(symbols)
    var resultList = []
    var loadBarLabel = document.getElementById("load_text")
    for (const mk of usdtMarkets) {
       if (!marketInfo.notSupportMarket(mk)) {
+         var curPrice = currentPriceArray[mk]["last"]
          var ohlcv15m = await marketInfo.getPastDataArray(mk, "15m", 7)
          var ohlcv30m = await marketInfo.getPastDataArray(mk, "30m", 7)
-         var tier15m = checker.getTier(mk, ohlcv15m)
-         var tier30m = checker.getTier(mk, ohlcv30m)
-         if (tier15m > 0 || tier30m > 0) {
-            resultList.push(this.getResults(mk, tier15m, tier30m, ohlcv15m))
+         var tier15m = checker.getTier(mk, ohlcv15m, curPrice)
+         var tier30m = checker.getTier(mk, ohlcv30m, curPrice)
+
+         if ((tier15m == 5 && tier30m == 5) || (tier15m == 5 && tier30m == 4)
+            || (tier15m == 4 && tier30m == 5) || (tier15m == 6 || tier30m == 6)) {
+            this.updateRate(loadBarLabel, ++i, usdtMarkets.length);
+            continue;
          }
+         resultList.push(this.getResults(mk, tier15m, tier30m, ohlcv15m))
       }
-      var rate = Math.floor(((++i) * 100) / usdtMarkets.length)
-      loadBarLabel.textContent = this.getRate(rate, 3) + " %"
+      this.updateRate(loadBarLabel, ++i, usdtMarkets.length);
    }
    resultList.sort(function (a, b) {
-      return a[1] - b[1]
+      if (a[1] - b[1] < 0) {
+         return a[1] - b[1]
+      } else if (a[1] - b[1] == 0) {
+         return a[2] - b[2]
+      }
    })
    return resultList
+}
+
+function updateRate(label, r, c) {
+   var rate = Math.floor((r * 100) / c)
+   label.textContent = this.getRate(rate, 3) + " %"
 }
 
 function getRate(n, w) {
@@ -83,8 +95,4 @@ function getResults(symbol, tier15m, tier30m, arr) {
    var urlSymbol = symbol.replace("/USDT", "")
    return [urlSymbol, tier15m, tier30m,
       "stop(1) " + arr[3][3] + "\\nstop(2) " + arr[1][3], "https://kr.tradingview.com/chart/?symbol=BINANCE%3A" + urlSymbol + "USDTPERP"]
-}
-
-function getTierString(tier) {
-   return tier == -1 ? '-' : tier
 }

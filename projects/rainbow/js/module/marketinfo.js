@@ -23,5 +23,10 @@ class MarketInfo {
     getPastDataArray(market, time, count) {
         return this.binanceusdm.fetchOHLCV(market, time, undefined, undefined, { 'limit': count })
     }
+
+    // need await : server call
+    getCurrentDataArray(markets) {
+        return this.binanceusdm.fetchTickers(markets)
+    }
 }
 

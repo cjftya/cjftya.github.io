@@ -21,11 +21,12 @@ class Checker {
         }
     }
 
-    getTier(symbol, arr) {
+    getTier(symbol, arr, current) {
         if (this.isSkip(arr)) {
-            return 99
+            return 5
         }
 
+        var lastIndex = arr.length - 1;
         var minusIndexArr = this.getMinusCandleIndexArr(arr)
         var minusCandleCount = minusIndexArr.length
 
@@ -42,6 +43,11 @@ class Checker {
             if ((arr[maxIndex - 1][4] - arr[1][4]) * 3 < maxDiff) {
                 return 3
             }
+
+            if (current < arr[lastIndex - 3][4] || current < arr[lastIndex - 2][4]) {
+                return 6
+            }
+
             // 1 tier
             return 1
         }
@@ -49,10 +55,11 @@ class Checker {
         // 2 tier
         if (minusCandleCount == 1) {
             if (minusIndexArr[0] == arr.length - 2) {  // last candle
-                return 99
+                return 5
             } else if (minusIndexArr[0] == 1) {  // first candle
                 if (arr[1][4] < arr[2][4]) {
-                    return 2
+                    // 1 tier
+                    return 1
                 }
             } else {
                 if (arr[minusIndexArr[0] + 1][4] >= arr[minusIndexArr[0] - 1][4]) {
@@ -67,6 +74,6 @@ class Checker {
                 return 4
             }
         }
-        return 99
+        return 5
     }
 }
