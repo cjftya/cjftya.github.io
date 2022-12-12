@@ -1,4 +1,0 @@
-const STOP_MARKET_LIST = ["FTT", "SRM", "CVC", "BTS", "SC", "TLM", "RAY", "BAL"]
-
-const TOTAL_CHECKING_CANDLE_COUNT = 7
-
