@@ -33,6 +33,7 @@ export abstract class SceneObjectStore implements ObjectStore {
         this.list.forEach((v, k) => {
             if (v instanceof PIXI.ViewContainer) {
                 v.removeAllListeners();
+                v.removeChildren();
             }
         });
     }

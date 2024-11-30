@@ -14,7 +14,7 @@ export class TitleScenePresenter extends ScenePresenter {
         // do nothing
     }
 
-    public onTitleButtonClicked(key: string): void {
+    public moveScene(key: string): void {
         this.topicManager?.publish(TopicKey.LoadScene, SceneArguments.make(key));
     }
 }

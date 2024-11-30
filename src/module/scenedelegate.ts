@@ -2,14 +2,18 @@ import * as PIXI from "pixi.js";
 import { SceneAds } from "../etc/sceneads";
 import { TopicKey } from "../etc/topic";
 import { SceneView } from "../ui/sceneview";
-import { TitleSceneView } from "../ui/title/titlesceneview";
 import { SceneArguments } from "./scenearguments";
 import { Subscriber } from "./subscriber";
 import { TopicListener, TopicManager } from "./topicmanager";
 import { WCardSceneView } from "../ui/wcard/wcardsceneview";
+import { PhysicsSceneView } from "../ui/physics/physicssceneview";
+import { TitleSceneView } from "../ui/title/titlesceneview";
+import { Log } from "../etc/log";
 
 export class SceneDelegate extends Subscriber {
 
+    private TAG: string = "SceneDelegate";
+    
     private topicManager: TopicManager;
     private scene?: SceneView|null;
 
@@ -40,6 +44,9 @@ export class SceneDelegate extends Subscriber {
             case SceneAds.WCard:
                 view = new WCardSceneView(context, this.topicManager, sceneArgs.getArguments());
                 break;
+            case SceneAds.Physics:
+                view = new PhysicsSceneView(context, this.topicManager, sceneArgs.getArguments());
+                break;
         }
         if (this.scene != null) {
             context.stage.removeChild(this.scene);
@@ -49,9 +56,9 @@ export class SceneDelegate extends Subscriber {
             this.scene = view;
             this.scene.onCreate();
             context.stage.addChild(this.scene);
-            console.log("loadScene : " + this.scene.getName());
+            Log.d(this.TAG, "loadScene : " + this.scene.getName());
         } else {
-            console.log("view is null : " + address);
+            Log.d(this.TAG, "view is null");
         }
         // this.database.open(address);
     }

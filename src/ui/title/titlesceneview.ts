@@ -35,10 +35,15 @@ export class TitleSceneView extends SceneView implements TitleScene {
         this.addChild(background);
 
         let wcardTextView = this.getObjectStore().read(ObjectId.Title.WCardText) as TextView;
-        wcardTextView.setPointerListener("pointerup", (e: PIXI.FederatedPointerEvent) => {
-            this.getPresenter().onTitleButtonClicked(SceneAds.WCard);
-            Log.d(this.getName(), "test : " + e);
+        wcardTextView.setPointerListener("pointerup", e => {
+            this.getPresenter().moveScene(SceneAds.WCard);
         });
         this.addChild(wcardTextView);
+
+        let physicsTextView = this.getObjectStore().read(ObjectId.Title.PhysicsText) as TextView;
+        physicsTextView.setPointerListener("pointerup", e => {
+            this.getPresenter().moveScene(SceneAds.Physics);
+        });
+        this.addChild(physicsTextView);
     }
 }
