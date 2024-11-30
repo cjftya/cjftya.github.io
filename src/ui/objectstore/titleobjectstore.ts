@@ -9,6 +9,7 @@ export class TitleObjectStore extends SceneObjectStore {
     protected createViews(): void {
         this.list.set(ObjectId.Title.Background, this.createBackground());
         this.list.set(ObjectId.Title.WCardText, this.createWCardText());
+        this.list.set(ObjectId.Title.PhysicsText, this.createPhysicsText());
     }
 
     protected resizeViews(): void {
@@ -31,10 +32,6 @@ export class TitleObjectStore extends SceneObjectStore {
             fill: '#ffffff',
             fontWeight: 'lighter'
         });
-        // const text = new PIXI.Text({
-        //     text: "W.Card",
-        //     style,
-        // });
         const text = new TextView({
             text: "W.Card",
             style,
@@ -43,6 +40,24 @@ export class TitleObjectStore extends SceneObjectStore {
         text.anchor.set(0.5, 0.5);
         text.x = this.getWidth() / 2;
         text.y = this.getHeight() / 2;
+        return text;
+    }
+
+    private createPhysicsText(): PIXI.View {
+        const style = new PIXI.TextStyle({
+            fontFamily: 'Arial',
+            fontSize: 36,
+            fill: '#ffffff',
+            fontWeight: 'lighter'
+        });
+        const text = new TextView({
+            text: "Physics",
+            style,
+        });
+        text.interactive = true;
+        text.anchor.set(0.5, 0.5);
+        text.x = this.getWidth() / 2;
+        text.y = this.getHeight() / 2 + 100;
         return text;
     }
 }
