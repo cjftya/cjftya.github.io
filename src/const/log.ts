@@ -1,8 +1,8 @@
-import { L } from "./linker";
+import { BuildConfig } from "./buildconfig";
 
 export class Log {
 
-    private static debug: boolean = L.values.debug;
+    private static debug: boolean = BuildConfig.debug
 
     public static e(tag: string, msg: any): void  {
         console.log("[E:"+tag+"] " + msg);

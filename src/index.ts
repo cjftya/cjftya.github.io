@@ -1,9 +1,6 @@
 import * as PIXI from "pixi.js";
-
-import { L } from "./etc/linker";
-import { System } from "./module/system";
-
-let system: System;
+import { L } from "./const/linker";
+import { Log } from "./const/log";
 
 initialize()
 function initialize() {
@@ -12,6 +9,7 @@ function initialize() {
         const app = new PIXI.Application();
         const w = window.innerWidth
         const h = window.innerHeight
+        Log.i("index", `window size: ${window.innerWidth}x${window.innerHeight}`);
        
         // Intialize the application.
         await app.init({
@@ -20,19 +18,12 @@ function initialize() {
             antialias: true,
             backgroundColor: L.colors.main_background_color});
 
-        system = new System(app);
-        
         // Then adding the application's canvas to the DOM body.
         document.body.appendChild(app.canvas);
 
-        system.onCreate();
-
         window.addEventListener("resize", () => {
-            system.onResolutionChanged(window.innerWidth, window.innerHeight);
+            app.renderer.resize(window.innerWidth, window.innerHeight);
+            Log.i("index", `window size: ${window.innerWidth}x${window.innerHeight}`);
         });
     })();
 }
-
-// function isMobileSystem(): boolean {
-//     return /Android|webOS|iPhone|iPad|iPod|Opera Mini/i.test(navigator.userAgent);
-// }
