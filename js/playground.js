@@ -8,15 +8,24 @@ function draw() {
 }
 
 function mousePressed() {
+    // 마우스가 눌렸을 때 호출
+    console.log('mousePressed:', mouseX, mouseY);
 }
 
 function mouseReleased() {
+    // 마우스가 떼어졌을 때 호출
+    console.log('mouseReleased:', mouseX, mouseY);
 }
 
 function mouseDragged() {
+    // 마우스를 드래그할 때 호출
+    console.log('mouseDragged:', mouseX, mouseY);
 }
 
 function mouseMoved() {
+    // 마우스가 움직일 때 호출
+    // 너무 자주 호출되므로 주석 처리
+    // console.log('mouseMoved:', mouseX, mouseY);
 }
 
 function windowResized() {
