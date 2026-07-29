@@ -15,7 +15,7 @@ describe('JsonProjectRepository', () => {
 
     await expect(repository.getProjects()).resolves.toMatchObject([
       { id: 'earlier-project' },
-      { id: 'viola' },
+      { id: 'sample-project' },
     ]);
     expect(fetcher).toHaveBeenCalledOnce();
   });
@@ -26,8 +26,8 @@ describe('JsonProjectRepository', () => {
     );
     const repository = new JsonProjectRepository('/data/projects.json', fetcher);
 
-    await expect(repository.getProject('viola')).resolves.toMatchObject({
-      name: 'Viola',
+    await expect(repository.getProject('sample-project')).resolves.toMatchObject({
+      name: 'Sample project',
     });
     await expect(repository.getProject('missing')).resolves.toBeUndefined();
     expect(fetcher).toHaveBeenCalledOnce();

@@ -9,7 +9,25 @@ describe('public/data/projects.json', () => {
 
     const collection = parseProjectCollection(input);
 
-    expect(collection.projects).toHaveLength(1);
-    expect(collection.projects[0]?.id).toBe('viola');
+    expect(collection.projects.map((project) => project.id)).toEqual([
+      'lottery-chart',
+      'rainbow',
+      'llm-android-leakchecker',
+      'jelly-tracer',
+      'jelly-sim-v1',
+      'jelly-markdown',
+    ]);
+    expect(collection.projects).toHaveLength(6);
+    expect(collection.projects).not.toContainEqual(
+      expect.objectContaining({ id: 'viola' }),
+    );
+    expect(collection.projects).not.toContainEqual(
+      expect.objectContaining({ id: 'wedding-card' }),
+    );
+    expect(
+      collection.projects.every((project) =>
+        project.links.github?.startsWith('https://github.com/cjftya/'),
+      ),
+    ).toBe(true);
   });
 });

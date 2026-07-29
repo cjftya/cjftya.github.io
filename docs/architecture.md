@@ -21,8 +21,10 @@ flowchart TD
 3. `JsonProjectRepository`가 `/data/projects.json`을 읽고 검증합니다.
 4. 검증된 프로젝트를 `SolarSystem`에 전달합니다.
 5. `SolarSystem`이 `PlanetBuilder`로 행성을 만들고 궤도와 함께 장면에 추가합니다.
-6. 로딩이 끝나면 `PlanetPicker`가 선택 이벤트를 UI에 전달합니다.
-7. 앱 종료 시 `dispose()`가 이벤트, WebGL 리소스와 controls를 정리합니다.
+6. 로딩이 끝나면 `PlanetPicker`가 선택 이벤트를 `App`에 전달합니다.
+7. `App`이 행성 선택, 카메라 포커스, UI 상세 정보와 브라우저 history를 함께
+   갱신합니다.
+8. 앱 종료 시 `dispose()`가 이벤트, WebGL 리소스와 controls를 정리합니다.
 
 오류는 `App` 경계에서 잡습니다. 자세한 검증 경로는 콘솔에 남고, 화면에는 짧은 오류
 상태가 표시됩니다.
@@ -42,9 +44,14 @@ pixel density 자체로 가장자리 품질을 유지해 모바일 fill-rate 비
 
 ### CameraController
 
-Perspective camera와 `OrbitControls`를 함께 소유합니다. 카메라 target은 태양이며,
+Perspective camera와 `OrbitControls`를 함께 소유합니다. 기본 target은 태양이며,
 pan은 끄고 damping과 최소·최대 거리를 설정합니다. OrbitControls가 마우스, 터치,
 휠과 핀치 입력을 처리합니다.
+
+행성 선택 시 `focusOn()`이 현재 카메라 위치와 행성 위치 사이를 0.75초 동안
+ease-out 보간합니다. 이동 중에는 controls 입력을 잠시 막고 완료 후 선택 행성을
+새 target으로 사용합니다. 선택 해제 시 `resetFocus()`가 태양계 기본 위치로
+복귀합니다. 사용자가 reduced motion을 요청한 환경에서는 보간 없이 즉시 이동합니다.
 
 ### SolarSystem
 
@@ -54,6 +61,8 @@ pan은 끄고 damping과 최소·최대 거리를 설정합니다. OrbitControls
 - 프로젝트마다 `Planet`과 `Orbit`을 한 개씩 만듭니다.
 - animation frame마다 각 `Planet.update(delta)`를 호출합니다.
 - raycast 대상 mesh와 프로젝트의 대응 관계를 보관합니다.
+- 프로젝트 ID와 런타임 행성의 대응 관계를 보관해 카메라용 world position을
+  제공합니다.
 - 선택 상태와 dispose를 전체 행성에 전달합니다.
 
 ### Sun
@@ -72,6 +81,7 @@ pan은 끄고 damping과 최소·최대 거리를 설정합니다. OrbitControls
 - 행성 자전 방향과 속도
 - 축 기울기
 - 선택 강조
+- 선택 중 공전 일시 정지
 - mesh와 texture dispose
 
 프로젝트 메타데이터를 보관하지만 데이터 파일을 직접 읽지는 않습니다.
@@ -124,18 +134,23 @@ export interface ProjectRepository {
 
 ## UI와 Three.js 경계
 
-`UiController`는 HTML 요소와 문구만 관리하며 Three.js 객체를 알지 못합니다.
-`PlanetPicker`는 raycast 결과를 `Project | null` 콜백으로 바꿉니다. `App`이 이 값을
-받아 `SolarSystem.setSelected()`와 `UiController.showSelection()`에 각각 전달합니다.
+`UiController`는 HTML 요소, 프로젝트 설명, 태그와 링크만 관리하며 Three.js 객체를
+알지 못합니다. `PlanetPicker`는 raycast 결과를 `Project | null` 콜백으로 바꿉니다.
+`App`은 선택 상태의 단일 조정자이며 아래 네 작업을 함께 수행합니다.
 
-이 경계 덕분에 선택 패널 디자인을 바꿔도 raycast 로직이 바뀌지 않고, 카메라 자동
-이동을 추가해도 UI가 camera 객체를 직접 다루지 않습니다.
+1. `SolarSystem.setSelected()`로 선택 강조와 공전 정지를 적용합니다.
+2. `CameraController.focusOn()` 또는 `resetFocus()`로 카메라를 이동합니다.
+3. `UiController.showSelection()`으로 상세 패널을 표시하거나 닫습니다.
+4. browser history에 선택 상태를 기록해 뒤로가기를 전체 화면 복귀로 연결합니다.
+
+패널 닫기, Esc, 빈 공간 선택도 모두 `App`의 동일한 선택 해제 경로를 사용합니다.
+이 경계 덕분에 상세 패널 디자인을 바꿔도 raycast와 카메라 로직이 바뀌지 않습니다.
 
 ## 확장 지점
 
 - 새 데이터 소스: `ProjectRepository` 구현 추가
-- 프로젝트 상세 UI: `UiController` 확장 또는 작은 UI 컴포넌트 분리
-- 카메라 포커스: 선택 콜백에서 별도 camera transition 객체 호출
+- 프로젝트 상세 정보 확장: JSON schema와 `UiController`를 함께 확장
+- 프로젝트 수 증가: 이름 표시 또는 목록 기반 키보드 탐색 추가
 - 행성 표현: `PlanetBuilder`에 검증된 옵션만 단계적으로 추가
 - 많은 행성: visibility 관리, texture cache, LOD를 실제 필요가 생긴 뒤 도입
 
