@@ -83,6 +83,7 @@ export class App {
     this.picker?.dispose();
     this.ui.dispose();
     this.solarSystem.dispose();
+    this.sceneManager.dispose();
     this.cameraController.dispose();
     this.rendererManager.dispose();
   }
@@ -99,6 +100,7 @@ export class App {
         ? timeMs - (elapsedMs % this.minimumFrameIntervalMs)
         : timeMs;
     const deltaSeconds = Math.min(this.clock.getDelta(), 0.1);
+    this.sceneManager.update(deltaSeconds);
     this.solarSystem.update(deltaSeconds);
     this.cameraController.update(deltaSeconds);
     this.rendererManager.renderer.render(

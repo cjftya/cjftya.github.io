@@ -1,4 +1,10 @@
-import type { Project } from '../data/Project';
+import type { Project, ProjectStatus } from '../data/Project';
+
+const PROJECT_STATUS_LABELS: Record<ProjectStatus, string> = {
+  active: '진행 중',
+  legacy: '이전 작업',
+  archived: '보관됨',
+};
 
 export class UiController {
   readonly viewport: HTMLElement;
@@ -7,9 +13,13 @@ export class UiController {
   private readonly loading: HTMLElement;
   private readonly message: HTMLElement;
   private readonly selectionPanel: HTMLElement;
+  private readonly projectCover: HTMLImageElement;
+  private readonly projectStatus: HTMLElement;
+  private readonly projectCategory: HTMLElement;
   private readonly projectName: HTMLElement;
   private readonly projectSummary: HTMLElement;
-  private readonly projectTags: HTMLElement;
+  private readonly projectDescription: HTMLElement;
+  private readonly projectTechStack: HTMLElement;
   private readonly projectPageLink: HTMLAnchorElement;
   private readonly projectGithubLink: HTMLAnchorElement;
   private readonly closeButton: HTMLButtonElement;
@@ -45,10 +55,18 @@ export class UiController {
             >
               <span aria-hidden="true">×</span>
             </button>
-            <p class="panel-label">Selected project</p>
+            <img class="project-cover" alt="" loading="lazy" hidden />
+            <div class="project-meta">
+              <span class="project-status"></span>
+              <span class="project-category"></span>
+            </div>
             <h2 id="selected-project-name"></h2>
             <p class="project-summary"></p>
-            <ul class="project-tags" aria-label="프로젝트 기술 태그"></ul>
+            <p class="project-description"></p>
+            <section class="project-stack" aria-labelledby="project-stack-title">
+              <p id="project-stack-title" class="panel-label">Tech stack</p>
+              <ul class="project-tech-stack"></ul>
+            </section>
             <div class="project-actions">
               <a class="project-link project-page-link">프로젝트 열기</a>
               <a
@@ -69,9 +87,13 @@ export class UiController {
     this.loading = this.requireElement(root, '.status-message');
     this.message = this.loading;
     this.selectionPanel = this.requireElement(root, '.project-panel');
+    this.projectCover = this.requireElement(root, '.project-cover', HTMLImageElement);
+    this.projectStatus = this.requireElement(root, '.project-status');
+    this.projectCategory = this.requireElement(root, '.project-category');
     this.projectName = this.requireElement(root, '.project-panel h2');
     this.projectSummary = this.requireElement(root, '.project-summary');
-    this.projectTags = this.requireElement(root, '.project-tags');
+    this.projectDescription = this.requireElement(root, '.project-description');
+    this.projectTechStack = this.requireElement(root, '.project-tech-stack');
     this.projectPageLink = this.requireElement(
       root,
       '.project-page-link',
@@ -107,14 +129,19 @@ export class UiController {
     }
 
     this.projectName.textContent = project.name;
+    this.projectStatus.textContent = PROJECT_STATUS_LABELS[project.status];
+    this.projectStatus.dataset.status = project.status;
+    this.projectCategory.textContent = project.details.category;
     this.projectSummary.textContent =
       project.summary || '이 프로젝트에는 아직 소개가 등록되지 않았어요.';
+    this.projectDescription.textContent = project.details.description;
+    this.showCover(project);
     this.showLink(this.projectPageLink, project.links.page);
     this.showLink(this.projectGithubLink, project.links.github);
-    this.projectTags.replaceChildren(
-      ...project.tags.map((tag) => {
+    this.projectTechStack.replaceChildren(
+      ...project.details.techStack.map((technology) => {
         const item = document.createElement('li');
-        item.textContent = tag;
+        item.textContent = technology;
         return item;
       }),
     );
@@ -144,6 +171,20 @@ export class UiController {
     }
 
     link.href = href;
+  }
+
+  private showCover(project: Project): void {
+    const source = project.details.coverImage;
+    this.projectCover.hidden = source === null;
+
+    if (source === null) {
+      this.projectCover.removeAttribute('src');
+      this.projectCover.alt = '';
+      return;
+    }
+
+    this.projectCover.src = source;
+    this.projectCover.alt = `${project.name} 대표 이미지`;
   }
 
   private requireElement<T extends Element>(
