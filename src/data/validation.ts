@@ -30,6 +30,12 @@ const projectSchema = z.object({
     page: nullableLinkSchema,
     github: nullableLinkSchema,
   }),
+  details: z.object({
+    category: z.string().trim().min(1),
+    description: z.string().trim().min(1),
+    techStack: z.array(z.string().trim().min(1)).min(1),
+    coverImage: nullableLinkSchema,
+  }),
   planet: z.object({
     seed: z.number().int(),
     orbit: z.object({

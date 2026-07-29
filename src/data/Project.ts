@@ -6,6 +6,13 @@ export interface ProjectLinks {
   github: string | null;
 }
 
+export interface ProjectDetails {
+  category: string;
+  description: string;
+  techStack: string[];
+  coverImage: string | null;
+}
+
 export interface OrbitSettings {
   radius: number;
   speed: number;
@@ -55,6 +62,7 @@ export interface Project {
   order: number;
   tags: string[];
   links: ProjectLinks;
+  details: ProjectDetails;
   planet: PlanetSettings;
 }
 

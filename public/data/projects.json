@@ -4,14 +4,20 @@
     {
       "id": "lottery-chart",
       "name": "Lottery Chart",
-      "summary": "로또 번호 통계를 차트로 살펴보는 프로젝트예요.",
-      "status": "active",
+      "summary": "로또 당첨 데이터를 수집해 번호 출현 패턴과 조합 후보를 분석하는 프로젝트예요.",
+      "status": "legacy",
       "featured": false,
       "order": 10,
-      "tags": ["Data visualization"],
+      "tags": ["로또", "데이터 분석"],
       "links": {
         "page": null,
         "github": "https://github.com/cjftya/lotterychart"
+      },
+      "details": {
+        "category": "데이터 분석 실험",
+        "description": "동행복권 회차 데이터를 API와 CSV로 적재하고, 최근 회차의 번호별 출현 빈도를 계산해 조건에 맞는 조합 후보를 생성해요.",
+        "techStack": ["Python", "Requests", "Beautiful Soup", "CSV"],
+        "coverImage": null
       },
       "planet": {
         "seed": 2101,
@@ -46,14 +52,20 @@
     {
       "id": "rainbow",
       "name": "Rainbow",
-      "summary": "Rainbow 프로젝트의 소스와 작업 기록을 담은 저장소예요.",
-      "status": "active",
+      "summary": "암호화폐 시장 데이터를 주기적으로 수집하고 분석하는 자동화 프로젝트예요.",
+      "status": "legacy",
       "featured": false,
       "order": 20,
-      "tags": ["Experiment"],
+      "tags": ["암호화폐", "시장 분석", "자동화"],
       "links": {
         "page": null,
         "github": "https://github.com/cjftya/rainbow"
+      },
+      "details": {
+        "category": "시장 분석 자동화",
+        "description": "Binance의 현물·선물 OHLCV 데이터를 병렬로 수집하고, 주기별 롱·숏 조건 분석과 Telegram 알림 흐름을 실험한 Python 서비스예요.",
+        "techStack": ["Python", "Flask", "CCXT", "APScheduler", "Telegram Bot API"],
+        "coverImage": null
       },
       "planet": {
         "seed": 2202,
@@ -88,14 +100,26 @@
     {
       "id": "llm-android-leakchecker",
       "name": "LLM Android Leak Checker",
-      "summary": "LLM을 활용해 Android 메모리 누수 단서를 점검하는 프로젝트예요.",
+      "summary": "로컬 LLM으로 Android Java 코드의 메모리 누수 단서를 점검하는 IDE 플러그인이에요.",
       "status": "active",
       "featured": false,
       "order": 30,
-      "tags": ["Android", "LLM"],
+      "tags": ["Android", "메모리 누수", "로컬 LLM"],
       "links": {
         "page": null,
         "github": "https://github.com/cjftya/llm-android-leakchecker"
+      },
+      "details": {
+        "category": "Android Studio 플러그인",
+        "description": "Android Studio 안에서 Java 코드와 주변 컨텍스트를 수집하고, Ollama로 실행한 Gemma 모델에 전달해 메모리 누수 가능성을 대화형으로 분석해요.",
+        "techStack": [
+          "Kotlin",
+          "IntelliJ Platform SDK",
+          "Android Studio",
+          "Ollama",
+          "Gemma"
+        ],
+        "coverImage": null
       },
       "planet": {
         "seed": 2303,
@@ -130,14 +154,20 @@
     {
       "id": "jelly-tracer",
       "name": "Jelly Tracer",
-      "summary": "Perfetto 트레이스를 바탕으로 Android 실행 지연의 원인을 분석하는 AI 포렌식 엔진이에요.",
+      "summary": "Perfetto 트레이스에서 Android 실행 지연의 물리적 원인을 추적하는 AI 포렌식 엔진이에요.",
       "status": "active",
       "featured": true,
       "order": 40,
-      "tags": ["Android", "Perfetto", "AI"],
+      "tags": ["Android", "성능 분석", "포렌식"],
       "links": {
         "page": null,
         "github": "https://github.com/cjftya/jelly_tracer"
+      },
+      "details": {
+        "category": "Android 성능 포렌식",
+        "description": "실행·블로킹·스케줄링 시간을 분리하고 Point Scan, Insight Scan, Context Scan을 통해 앱 실행 지연의 원인과 주변 시스템 부하를 단계적으로 좁혀요.",
+        "techStack": ["Python", "Perfetto Trace Processor", "Pandas", "Gemma"],
+        "coverImage": null
       },
       "planet": {
         "seed": 2404,
@@ -172,14 +202,26 @@
     {
       "id": "jelly-sim-v1",
       "name": "Jelly Sim V1",
-      "summary": "Google GenAI와 로컬 임베딩을 조합한 데스크톱 시뮬레이션 프로토타입이에요.",
+      "summary": "기억과 감정을 가진 AI 에이전트들이 상호작용하는 데스크톱 시뮬레이션이에요.",
       "status": "active",
       "featured": false,
       "order": 50,
-      "tags": ["Python", "Google GenAI"],
+      "tags": ["AI 에이전트", "시뮬레이션", "기억 시스템"],
       "links": {
         "page": null,
         "github": "https://github.com/cjftya/jelly_sim_v1"
+      },
+      "details": {
+        "category": "멀티 에이전트 시뮬레이션",
+        "description": "Google GenAI와 로컬 임베딩을 사용해 에이전트의 행동을 만들고, Kuzu 그래프에 에피소드 기억과 감정 흔적을 저장하며 가상 세계의 상호작용을 시뮬레이션해요.",
+        "techStack": [
+          "Python",
+          "CustomTkinter",
+          "Google GenAI",
+          "Kuzu",
+          "Sentence Transformers"
+        ],
+        "coverImage": null
       },
       "planet": {
         "seed": 2505,
@@ -214,14 +256,26 @@
     {
       "id": "jelly-markdown",
       "name": "JellyMarkdown",
-      "summary": "Android에서 Markdown 문서를 열고 읽고 편집하는 앱이에요.",
+      "summary": "Android에서 긴 Markdown 문서를 열고 읽고 편집하는 로컬 문서 앱이에요.",
       "status": "active",
       "featured": true,
       "order": 60,
-      "tags": ["Android", "Markdown"],
+      "tags": ["Android", "Markdown", "문서 도구"],
       "links": {
         "page": null,
         "github": "https://github.com/cjftya/jelly_markdown"
+      },
+      "details": {
+        "category": "Android 문서 도구",
+        "description": "SAF로 로컬·클라우드 Markdown 파일을 열고 저장하며, WebView 미리보기와 편집 모드, 목차 이동, 테마 설정, 읽던 위치 복원을 제공해요.",
+        "techStack": [
+          "Java",
+          "Android SDK",
+          "CommonMark",
+          "WebView",
+          "Storage Access Framework"
+        ],
+        "coverImage": null
       },
       "planet": {
         "seed": 2606,
