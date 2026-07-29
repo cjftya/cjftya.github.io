@@ -7,6 +7,9 @@ describe('public/data/projects.json', () => {
     const fileUrl = new URL('../public/data/projects.json', import.meta.url);
     const input: unknown = JSON.parse(await readFile(fileUrl, 'utf8'));
 
-    expect(parseProjectCollection(input).projects.length).toBeGreaterThanOrEqual(2);
+    const collection = parseProjectCollection(input);
+
+    expect(collection.projects).toHaveLength(1);
+    expect(collection.projects[0]?.id).toBe('viola');
   });
 });

@@ -8,6 +8,8 @@ import type { ProjectRepository } from '../data/ProjectRepository';
 import { SolarSystem } from '../solar-system/SolarSystem';
 import { UiController } from '../ui/UiController';
 
+const MOBILE_FRAME_INTERVAL_MS = 1000 / 30;
+
 export class App {
   private readonly ui: UiController;
   private readonly sceneManager = new SceneManager();
@@ -16,7 +18,12 @@ export class App {
   private readonly solarSystem: SolarSystem;
   private readonly clock = new Clock();
   private readonly resizeObserver: ResizeObserver;
+  private readonly minimumFrameIntervalMs = window.matchMedia('(pointer: coarse)')
+    .matches
+    ? MOBILE_FRAME_INTERVAL_MS
+    : 0;
   private picker: PlanetPicker | undefined;
+  private lastRenderTimeMs = 0;
   private disposed = false;
 
   constructor(
@@ -39,7 +46,8 @@ export class App {
   }
 
   async start(): Promise<void> {
-    this.rendererManager.renderer.setAnimationLoop(this.animate);
+    document.addEventListener('visibilitychange', this.handleVisibilityChange);
+    this.syncRenderLoopWithVisibility();
 
     try {
       const projects = await this.projectRepository.getProjects();
@@ -65,6 +73,7 @@ export class App {
     }
 
     this.disposed = true;
+    document.removeEventListener('visibilitychange', this.handleVisibilityChange);
     this.resizeObserver.disconnect();
     this.picker?.dispose();
     this.solarSystem.dispose();
@@ -72,7 +81,17 @@ export class App {
     this.rendererManager.dispose();
   }
 
-  private readonly animate = (): void => {
+  private readonly animate = (timeMs: number): void => {
+    const elapsedMs = timeMs - this.lastRenderTimeMs;
+
+    if (elapsedMs < this.minimumFrameIntervalMs) {
+      return;
+    }
+
+    this.lastRenderTimeMs =
+      this.minimumFrameIntervalMs > 0
+        ? timeMs - (elapsedMs % this.minimumFrameIntervalMs)
+        : timeMs;
     const deltaSeconds = Math.min(this.clock.getDelta(), 0.1);
     this.solarSystem.update(deltaSeconds);
     this.cameraController.update();
@@ -81,6 +100,22 @@ export class App {
       this.cameraController.camera,
     );
   };
+
+  private readonly handleVisibilityChange = (): void => {
+    this.syncRenderLoopWithVisibility();
+  };
+
+  private syncRenderLoopWithVisibility(): void {
+    if (document.hidden) {
+      this.rendererManager.renderer.setAnimationLoop(null);
+      this.clock.stop();
+      return;
+    }
+
+    this.lastRenderTimeMs = 0;
+    this.clock.start();
+    this.rendererManager.renderer.setAnimationLoop(this.animate);
+  }
 
   private readonly handleResize = (): void => {
     const { width, height } = this.ui.viewport.getBoundingClientRect();
