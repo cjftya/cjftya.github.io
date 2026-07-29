@@ -42,7 +42,6 @@ export function createValidProjectCollection(): ProjectCollection {
           },
           surface: {
             baseColor: '#7fd1b9',
-            texture: null,
           },
           ring: {
             enabled: false,
