@@ -29,5 +29,12 @@ describe('public/data/projects.json', () => {
         project.links.github?.startsWith('https://github.com/cjftya/'),
       ),
     ).toBe(true);
+    expect(
+      collection.projects.every(
+        (project) =>
+          project.details.description.length > 0 &&
+          project.details.techStack.length > 0,
+      ),
+    ).toBe(true);
   });
 });

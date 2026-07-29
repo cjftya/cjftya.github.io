@@ -32,6 +32,7 @@
 | `order`    | integer  | 예   | 표시 순서                                |
 | `tags`     | string[] | 예   | 검색·분류용 태그. 없으면 빈 배열         |
 | `links`    | object   | 예   | 프로젝트 링크                            |
+| `details`  | object   | 예   | 상세 패널에 표시할 설명과 기술 정보      |
 | `planet`   | object   | 예   | 행성 표현 설정                           |
 
 프로젝트 `id`는 전체 배열에서 고유해야 합니다. 이름이 바뀌더라도 기존 `id`는 유지합니다.
@@ -46,6 +47,18 @@
 링크는 `/projects/example/` 같은 루트 상대 경로나 완전한 URL이어야 합니다. 링크가
 없으면 빈 문자열 대신 `null`을 사용합니다. 상세 패널은 등록된 링크만 버튼으로
 표시하며, 외부 GitHub 링크는 새 탭에서 엽니다.
+
+## 상세 정보
+
+| 필드                  | 타입             | 의미                                 |
+| --------------------- | ---------------- | ------------------------------------ |
+| `details.category`    | string           | 프로젝트 유형                        |
+| `details.description` | string           | 상세 패널의 본문 설명                |
+| `details.techStack`   | string[]         | 실제 사용 기술. 최소 한 개 필요      |
+| `details.coverImage`  | string 또는 null | 선택적 대표 이미지의 public 경로·URL |
+
+대표 이미지가 아직 없으면 `coverImage`를 `null`로 둡니다. 패널은 이미지 영역을
+숨기며, 나중에 경로를 추가하면 지연 로딩으로 표시합니다.
 
 ## 행성 옵션
 
@@ -106,6 +119,12 @@
     "page": "/projects/sample-project/",
     "github": null
   },
+  "details": {
+    "category": "Sample",
+    "description": "프로젝트 상세 설명",
+    "techStack": ["TypeScript"],
+    "coverImage": null
+  },
   "planet": {
     "seed": 3003,
     "orbit": {
@@ -138,8 +157,8 @@
 }
 ```
 
-실제 정보가 불명확한 필드는 추측해서 채우지 않고, `summary`는 빈 문자열,
-nullable 링크는 `null`, 태그는 빈 배열로 둡니다.
+실제 정보가 불명확한 필드는 저장소 코드와 문서를 먼저 확인합니다. nullable 링크와
+대표 이미지는 `null`로 두고, 상세 설명과 기술 스택은 확인된 정보만 입력합니다.
 
 ## 검증
 

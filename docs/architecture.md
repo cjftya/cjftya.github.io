@@ -33,7 +33,10 @@ flowchart TD
 
 ### SceneManager
 
-Three.js `Scene`과 전역 배경, 기본 ambient light만 소유합니다.
+Three.js `Scene`, 전역 배경, 기본 ambient light와 `SpaceBackdrop`을 소유합니다.
+`SpaceBackdrop`은 far star와 near dust를 각각 한 번의 draw call로 렌더링합니다.
+두 field는 서로 다른 반지름에 분포해 카메라 이동 시 자연스러운 시차를 만들고,
+아주 느린 회전만 적용합니다. reduced motion 환경에서는 회전하지 않습니다.
 
 ### RendererManager
 
@@ -134,8 +137,9 @@ export interface ProjectRepository {
 
 ## UI와 Three.js 경계
 
-`UiController`는 HTML 요소, 프로젝트 설명, 태그와 링크만 관리하며 Three.js 객체를
-알지 못합니다. `PlanetPicker`는 raycast 결과를 `Project | null` 콜백으로 바꿉니다.
+`UiController`는 HTML 요소, 프로젝트 설명, 상태, 기술 스택, 선택적 대표 이미지와
+링크만 관리하며 Three.js 객체를 알지 못합니다. `PlanetPicker`는 raycast 결과를
+`Project | null` 콜백으로 바꿉니다.
 `App`은 선택 상태의 단일 조정자이며 아래 네 작업을 함께 수행합니다.
 
 1. `SolarSystem.setSelected()`로 선택 강조와 공전 정지를 적용합니다.
@@ -149,9 +153,9 @@ export interface ProjectRepository {
 ## 확장 지점
 
 - 새 데이터 소스: `ProjectRepository` 구현 추가
-- 프로젝트 상세 정보 확장: JSON schema와 `UiController`를 함께 확장
+- 프로젝트 상세 정보 확장: `details` JSON과 `UiController`를 함께 확장
 - 프로젝트 수 증가: 이름 표시 또는 목록 기반 키보드 탐색 추가
-- 행성 표현: `PlanetBuilder`에 검증된 옵션만 단계적으로 추가
+- 행성 표현: texture와 동적 우주 효과를 실제 필요가 생긴 뒤 단계적으로 추가
 - 많은 행성: visibility 관리, texture cache, LOD를 실제 필요가 생긴 뒤 도입
 
 확장 시에도 `App`은 조정, Repository는 데이터, `SolarSystem`은 장면 상태,
