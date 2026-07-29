@@ -36,7 +36,9 @@ Three.js `Scene`과 전역 배경, 기본 ambient light만 소유합니다.
 ### RendererManager
 
 `WebGLRenderer` 생성, 색 공간, tone mapping, pixel ratio 상한과 resize를 담당합니다.
-기기 pixel ratio는 최대 2로 제한합니다.
+기기 pixel ratio는 최대 1.5로 제한합니다. 고해상도 화면에서는 MSAA를 끄고
+pixel density 자체로 가장자리 품질을 유지해 모바일 fill-rate 비용을 줄입니다.
+동일한 크기의 중복 resize 요청은 렌더러에 전달하지 않습니다.
 
 ### CameraController
 
@@ -73,6 +75,12 @@ pan은 끄고 damping과 최소·최대 거리를 설정합니다. OrbitControls
 - mesh와 texture dispose
 
 프로젝트 메타데이터를 보관하지만 데이터 파일을 직접 읽지는 않습니다.
+
+### 렌더 루프 정책
+
+데스크톱은 디스플레이 주사율을 따르고, coarse pointer를 사용하는 모바일 환경은
+30fps로 제한합니다. 문서가 background 상태가 되면 animation loop를 중지하고,
+다시 보일 때 clock과 loop를 재시작해 숨겨진 탭에서 GPU를 사용하지 않습니다.
 
 ## 행성 생성
 
