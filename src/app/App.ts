@@ -4,13 +4,14 @@ import { PlanetPicker } from '../core/interaction/PlanetPicker';
 import { RendererManager } from '../core/renderer/RendererManager';
 import { SceneManager } from '../core/scene/SceneManager';
 import { JsonProjectRepository } from '../data/JsonProjectRepository';
-import type { Project } from '../data/Project';
+import type { Galaxy, Project } from '../data/Project';
 import type { ProjectRepository } from '../data/ProjectRepository';
 import { SolarSystem } from '../solar-system/SolarSystem';
 import { UiController } from '../ui/UiController';
 
 const MOBILE_FRAME_INTERVAL_MS = 1000 / 30;
 const HISTORY_PROJECT_KEY = 'jellyPlantsProjectId';
+const HISTORY_GALAXY_KEY = 'jellyPlantsGalaxyId';
 
 export class App {
   private readonly ui: UiController;
@@ -21,6 +22,9 @@ export class App {
   private readonly clock = new Clock();
   private readonly resizeObserver: ResizeObserver;
   private readonly projectById = new Map<string, Project>();
+  private readonly galaxyById = new Map<string, Galaxy>();
+  private projects: Project[] = [];
+  private activeGalaxyId: string | null = null;
   private readonly projectedLabelPosition = new Vector3();
   private readonly minimumFrameIntervalMs = window.matchMedia('(pointer: coarse)')
     .matches
@@ -40,6 +44,7 @@ export class App {
   ) {
     this.ui = new UiController(root, {
       onCloseSelection: this.requestClearSelection,
+      onSelectGalaxy: this.handleGalaxySelection,
       onSelectProject: this.handleLabelSelection,
       onHoverProject: this.handleLabelHover,
     });
@@ -63,10 +68,22 @@ export class App {
     this.syncRenderLoopWithVisibility();
 
     try {
-      const projects = await this.projectRepository.getProjects();
+      const { galaxies, projects } = await this.projectRepository.getCollection();
+      const initialGalaxy = galaxies[0];
+
+      if (initialGalaxy === undefined) {
+        throw new Error('At least one galaxy is required.');
+      }
+
+      this.projects = projects;
+      galaxies.forEach((galaxy) => this.galaxyById.set(galaxy.id, galaxy));
       projects.forEach((project) => this.projectById.set(project.id, project));
-      await this.solarSystem.load(projects);
-      this.ui.showProjects(projects);
+      await this.solarSystem.load(projects, initialGalaxy);
+      this.sceneManager.setGalaxyColor(initialGalaxy.color);
+      this.activeGalaxyId = initialGalaxy.id;
+      this.ui.showGalaxies(galaxies);
+      this.ui.showGalaxy(initialGalaxy, false);
+      this.ui.showProjects(this.getProjectsForGalaxy(initialGalaxy.id));
       this.picker = new PlanetPicker(
         this.ui.canvas,
         this.cameraController.camera,
@@ -148,6 +165,24 @@ export class App {
     this.applyHover(project?.id ?? null);
   };
 
+  private readonly handleGalaxySelection = (galaxyId: string): void => {
+    const galaxy = this.galaxyById.get(galaxyId);
+
+    if (galaxy === undefined || galaxy.id === this.activeGalaxyId) {
+      return;
+    }
+
+    window.history.pushState(
+      {
+        ...this.getCurrentHistoryState(),
+        [HISTORY_GALAXY_KEY]: galaxy.id,
+        [HISTORY_PROJECT_KEY]: null,
+      },
+      '',
+    );
+    this.applyGalaxy(galaxy, true);
+  };
+
   private readonly handleLabelSelection = (projectId: string): void => {
     const project = this.projectById.get(projectId);
 
@@ -167,8 +202,19 @@ export class App {
   };
 
   private readonly handlePopState = (event: PopStateEvent): void => {
-    const state = this.readProjectIdFromHistory(event.state);
-    const project = state === null ? null : (this.projectById.get(state) ?? null);
+    const galaxyId = this.readStringFromHistory(event.state, HISTORY_GALAXY_KEY);
+    const galaxy =
+      (galaxyId === null ? undefined : this.galaxyById.get(galaxyId)) ??
+      this.galaxyById.values().next().value;
+
+    if (galaxy !== undefined && galaxy.id !== this.activeGalaxyId) {
+      this.applyGalaxy(galaxy, true);
+    }
+
+    const projectId = this.readStringFromHistory(event.state, HISTORY_PROJECT_KEY);
+    const candidate =
+      projectId === null ? null : (this.projectById.get(projectId) ?? null);
+    const project = candidate?.galaxyId === this.activeGalaxyId ? candidate : null;
     this.applySelection(project);
   };
 
@@ -198,6 +244,7 @@ export class App {
     window.history.replaceState(
       {
         ...this.getCurrentHistoryState(),
+        [HISTORY_GALAXY_KEY]: this.activeGalaxyId,
         [HISTORY_PROJECT_KEY]: null,
       },
       '',
@@ -219,6 +266,18 @@ export class App {
     if (worldPosition !== null) {
       this.cameraController.focusOn(worldPosition, project.planet.shape.radius);
     }
+  }
+
+  private applyGalaxy(galaxy: Galaxy, animate: boolean): void {
+    this.activeGalaxyId = galaxy.id;
+    this.selectedProjectId = null;
+    this.applyHover(null);
+    this.solarSystem.setActiveGalaxy(galaxy);
+    this.sceneManager.setGalaxyColor(galaxy.color);
+    this.ui.showSelection(null);
+    this.ui.showGalaxy(galaxy, animate);
+    this.ui.showProjects(this.getProjectsForGalaxy(galaxy.id));
+    this.cameraController.resetFocus();
   }
 
   private applyHover(projectId: string | null): void {
@@ -257,12 +316,16 @@ export class App {
       : {};
   }
 
-  private readProjectIdFromHistory(state: unknown): string | null {
+  private readStringFromHistory(state: unknown, key: string): string | null {
     if (typeof state !== 'object' || state === null) {
       return null;
     }
 
-    const projectId = (state as Record<string, unknown>)[HISTORY_PROJECT_KEY];
-    return typeof projectId === 'string' ? projectId : null;
+    const value = (state as Record<string, unknown>)[key];
+    return typeof value === 'string' ? value : null;
+  }
+
+  private getProjectsForGalaxy(galaxyId: string): Project[] {
+    return this.projects.filter((project) => project.galaxyId === galaxyId);
   }
 }

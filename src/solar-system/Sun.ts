@@ -4,6 +4,7 @@ import {
   Mesh,
   MeshBasicMaterial,
   PointLight,
+  Color,
   SphereGeometry,
 } from 'three';
 
@@ -28,6 +29,7 @@ export class Sun {
   });
   private readonly innerGlow = new Mesh(this.geometry, this.innerGlowMaterial);
   private readonly outerGlow = new Mesh(this.geometry, this.outerGlowMaterial);
+  private readonly light = new PointLight('#ffe0ad', 105, 82, 1.45);
   private readonly prefersReducedMotion = window.matchMedia(
     '(prefers-reduced-motion: reduce)',
   ).matches;
@@ -35,12 +37,19 @@ export class Sun {
 
   constructor() {
     const core = new Mesh(this.geometry, this.coreMaterial);
-    const light = new PointLight('#ffe0ad', 105, 82, 1.45);
 
     this.innerGlow.scale.setScalar(1.62);
     this.outerGlow.scale.setScalar(2.18);
     this.outerGlow.renderOrder = -1;
-    this.object.add(this.outerGlow, this.innerGlow, core, light);
+    this.object.add(this.outerGlow, this.innerGlow, core, this.light);
+  }
+
+  setColor(color: string): void {
+    const accent = new Color(color);
+    this.coreMaterial.color.copy(accent).lerp(new Color('#ffffff'), 0.12);
+    this.innerGlowMaterial.color.copy(accent);
+    this.outerGlowMaterial.color.copy(accent).lerp(new Color('#5b4f89'), 0.28);
+    this.light.color.copy(accent).lerp(new Color('#ffffff'), 0.48);
   }
 
   update(deltaSeconds: number): void {
