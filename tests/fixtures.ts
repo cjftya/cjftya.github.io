@@ -5,16 +5,16 @@ export function createValidProjectCollection(): ProjectCollection {
     version: 1,
     projects: [
       {
-        id: 'viola',
-        name: 'Viola',
+        id: 'sample-project',
+        name: 'Sample project',
         summary: '',
         status: 'legacy',
         featured: true,
         order: 10,
         tags: [],
         links: {
-          page: '/projects/viola/',
-          github: null,
+          page: null,
+          github: 'https://github.com/cjftya/sample-project',
         },
         planet: {
           seed: 1001,

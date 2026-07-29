@@ -44,7 +44,8 @@
 | `links.github` | string 또는 null | 별도 GitHub 저장소   |
 
 링크는 `/projects/example/` 같은 루트 상대 경로나 완전한 URL이어야 합니다. 링크가
-없으면 빈 문자열 대신 `null`을 사용합니다.
+없으면 빈 문자열 대신 `null`을 사용합니다. 상세 패널은 등록된 링크만 버튼으로
+표시하며, 외부 GitHub 링크는 새 탭에서 엽니다.
 
 ## 행성 옵션
 

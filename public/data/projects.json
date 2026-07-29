@@ -2,44 +2,254 @@
   "version": 1,
   "projects": [
     {
-      "id": "viola",
-      "name": "Viola",
-      "summary": "",
-      "status": "legacy",
-      "featured": true,
+      "id": "lottery-chart",
+      "name": "Lottery Chart",
+      "summary": "로또 번호 통계를 차트로 살펴보는 프로젝트예요.",
+      "status": "active",
+      "featured": false,
       "order": 10,
-      "tags": [],
+      "tags": ["Data visualization"],
       "links": {
-        "page": "/projects/viola/",
-        "github": null
+        "page": null,
+        "github": "https://github.com/cjftya/lotterychart"
       },
       "planet": {
-        "seed": 1001,
+        "seed": 2101,
         "orbit": {
-          "radius": 4.5,
-          "speed": 0.08,
-          "startAngle": 0,
-          "inclination": 4
+          "radius": 4.3,
+          "speed": 0.105,
+          "startAngle": 10,
+          "inclination": 2
         },
         "rotation": {
-          "speed": 0.15,
+          "speed": 0.18,
           "direction": "counterclockwise",
-          "axisTilt": 8
+          "axisTilt": 7
         },
         "shape": {
-          "radius": 0.7,
-          "roughness": 0.04,
-          "frequency": 2
+          "radius": 0.5,
+          "roughness": 0.045,
+          "frequency": 2.2
         },
         "surface": {
-          "baseColor": "#7fd1b9",
+          "baseColor": "#f6c85f",
           "texture": null
         },
         "ring": {
           "enabled": false,
-          "color": "#ffffff",
-          "width": 0.2,
+          "color": "#fff1bd",
+          "width": 0.14,
           "tilt": 0
+        }
+      }
+    },
+    {
+      "id": "rainbow",
+      "name": "Rainbow",
+      "summary": "Rainbow 프로젝트의 소스와 작업 기록을 담은 저장소예요.",
+      "status": "active",
+      "featured": false,
+      "order": 20,
+      "tags": ["Experiment"],
+      "links": {
+        "page": null,
+        "github": "https://github.com/cjftya/rainbow"
+      },
+      "planet": {
+        "seed": 2202,
+        "orbit": {
+          "radius": 5.8,
+          "speed": 0.085,
+          "startAngle": 75,
+          "inclination": -5
+        },
+        "rotation": {
+          "speed": 0.14,
+          "direction": "clockwise",
+          "axisTilt": -11
+        },
+        "shape": {
+          "radius": 0.58,
+          "roughness": 0.055,
+          "frequency": 2.8
+        },
+        "surface": {
+          "baseColor": "#f08ba8",
+          "texture": null
+        },
+        "ring": {
+          "enabled": false,
+          "color": "#ffd7e3",
+          "width": 0.15,
+          "tilt": 0
+        }
+      }
+    },
+    {
+      "id": "llm-android-leakchecker",
+      "name": "LLM Android Leak Checker",
+      "summary": "LLM을 활용해 Android 메모리 누수 단서를 점검하는 프로젝트예요.",
+      "status": "active",
+      "featured": false,
+      "order": 30,
+      "tags": ["Android", "LLM"],
+      "links": {
+        "page": null,
+        "github": "https://github.com/cjftya/llm-android-leakchecker"
+      },
+      "planet": {
+        "seed": 2303,
+        "orbit": {
+          "radius": 7.3,
+          "speed": 0.07,
+          "startAngle": 140,
+          "inclination": 6
+        },
+        "rotation": {
+          "speed": 0.16,
+          "direction": "counterclockwise",
+          "axisTilt": 16
+        },
+        "shape": {
+          "radius": 0.66,
+          "roughness": 0.065,
+          "frequency": 3.1
+        },
+        "surface": {
+          "baseColor": "#72d6c9",
+          "texture": null
+        },
+        "ring": {
+          "enabled": false,
+          "color": "#c8fff8",
+          "width": 0.16,
+          "tilt": 0
+        }
+      }
+    },
+    {
+      "id": "jelly-tracer",
+      "name": "Jelly Tracer",
+      "summary": "Perfetto 트레이스를 바탕으로 Android 실행 지연의 원인을 분석하는 AI 포렌식 엔진이에요.",
+      "status": "active",
+      "featured": true,
+      "order": 40,
+      "tags": ["Android", "Perfetto", "AI"],
+      "links": {
+        "page": null,
+        "github": "https://github.com/cjftya/jelly_tracer"
+      },
+      "planet": {
+        "seed": 2404,
+        "orbit": {
+          "radius": 8.9,
+          "speed": 0.055,
+          "startAngle": 205,
+          "inclination": -3
+        },
+        "rotation": {
+          "speed": 0.12,
+          "direction": "counterclockwise",
+          "axisTilt": 21
+        },
+        "shape": {
+          "radius": 0.78,
+          "roughness": 0.075,
+          "frequency": 2.4
+        },
+        "surface": {
+          "baseColor": "#8ca9ff",
+          "texture": null
+        },
+        "ring": {
+          "enabled": true,
+          "color": "#b9c9ff",
+          "width": 0.18,
+          "tilt": 18
+        }
+      }
+    },
+    {
+      "id": "jelly-sim-v1",
+      "name": "Jelly Sim V1",
+      "summary": "Google GenAI와 로컬 임베딩을 조합한 데스크톱 시뮬레이션 프로토타입이에요.",
+      "status": "active",
+      "featured": false,
+      "order": 50,
+      "tags": ["Python", "Google GenAI"],
+      "links": {
+        "page": null,
+        "github": "https://github.com/cjftya/jelly_sim_v1"
+      },
+      "planet": {
+        "seed": 2505,
+        "orbit": {
+          "radius": 10.5,
+          "speed": 0.045,
+          "startAngle": 270,
+          "inclination": 8
+        },
+        "rotation": {
+          "speed": 0.11,
+          "direction": "clockwise",
+          "axisTilt": -18
+        },
+        "shape": {
+          "radius": 0.7,
+          "roughness": 0.085,
+          "frequency": 3.4
+        },
+        "surface": {
+          "baseColor": "#c19af4",
+          "texture": null
+        },
+        "ring": {
+          "enabled": false,
+          "color": "#ead9ff",
+          "width": 0.17,
+          "tilt": 0
+        }
+      }
+    },
+    {
+      "id": "jelly-markdown",
+      "name": "JellyMarkdown",
+      "summary": "Android에서 Markdown 문서를 열고 읽고 편집하는 앱이에요.",
+      "status": "active",
+      "featured": true,
+      "order": 60,
+      "tags": ["Android", "Markdown"],
+      "links": {
+        "page": null,
+        "github": "https://github.com/cjftya/jelly_markdown"
+      },
+      "planet": {
+        "seed": 2606,
+        "orbit": {
+          "radius": 12.2,
+          "speed": 0.035,
+          "startAngle": 330,
+          "inclination": -7
+        },
+        "rotation": {
+          "speed": 0.13,
+          "direction": "counterclockwise",
+          "axisTilt": 12
+        },
+        "shape": {
+          "radius": 0.62,
+          "roughness": 0.05,
+          "frequency": 2.6
+        },
+        "surface": {
+          "baseColor": "#7fc5f5",
+          "texture": null
+        },
+        "ring": {
+          "enabled": true,
+          "color": "#c9eaff",
+          "width": 0.13,
+          "tilt": -12
         }
       }
     }
