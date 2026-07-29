@@ -29,6 +29,20 @@ describe('parseProjectCollection', () => {
     expect(() => parseProjectCollection(input)).toThrow(/Duplicate project id/);
   });
 
+  it('rejects duplicate galaxy ids', () => {
+    const input = createValidProjectCollection();
+    input.galaxies.push(structuredClone(input.galaxies[0]!));
+
+    expect(() => parseProjectCollection(input)).toThrow(/Duplicate galaxy id/);
+  });
+
+  it('rejects a project assigned to an unknown galaxy', () => {
+    const input = createValidProjectCollection();
+    input.projects[0]!.galaxyId = 'missing-galaxy';
+
+    expect(() => parseProjectCollection(input)).toThrow(/Unknown galaxy id/);
+  });
+
   it('rejects an invalid rotation direction', () => {
     const input = createValidProjectCollection() as unknown as {
       projects: Array<{ planet: { rotation: { direction: string } } }>;
@@ -57,5 +71,12 @@ describe('parseProjectCollection', () => {
     input.projects[0]!.links.github = 'https://example.com/project';
 
     expect(() => parseProjectCollection(input)).toThrow(/GitHub URL/);
+  });
+
+  it('allows a project with no detail-page action', () => {
+    const input = createValidProjectCollection();
+    input.projects[0]!.links.github = null;
+
+    expect(parseProjectCollection(input)).toEqual(input);
   });
 });

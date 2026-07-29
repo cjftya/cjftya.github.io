@@ -13,8 +13,8 @@ const appRoot = root;
 
 async function bootstrap(): Promise<void> {
   if (!supportsWebGl2()) {
-    const projects = await loadFallbackProjects();
-    renderWebGlFallback(appRoot, projects);
+    const collection = await loadFallbackProjects();
+    renderWebGlFallback(appRoot, collection.galaxies, collection.projects);
     return;
   }
 
@@ -24,8 +24,8 @@ async function bootstrap(): Promise<void> {
     window.addEventListener('pagehide', () => app.dispose(), { once: true });
   } catch (error) {
     console.error('WebGL renderer initialization failed.', error);
-    const projects = await loadFallbackProjects();
-    renderWebGlFallback(appRoot, projects);
+    const collection = await loadFallbackProjects();
+    renderWebGlFallback(appRoot, collection.galaxies, collection.projects);
   }
 }
 
@@ -39,10 +39,10 @@ function supportsWebGl2(): boolean {
 
 async function loadFallbackProjects() {
   try {
-    return await new JsonProjectRepository().getProjects();
+    return await new JsonProjectRepository().getCollection();
   } catch (error) {
     console.error('Fallback project data failed to load.', error);
-    return [];
+    return { version: 2 as const, galaxies: [], projects: [] };
   }
 }
 

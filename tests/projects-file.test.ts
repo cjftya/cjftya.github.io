@@ -9,6 +9,10 @@ describe('public/data/projects.json', () => {
 
     const collection = parseProjectCollection(input);
 
+    expect(collection.galaxies.map((galaxy) => galaxy.id)).toEqual([
+      'jelly-garden',
+      'pages-archive',
+    ]);
     expect(collection.projects.map((project) => project.id)).toEqual([
       'lottery-chart',
       'rainbow',
@@ -16,20 +20,32 @@ describe('public/data/projects.json', () => {
       'jelly-tracer',
       'jelly-sim-v1',
       'jelly-markdown',
+      'viola',
+      'wedding-card',
     ]);
-    expect(collection.projects).toHaveLength(6);
-    expect(collection.projects).not.toContainEqual(
-      expect.objectContaining({ id: 'viola' }),
-    );
-    expect(collection.projects).not.toContainEqual(
-      expect.objectContaining({ id: 'wedding-card' }),
-    );
+    expect(collection.projects).toHaveLength(8);
     expect(
-      collection.projects.every(
-        (project) =>
-          Object.keys(project.links).length === 1 &&
-          project.links.github.startsWith('https://github.com/cjftya/'),
-      ),
+      collection.projects.filter((project) => project.galaxyId === 'jelly-garden'),
+    ).toHaveLength(6);
+    expect(
+      collection.projects.filter((project) => project.galaxyId === 'pages-archive'),
+    ).toHaveLength(2);
+    expect(
+      collection.projects
+        .filter((project) => project.galaxyId === 'jelly-garden')
+        .every(
+          (project) =>
+            Object.keys(project.links).length === 1 &&
+            project.links.github?.startsWith('https://github.com/cjftya/'),
+        ),
+    ).toBe(true);
+    expect(
+      collection.projects
+        .filter((project) => project.galaxyId === 'pages-archive')
+        .every(
+          (project) =>
+            Object.keys(project.links).length === 1 && project.links.github === null,
+        ),
     ).toBe(true);
     expect(
       collection.projects.every(

@@ -44,6 +44,8 @@ button {
 }
 
 .scene-viewport {
+  --galaxy-color: #ffd28a;
+
   isolation: isolate;
   background:
     radial-gradient(circle at 50% 45%, rgb(52 57 91 / 34%), transparent 34%),
@@ -177,6 +179,157 @@ button {
   top: clamp(1.25rem, 4vw, 2.5rem);
   left: clamp(1.25rem, 4vw, 3.5rem);
   pointer-events: none;
+}
+
+.galaxy-description {
+  max-width: min(24rem, calc(100vw - 2.5rem));
+  margin: 0.7rem 0 0;
+  color: rgb(187 197 224 / 76%);
+  font-size: 0.72rem;
+  letter-spacing: 0.02em;
+  line-height: 1.45;
+}
+
+.galaxy-switcher {
+  position: absolute;
+  z-index: 3;
+  top: clamp(1.25rem, 4vw, 2.5rem);
+  right: clamp(1.25rem, 4vw, 3.5rem);
+  display: flex;
+  gap: 0.35rem;
+  padding: 0.3rem;
+  border: 1px solid rgb(255 255 255 / 9%);
+  border-radius: 999px;
+  background: rgb(7 10 22 / 68%);
+  box-shadow: 0 0.8rem 2.5rem rgb(0 0 0 / 24%);
+  backdrop-filter: blur(14px);
+}
+
+.galaxy-option {
+  --option-color: #ffd28a;
+
+  display: inline-flex;
+  min-height: 2.35rem;
+  align-items: center;
+  gap: 0.48rem;
+  padding: 0.5rem 0.72rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  color: rgb(190 199 224 / 74%);
+  background: transparent;
+  cursor: pointer;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.015em;
+  transition:
+    color 180ms ease,
+    border-color 180ms ease,
+    background 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.galaxy-option:hover,
+.galaxy-option:focus-visible {
+  color: #f7f8ff;
+  background: rgb(255 255 255 / 5%);
+}
+
+.galaxy-option.is-active {
+  border-color: color-mix(in srgb, var(--option-color) 34%, transparent);
+  color: #ffffff;
+  background: color-mix(in srgb, var(--option-color) 12%, rgb(13 17 34 / 88%));
+  box-shadow: 0 0 1rem color-mix(in srgb, var(--option-color) 13%, transparent);
+}
+
+.galaxy-orbit {
+  position: relative;
+  width: 0.9rem;
+  height: 0.9rem;
+  border: 1px solid color-mix(in srgb, var(--option-color) 45%, transparent);
+  border-radius: 50%;
+  rotate: -22deg;
+}
+
+.galaxy-orbit::after {
+  position: absolute;
+  top: -0.12rem;
+  left: 50%;
+  width: 0.3rem;
+  height: 0.3rem;
+  border-radius: 50%;
+  background: var(--option-color);
+  box-shadow: 0 0 0.55rem var(--option-color);
+  content: '';
+  translate: -50% 0;
+}
+
+.galaxy-option.is-active .galaxy-orbit {
+  animation: galaxy-option-orbit 4.6s linear infinite;
+}
+
+.galaxy-transit {
+  position: absolute;
+  z-index: 4;
+  inset: 0;
+  display: grid;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  place-items: center;
+}
+
+.galaxy-transit::before {
+  position: absolute;
+  width: min(76vw, 56rem);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    transparent 8%,
+    color-mix(in srgb, var(--galaxy-color) 13%, transparent) 30%,
+    transparent 68%
+  );
+  content: '';
+  filter: blur(0.35rem);
+  transform: scale(0.25);
+}
+
+.galaxy-transit span {
+  position: absolute;
+  width: min(58vw, 42rem);
+  aspect-ratio: 1;
+  border: 1px solid color-mix(in srgb, var(--galaxy-color) 28%, transparent);
+  border-radius: 50%;
+  box-shadow: 0 0 2rem color-mix(in srgb, var(--galaxy-color) 10%, transparent);
+  transform: scale(0.15);
+}
+
+.galaxy-transit span:nth-child(2) {
+  width: min(42vw, 30rem);
+}
+
+.galaxy-transit span:nth-child(3) {
+  width: min(26vw, 18rem);
+}
+
+.scene-viewport.is-switching-galaxy .galaxy-transit {
+  animation: galaxy-transit-fade 820ms ease-out both;
+}
+
+.scene-viewport.is-switching-galaxy .galaxy-transit::before {
+  animation: galaxy-transit-core 820ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.scene-viewport.is-switching-galaxy .galaxy-transit span {
+  animation: galaxy-transit-ring 820ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.scene-viewport.is-switching-galaxy .galaxy-transit span:nth-child(2) {
+  animation-delay: 55ms;
+}
+
+.scene-viewport.is-switching-galaxy .galaxy-transit span:nth-child(3) {
+  animation-delay: 105ms;
 }
 
 .eyebrow,
@@ -485,6 +638,10 @@ h1 {
   gap: 0.55rem;
 }
 
+.project-actions[hidden] {
+  display: none;
+}
+
 .project-link {
   display: inline-flex;
   min-height: 2.5rem;
@@ -521,15 +678,39 @@ h1 {
     left: 1.15rem;
   }
 
+  .site-header h1 {
+    font-size: clamp(2rem, 12vw, 3.5rem);
+  }
+
+  .galaxy-description {
+    max-width: calc(100vw - 2.3rem);
+    font-size: 0.66rem;
+  }
+
+  .galaxy-switcher {
+    top: auto;
+    right: 50%;
+    bottom: 2.8rem;
+    max-width: calc(100% - 1.5rem);
+    transform: translateX(50%);
+  }
+
+  .galaxy-option {
+    min-height: 2.15rem;
+    padding: 0.43rem 0.6rem;
+    font-size: 0.62rem;
+  }
+
   .project-panel {
     right: 1rem;
-    bottom: 3.2rem;
+    bottom: 5.5rem;
     left: 1rem;
     width: auto;
     max-height: min(72vh, 34rem);
   }
 
   .controls-hint {
+    bottom: 0.65rem;
     width: 100%;
     padding-inline: 1rem;
     font-size: 0.7rem;
@@ -567,6 +748,14 @@ h1 {
 
   .travel-streaks {
     display: none;
+  }
+
+  .galaxy-transit {
+    display: none;
+  }
+
+  .galaxy-option.is-active .galaxy-orbit {
+    animation: none;
   }
 }
 
@@ -617,6 +806,56 @@ h1 {
   }
 }
 
+@keyframes galaxy-option-orbit {
+  to {
+    rotate: 338deg;
+  }
+}
+
+@keyframes galaxy-transit-fade {
+  0%,
+  100% {
+    opacity: 0;
+  }
+
+  26%,
+  58% {
+    opacity: 1;
+  }
+}
+
+@keyframes galaxy-transit-core {
+  0% {
+    opacity: 0;
+    transform: scale(0.18);
+  }
+
+  45% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(1.35);
+  }
+}
+
+@keyframes galaxy-transit-ring {
+  0% {
+    opacity: 0;
+    transform: scale(0.12);
+  }
+
+  34% {
+    opacity: 0.8;
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(1.65);
+  }
+}
+
 .fallback-view {
   min-height: 100%;
   padding: clamp(1.25rem, 5vw, 4rem);
@@ -656,6 +895,22 @@ h1 {
   list-style: none;
 }
 
+.fallback-galaxies {
+  display: grid;
+  gap: 1.8rem;
+}
+
+.fallback-galaxies section > h2 {
+  margin-bottom: 0.25rem;
+  font-size: 1.05rem;
+}
+
+.fallback-galaxies section > p {
+  margin-bottom: 0.75rem;
+  color: #8793b2;
+  font-size: 0.75rem;
+}
+
 .fallback-projects li {
   padding: 0.9rem 1rem;
   border: 1px solid rgb(255 255 255 / 8%);
@@ -663,7 +918,8 @@ h1 {
   background: rgb(255 255 255 / 3%);
 }
 
-.fallback-projects a {
+.fallback-projects a,
+.fallback-projects strong {
   display: inline-block;
   margin-bottom: 0.3rem;
   color: #dfe7ff;

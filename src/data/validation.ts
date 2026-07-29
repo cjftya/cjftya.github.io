@@ -14,11 +14,22 @@ const colorSchema = z
   .string()
   .regex(/^#[0-9a-fA-F]{6}$/, 'Must be a six-digit hexadecimal color');
 
+const slugSchema = z
+  .string()
+  .min(1)
+  .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'Must be a lowercase slug');
+
+const galaxySchema = z.object({
+  id: slugSchema,
+  name: z.string().trim().min(1),
+  description: z.string().trim().min(1),
+  color: colorSchema,
+  order: z.number().int(),
+});
+
 const projectSchema = z.object({
-  id: z
-    .string()
-    .min(1)
-    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'Must be a lowercase slug'),
+  id: slugSchema,
+  galaxyId: slugSchema,
   name: z.string().trim().min(1),
   summary: z.string(),
   status: z.enum(['active', 'legacy', 'archived']),
@@ -26,7 +37,7 @@ const projectSchema = z.object({
   order: z.number().int(),
   tags: z.array(z.string().trim().min(1)),
   links: z.object({
-    github: githubLinkSchema,
+    github: githubLinkSchema.nullable(),
   }),
   details: z.object({
     category: z.string().trim().min(1),
@@ -65,14 +76,28 @@ const projectSchema = z.object({
 
 const projectCollectionSchema = z
   .object({
-    version: z.literal(1),
+    version: z.literal(2),
+    galaxies: z.array(galaxySchema).min(1),
     projects: z.array(projectSchema),
   })
-  .superRefine(({ projects }, context) => {
-    const ids = new Set<string>();
+  .superRefine(({ galaxies, projects }, context) => {
+    const galaxyIds = new Set<string>();
+    const projectIds = new Set<string>();
+
+    galaxies.forEach((galaxy, index) => {
+      if (galaxyIds.has(galaxy.id)) {
+        context.addIssue({
+          code: 'custom',
+          path: ['galaxies', index, 'id'],
+          message: `Duplicate galaxy id: ${galaxy.id}`,
+        });
+      }
+
+      galaxyIds.add(galaxy.id);
+    });
 
     projects.forEach((project, index) => {
-      if (ids.has(project.id)) {
+      if (projectIds.has(project.id)) {
         context.addIssue({
           code: 'custom',
           path: ['projects', index, 'id'],
@@ -80,7 +105,15 @@ const projectCollectionSchema = z
         });
       }
 
-      ids.add(project.id);
+      if (!galaxyIds.has(project.galaxyId)) {
+        context.addIssue({
+          code: 'custom',
+          path: ['projects', index, 'galaxyId'],
+          message: `Unknown galaxy id: ${project.galaxyId}`,
+        });
+      }
+
+      projectIds.add(project.id);
     });
   });
 

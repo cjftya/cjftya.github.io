@@ -1,13 +1,14 @@
 # Jelly Plants
 
-Jelly Plants는 프로젝트 목록을 작은 태양계로 보여 주는 `cjftya.github.io`의 새
+Jelly Plants는 프로젝트 목록을 작은 은하계로 보여 주는 `cjftya.github.io`의 새
 루트 페이지예요. 각 프로젝트는 JSON 데이터와 재현 가능한 seed를 바탕으로 절차적으로
 생성한 행성으로 표현합니다.
 
 현재 단계는 데이터 검증과 Three.js 렌더링 기반 위에 프로젝트 탐색 흐름까지 구현한
-상태입니다. 행성을 선택하면 카메라가 가까이 이동하고 프로젝트 설명과 GitHub 링크가
-표시됩니다. 프로젝트 유형, 상태와 기술 스택도 같은 JSON에서 관리합니다. 닫기, Esc,
-빈 공간 선택, 브라우저 뒤로가기로 전체 태양계로 복귀합니다.
+상태입니다. 상단의 은하계 선택기로 독립 프로젝트와 GitHub Pages 아카이브를 오가며,
+행성을 선택하면 카메라가 가까이 이동하고 프로젝트 설명이 표시됩니다. 프로젝트 유형,
+상태, 기술 스택과 선택적 GitHub 링크도 같은 JSON에서 관리합니다. 닫기, Esc, 빈 공간
+선택, 브라우저 뒤로가기로 전체 행성계로 복귀합니다.
 
 배경은 별과 우주 먼지를 각각 한 개의 point field로 렌더링합니다. 서로 다른 깊이와
 아주 느린 회전으로 가벼운 시차를 만들며, 드물게 한 개의 유성이 지나갑니다. 행성은
@@ -15,7 +16,7 @@ Jelly Plants는 프로젝트 목록을 작은 태양계로 보여 주는 `cjftya
 연결선, 궤도를 흐르는 광점, 생명광과 빛 입자, 작은 위성이 프로젝트를 살아 있는
 천체처럼 보이게 하는 **우주 정원** 콘셉트를 만듭니다.
 
-## 전시 프로젝트
+## Jelly Garden
 
 GitHub Pages 저장소 자체를 제외한 공개 저장소를 행성으로 표시합니다.
 
@@ -26,9 +27,18 @@ GitHub Pages 저장소 자체를 제외한 공개 저장소를 행성으로 표�
 - Jelly Sim V1
 - JellyMarkdown
 
-GitHub 링크와 행성 설정은 `public/data/projects.json`에서 관리합니다. 상세 패널은
-프로젝트 설명 뒤에 GitHub 링크 하나만 제공합니다. Viola와 Wedding Card는 기존
-URL만 보존하며 행성 목록에는 포함하지 않습니다.
+## Pages Archive
+
+GitHub Pages에 종속된 초기 웹 프로젝트는 별도 은하계로 표시합니다.
+
+- Viola
+- Wedding Card
+
+두 프로젝트의 상세 패널에는 실행·바로가기·GitHub 버튼을 표시하지 않습니다.
+원본 정적 경로는 아래 레거시 프로젝트 규칙으로 그대로 보존합니다.
+
+은하계 정보, GitHub 링크와 행성 설정은 `public/data/projects.json`에서 관리합니다.
+GitHub 링크가 `null`인 프로젝트는 상세 패널의 액션 영역 전체를 숨깁니다.
 
 ## 레거시 프로젝트
 
@@ -114,10 +124,12 @@ Pull Request에서는 lint, test, build까지만 실행하며 실제 배포는 �
 프로젝트는 TypeScript 코드가 아니라 `public/data/projects.json`에 추가합니다.
 
 1. 영구적으로 사용할 고유 `id`를 정합니다.
-2. 목록 순서는 배열 위치가 아니라 `order`로 정합니다.
-3. 프로젝트 설명, 기술 스택과 `planet` 표현 설정을 입력합니다.
-4. `npm run test`로 스키마와 중복 ID를 검사합니다.
-5. `npm run dev`로 행성과 링크를 확인합니다.
+2. 프로젝트가 속할 `galaxyId`를 선택합니다.
+3. 목록 순서는 배열 위치가 아니라 `order`로 정합니다.
+4. 프로젝트 설명, 기술 스택과 `planet` 표현 설정을 입력합니다.
+5. 상세 액션이 필요 없으면 `links.github`를 `null`로 둡니다.
+6. `npm run test`로 스키마와 중복 ID를 검사합니다.
+7. `npm run dev`로 은하계 전환, 행성과 링크를 확인합니다.
 
 전체 필드와 예시는
 [docs/project-data-schema.md](docs/project-data-schema.md)를 참고하세요.
