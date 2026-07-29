@@ -6,10 +6,18 @@
 - 기본 브랜치: `master`
 - 작업 전 최신 `master` SHA:
   `ec3386d3ba735d65b6fe857415e64bd86e21b1ee`
-- 백업 태그: `pre-jelly-plants`
+- 로컬 백업 태그: `pre-jelly-plants`
+- 원격 백업 태그: 현재 Work 연결에는 tag ref 생성 기능이 없어 아직 만들지 않음
 - 작업 브랜치: `feature/jelly-plants-foundation`
 
-`pre-jelly-plants`는 위 SHA를 가리키며 기존 루트와 레거시 프로젝트를 복구하는 기준입니다.
+로컬 `pre-jelly-plants`는 위 SHA를 가리키며 기존 루트와 레거시 프로젝트를 복구하는
+기준입니다. 병합 전에 원격 태그도 보존하려면 저장소 쓰기 인증이 있는 환경에서 다음을
+실행합니다. 같은 원격 태그가 생겼다면 덮어쓰지 않습니다.
+
+```bash
+git ls-remote --tags origin refs/tags/pre-jelly-plants
+git push origin refs/tags/pre-jelly-plants
+```
 
 ## 기존 구조
 
