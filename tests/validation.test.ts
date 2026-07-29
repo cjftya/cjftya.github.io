@@ -44,4 +44,11 @@ describe('parseProjectCollection', () => {
 
     expect(() => parseProjectCollection(input)).toThrow(/radius/);
   });
+
+  it('rejects an empty technology stack', () => {
+    const input = createValidProjectCollection();
+    input.projects[0]!.details.techStack = [];
+
+    expect(() => parseProjectCollection(input)).toThrow(/techStack/);
+  });
 });

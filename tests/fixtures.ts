@@ -16,6 +16,12 @@ export function createValidProjectCollection(): ProjectCollection {
           page: null,
           github: 'https://github.com/cjftya/sample-project',
         },
+        details: {
+          category: 'Sample',
+          description: 'A sample project used by the test suite.',
+          techStack: ['TypeScript'],
+          coverImage: null,
+        },
         planet: {
           seed: 1001,
           orbit: {
