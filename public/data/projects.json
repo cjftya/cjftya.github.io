@@ -10,14 +10,12 @@
       "order": 10,
       "tags": ["로또", "데이터 분석"],
       "links": {
-        "page": null,
         "github": "https://github.com/cjftya/lotterychart"
       },
       "details": {
         "category": "데이터 분석 실험",
         "description": "동행복권 회차 데이터를 API와 CSV로 적재하고, 최근 회차의 번호별 출현 빈도를 계산해 조건에 맞는 조합 후보를 생성해요.",
-        "techStack": ["Python", "Requests", "Beautiful Soup", "CSV"],
-        "coverImage": null
+        "techStack": ["Python", "Requests", "Beautiful Soup", "CSV"]
       },
       "planet": {
         "seed": 2101,
@@ -57,14 +55,12 @@
       "order": 20,
       "tags": ["암호화폐", "시장 분석", "자동화"],
       "links": {
-        "page": null,
         "github": "https://github.com/cjftya/rainbow"
       },
       "details": {
         "category": "시장 분석 자동화",
         "description": "Binance의 현물·선물 OHLCV 데이터를 병렬로 수집하고, 주기별 롱·숏 조건 분석과 Telegram 알림 흐름을 실험한 Python 서비스예요.",
-        "techStack": ["Python", "Flask", "CCXT", "APScheduler", "Telegram Bot API"],
-        "coverImage": null
+        "techStack": ["Python", "Flask", "CCXT", "APScheduler", "Telegram Bot API"]
       },
       "planet": {
         "seed": 2202,
@@ -104,7 +100,6 @@
       "order": 30,
       "tags": ["Android", "메모리 누수", "로컬 LLM"],
       "links": {
-        "page": null,
         "github": "https://github.com/cjftya/llm-android-leakchecker"
       },
       "details": {
@@ -116,8 +111,7 @@
           "Android Studio",
           "Ollama",
           "Gemma"
-        ],
-        "coverImage": null
+        ]
       },
       "planet": {
         "seed": 2303,
@@ -157,14 +151,12 @@
       "order": 40,
       "tags": ["Android", "성능 분석", "포렌식"],
       "links": {
-        "page": null,
         "github": "https://github.com/cjftya/jelly_tracer"
       },
       "details": {
         "category": "Android 성능 포렌식",
         "description": "실행·블로킹·스케줄링 시간을 분리하고 Point Scan, Insight Scan, Context Scan을 통해 앱 실행 지연의 원인과 주변 시스템 부하를 단계적으로 좁혀요.",
-        "techStack": ["Python", "Perfetto Trace Processor", "Pandas", "Gemma"],
-        "coverImage": null
+        "techStack": ["Python", "Perfetto Trace Processor", "Pandas", "Gemma"]
       },
       "planet": {
         "seed": 2404,
@@ -204,7 +196,6 @@
       "order": 50,
       "tags": ["AI 에이전트", "시뮬레이션", "기억 시스템"],
       "links": {
-        "page": null,
         "github": "https://github.com/cjftya/jelly_sim_v1"
       },
       "details": {
@@ -216,8 +207,7 @@
           "Google GenAI",
           "Kuzu",
           "Sentence Transformers"
-        ],
-        "coverImage": null
+        ]
       },
       "planet": {
         "seed": 2505,
@@ -257,7 +247,6 @@
       "order": 60,
       "tags": ["Android", "Markdown", "문서 도구"],
       "links": {
-        "page": null,
         "github": "https://github.com/cjftya/jelly_markdown"
       },
       "details": {
@@ -269,8 +258,7 @@
           "CommonMark",
           "WebView",
           "Storage Access Framework"
-        ],
-        "coverImage": null
+        ]
       },
       "planet": {
         "seed": 2606,

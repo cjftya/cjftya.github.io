@@ -51,4 +51,11 @@ describe('parseProjectCollection', () => {
 
     expect(() => parseProjectCollection(input)).toThrow(/techStack/);
   });
+
+  it('rejects a non-GitHub project link', () => {
+    const input = createValidProjectCollection();
+    input.projects[0]!.links.github = 'https://example.com/project';
+
+    expect(() => parseProjectCollection(input)).toThrow(/GitHub URL/);
+  });
 });
