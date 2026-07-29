@@ -64,6 +64,7 @@ ease-out 보간합니다. 이동 중에는 controls 입력을 잠시 막고 완�
 
 - `Sun`을 한 개 소유합니다.
 - 프로젝트마다 `Planet`과 `Orbit`을 한 개씩 만듭니다.
+- `CosmicGarden`이 행성 사이의 별자리 연결선과 빛 노드를 두 draw call로 묶습니다.
 - animation frame마다 각 `Planet.update(delta)`를 호출합니다.
 - raycast 대상 mesh와 프로젝트의 대응 관계를 보관합니다.
 - 프로젝트 ID와 런타임 행성의 대응 관계를 보관해 카메라용 world position을
@@ -78,8 +79,8 @@ ease-out 보간합니다. 이동 중에는 controls 입력을 잠시 막고 완�
 
 ### Orbit
 
-하나의 원형 궤도 선과 경사만 표현합니다. 공전 상태를 소유하지 않으며 선택·호버된
-행성의 색을 따라 가독성만 높입니다.
+하나의 원형 궤도 선과 경사, 궤도를 따라 흐르는 작은 광점을 표현합니다. 공전 상태를
+소유하지 않으며 선택·호버된 행성의 색을 따라 가독성과 광점 밝기만 높입니다.
 
 ### Planet
 
@@ -88,6 +89,8 @@ ease-out 보간합니다. 이동 중에는 controls 입력을 잠시 막고 완�
 - 궤도 회전과 시작 각도
 - 행성 자전 방향과 속도
 - 축 기울기
+- 행성 주변의 생명광과 빛 입자
+- 고리가 없는 행성의 작은 위성
 - 선택·호버 강조
 - 선택 중 공전 일시 정지
 - mesh와 material dispose
@@ -142,9 +145,9 @@ export interface ProjectRepository {
 
 ## UI와 Three.js 경계
 
-`UiController`는 HTML 요소, 프로젝트 이름 라벨, 설명, 상태, 기술 스택, 선택적 대표
-이미지와 링크만 관리하며 Three.js 객체를 알지 못합니다. `PlanetPicker`는 raycast
-결과를 선택·호버 콜백으로 바꿉니다.
+`UiController`는 HTML 요소, 프로젝트 이름 라벨, 설명, 상태, 기술 스택과 GitHub
+링크만 관리하며 Three.js 객체를 알지 못합니다. 카메라 이동 중에는 짧은 별빛 스트릭을
+DOM 효과로 표시합니다. `PlanetPicker`는 raycast 결과를 선택·호버 콜백으로 바꿉니다.
 `App`은 선택 상태의 단일 조정자이며 아래 네 작업을 함께 수행합니다.
 
 1. `SolarSystem.setSelected()`로 선택 강조와 공전 정지를 적용합니다.

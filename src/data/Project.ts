@@ -2,15 +2,13 @@ export type ProjectStatus = 'active' | 'legacy' | 'archived';
 export type RotationDirection = 'clockwise' | 'counterclockwise';
 
 export interface ProjectLinks {
-  page: string | null;
-  github: string | null;
+  github: string;
 }
 
 export interface ProjectDetails {
   category: string;
   description: string;
   techStack: string[];
-  coverImage: string | null;
 }
 
 export interface OrbitSettings {

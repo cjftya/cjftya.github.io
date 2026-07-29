@@ -1,6 +1,7 @@
 import { type Mesh, type Scene, Vector3 } from 'three';
 import type { Project } from '../data/Project';
 import { PlanetBuilder } from '../planets/PlanetBuilder';
+import { CosmicGarden } from './CosmicGarden';
 import { Orbit } from './Orbit';
 import type { Planet } from './Planet';
 import { Sun } from './Sun';
@@ -20,6 +21,7 @@ export class SolarSystem {
   private readonly projectByMesh = new Map<Mesh, Project>();
   private readonly planetByProjectId = new Map<string, Planet>();
   private readonly orbitByProjectId = new Map<string, Orbit>();
+  private cosmicGarden: CosmicGarden | null = null;
   private selectedProjectId: string | null = null;
   private hoveredProjectId: string | null = null;
 
@@ -53,6 +55,12 @@ export class SolarSystem {
       this.orbitByProjectId.set(planet.project.id, orbit);
       this.scene.add(orbit.object, planet.orbitPlane);
     });
+
+    const reducedEffects =
+      (navigator.hardwareConcurrency ?? 8) <= 4 ||
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    this.cosmicGarden = new CosmicGarden(this.planets, reducedEffects);
+    this.scene.add(this.cosmicGarden.object);
   }
 
   update(deltaSeconds: number): void {
@@ -65,6 +73,8 @@ export class SolarSystem {
       planet.update(deltaSeconds, selected);
       this.orbitByProjectId.get(projectId)?.update(deltaSeconds, selected, hovered);
     }
+
+    this.cosmicGarden?.update(deltaSeconds);
   }
 
   getSelectableMeshes(): Mesh[] {
@@ -77,6 +87,7 @@ export class SolarSystem {
 
   setSelected(projectId: string | null): void {
     this.selectedProjectId = projectId;
+    this.cosmicGarden?.setSelected(projectId);
 
     for (const planet of this.planets) {
       planet.setSelected(planet.project.id === projectId);
@@ -113,6 +124,11 @@ export class SolarSystem {
   dispose(): void {
     this.scene.remove(this.sun.object);
     this.sun.dispose();
+    if (this.cosmicGarden !== null) {
+      this.scene.remove(this.cosmicGarden.object);
+      this.cosmicGarden.dispose();
+      this.cosmicGarden = null;
+    }
 
     this.planets.forEach((planet) => {
       this.scene.remove(planet.orbitPlane);

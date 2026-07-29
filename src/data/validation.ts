@@ -1,15 +1,14 @@
 import { z } from 'zod';
 import type { ProjectCollection } from './Project';
 
-const nullableLinkSchema = z
+const githubLinkSchema = z
   .string()
   .trim()
   .min(1)
   .refine(
-    (value) => value.startsWith('/') || URL.canParse(value),
-    'Must be a root-relative path or an absolute URL',
-  )
-  .nullable();
+    (value) => URL.canParse(value) && value.startsWith('https://github.com/'),
+    'Must be an absolute GitHub URL',
+  );
 
 const colorSchema = z
   .string()
@@ -27,14 +26,12 @@ const projectSchema = z.object({
   order: z.number().int(),
   tags: z.array(z.string().trim().min(1)),
   links: z.object({
-    page: nullableLinkSchema,
-    github: nullableLinkSchema,
+    github: githubLinkSchema,
   }),
   details: z.object({
     category: z.string().trim().min(1),
     description: z.string().trim().min(1),
     techStack: z.array(z.string().trim().min(1)).min(1),
-    coverImage: nullableLinkSchema,
   }),
   planet: z.object({
     seed: z.number().int(),

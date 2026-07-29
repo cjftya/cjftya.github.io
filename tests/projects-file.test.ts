@@ -25,8 +25,10 @@ describe('public/data/projects.json', () => {
       expect.objectContaining({ id: 'wedding-card' }),
     );
     expect(
-      collection.projects.every((project) =>
-        project.links.github?.startsWith('https://github.com/cjftya/'),
+      collection.projects.every(
+        (project) =>
+          Object.keys(project.links).length === 1 &&
+          project.links.github.startsWith('https://github.com/cjftya/'),
       ),
     ).toBe(true);
     expect(
