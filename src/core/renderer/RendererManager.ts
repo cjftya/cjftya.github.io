@@ -1,6 +1,7 @@
 import { ACESFilmicToneMapping, SRGBColorSpace, WebGLRenderer } from 'three';
 
-const MAX_PIXEL_RATIO = 1.5;
+const DEFAULT_MAX_PIXEL_RATIO = 1.5;
+const REDUCED_MAX_PIXEL_RATIO = 1.2;
 
 export class RendererManager {
   readonly renderer: WebGLRenderer;
@@ -8,6 +9,10 @@ export class RendererManager {
   private width = 0;
   private height = 0;
   private pixelRatio = 0;
+  private readonly maxPixelRatio =
+    (navigator.hardwareConcurrency ?? 8) <= 4
+      ? REDUCED_MAX_PIXEL_RATIO
+      : DEFAULT_MAX_PIXEL_RATIO;
 
   constructor(canvas: HTMLCanvasElement) {
     const devicePixelRatio = Math.max(window.devicePixelRatio, 1);
@@ -25,7 +30,10 @@ export class RendererManager {
   }
 
   resize(width: number, height: number): void {
-    const pixelRatio = Math.min(Math.max(window.devicePixelRatio, 1), MAX_PIXEL_RATIO);
+    const pixelRatio = Math.min(
+      Math.max(window.devicePixelRatio, 1),
+      this.maxPixelRatio,
+    );
 
     if (
       this.width === width &&

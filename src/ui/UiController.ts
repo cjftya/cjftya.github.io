@@ -20,18 +20,17 @@ export class UiController {
   private readonly message: HTMLElement;
   private readonly labelLayer: HTMLElement;
   private readonly selectionPanel: HTMLElement;
-  private readonly projectCover: HTMLImageElement;
   private readonly projectStatus: HTMLElement;
   private readonly projectCategory: HTMLElement;
   private readonly projectName: HTMLElement;
   private readonly projectSummary: HTMLElement;
   private readonly projectDescription: HTMLElement;
   private readonly projectTechStack: HTMLElement;
-  private readonly projectPageLink: HTMLAnchorElement;
   private readonly projectGithubLink: HTMLAnchorElement;
   private readonly closeButton: HTMLButtonElement;
   private readonly planetLabels = new Map<string, HTMLButtonElement>();
   private readyTimer: number | undefined;
+  private travelTimer: number | undefined;
 
   constructor(
     root: HTMLElement,
@@ -41,9 +40,13 @@ export class UiController {
       <main class="app-shell">
         <section class="scene-viewport" aria-label="Jelly Plants 태양계">
           <canvas class="scene-canvas"></canvas>
+          <div class="travel-streaks" aria-hidden="true">
+            <span></span><span></span><span></span>
+            <span></span><span></span><span></span>
+          </div>
           <div class="planet-label-layer" aria-label="프로젝트 행성 목록"></div>
           <header class="site-header">
-            <p class="eyebrow">Project constellation</p>
+            <p class="eyebrow">Cosmic project garden</p>
             <h1>Jelly Plants</h1>
           </header>
           <p class="controls-hint">
@@ -71,7 +74,7 @@ export class UiController {
             >
               <span aria-hidden="true">×</span>
             </button>
-            <img class="project-cover" alt="" loading="lazy" hidden />
+            <span class="observation-signal" aria-hidden="true"></span>
             <div class="project-meta">
               <span class="project-status"></span>
               <span class="project-category"></span>
@@ -84,13 +87,12 @@ export class UiController {
               <ul class="project-tech-stack"></ul>
             </section>
             <div class="project-actions">
-              <a class="project-link project-page-link">프로젝트 열기</a>
               <a
                 class="project-link project-github-link"
                 target="_blank"
                 rel="noreferrer"
               >
-                GitHub 저장소
+                GitHub에서 보기
               </a>
             </div>
           </aside>
@@ -104,18 +106,12 @@ export class UiController {
     this.message = this.requireElement(root, '.status-message');
     this.labelLayer = this.requireElement(root, '.planet-label-layer');
     this.selectionPanel = this.requireElement(root, '.project-panel');
-    this.projectCover = this.requireElement(root, '.project-cover', HTMLImageElement);
     this.projectStatus = this.requireElement(root, '.project-status');
     this.projectCategory = this.requireElement(root, '.project-category');
     this.projectName = this.requireElement(root, '.project-panel h2');
     this.projectSummary = this.requireElement(root, '.project-summary');
     this.projectDescription = this.requireElement(root, '.project-description');
     this.projectTechStack = this.requireElement(root, '.project-tech-stack');
-    this.projectPageLink = this.requireElement(
-      root,
-      '.project-page-link',
-      HTMLAnchorElement,
-    );
     this.projectGithubLink = this.requireElement(
       root,
       '.project-github-link',
@@ -164,9 +160,8 @@ export class UiController {
     this.projectSummary.textContent =
       project.summary || '이 프로젝트에는 아직 소개가 등록되지 않았어요.';
     this.projectDescription.textContent = project.details.description;
-    this.showCover(project);
-    this.showLink(this.projectPageLink, project.links.page);
     this.showLink(this.projectGithubLink, project.links.github);
+    this.playTravelEffect();
     this.projectTechStack.replaceChildren(
       ...project.details.techStack.map((technology) => {
         const item = document.createElement('li');
@@ -217,6 +212,9 @@ export class UiController {
   dispose(): void {
     if (this.readyTimer !== undefined) {
       window.clearTimeout(this.readyTimer);
+    }
+    if (this.travelTimer !== undefined) {
+      window.clearTimeout(this.travelTimer);
     }
     this.closeButton.removeEventListener('click', this.handleClose);
     this.labelLayer.removeEventListener('click', this.handleLabelClick);
@@ -271,18 +269,21 @@ export class UiController {
     link.href = href;
   }
 
-  private showCover(project: Project): void {
-    const source = project.details.coverImage;
-    this.projectCover.hidden = source === null;
-
-    if (source === null) {
-      this.projectCover.removeAttribute('src');
-      this.projectCover.alt = '';
+  private playTravelEffect(): void {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       return;
     }
 
-    this.projectCover.src = source;
-    this.projectCover.alt = `${project.name} 대표 이미지`;
+    if (this.travelTimer !== undefined) {
+      window.clearTimeout(this.travelTimer);
+    }
+
+    this.viewport.classList.remove('is-traveling');
+    void this.viewport.offsetWidth;
+    this.viewport.classList.add('is-traveling');
+    this.travelTimer = window.setTimeout(() => {
+      this.viewport.classList.remove('is-traveling');
+    }, 760);
   }
 
   private findLabel(target: EventTarget | null): HTMLButtonElement | null {
@@ -313,7 +314,7 @@ export function renderWebGlFallback(root: HTMLElement, projects: Project[]): voi
   root.innerHTML = `
     <main class="fallback-view">
       <section class="fallback-card">
-        <p class="eyebrow">Project constellation</p>
+        <p class="eyebrow">Cosmic project garden</p>
         <h1>Jelly Plants</h1>
         <p class="fallback-message">
           이 브라우저에서는 3D 행성계를 표시할 수 없어요. 프로젝트 목록은 아래에서
@@ -336,7 +337,7 @@ export function renderWebGlFallback(root: HTMLElement, projects: Project[]): voi
     const summary = document.createElement('span');
 
     link.textContent = project.name;
-    link.href = project.links.github ?? project.links.page ?? '#';
+    link.href = project.links.github;
     link.target = '_blank';
     link.rel = 'noreferrer';
     summary.textContent = project.summary;
