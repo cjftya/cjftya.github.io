@@ -4,11 +4,13 @@ import { PlanetPicker } from '../core/interaction/PlanetPicker';
 import { RendererManager } from '../core/renderer/RendererManager';
 import { SceneManager } from '../core/scene/SceneManager';
 import { JsonProjectRepository } from '../data/JsonProjectRepository';
+import type { Project } from '../data/Project';
 import type { ProjectRepository } from '../data/ProjectRepository';
 import { SolarSystem } from '../solar-system/SolarSystem';
 import { UiController } from '../ui/UiController';
 
 const MOBILE_FRAME_INTERVAL_MS = 1000 / 30;
+const HISTORY_PROJECT_KEY = 'jellyPlantsProjectId';
 
 export class App {
   private readonly ui: UiController;
@@ -18,11 +20,13 @@ export class App {
   private readonly solarSystem: SolarSystem;
   private readonly clock = new Clock();
   private readonly resizeObserver: ResizeObserver;
+  private readonly projectById = new Map<string, Project>();
   private readonly minimumFrameIntervalMs = window.matchMedia('(pointer: coarse)')
     .matches
     ? MOBILE_FRAME_INTERVAL_MS
     : 0;
   private picker: PlanetPicker | undefined;
+  private selectedProjectId: string | null = null;
   private lastRenderTimeMs = 0;
   private disposed = false;
 
@@ -30,7 +34,7 @@ export class App {
     root: HTMLElement,
     private readonly projectRepository: ProjectRepository = new JsonProjectRepository(),
   ) {
-    this.ui = new UiController(root);
+    this.ui = new UiController(root, this.requestClearSelection);
     const { width, height } = this.ui.viewport.getBoundingClientRect();
     const safeHeight = Math.max(height, 1);
 
@@ -47,20 +51,20 @@ export class App {
 
   async start(): Promise<void> {
     document.addEventListener('visibilitychange', this.handleVisibilityChange);
+    window.addEventListener('popstate', this.handlePopState);
     this.syncRenderLoopWithVisibility();
 
     try {
       const projects = await this.projectRepository.getProjects();
+      projects.forEach((project) => this.projectById.set(project.id, project));
       await this.solarSystem.load(projects);
       this.picker = new PlanetPicker(
         this.ui.canvas,
         this.cameraController.camera,
         this.solarSystem,
-        (project) => {
-          this.solarSystem.setSelected(project?.id ?? null);
-          this.ui.showSelection(project);
-        },
+        this.handlePickedProject,
       );
+      this.initializeHistoryState();
       this.ui.showReady();
     } catch (error) {
       this.ui.showError(error);
@@ -74,8 +78,10 @@ export class App {
 
     this.disposed = true;
     document.removeEventListener('visibilitychange', this.handleVisibilityChange);
+    window.removeEventListener('popstate', this.handlePopState);
     this.resizeObserver.disconnect();
     this.picker?.dispose();
+    this.ui.dispose();
     this.solarSystem.dispose();
     this.cameraController.dispose();
     this.rendererManager.dispose();
@@ -94,7 +100,7 @@ export class App {
         : timeMs;
     const deltaSeconds = Math.min(this.clock.getDelta(), 0.1);
     this.solarSystem.update(deltaSeconds);
-    this.cameraController.update();
+    this.cameraController.update(deltaSeconds);
     this.rendererManager.renderer.render(
       this.sceneManager.scene,
       this.cameraController.camera,
@@ -103,6 +109,38 @@ export class App {
 
   private readonly handleVisibilityChange = (): void => {
     this.syncRenderLoopWithVisibility();
+  };
+
+  private readonly handlePickedProject = (project: Project | null): void => {
+    if (project === null) {
+      this.requestClearSelection();
+      return;
+    }
+
+    const historyState = {
+      ...this.getCurrentHistoryState(),
+      [HISTORY_PROJECT_KEY]: project.id,
+    };
+
+    if (this.selectedProjectId === null) {
+      window.history.pushState(historyState, '');
+    } else {
+      window.history.replaceState(historyState, '');
+    }
+
+    this.applySelection(project);
+  };
+
+  private readonly requestClearSelection = (): void => {
+    if (this.selectedProjectId !== null) {
+      window.history.back();
+    }
+  };
+
+  private readonly handlePopState = (event: PopStateEvent): void => {
+    const state = this.readProjectIdFromHistory(event.state);
+    const project = state === null ? null : (this.projectById.get(state) ?? null);
+    this.applySelection(project);
   };
 
   private syncRenderLoopWithVisibility(): void {
@@ -124,4 +162,47 @@ export class App {
     this.rendererManager.resize(safeWidth, safeHeight);
     this.cameraController.resize(safeWidth / safeHeight);
   };
+
+  private initializeHistoryState(): void {
+    window.history.replaceState(
+      {
+        ...this.getCurrentHistoryState(),
+        [HISTORY_PROJECT_KEY]: null,
+      },
+      '',
+    );
+  }
+
+  private applySelection(project: Project | null): void {
+    this.selectedProjectId = project?.id ?? null;
+    this.solarSystem.setSelected(this.selectedProjectId);
+    this.ui.showSelection(project);
+
+    if (project === null) {
+      this.cameraController.resetFocus();
+      return;
+    }
+
+    const worldPosition = this.solarSystem.getProjectWorldPosition(project.id);
+
+    if (worldPosition !== null) {
+      this.cameraController.focusOn(worldPosition, project.planet.shape.radius);
+    }
+  }
+
+  private getCurrentHistoryState(): Record<string, unknown> {
+    const state: unknown = window.history.state;
+    return typeof state === 'object' && state !== null
+      ? (state as Record<string, unknown>)
+      : {};
+  }
+
+  private readProjectIdFromHistory(state: unknown): string | null {
+    if (typeof state !== 'object' || state === null) {
+      return null;
+    }
+
+    const projectId = (state as Record<string, unknown>)[HISTORY_PROJECT_KEY];
+    return typeof projectId === 'string' ? projectId : null;
+  }
 }

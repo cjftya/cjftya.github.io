@@ -4,8 +4,23 @@ Jelly Plants는 프로젝트 목록을 작은 태양계로 보여 주는 `cjftya
 루트 페이지예요. 각 프로젝트는 JSON 데이터와 재현 가능한 seed를 바탕으로 절차적으로
 생성한 행성으로 표현합니다.
 
-현재 단계는 완성형 UI가 아니라 다음 개발을 위한 기반입니다. 데이터 검증, Three.js
-렌더링, 선택 상호작용, 테스트, GitHub Pages 배포 경로를 먼저 검증합니다.
+현재 단계는 데이터 검증과 Three.js 렌더링 기반 위에 프로젝트 탐색 흐름까지 구현한
+상태입니다. 행성을 선택하면 카메라가 가까이 이동하고 프로젝트 설명과 GitHub 링크가
+표시됩니다. 닫기, Esc, 빈 공간 선택, 브라우저 뒤로가기로 전체 태양계로 복귀합니다.
+
+## 전시 프로젝트
+
+GitHub Pages 저장소 자체를 제외한 공개 저장소를 행성으로 표시합니다.
+
+- Lottery Chart
+- Rainbow
+- LLM Android Leak Checker
+- Jelly Tracer
+- Jelly Sim V1
+- JellyMarkdown
+
+프로젝트 링크와 행성 설정은 `public/data/projects.json`에서 관리합니다. Viola와
+Wedding Card는 기존 URL만 보존하며 행성 목록에는 포함하지 않습니다.
 
 ## 레거시 프로젝트
 
