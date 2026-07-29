@@ -82,16 +82,15 @@
 
 ### 형태와 표면
 
-| 필드                | 타입·범위        | 의미                        |
-| ------------------- | ---------------- | --------------------------- |
-| `shape.radius`      | number, `> 0`    | 행성 기본 반지름            |
-| `shape.roughness`   | `0..0.5`         | 반지름 대비 표면 변위 비율  |
-| `shape.frequency`   | `> 0`, 최대 `16` | 노이즈 공간 빈도            |
-| `surface.baseColor` | `#RRGGBB`        | texture가 없을 때 사용할 색 |
-| `surface.texture`   | string 또는 null | 선택적 public texture 경로  |
+| 필드                | 타입·범위        | 의미                       |
+| ------------------- | ---------------- | -------------------------- |
+| `shape.radius`      | number, `> 0`    | 행성 기본 반지름           |
+| `shape.roughness`   | `0..0.5`         | 반지름 대비 표면 변위 비율 |
+| `shape.frequency`   | `> 0`, 최대 `16` | 노이즈 공간 빈도           |
+| `surface.baseColor` | `#RRGGBB`        | 절차적 표면의 기준 색      |
 
-같은 `seed`, `shape` 값을 사용하면 같은 좌표에서 같은 노이즈가 계산됩니다. texture가
-없거나 로딩에 실패하면 `baseColor`로 렌더링합니다.
+같은 `seed`, `shape`, `baseColor` 값을 사용하면 같은 geometry와 색 변화가
+재현됩니다. 이미지 텍스처는 사용하지 않습니다.
 
 ### 고리
 
@@ -144,8 +143,7 @@
       "frequency": 2.5
     },
     "surface": {
-      "baseColor": "#8ab4f8",
-      "texture": null
+      "baseColor": "#8ab4f8"
     },
     "ring": {
       "enabled": false,

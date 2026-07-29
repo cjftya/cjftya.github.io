@@ -38,8 +38,7 @@
           "frequency": 2.2
         },
         "surface": {
-          "baseColor": "#f6c85f",
-          "texture": null
+          "baseColor": "#f6c85f"
         },
         "ring": {
           "enabled": false,
@@ -86,8 +85,7 @@
           "frequency": 2.8
         },
         "surface": {
-          "baseColor": "#f08ba8",
-          "texture": null
+          "baseColor": "#f08ba8"
         },
         "ring": {
           "enabled": false,
@@ -140,8 +138,7 @@
           "frequency": 3.1
         },
         "surface": {
-          "baseColor": "#72d6c9",
-          "texture": null
+          "baseColor": "#72d6c9"
         },
         "ring": {
           "enabled": false,
@@ -188,8 +185,7 @@
           "frequency": 2.4
         },
         "surface": {
-          "baseColor": "#8ca9ff",
-          "texture": null
+          "baseColor": "#8ca9ff"
         },
         "ring": {
           "enabled": true,
@@ -242,8 +238,7 @@
           "frequency": 3.4
         },
         "surface": {
-          "baseColor": "#c19af4",
-          "texture": null
+          "baseColor": "#c19af4"
         },
         "ring": {
           "enabled": false,
@@ -296,8 +291,7 @@
           "frequency": 2.6
         },
         "surface": {
-          "baseColor": "#7fc5f5",
-          "texture": null
+          "baseColor": "#7fc5f5"
         },
         "ring": {
           "enabled": true,

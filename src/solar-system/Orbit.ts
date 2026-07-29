@@ -14,8 +14,10 @@ export class Orbit {
 
   private readonly geometry: BufferGeometry;
   private readonly material: LineBasicMaterial;
+  private readonly baseColor = new Color('#55607a');
+  private readonly highlightColor: Color;
 
-  constructor(settings: OrbitSettings) {
+  constructor(settings: OrbitSettings, highlightColor: string) {
     const segments = 96;
     const points: Vector3[] = [];
 
@@ -31,13 +33,31 @@ export class Orbit {
     }
 
     this.geometry = new BufferGeometry().setFromPoints(points);
+    this.highlightColor = new Color(highlightColor).lerp(new Color('#ffffff'), 0.28);
     this.material = new LineBasicMaterial({
-      color: new Color('#55607a'),
+      color: this.baseColor,
       transparent: true,
-      opacity: 0.34,
+      opacity: 0.28,
     });
     this.object.rotation.z = MathUtils.degToRad(settings.inclination);
     this.object.add(new LineLoop(this.geometry, this.material));
+  }
+
+  update(deltaSeconds: number, selected: boolean, hovered: boolean): void {
+    const highlighted = selected || hovered;
+    const targetOpacity = selected ? 0.72 : hovered ? 0.48 : 0.28;
+    const colorMix = 1 - Math.exp(-deltaSeconds * 9);
+
+    this.material.opacity = MathUtils.damp(
+      this.material.opacity,
+      targetOpacity,
+      9,
+      deltaSeconds,
+    );
+    this.material.color.lerp(
+      highlighted ? this.highlightColor : this.baseColor,
+      colorMix,
+    );
   }
 
   dispose(): void {

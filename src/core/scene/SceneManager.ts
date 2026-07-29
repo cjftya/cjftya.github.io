@@ -1,4 +1,4 @@
-import { AmbientLight, Color, Scene } from 'three';
+import { AmbientLight, Color, HemisphereLight, Scene } from 'three';
 import { SpaceBackdrop } from './SpaceBackdrop';
 
 export class SceneManager {
@@ -8,7 +8,11 @@ export class SceneManager {
 
   constructor() {
     this.scene.background = new Color('#050711');
-    this.scene.add(new AmbientLight('#7180a8', 0.45), this.backdrop.object);
+    this.scene.add(
+      new AmbientLight('#7180a8', 0.3),
+      new HemisphereLight('#91a8d7', '#17111f', 0.7),
+      this.backdrop.object,
+    );
   }
 
   update(deltaSeconds: number): void {

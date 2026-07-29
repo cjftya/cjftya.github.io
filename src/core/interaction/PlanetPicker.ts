@@ -3,28 +3,35 @@ import type { Project } from '../../data/Project';
 import type { SolarSystem } from '../../solar-system/SolarSystem';
 
 type SelectionHandler = (project: Project | null) => void;
+type HoverHandler = (project: Project | null) => void;
 
 export class PlanetPicker {
   private readonly raycaster = new Raycaster();
   private readonly pointer = new Vector2();
   private readonly pointerStart = new Vector2();
   private pointerId: number | undefined;
+  private hoveredProjectId: string | null = null;
 
   constructor(
     private readonly canvas: HTMLCanvasElement,
     private readonly camera: PerspectiveCamera,
     private readonly solarSystem: SolarSystem,
     private readonly onSelection: SelectionHandler,
+    private readonly onHover: HoverHandler,
   ) {
     this.canvas.addEventListener('pointerdown', this.handlePointerDown);
     this.canvas.addEventListener('pointerup', this.handlePointerUp);
     this.canvas.addEventListener('pointercancel', this.handlePointerCancel);
+    this.canvas.addEventListener('pointermove', this.handlePointerMove);
+    this.canvas.addEventListener('pointerleave', this.handlePointerLeave);
   }
 
   dispose(): void {
     this.canvas.removeEventListener('pointerdown', this.handlePointerDown);
     this.canvas.removeEventListener('pointerup', this.handlePointerUp);
     this.canvas.removeEventListener('pointercancel', this.handlePointerCancel);
+    this.canvas.removeEventListener('pointermove', this.handlePointerMove);
+    this.canvas.removeEventListener('pointerleave', this.handlePointerLeave);
   }
 
   private readonly handlePointerDown = (event: PointerEvent): void => {
@@ -46,10 +53,39 @@ export class PlanetPicker {
       return;
     }
 
+    this.onSelection(this.pickProject(event.clientX, event.clientY));
+  };
+
+  private readonly handlePointerCancel = (): void => {
+    this.pointerId = undefined;
+  };
+
+  private readonly handlePointerMove = (event: PointerEvent): void => {
+    if (event.pointerType === 'touch') {
+      return;
+    }
+
+    const project = this.pickProject(event.clientX, event.clientY);
+    const projectId = project?.id ?? null;
+
+    if (projectId === this.hoveredProjectId) {
+      return;
+    }
+
+    this.hoveredProjectId = projectId;
+    this.onHover(project);
+  };
+
+  private readonly handlePointerLeave = (): void => {
+    this.hoveredProjectId = null;
+    this.onHover(null);
+  };
+
+  private pickProject(clientX: number, clientY: number): Project | null {
     const bounds = this.canvas.getBoundingClientRect();
     this.pointer.set(
-      ((event.clientX - bounds.left) / bounds.width) * 2 - 1,
-      -((event.clientY - bounds.top) / bounds.height) * 2 + 1,
+      ((clientX - bounds.left) / bounds.width) * 2 - 1,
+      -((clientY - bounds.top) / bounds.height) * 2 + 1,
     );
     this.raycaster.setFromCamera(this.pointer, this.camera);
 
@@ -58,13 +94,9 @@ export class PlanetPicker {
       false,
     );
     const mesh = intersection?.object;
-    const project =
-      mesh instanceof Mesh ? this.solarSystem.getProjectForMesh(mesh) : undefined;
 
-    this.onSelection(project ?? null);
-  };
-
-  private readonly handlePointerCancel = (): void => {
-    this.pointerId = undefined;
-  };
+    return mesh instanceof Mesh
+      ? (this.solarSystem.getProjectForMesh(mesh) ?? null)
+      : null;
+  }
 }

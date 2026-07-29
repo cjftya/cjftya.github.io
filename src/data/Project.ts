@@ -34,7 +34,6 @@ export interface ShapeSettings {
 
 export interface SurfaceSettings {
   baseColor: string;
-  texture: string | null;
 }
 
 export interface RingSettings {

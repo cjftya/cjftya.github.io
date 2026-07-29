@@ -6,6 +6,7 @@ import {
   Points,
   PointsMaterial,
 } from 'three';
+import { MeteorField } from './MeteorField';
 
 interface PointFieldOptions {
   count: number;
@@ -44,15 +45,18 @@ export class SpaceBackdrop {
     size: 0.075,
     opacity: 0.2,
   });
+  private readonly meteors = new MeteorField();
   private readonly prefersReducedMotion = window.matchMedia(
     '(prefers-reduced-motion: reduce)',
   ).matches;
 
   constructor() {
-    this.object.add(this.farStars.points, this.nearDust.points);
+    this.object.add(this.farStars.points, this.nearDust.points, this.meteors.object);
   }
 
   update(deltaSeconds: number): void {
+    this.meteors.update(deltaSeconds);
+
     if (this.prefersReducedMotion) {
       return;
     }
@@ -63,11 +67,12 @@ export class SpaceBackdrop {
   }
 
   dispose(): void {
-    this.object.remove(this.farStars.points, this.nearDust.points);
+    this.object.remove(this.farStars.points, this.nearDust.points, this.meteors.object);
     this.farStars.geometry.dispose();
     this.farStars.material.dispose();
     this.nearDust.geometry.dispose();
     this.nearDust.material.dispose();
+    this.meteors.dispose();
   }
 
   private createPointField(options: PointFieldOptions): PointField {
