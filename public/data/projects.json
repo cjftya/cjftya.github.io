@@ -42,48 +42,6 @@
           "tilt": 0
         }
       }
-    },
-    {
-      "id": "weddingcard",
-      "name": "Wedding Card",
-      "summary": "",
-      "status": "legacy",
-      "featured": false,
-      "order": 20,
-      "tags": [],
-      "links": {
-        "page": "/projects/weddingcard/",
-        "github": null
-      },
-      "planet": {
-        "seed": 2002,
-        "orbit": {
-          "radius": 7,
-          "speed": 0.045,
-          "startAngle": 135,
-          "inclination": -6
-        },
-        "rotation": {
-          "speed": 0.1,
-          "direction": "clockwise",
-          "axisTilt": 16
-        },
-        "shape": {
-          "radius": 0.95,
-          "roughness": 0.06,
-          "frequency": 3
-        },
-        "surface": {
-          "baseColor": "#d89cc8",
-          "texture": null
-        },
-        "ring": {
-          "enabled": true,
-          "color": "#f4d8ee",
-          "width": 0.28,
-          "tilt": 18
-        }
-      }
     }
   ]
 }

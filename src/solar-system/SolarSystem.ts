@@ -9,6 +9,7 @@ export class SolarSystem {
   private readonly sun = new Sun();
   private readonly planets: Planet[] = [];
   private readonly orbits: Orbit[] = [];
+  private readonly selectableMeshes: Mesh[] = [];
   private readonly projectByMesh = new Map<Mesh, Project>();
 
   constructor(
@@ -27,6 +28,7 @@ export class SolarSystem {
       const orbit = new Orbit(planet.project.planet.orbit);
       this.planets.push(planet);
       this.orbits.push(orbit);
+      this.selectableMeshes.push(planet.selectableMesh);
       this.projectByMesh.set(planet.selectableMesh, planet.project);
       this.scene.add(orbit.object, planet.orbitPlane);
     });
@@ -39,7 +41,7 @@ export class SolarSystem {
   }
 
   getSelectableMeshes(): Mesh[] {
-    return [...this.projectByMesh.keys()];
+    return this.selectableMeshes;
   }
 
   getProjectForMesh(mesh: Mesh): Project | undefined {
@@ -64,6 +66,7 @@ export class SolarSystem {
       this.scene.remove(orbit.object);
       orbit.dispose();
     });
+    this.selectableMeshes.length = 0;
     this.projectByMesh.clear();
   }
 }
