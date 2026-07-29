@@ -61,6 +61,65 @@ button {
   cursor: pointer;
 }
 
+.travel-streaks {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.travel-streaks span {
+  --streak-angle: 0deg;
+  --streak-delay: 0ms;
+
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: clamp(8rem, 26vw, 26rem);
+  height: 1px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, rgb(201 229 255 / 78%));
+  filter: drop-shadow(0 0 0.35rem rgb(139 193 255 / 58%));
+  opacity: 0;
+  transform: rotate(var(--streak-angle)) translateX(2rem) scaleX(0.15);
+  transform-origin: left center;
+}
+
+.travel-streaks span:nth-child(2) {
+  --streak-angle: 42deg;
+  --streak-delay: 35ms;
+}
+
+.travel-streaks span:nth-child(3) {
+  --streak-angle: 114deg;
+  --streak-delay: 70ms;
+}
+
+.travel-streaks span:nth-child(4) {
+  --streak-angle: 178deg;
+  --streak-delay: 20ms;
+}
+
+.travel-streaks span:nth-child(5) {
+  --streak-angle: 226deg;
+  --streak-delay: 85ms;
+}
+
+.travel-streaks span:nth-child(6) {
+  --streak-angle: 306deg;
+  --streak-delay: 50ms;
+}
+
+.scene-viewport.is-traveling .travel-streaks {
+  opacity: 1;
+}
+
+.scene-viewport.is-traveling .travel-streaks span {
+  animation: garden-travel 680ms cubic-bezier(0.16, 1, 0.3, 1) var(--streak-delay) both;
+}
+
 .planet-label-layer {
   position: absolute;
   z-index: 2;
@@ -259,13 +318,51 @@ h1 {
   width: min(25rem, calc(100% - 2rem));
   max-height: min(76vh, 42rem);
   padding: 1.25rem;
-  border: 1px solid rgb(255 255 255 / 13%);
+  border: 1px solid rgb(159 209 255 / 20%);
   border-radius: 1.15rem;
-  background: rgb(10 14 29 / 78%);
-  box-shadow: 0 1.5rem 5rem rgb(0 0 0 / 35%);
+  background:
+    linear-gradient(135deg, rgb(132 214 255 / 7%), transparent 38%),
+    repeating-linear-gradient(
+      0deg,
+      rgb(175 224 255 / 2%) 0,
+      rgb(175 224 255 / 2%) 1px,
+      transparent 1px,
+      transparent 5px
+    ),
+    rgb(8 14 29 / 82%);
+  box-shadow:
+    0 1.5rem 5rem rgb(0 0 0 / 38%),
+    inset 0 0 2.5rem rgb(112 189 255 / 5%),
+    0 0 2rem rgb(92 166 255 / 7%);
   backdrop-filter: blur(18px);
   overflow-y: auto;
   animation: panel-enter 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.project-panel::after {
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  right: 0.8rem;
+  left: 0.8rem;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgb(172 225 255 / 42%), transparent);
+  content: '';
+  pointer-events: none;
+  animation: panel-scan 5.5s ease-in-out infinite;
+}
+
+.observation-signal {
+  position: absolute;
+  top: 1.12rem;
+  left: 1.25rem;
+  width: 0.34rem;
+  height: 0.34rem;
+  border-radius: 50%;
+  background: #9ce6db;
+  box-shadow:
+    0 0 0 0.22rem rgb(156 230 219 / 8%),
+    0 0 0.8rem rgb(156 230 219 / 58%);
 }
 
 .panel-close {
@@ -295,24 +392,12 @@ h1 {
   background: rgb(255 255 255 / 10%);
 }
 
-.project-cover {
-  display: block;
-  width: 100%;
-  max-height: 12rem;
-  margin-bottom: 1rem;
-  border-radius: 0.8rem;
-  object-fit: cover;
-}
-
-.project-cover[hidden] {
-  display: none;
-}
-
 .project-meta {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   padding-right: 2.5rem;
+  padding-left: 0.85rem;
   margin-bottom: 0.65rem;
   color: #9ca8c6;
   font-size: 0.68rem;
@@ -414,8 +499,10 @@ h1 {
 }
 
 .project-github-link {
-  color: #dfe6fa;
-  background: rgb(255 255 255 / 9%);
+  min-width: 9rem;
+  justify-content: center;
+  color: #071219;
+  background: linear-gradient(135deg, #a6e3d6, #a9c9ff);
 }
 
 .project-link:hover,
@@ -425,7 +512,7 @@ h1 {
 
 .project-github-link:hover,
 .project-github-link:focus-visible {
-  background: rgb(255 255 255 / 16%);
+  background: linear-gradient(135deg, #c5f5eb, #c6dcff);
 }
 
 @media (max-width: 640px) {
@@ -460,17 +547,26 @@ h1 {
     padding: 0.26rem 0.42rem;
     font-size: 0.58rem;
   }
+
+  .travel-streaks span:nth-child(n + 4) {
+    display: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .loading-orbit,
-  .project-panel {
+  .project-panel,
+  .project-panel::after {
     animation: none;
   }
 
   .loading-screen,
   .planet-label {
     transition: none;
+  }
+
+  .travel-streaks {
+    display: none;
   }
 }
 
@@ -484,6 +580,40 @@ h1 {
   from {
     opacity: 0;
     transform: translateY(0.7rem) scale(0.985);
+  }
+}
+
+@keyframes garden-travel {
+  0% {
+    opacity: 0;
+    transform: rotate(var(--streak-angle)) translateX(1rem) scaleX(0.08);
+  }
+
+  32% {
+    opacity: 0.86;
+  }
+
+  100% {
+    opacity: 0;
+    transform: rotate(var(--streak-angle)) translateX(36vw) scaleX(1.45);
+  }
+}
+
+@keyframes panel-scan {
+  0%,
+  100% {
+    top: 0.8rem;
+    opacity: 0;
+  }
+
+  18%,
+  74% {
+    opacity: 0.7;
+  }
+
+  88% {
+    top: calc(100% - 0.8rem);
+    opacity: 0;
   }
 }
 

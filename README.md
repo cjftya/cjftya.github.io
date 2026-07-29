@@ -11,7 +11,9 @@ Jelly Plants는 프로젝트 목록을 작은 태양계로 보여 주는 `cjftya
 
 배경은 별과 우주 먼지를 각각 한 개의 point field로 렌더링합니다. 서로 다른 깊이와
 아주 느린 회전으로 가벼운 시차를 만들며, 드물게 한 개의 유성이 지나갑니다. 행성은
-이미지 텍스처 대신 seed 기반 색 변화와 조명으로 표현합니다.
+이미지 텍스처 대신 seed 기반 색 변화와 조명으로 표현합니다. 행성 사이의 별자리
+연결선, 궤도를 흐르는 광점, 생명광과 빛 입자, 작은 위성이 프로젝트를 살아 있는
+천체처럼 보이게 하는 **우주 정원** 콘셉트를 만듭니다.
 
 ## 전시 프로젝트
 
@@ -24,8 +26,9 @@ GitHub Pages 저장소 자체를 제외한 공개 저장소를 행성으로 표�
 - Jelly Sim V1
 - JellyMarkdown
 
-프로젝트 링크와 행성 설정은 `public/data/projects.json`에서 관리합니다. Viola와
-Wedding Card는 기존 URL만 보존하며 행성 목록에는 포함하지 않습니다.
+GitHub 링크와 행성 설정은 `public/data/projects.json`에서 관리합니다. 상세 패널은
+프로젝트 설명 뒤에 GitHub 링크 하나만 제공합니다. Viola와 Wedding Card는 기존
+URL만 보존하며 행성 목록에는 포함하지 않습니다.
 
 ## 레거시 프로젝트
 
@@ -115,9 +118,6 @@ Pull Request에서는 lint, test, build까지만 실행하며 실제 배포는 �
 3. 프로젝트 설명, 기술 스택과 `planet` 표현 설정을 입력합니다.
 4. `npm run test`로 스키마와 중복 ID를 검사합니다.
 5. `npm run dev`로 행성과 링크를 확인합니다.
-
-대표 이미지가 생기면 `details.coverImage`에 public 경로나 URL을 등록합니다. 값이
-`null`이면 상세 패널은 이미지 영역을 만들지 않습니다.
 
 전체 필드와 예시는
 [docs/project-data-schema.md](docs/project-data-schema.md)를 참고하세요.
