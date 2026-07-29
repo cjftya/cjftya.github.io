@@ -16,7 +16,8 @@ flowchart TD
   System --> Builder["PlanetBuilder"]
 ```
 
-1. `main.ts`가 DOM 루트를 찾고 `App`을 시작합니다.
+1. `main.ts`가 DOM 루트와 WebGL2 지원 여부를 확인한 뒤 `App`을 시작합니다. WebGL2를
+   사용할 수 없으면 같은 프로젝트 데이터로 링크 목록을 표시합니다.
 2. `App`이 장면, 렌더러, 카메라, UI를 한 번만 구성합니다.
 3. `JsonProjectRepository`가 `/data/projects.json`을 읽고 검증합니다.
 4. 검증된 프로젝트를 `SolarSystem`에 전달합니다.
@@ -36,7 +37,8 @@ flowchart TD
 Three.js `Scene`, 전역 배경, 기본 ambient light와 `SpaceBackdrop`을 소유합니다.
 `SpaceBackdrop`은 far star와 near dust를 각각 한 번의 draw call로 렌더링합니다.
 두 field는 서로 다른 반지름에 분포해 카메라 이동 시 자연스러운 시차를 만들고,
-아주 느린 회전만 적용합니다. reduced motion 환경에서는 회전하지 않습니다.
+아주 느린 회전만 적용합니다. `MeteorField`는 한 번에 한 개의 유성만 드물게
+표시합니다. reduced motion 환경에서는 회전과 유성을 모두 중지합니다.
 
 ### RendererManager
 
@@ -66,15 +68,18 @@ ease-out 보간합니다. 이동 중에는 controls 입력을 잠시 막고 완�
 - raycast 대상 mesh와 프로젝트의 대응 관계를 보관합니다.
 - 프로젝트 ID와 런타임 행성의 대응 관계를 보관해 카메라용 world position을
   제공합니다.
-- 선택 상태와 dispose를 전체 행성에 전달합니다.
+- 선택·호버 상태와 dispose를 전체 행성·궤도에 전달합니다.
+- 프로젝트 이름을 DOM에 투영할 world position을 제공합니다.
 
 ### Sun
 
-중앙 구체와 point light를 소유합니다. 행성 데이터와는 무관합니다.
+중앙 구체, 두 겹의 반투명 광륜과 point light를 소유합니다. reduced motion 설정을
+따르는 아주 약한 맥동 외에는 행성 데이터와 무관합니다.
 
 ### Orbit
 
-하나의 원형 궤도 선과 경사만 표현합니다. 공전 상태를 소유하지 않습니다.
+하나의 원형 궤도 선과 경사만 표현합니다. 공전 상태를 소유하지 않으며 선택·호버된
+행성의 색을 따라 가독성만 높입니다.
 
 ### Planet
 
@@ -83,9 +88,9 @@ ease-out 보간합니다. 이동 중에는 controls 입력을 잠시 막고 완�
 - 궤도 회전과 시작 각도
 - 행성 자전 방향과 속도
 - 축 기울기
-- 선택 강조
+- 선택·호버 강조
 - 선택 중 공전 일시 정지
-- mesh와 texture dispose
+- mesh와 material dispose
 
 프로젝트 메타데이터를 보관하지만 데이터 파일을 직접 읽지는 않습니다.
 
@@ -102,8 +107,8 @@ Icosahedron detail은 3으로 고정해 모바일에서 과도한 subdivision을
 
 `seededNoise.ts`의 lattice value noise는 좌표와 seed만으로 같은 값을 계산합니다.
 따라서 seed, 반지름, roughness, frequency가 같으면 같은 geometry가 만들어집니다.
-텍스처 경로가 없으면 기본 색상만 사용합니다. 텍스처 로딩에 실패해도 경고를 남긴 뒤
-기본 색상으로 계속 렌더링합니다.
+같은 noise를 한 번 더 샘플링해 `baseColor`의 명도와 채도를 미세하게 바꾸므로 이미지
+텍스처 없이도 프로젝트마다 재현 가능한 표면 변화가 생깁니다.
 
 현재 파라미터에 필요하지 않은 생물군계, 셰이더 그래프, LOD 엔진 등은 의도적으로
 포함하지 않습니다.
@@ -137,9 +142,9 @@ export interface ProjectRepository {
 
 ## UI와 Three.js 경계
 
-`UiController`는 HTML 요소, 프로젝트 설명, 상태, 기술 스택, 선택적 대표 이미지와
-링크만 관리하며 Three.js 객체를 알지 못합니다. `PlanetPicker`는 raycast 결과를
-`Project | null` 콜백으로 바꿉니다.
+`UiController`는 HTML 요소, 프로젝트 이름 라벨, 설명, 상태, 기술 스택, 선택적 대표
+이미지와 링크만 관리하며 Three.js 객체를 알지 못합니다. `PlanetPicker`는 raycast
+결과를 선택·호버 콜백으로 바꿉니다.
 `App`은 선택 상태의 단일 조정자이며 아래 네 작업을 함께 수행합니다.
 
 1. `SolarSystem.setSelected()`로 선택 강조와 공전 정지를 적용합니다.
@@ -154,9 +159,9 @@ export interface ProjectRepository {
 
 - 새 데이터 소스: `ProjectRepository` 구현 추가
 - 프로젝트 상세 정보 확장: `details` JSON과 `UiController`를 함께 확장
-- 프로젝트 수 증가: 이름 표시 또는 목록 기반 키보드 탐색 추가
-- 행성 표현: texture와 동적 우주 효과를 실제 필요가 생긴 뒤 단계적으로 추가
-- 많은 행성: visibility 관리, texture cache, LOD를 실제 필요가 생긴 뒤 도입
+- 프로젝트 수 증가: 라벨 충돌 회피와 별도 목록 탐색 추가
+- 행성 표현: 이미지 텍스처 대신 절차적 색·재질 파라미터 확장
+- 많은 행성: visibility 관리와 LOD를 실제 필요가 생긴 뒤 도입
 
 확장 시에도 `App`은 조정, Repository는 데이터, `SolarSystem`은 장면 상태,
 `UiController`는 DOM이라는 경계를 유지합니다.

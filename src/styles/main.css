@@ -46,7 +46,8 @@ button {
 .scene-viewport {
   isolation: isolate;
   background:
-    radial-gradient(circle at 50% 45%, rgb(43 48 75 / 30%), transparent 35%), #050711;
+    radial-gradient(circle at 50% 45%, rgb(52 57 91 / 34%), transparent 34%),
+    radial-gradient(circle at 15% 85%, rgb(55 38 82 / 18%), transparent 35%), #050711;
 }
 
 .scene-canvas {
@@ -54,6 +55,61 @@ button {
   width: 100%;
   height: 100%;
   touch-action: none;
+}
+
+.scene-canvas.is-hovering-planet {
+  cursor: pointer;
+}
+
+.planet-label-layer {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.planet-label {
+  position: absolute;
+  padding: 0.28rem 0.48rem;
+  border: 1px solid rgb(255 255 255 / 8%);
+  border-radius: 999px;
+  color: rgb(220 227 246 / 72%);
+  background: rgb(7 10 22 / 52%);
+  box-shadow: 0 0.35rem 1.2rem rgb(0 0 0 / 20%);
+  backdrop-filter: blur(7px);
+  cursor: pointer;
+  font-size: 0.62rem;
+  font-weight: 650;
+  letter-spacing: 0.015em;
+  line-height: 1.1;
+  pointer-events: auto;
+  transform: translate(-50%, calc(-100% - 0.35rem));
+  transition:
+    color 160ms ease,
+    border-color 160ms ease,
+    background 160ms ease,
+    opacity 160ms ease;
+  white-space: nowrap;
+}
+
+.planet-label:hover,
+.planet-label:focus-visible,
+.planet-label.is-hovered,
+.planet-label.is-selected {
+  border-color: rgb(208 222 255 / 28%);
+  color: #f7f9ff;
+  background: rgb(18 24 46 / 82%);
+}
+
+.planet-label.is-selected {
+  box-shadow:
+    0 0.35rem 1.2rem rgb(0 0 0 / 22%),
+    0 0 1.2rem rgb(160 188 255 / 16%);
+}
+
+.planet-label[hidden] {
+  display: none;
 }
 
 .site-header {
@@ -88,8 +144,7 @@ h1 {
   line-height: 0.92;
 }
 
-.controls-hint,
-.status-message {
+.controls-hint {
   position: absolute;
   z-index: 2;
   left: 50%;
@@ -106,18 +161,93 @@ h1 {
   pointer-events: none;
 }
 
-.status-message {
-  top: 50%;
-  padding: 0.75rem 1rem;
-  border: 1px solid rgb(255 255 255 / 10%);
-  border-radius: 999px;
-  background: rgb(9 12 25 / 72%);
-  backdrop-filter: blur(10px);
+.mobile-hint {
+  display: none;
 }
 
-.status-message.is-error {
-  max-width: min(28rem, calc(100% - 2rem));
+.loading-screen {
+  position: absolute;
+  z-index: 5;
+  inset: 0;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  background:
+    radial-gradient(circle at center, rgb(38 46 76 / 55%), transparent 34%),
+    rgb(5 7 17 / 96%);
+  opacity: 1;
+  transition:
+    opacity 420ms ease,
+    visibility 420ms ease;
+}
+
+.loading-screen.is-ready {
+  visibility: hidden;
+  opacity: 0;
+}
+
+.loading-screen[hidden] {
+  display: none;
+}
+
+.loading-orbit {
+  position: relative;
+  width: 4.2rem;
+  height: 4.2rem;
+  margin-bottom: 1.15rem;
+  border: 1px solid rgb(175 197 245 / 22%);
+  border-radius: 50%;
+  animation: loading-spin 2.6s linear infinite;
+}
+
+.loading-orbit::before {
+  position: absolute;
+  inset: 50%;
+  width: 1.1rem;
+  height: 1.1rem;
+  border-radius: 50%;
+  background: #ffd28a;
+  box-shadow:
+    0 0 0.8rem rgb(255 185 95 / 70%),
+    0 0 2rem rgb(255 143 88 / 32%);
+  content: '';
+  transform: translate(-50%, -50%);
+}
+
+.loading-orbit span {
+  position: absolute;
+  top: -0.18rem;
+  left: 50%;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: #8ca9ff;
+  box-shadow: 0 0 0.7rem rgb(140 169 255 / 70%);
+  transform: translateX(-50%);
+}
+
+.loading-title {
+  margin-bottom: 0.35rem;
+  font-size: 1.1rem;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+}
+
+.status-message {
+  max-width: calc(100% - 2rem);
+  margin: 0;
+  color: #9eabc9;
+  font-size: 0.72rem;
+  text-align: center;
+}
+
+.loading-screen.is-error .loading-orbit {
+  animation: none;
   border-color: rgb(255 151 151 / 32%);
+}
+
+.loading-screen.is-error .status-message {
+  max-width: min(28rem, calc(100% - 2rem));
   color: #ffd5d5;
 }
 
@@ -135,6 +265,7 @@ h1 {
   box-shadow: 0 1.5rem 5rem rgb(0 0 0 / 35%);
   backdrop-filter: blur(18px);
   overflow-y: auto;
+  animation: panel-enter 320ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .panel-close {
@@ -316,10 +447,108 @@ h1 {
     padding-inline: 1rem;
     font-size: 0.7rem;
   }
+
+  .desktop-hint {
+    display: none;
+  }
+
+  .mobile-hint {
+    display: inline;
+  }
+
+  .planet-label {
+    padding: 0.26rem 0.42rem;
+    font-size: 0.58rem;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .project-link {
-    scroll-behavior: auto;
+  .loading-orbit,
+  .project-panel {
+    animation: none;
   }
+
+  .loading-screen,
+  .planet-label {
+    transition: none;
+  }
+}
+
+@keyframes loading-spin {
+  to {
+    rotate: 1turn;
+  }
+}
+
+@keyframes panel-enter {
+  from {
+    opacity: 0;
+    transform: translateY(0.7rem) scale(0.985);
+  }
+}
+
+.fallback-view {
+  min-height: 100%;
+  padding: clamp(1.25rem, 5vw, 4rem);
+  overflow-y: auto;
+  background:
+    radial-gradient(circle at 75% 18%, rgb(64 69 113 / 30%), transparent 32%),
+    radial-gradient(circle at 15% 80%, rgb(60 40 91 / 24%), transparent 38%), #050711;
+}
+
+.fallback-card {
+  width: min(48rem, 100%);
+  margin: 0 auto;
+  padding: clamp(1.4rem, 4vw, 2.5rem);
+  border: 1px solid rgb(255 255 255 / 10%);
+  border-radius: 1.4rem;
+  background: rgb(10 14 29 / 76%);
+  box-shadow: 0 2rem 6rem rgb(0 0 0 / 25%);
+  backdrop-filter: blur(18px);
+}
+
+.fallback-card h1 {
+  margin-bottom: 1.4rem;
+}
+
+.fallback-message {
+  max-width: 38rem;
+  margin-bottom: 1.8rem;
+  color: #aeb8d1;
+  line-height: 1.65;
+}
+
+.fallback-projects {
+  display: grid;
+  gap: 0.7rem;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.fallback-projects li {
+  padding: 0.9rem 1rem;
+  border: 1px solid rgb(255 255 255 / 8%);
+  border-radius: 0.85rem;
+  background: rgb(255 255 255 / 3%);
+}
+
+.fallback-projects a {
+  display: inline-block;
+  margin-bottom: 0.3rem;
+  color: #dfe7ff;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.fallback-projects a:hover,
+.fallback-projects a:focus-visible {
+  color: #a6e3d6;
+}
+
+.fallback-projects span {
+  display: block;
+  color: #9ca8c6;
+  font-size: 0.78rem;
+  line-height: 1.5;
 }

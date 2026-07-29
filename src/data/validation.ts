@@ -56,7 +56,6 @@ const projectSchema = z.object({
     }),
     surface: z.object({
       baseColor: colorSchema,
-      texture: nullableLinkSchema,
     }),
     ring: z.object({
       enabled: z.boolean(),
