@@ -1,8 +1,25 @@
 {
-  "version": 1,
+  "version": 2,
+  "galaxies": [
+    {
+      "id": "jelly-garden",
+      "name": "Jelly Garden",
+      "description": "독립적으로 자라나는 프로젝트 행성계",
+      "color": "#ffd28a",
+      "order": 10
+    },
+    {
+      "id": "pages-archive",
+      "name": "Pages Archive",
+      "description": "GitHub Pages에 남아 있는 초기 웹 프로젝트",
+      "color": "#b79cff",
+      "order": 20
+    }
+  ],
   "projects": [
     {
       "id": "lottery-chart",
+      "galaxyId": "jelly-garden",
       "name": "Lottery Chart",
       "summary": "로또 당첨 데이터를 수집해 번호 출현 패턴과 조합 후보를 분석하는 프로젝트예요.",
       "status": "legacy",
@@ -48,6 +65,7 @@
     },
     {
       "id": "rainbow",
+      "galaxyId": "jelly-garden",
       "name": "Rainbow",
       "summary": "암호화폐 시장 데이터를 주기적으로 수집하고 분석하는 자동화 프로젝트예요.",
       "status": "legacy",
@@ -93,6 +111,7 @@
     },
     {
       "id": "llm-android-leakchecker",
+      "galaxyId": "jelly-garden",
       "name": "LLM Android Leak Checker",
       "summary": "로컬 LLM으로 Android Java 코드의 메모리 누수 단서를 점검하는 IDE 플러그인이에요.",
       "status": "active",
@@ -144,6 +163,7 @@
     },
     {
       "id": "jelly-tracer",
+      "galaxyId": "jelly-garden",
       "name": "Jelly Tracer",
       "summary": "Perfetto 트레이스에서 Android 실행 지연의 물리적 원인을 추적하는 AI 포렌식 엔진이에요.",
       "status": "active",
@@ -189,6 +209,7 @@
     },
     {
       "id": "jelly-sim-v1",
+      "galaxyId": "jelly-garden",
       "name": "Jelly Sim V1",
       "summary": "기억과 감정을 가진 AI 에이전트들이 상호작용하는 데스크톱 시뮬레이션이에요.",
       "status": "active",
@@ -240,6 +261,7 @@
     },
     {
       "id": "jelly-markdown",
+      "galaxyId": "jelly-garden",
       "name": "JellyMarkdown",
       "summary": "Android에서 긴 Markdown 문서를 열고 읽고 편집하는 로컬 문서 앱이에요.",
       "status": "active",
@@ -286,6 +308,98 @@
           "color": "#c9eaff",
           "width": 0.13,
           "tilt": -12
+        }
+      }
+    },
+    {
+      "id": "viola",
+      "galaxyId": "pages-archive",
+      "name": "Viola",
+      "summary": "p5.js로 충돌, 파티클, 제약 조건을 실험한 브라우저 물리 놀이터예요.",
+      "status": "legacy",
+      "featured": false,
+      "order": 10,
+      "tags": ["웹 실험", "물리 엔진", "캔버스"],
+      "links": {
+        "github": null
+      },
+      "details": {
+        "category": "브라우저 물리 실험",
+        "description": "도형 충돌과 반응, 스프링과 제약 조건, 파티클 장면을 직접 구현하며 2D 물리와 오브젝트 관리 구조를 실험한 초기 웹 프로젝트예요.",
+        "techStack": ["JavaScript", "p5.js", "Canvas 2D"]
+      },
+      "planet": {
+        "seed": 3107,
+        "orbit": {
+          "radius": 5.4,
+          "speed": 0.078,
+          "startAngle": 35,
+          "inclination": 8
+        },
+        "rotation": {
+          "speed": 0.17,
+          "direction": "counterclockwise",
+          "axisTilt": 19
+        },
+        "shape": {
+          "radius": 0.72,
+          "roughness": 0.09,
+          "frequency": 3.8
+        },
+        "surface": {
+          "baseColor": "#8f91f5"
+        },
+        "ring": {
+          "enabled": true,
+          "color": "#cbc9ff",
+          "width": 0.16,
+          "tilt": 24
+        }
+      }
+    },
+    {
+      "id": "wedding-card",
+      "galaxyId": "pages-archive",
+      "name": "Wedding Card",
+      "summary": "캔버스 애니메이션과 갤러리로 구성한 개인 모바일 청첩장 프로젝트예요.",
+      "status": "archived",
+      "featured": false,
+      "order": 20,
+      "tags": ["모바일 웹", "청첩장", "캔버스"],
+      "links": {
+        "github": null
+      },
+      "details": {
+        "category": "모바일 웹 아카이브",
+        "description": "초대 문구, 일정, 지도, 갤러리와 입자 효과를 하나의 세로형 화면에 구성하고 터치 탐색에 맞춰 제작한 개인용 웹 프로젝트예요.",
+        "techStack": ["JavaScript", "p5.js", "Viewer.js", "Canvas 2D"]
+      },
+      "planet": {
+        "seed": 3208,
+        "orbit": {
+          "radius": 8.2,
+          "speed": 0.052,
+          "startAngle": 215,
+          "inclination": -7
+        },
+        "rotation": {
+          "speed": 0.1,
+          "direction": "clockwise",
+          "axisTilt": -14
+        },
+        "shape": {
+          "radius": 0.64,
+          "roughness": 0.045,
+          "frequency": 2.1
+        },
+        "surface": {
+          "baseColor": "#e7a6c8"
+        },
+        "ring": {
+          "enabled": false,
+          "color": "#ffd8ea",
+          "width": 0.14,
+          "tilt": 0
         }
       }
     }

@@ -7,31 +7,47 @@
 
 ```json
 {
-  "version": 1,
+  "version": 2,
+  "galaxies": [],
   "projects": []
 }
 ```
 
 | 필드       | 필수 | 의미                                |
 | ---------- | ---- | ----------------------------------- |
-| `version`  | 예   | schema 버전. 현재는 정수 `1`만 허용 |
+| `version`  | 예   | schema 버전. 현재는 정수 `2`만 허용 |
+| `galaxies` | 예   | 은하계 선택 UI와 시각 테마 정보     |
 | `projects` | 예   | 프로젝트 객체 배열                  |
 
 배열 위치는 표시 순서를 의미하지 않습니다. UI 순서는 `order`, 같은 값이면 `id`로
 결정합니다.
+
+## 은하계 필드
+
+| 필드          | 타입    | 의미                                     |
+| ------------- | ------- | ---------------------------------------- |
+| `id`          | string  | 프로젝트의 `galaxyId`가 참조할 영구 ID   |
+| `name`        | string  | 은하계 선택기에 표시할 이름              |
+| `description` | string  | 현재 은하계 소개 문구                    |
+| `color`       | string  | `#RRGGBB` 형식의 중심별·전환 효과 기준색 |
+| `order`       | integer | 은하계 선택기 표시 순서                  |
+
+은하계 ID는 중복될 수 없고, 프로젝트는 반드시 등록된 은하계 하나를 참조해야 합니다.
+은하계를 바꾸면 해당 그룹의 행성·궤도·별자리만 표시됩니다.
 
 ## 프로젝트 필드
 
 | 필드       | 타입     | 필수 | 의미                                     |
 | ---------- | -------- | ---- | ---------------------------------------- |
 | `id`       | string   | 예   | 영구 식별자. 소문자, 숫자, 하이픈만 허용 |
+| `galaxyId` | string   | 예   | 프로젝트가 속한 은하계 ID                |
 | `name`     | string   | 예   | 사용자에게 표시할 이름                   |
 | `summary`  | string   | 예   | 짧은 설명. 모르면 빈 문자열 허용         |
 | `status`   | enum     | 예   | `active`, `legacy`, `archived` 중 하나   |
 | `featured` | boolean  | 예   | 향후 강조 표시에 사용할 값               |
-| `order`    | integer  | 예   | 표시 순서                                |
+| `order`    | integer  | 예   | 같은 은하계 안에서의 표시 순서           |
 | `tags`     | string[] | 예   | 검색·분류용 태그. 없으면 빈 배열         |
-| `links`    | object   | 예   | GitHub 저장소 링크                       |
+| `links`    | object   | 예   | 상세 패널의 선택적 GitHub 액션           |
 | `details`  | object   | 예   | 상세 패널에 표시할 설명과 기술 정보      |
 | `planet`   | object   | 예   | 행성 표현 설정                           |
 
@@ -39,12 +55,13 @@
 
 ## 링크
 
-| 필드           | 타입   | 의미                |
-| -------------- | ------ | ------------------- |
-| `links.github` | string | 프로젝트 GitHub URL |
+| 필드           | 타입             | 의미                       |
+| -------------- | ---------------- | -------------------------- |
+| `links.github` | string 또는 null | 선택적 프로젝트 GitHub URL |
 
-GitHub 링크는 `https://github.com/`으로 시작하는 완전한 URL이어야 합니다. 상세
-패널은 이 링크만 버튼으로 표시하며 새 탭에서 엽니다.
+문자열이면 `https://github.com/`으로 시작하는 완전한 URL이어야 합니다. `null`이면
+상세 패널의 액션 영역 전체를 숨기며 WebGL 대체 화면에서도 링크를 만들지 않습니다.
+Viola와 Wedding Card가 이 규칙을 사용합니다.
 
 ## 상세 정보
 
@@ -102,6 +119,7 @@ GitHub 링크는 `https://github.com/`으로 시작하는 완전한 URL이어야
 ```json
 {
   "id": "sample-project",
+  "galaxyId": "jelly-garden",
   "name": "Sample Project",
   "summary": "",
   "status": "active",
@@ -156,8 +174,9 @@ GitHub 링크는 `https://github.com/`으로 시작하는 완전한 URL이어야
 npm run test
 ```
 
-테스트는 정상 파싱, 필수 필드 누락, 중복 ID, 잘못된 자전 방향, 음수 반지름,
-Repository 조회와 실제 `projects.json`을 검사합니다. 검증 실패 메시지는
+테스트는 정상 파싱, 필수 필드 누락, 중복 은하계·프로젝트 ID, 알 수 없는 은하계 참조,
+선택적 액션, 잘못된 자전 방향, 음수 반지름, Repository 조회와 실제
+`projects.json`을 검사합니다. 검증 실패 메시지는
 `projects.0.planet.shape.radius`처럼 잘못된 필드 경로를 포함합니다.
 
 브라우저 런타임에서도 같은 schema를 사용합니다. 실패하면 자세한 오류는 console에
