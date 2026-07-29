@@ -36,5 +36,10 @@ describe('public/data/projects.json', () => {
           project.details.techStack.length > 0,
       ),
     ).toBe(true);
+    expect(
+      collection.projects.every(
+        (project) => Object.keys(project.planet.surface).length === 1,
+      ),
+    ).toBe(true);
   });
 });

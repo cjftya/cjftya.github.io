@@ -1,4 +1,4 @@
-import { Clock } from 'three';
+import { Clock, Vector3 } from 'three';
 import { CameraController } from '../core/camera/CameraController';
 import { PlanetPicker } from '../core/interaction/PlanetPicker';
 import { RendererManager } from '../core/renderer/RendererManager';
@@ -21,20 +21,28 @@ export class App {
   private readonly clock = new Clock();
   private readonly resizeObserver: ResizeObserver;
   private readonly projectById = new Map<string, Project>();
+  private readonly projectedLabelPosition = new Vector3();
   private readonly minimumFrameIntervalMs = window.matchMedia('(pointer: coarse)')
     .matches
     ? MOBILE_FRAME_INTERVAL_MS
     : 0;
   private picker: PlanetPicker | undefined;
   private selectedProjectId: string | null = null;
+  private hoveredProjectId: string | null = null;
   private lastRenderTimeMs = 0;
+  private viewportWidth = 1;
+  private viewportHeight = 1;
   private disposed = false;
 
   constructor(
     root: HTMLElement,
     private readonly projectRepository: ProjectRepository = new JsonProjectRepository(),
   ) {
-    this.ui = new UiController(root, this.requestClearSelection);
+    this.ui = new UiController(root, {
+      onCloseSelection: this.requestClearSelection,
+      onSelectProject: this.handleLabelSelection,
+      onHoverProject: this.handleLabelHover,
+    });
     const { width, height } = this.ui.viewport.getBoundingClientRect();
     const safeHeight = Math.max(height, 1);
 
@@ -58,11 +66,13 @@ export class App {
       const projects = await this.projectRepository.getProjects();
       projects.forEach((project) => this.projectById.set(project.id, project));
       await this.solarSystem.load(projects);
+      this.ui.showProjects(projects);
       this.picker = new PlanetPicker(
         this.ui.canvas,
         this.cameraController.camera,
         this.solarSystem,
         this.handlePickedProject,
+        this.handleHoveredProject,
       );
       this.initializeHistoryState();
       this.ui.showReady();
@@ -103,6 +113,7 @@ export class App {
     this.sceneManager.update(deltaSeconds);
     this.solarSystem.update(deltaSeconds);
     this.cameraController.update(deltaSeconds);
+    this.updatePlanetLabels();
     this.rendererManager.renderer.render(
       this.sceneManager.scene,
       this.cameraController.camera,
@@ -133,6 +144,22 @@ export class App {
     this.applySelection(project);
   };
 
+  private readonly handleHoveredProject = (project: Project | null): void => {
+    this.applyHover(project?.id ?? null);
+  };
+
+  private readonly handleLabelSelection = (projectId: string): void => {
+    const project = this.projectById.get(projectId);
+
+    if (project !== undefined) {
+      this.handlePickedProject(project);
+    }
+  };
+
+  private readonly handleLabelHover = (projectId: string | null): void => {
+    this.applyHover(projectId);
+  };
+
   private readonly requestClearSelection = (): void => {
     if (this.selectedProjectId !== null) {
       window.history.back();
@@ -161,6 +188,8 @@ export class App {
     const { width, height } = this.ui.viewport.getBoundingClientRect();
     const safeWidth = Math.max(Math.floor(width), 1);
     const safeHeight = Math.max(Math.floor(height), 1);
+    this.viewportWidth = safeWidth;
+    this.viewportHeight = safeHeight;
     this.rendererManager.resize(safeWidth, safeHeight);
     this.cameraController.resize(safeWidth / safeHeight);
   };
@@ -189,6 +218,35 @@ export class App {
 
     if (worldPosition !== null) {
       this.cameraController.focusOn(worldPosition, project.planet.shape.radius);
+    }
+  }
+
+  private applyHover(projectId: string | null): void {
+    if (projectId === this.hoveredProjectId) {
+      return;
+    }
+
+    this.hoveredProjectId = projectId;
+    this.solarSystem.setHovered(projectId);
+    this.ui.setHoveredProject(projectId);
+  }
+
+  private updatePlanetLabels(): void {
+    for (const anchor of this.solarSystem.getLabelAnchors()) {
+      this.projectedLabelPosition
+        .copy(anchor.position)
+        .addScaledVector(this.cameraController.camera.up, anchor.radius * 1.55)
+        .project(this.cameraController.camera);
+
+      const { x, y, z } = this.projectedLabelPosition;
+      const visible = z >= -1 && z <= 1 && Math.abs(x) <= 1.08 && Math.abs(y) <= 1.08;
+
+      this.ui.updatePlanetLabel(
+        anchor.id,
+        (x * 0.5 + 0.5) * this.viewportWidth,
+        (-y * 0.5 + 0.5) * this.viewportHeight,
+        visible,
+      );
     }
   }
 

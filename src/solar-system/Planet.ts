@@ -24,6 +24,8 @@ export class Planet {
   private readonly bodyAnchor = new Group();
   private readonly axisGroup = new Group();
   private readonly spinGroup = new Group();
+  private selected = false;
+  private hovered = false;
 
   constructor(
     definition: PlanetDefinition,
@@ -64,14 +66,24 @@ export class Planet {
     }
 
     this.spinGroup.rotation.y += direction * rotation.speed * deltaSeconds;
+    const targetScale = this.selected ? 1.12 : this.hovered ? 1.065 : 1;
+    const targetEmissiveIntensity = this.selected ? 0.48 : this.hovered ? 0.22 : 0.055;
+    const scale = MathUtils.damp(this.axisGroup.scale.x, targetScale, 10, deltaSeconds);
+    this.axisGroup.scale.setScalar(scale);
+    this.selectableMesh.material.emissiveIntensity = MathUtils.damp(
+      this.selectableMesh.material.emissiveIntensity,
+      targetEmissiveIntensity,
+      10,
+      deltaSeconds,
+    );
   }
 
   setSelected(selected: boolean): void {
-    this.axisGroup.scale.setScalar(selected ? 1.1 : 1);
-    this.selectableMesh.material.emissive.set(
-      selected ? this.project.planet.surface.baseColor : '#000000',
-    );
-    this.selectableMesh.material.emissiveIntensity = selected ? 0.35 : 0;
+    this.selected = selected;
+  }
+
+  setHovered(hovered: boolean): void {
+    this.hovered = hovered;
   }
 
   dispose(): void {
