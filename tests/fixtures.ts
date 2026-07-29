@@ -2,10 +2,20 @@ import type { ProjectCollection } from '../src/data/Project';
 
 export function createValidProjectCollection(): ProjectCollection {
   return {
-    version: 1,
+    version: 2,
+    galaxies: [
+      {
+        id: 'sample-galaxy',
+        name: 'Sample galaxy',
+        description: 'A sample galaxy used by the test suite.',
+        color: '#ffd28a',
+        order: 10,
+      },
+    ],
     projects: [
       {
         id: 'sample-project',
+        galaxyId: 'sample-galaxy',
         name: 'Sample project',
         summary: '',
         status: 'legacy',

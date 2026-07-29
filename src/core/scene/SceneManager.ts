@@ -5,6 +5,7 @@ export class SceneManager {
   readonly scene = new Scene();
 
   private readonly backdrop = new SpaceBackdrop();
+  private readonly backgroundColor = new Color('#050711');
 
   constructor() {
     this.scene.background = new Color('#050711');
@@ -17,6 +18,11 @@ export class SceneManager {
 
   update(deltaSeconds: number): void {
     this.backdrop.update(deltaSeconds);
+  }
+
+  setGalaxyColor(color: string): void {
+    this.backgroundColor.set('#050711').lerp(new Color(color), 0.075);
+    this.scene.background = this.backgroundColor;
   }
 
   dispose(): void {

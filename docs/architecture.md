@@ -19,8 +19,9 @@ flowchart TD
 1. `main.ts`가 DOM 루트와 WebGL2 지원 여부를 확인한 뒤 `App`을 시작합니다. WebGL2를
    사용할 수 없으면 같은 프로젝트 데이터로 링크 목록을 표시합니다.
 2. `App`이 장면, 렌더러, 카메라, UI를 한 번만 구성합니다.
-3. `JsonProjectRepository`가 `/data/projects.json`을 읽고 검증합니다.
-4. 검증된 프로젝트를 `SolarSystem`에 전달합니다.
+3. `JsonProjectRepository`가 `/data/projects.json`의 은하계와 프로젝트를 읽고
+   검증합니다.
+4. 검증된 프로젝트와 초기 은하계를 `SolarSystem`에 전달합니다.
 5. `SolarSystem`이 `PlanetBuilder`로 행성을 만들고 궤도와 함께 장면에 추가합니다.
 6. 로딩이 끝나면 `PlanetPicker`가 선택 이벤트를 `App`에 전달합니다.
 7. `App`이 행성 선택, 카메라 포커스, UI 상세 정보와 브라우저 history를 함께
@@ -64,7 +65,8 @@ ease-out 보간합니다. 이동 중에는 controls 입력을 잠시 막고 완�
 
 - `Sun`을 한 개 소유합니다.
 - 프로젝트마다 `Planet`과 `Orbit`을 한 개씩 만듭니다.
-- `CosmicGarden`이 행성 사이의 별자리 연결선과 빛 노드를 두 draw call로 묶습니다.
+- 은하계마다 `CosmicGarden`을 하나씩 만들고 활성 은하계의 별자리만 갱신합니다.
+- 은하계를 바꾸면 비활성 행성·궤도·raycast 대상을 숨기고 중심별 색을 바꿉니다.
 - animation frame마다 각 `Planet.update(delta)`를 호출합니다.
 - raycast 대상 mesh와 프로젝트의 대응 관계를 보관합니다.
 - 프로젝트 ID와 런타임 행성의 대응 관계를 보관해 카메라용 world position을
@@ -120,16 +122,17 @@ Icosahedron detail은 3으로 고정해 모바일에서 과도한 subdivision을
 
 ```mermaid
 flowchart LR
-  JSON["projects.json"] --> Repository["JsonProjectRepository"]
+  JSON["galaxies + projects"] --> Repository["JsonProjectRepository"]
   Repository --> Schema["Zod schema"]
-  Schema --> Projects["Project[]"]
-  Projects --> App["App"]
+  Schema --> Catalog["ProjectCollection"]
+  Catalog --> App["App"]
 ```
 
 `ProjectRepository`는 다음 두 메서드만 노출합니다.
 
 ```ts
 export interface ProjectRepository {
+  getCollection(): Promise<ProjectCollection>;
   getProjects(): Promise<Project[]>;
   getProject(id: string): Promise<Project | undefined>;
 }
@@ -145,9 +148,11 @@ export interface ProjectRepository {
 
 ## UI와 Three.js 경계
 
-`UiController`는 HTML 요소, 프로젝트 이름 라벨, 설명, 상태, 기술 스택과 GitHub
-링크만 관리하며 Three.js 객체를 알지 못합니다. 카메라 이동 중에는 짧은 별빛 스트릭을
-DOM 효과로 표시합니다. `PlanetPicker`는 raycast 결과를 선택·호버 콜백으로 바꿉니다.
+`UiController`는 HTML 요소, 은하계 선택기, 프로젝트 이름 라벨, 설명, 상태, 기술
+스택과 선택적 GitHub 링크만 관리하며 Three.js 객체를 알지 못합니다. 카메라 이동
+중에는 짧은 별빛 스트릭을, 은하계 전환 중에는 동심원 형태의 이동 효과를 DOM으로
+표시합니다. `PlanetPicker`는 활성 은하계의 raycast 결과를 선택·호버 콜백으로
+바꿉니다.
 `App`은 선택 상태의 단일 조정자이며 아래 네 작업을 함께 수행합니다.
 
 1. `SolarSystem.setSelected()`로 선택 강조와 공전 정지를 적용합니다.
@@ -155,7 +160,9 @@ DOM 효과로 표시합니다. `PlanetPicker`는 raycast 결과를 선택·호�
 3. `UiController.showSelection()`으로 상세 패널을 표시하거나 닫습니다.
 4. browser history에 선택 상태를 기록해 뒤로가기를 전체 화면 복귀로 연결합니다.
 
-패널 닫기, Esc, 빈 공간 선택도 모두 `App`의 동일한 선택 해제 경로를 사용합니다.
+은하계 전환은 선택과 호버를 해제하고 카메라를 중심별로 복귀시킨 뒤 표시할 행성 라벨과
+장면 객체를 함께 교체합니다. 패널 닫기, Esc, 빈 공간 선택도 모두 `App`의 동일한
+선택 해제 경로를 사용합니다.
 이 경계 덕분에 상세 패널 디자인을 바꿔도 raycast와 카메라 로직이 바뀌지 않습니다.
 
 ## 확장 지점

@@ -3,6 +3,23 @@ import { JsonProjectRepository } from '../src/data/JsonProjectRepository';
 import { createValidProjectCollection } from './fixtures';
 
 describe('JsonProjectRepository', () => {
+  it('loads the sorted galaxy catalog', async () => {
+    const collection = createValidProjectCollection();
+    collection.galaxies.push({
+      id: 'earlier-galaxy',
+      name: 'Earlier galaxy',
+      description: 'Earlier in the selector.',
+      color: '#b79cff',
+      order: 1,
+    });
+    const fetcher = vi.fn(async () => Response.json(collection, { status: 200 }));
+    const repository = new JsonProjectRepository('/data/projects.json', fetcher);
+
+    await expect(repository.getCollection()).resolves.toMatchObject({
+      galaxies: [{ id: 'earlier-galaxy' }, { id: 'sample-galaxy' }],
+    });
+  });
+
   it('loads and returns projects ordered by the order field', async () => {
     const collection = createValidProjectCollection();
     const secondProject = structuredClone(collection.projects[0]!);
