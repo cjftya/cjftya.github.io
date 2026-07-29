@@ -1,0 +1,6 @@
+dist
+node_modules
+projects
+shared
+coverage
+package-lock.json
