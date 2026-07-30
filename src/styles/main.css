@@ -70,6 +70,7 @@ button {
   overflow: hidden;
   opacity: 0;
   pointer-events: none;
+  contain: strict;
 }
 
 .travel-streaks span {
@@ -83,10 +84,11 @@ button {
   height: 1px;
   border-radius: 999px;
   background: linear-gradient(90deg, transparent, rgb(201 229 255 / 78%));
-  filter: drop-shadow(0 0 0.35rem rgb(139 193 255 / 58%));
+  box-shadow: 0 0 0.35rem rgb(139 193 255 / 58%);
   opacity: 0;
   transform: rotate(var(--streak-angle)) translateX(2rem) scaleX(0.15);
   transform-origin: left center;
+  will-change: transform, opacity;
 }
 
 .travel-streaks span:nth-child(2) {
@@ -132,26 +134,28 @@ button {
 
 .planet-label {
   position: absolute;
+  top: 0;
+  left: 0;
   padding: 0.28rem 0.48rem;
   border: 1px solid rgb(255 255 255 / 8%);
   border-radius: 999px;
   color: rgb(220 227 246 / 72%);
   background: rgb(7 10 22 / 52%);
   box-shadow: 0 0.35rem 1.2rem rgb(0 0 0 / 20%);
-  backdrop-filter: blur(7px);
   cursor: pointer;
   font-size: 0.62rem;
   font-weight: 650;
   letter-spacing: 0.015em;
   line-height: 1.1;
   pointer-events: auto;
-  transform: translate(-50%, calc(-100% - 0.35rem));
+  transform: translate3d(0, 0, 0) translate(-50%, calc(-100% - 0.35rem));
   transition:
     color 160ms ease,
     border-color 160ms ease,
     background 160ms ease,
     opacity 160ms ease;
   white-space: nowrap;
+  will-change: transform;
 }
 
 .planet-label:hover,
@@ -482,14 +486,15 @@ h1 {
       transparent 1px,
       transparent 5px
     ),
-    rgb(8 14 29 / 82%);
+    rgb(8 14 29 / 94%);
   box-shadow:
     0 1.5rem 5rem rgb(0 0 0 / 38%),
     inset 0 0 2.5rem rgb(112 189 255 / 5%),
     0 0 2rem rgb(92 166 255 / 7%);
-  backdrop-filter: blur(18px);
+  contain: layout paint style;
   overflow-y: auto;
   animation: panel-enter 320ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform, opacity;
 }
 
 .project-panel::after {
@@ -503,6 +508,7 @@ h1 {
   content: '';
   pointer-events: none;
   animation: panel-scan 5.5s ease-in-out infinite;
+  will-change: transform, opacity;
 }
 
 .observation-signal {
@@ -791,8 +797,8 @@ h1 {
 @keyframes panel-scan {
   0%,
   100% {
-    top: 0.8rem;
     opacity: 0;
+    transform: translateY(0);
   }
 
   18%,
@@ -801,8 +807,8 @@ h1 {
   }
 
   88% {
-    top: calc(100% - 0.8rem);
     opacity: 0;
+    transform: translateY(38rem);
   }
 }
 

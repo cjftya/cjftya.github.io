@@ -89,10 +89,16 @@ export class CosmicGarden {
       new LineSegments(this.connectionGeometry, this.connectionMaterial),
       new Points(this.nodeGeometry, this.nodeMaterial),
     );
+    this.updateColors();
   }
 
   setSelected(projectId: string | null): void {
+    if (projectId === this.selectedProjectId) {
+      return;
+    }
+
     this.selectedProjectId = projectId;
+    this.updateColors();
   }
 
   update(deltaSeconds: number): void {
@@ -114,34 +120,15 @@ export class CosmicGarden {
       const positionIndex = index * 6;
       this.firstPosition.toArray(this.connectionPositions, positionIndex);
       this.secondPosition.toArray(this.connectionPositions, positionIndex + 3);
-
-      const selected =
-        connection.first.project.id === this.selectedProjectId ||
-        connection.second.project.id === this.selectedProjectId;
-      this.selectedColor.copy(
-        selected ? ACTIVE_CONNECTION_COLOR : BASE_CONNECTION_COLOR,
-      );
-      this.selectedColor.toArray(this.connectionColors, positionIndex);
-      this.selectedColor
-        .multiplyScalar(selected ? 0.92 : 0.68)
-        .toArray(this.connectionColors, positionIndex + 3);
     });
 
     this.planets.forEach((planet, index) => {
       planet.selectableMesh.getWorldPosition(this.firstPosition);
       this.firstPosition.toArray(this.nodePositions, index * 3);
-
-      const selected = planet.project.id === this.selectedProjectId;
-      const color = selected
-        ? ACTIVE_CONNECTION_COLOR
-        : (this.planetColors[index] ?? BASE_CONNECTION_COLOR);
-      color.toArray(this.nodeColors, index * 3);
     });
 
     this.connectionGeometry.getAttribute('position').needsUpdate = true;
-    this.connectionGeometry.getAttribute('color').needsUpdate = true;
     this.nodeGeometry.getAttribute('position').needsUpdate = true;
-    this.nodeGeometry.getAttribute('color').needsUpdate = true;
   }
 
   dispose(): void {
@@ -178,5 +165,32 @@ export class CosmicGarden {
     }
 
     return connections;
+  }
+
+  private updateColors(): void {
+    this.connections.forEach((connection, index) => {
+      const positionIndex = index * 6;
+      const selected =
+        connection.first.project.id === this.selectedProjectId ||
+        connection.second.project.id === this.selectedProjectId;
+      this.selectedColor.copy(
+        selected ? ACTIVE_CONNECTION_COLOR : BASE_CONNECTION_COLOR,
+      );
+      this.selectedColor.toArray(this.connectionColors, positionIndex);
+      this.selectedColor
+        .multiplyScalar(selected ? 0.92 : 0.68)
+        .toArray(this.connectionColors, positionIndex + 3);
+    });
+
+    this.planets.forEach((planet, index) => {
+      const selected = planet.project.id === this.selectedProjectId;
+      const color = selected
+        ? ACTIVE_CONNECTION_COLOR
+        : (this.planetColors[index] ?? BASE_CONNECTION_COLOR);
+      color.toArray(this.nodeColors, index * 3);
+    });
+
+    this.connectionGeometry.getAttribute('color').needsUpdate = true;
+    this.nodeGeometry.getAttribute('color').needsUpdate = true;
   }
 }

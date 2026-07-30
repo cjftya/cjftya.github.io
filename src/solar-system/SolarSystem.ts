@@ -20,6 +20,7 @@ export class SolarSystem {
   private readonly selectableMeshes: Mesh[] = [];
   private readonly activeSelectableMeshes: Mesh[] = [];
   private readonly labelAnchors: PlanetLabelAnchor[] = [];
+  private readonly activeLabelAnchors: PlanetLabelAnchor[] = [];
   private readonly projectByMesh = new Map<Mesh, Project>();
   private readonly planetByProjectId = new Map<string, Planet>();
   private readonly orbitByProjectId = new Map<string, Orbit>();
@@ -125,11 +126,7 @@ export class SolarSystem {
   }
 
   getLabelAnchors(): readonly PlanetLabelAnchor[] {
-    const activeAnchors = this.labelAnchors.filter(
-      (anchor) => anchor.galaxyId === this.activeGalaxyId,
-    );
-
-    for (const anchor of activeAnchors) {
+    for (const anchor of this.activeLabelAnchors) {
       const planet = this.planetByProjectId.get(anchor.id);
 
       if (planet !== undefined) {
@@ -137,7 +134,7 @@ export class SolarSystem {
       }
     }
 
-    return activeAnchors;
+    return this.activeLabelAnchors;
   }
 
   getProjectWorldPosition(projectId: string): Vector3 | null {
@@ -151,6 +148,7 @@ export class SolarSystem {
     this.selectedProjectId = null;
     this.hoveredProjectId = null;
     this.activeSelectableMeshes.length = 0;
+    this.activeLabelAnchors.length = 0;
 
     for (const planet of this.planets) {
       const active = planet.project.galaxyId === galaxy.id;
@@ -161,6 +159,12 @@ export class SolarSystem {
 
       if (active) {
         this.activeSelectableMeshes.push(planet.selectableMesh);
+      }
+    }
+
+    for (const anchor of this.labelAnchors) {
+      if (anchor.galaxyId === galaxy.id) {
+        this.activeLabelAnchors.push(anchor);
       }
     }
 
@@ -191,6 +195,7 @@ export class SolarSystem {
     this.selectableMeshes.length = 0;
     this.activeSelectableMeshes.length = 0;
     this.labelAnchors.length = 0;
+    this.activeLabelAnchors.length = 0;
     this.projectByMesh.clear();
     this.planetByProjectId.clear();
     this.orbitByProjectId.clear();
