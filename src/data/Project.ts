@@ -1,12 +1,22 @@
 export type ProjectStatus = 'active' | 'legacy' | 'archived';
 export type RotationDirection = 'clockwise' | 'counterclockwise';
 
+export interface GalaxyAtmosphere {
+  backgroundColor: string;
+  starColor: string;
+  dustColor: string;
+  starOpacity: number;
+  dustOpacity: number;
+  motionScale: number;
+}
+
 export interface Galaxy {
   id: string;
   name: string;
   description: string;
   color: string;
   order: number;
+  atmosphere: GalaxyAtmosphere;
 }
 
 export interface ProjectLinks {
@@ -73,7 +83,7 @@ export interface Project {
 }
 
 export interface ProjectCollection {
-  version: 2;
+  version: 3;
   galaxies: Galaxy[];
   projects: Project[];
 }

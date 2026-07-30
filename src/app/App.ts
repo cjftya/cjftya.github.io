@@ -79,7 +79,7 @@ export class App {
       galaxies.forEach((galaxy) => this.galaxyById.set(galaxy.id, galaxy));
       projects.forEach((project) => this.projectById.set(project.id, project));
       await this.solarSystem.load(projects, initialGalaxy);
-      this.sceneManager.setGalaxyColor(initialGalaxy.color);
+      this.sceneManager.setGalaxy(initialGalaxy);
       this.activeGalaxyId = initialGalaxy.id;
       this.ui.showGalaxies(galaxies);
       this.ui.showGalaxy(initialGalaxy, false);
@@ -273,7 +273,7 @@ export class App {
     this.selectedProjectId = null;
     this.applyHover(null);
     this.solarSystem.setActiveGalaxy(galaxy);
-    this.sceneManager.setGalaxyColor(galaxy.color);
+    this.sceneManager.setGalaxy(galaxy);
     this.ui.showSelection(null);
     this.ui.showGalaxy(galaxy, animate);
     this.ui.showProjects(this.getProjectsForGalaxy(galaxy.id));

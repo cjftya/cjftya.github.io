@@ -43,6 +43,13 @@ describe('parseProjectCollection', () => {
     expect(() => parseProjectCollection(input)).toThrow(/Unknown galaxy id/);
   });
 
+  it('rejects an atmosphere opacity outside the renderable range', () => {
+    const input = createValidProjectCollection();
+    input.galaxies[0]!.atmosphere.starOpacity = 1.1;
+
+    expect(() => parseProjectCollection(input)).toThrow(/starOpacity/);
+  });
+
   it('rejects an invalid rotation direction', () => {
     const input = createValidProjectCollection() as unknown as {
       projects: Array<{ planet: { rotation: { direction: string } } }>;

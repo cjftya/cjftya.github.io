@@ -2,7 +2,7 @@ import type { ProjectCollection } from '../src/data/Project';
 
 export function createValidProjectCollection(): ProjectCollection {
   return {
-    version: 2,
+    version: 3,
     galaxies: [
       {
         id: 'sample-galaxy',
@@ -10,6 +10,14 @@ export function createValidProjectCollection(): ProjectCollection {
         description: 'A sample galaxy used by the test suite.',
         color: '#ffd28a',
         order: 10,
+        atmosphere: {
+          backgroundColor: '#071015',
+          starColor: '#ffe9bc',
+          dustColor: '#67d6c2',
+          starOpacity: 0.88,
+          dustOpacity: 0.25,
+          motionScale: 1,
+        },
       },
     ],
     projects: [

@@ -112,8 +112,9 @@ Icosahedron detail은 3으로 고정해 모바일에서 과도한 subdivision을
 
 `seededNoise.ts`의 lattice value noise는 좌표와 seed만으로 같은 값을 계산합니다.
 따라서 seed, 반지름, roughness, frequency가 같으면 같은 geometry가 만들어집니다.
-같은 noise를 한 번 더 샘플링해 `baseColor`의 명도와 채도를 미세하게 바꾸므로 이미지
-텍스처 없이도 프로젝트마다 재현 가능한 표면 변화가 생깁니다.
+`surfacePattern.ts`는 seed에 따라 가로 띠, 젤리 얼룩, 극지방, 흐르는 색상층,
+마블형 노이즈 중 하나를 선택합니다. 같은 noise 좌표를 조합해 `baseColor`의 명도와
+채도를 바꾸므로 이미지 텍스처 없이도 프로젝트마다 재현 가능한 표면 무늬가 생깁니다.
 
 현재 파라미터에 필요하지 않은 생물군계, 셰이더 그래프, LOD 엔진 등은 의도적으로
 포함하지 않습니다.
@@ -161,8 +162,9 @@ export interface ProjectRepository {
 4. browser history에 선택 상태를 기록해 뒤로가기를 전체 화면 복귀로 연결합니다.
 
 은하계 전환은 선택과 호버를 해제하고 카메라를 중심별로 복귀시킨 뒤 표시할 행성 라벨과
-장면 객체를 함께 교체합니다. 패널 닫기, Esc, 빈 공간 선택도 모두 `App`의 동일한
-선택 해제 경로를 사용합니다.
+장면 객체를 함께 교체합니다. `SceneManager`와 `SpaceBackdrop`은 JSON의
+`atmosphere`를 받아 배경색, 별빛, 우주 먼지와 움직임을 보간합니다. 패널 닫기, Esc,
+빈 공간 선택도 모두 `App`의 동일한 선택 해제 경로를 사용합니다.
 이 경계 덕분에 상세 패널 디자인을 바꿔도 raycast와 카메라 로직이 바뀌지 않습니다.
 
 ## 확장 지점
