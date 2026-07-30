@@ -3,6 +3,7 @@ import {
   BackSide,
   BufferAttribute,
   BufferGeometry,
+  Color,
   Group,
   IcosahedronGeometry,
   MathUtils,
@@ -36,9 +37,12 @@ export class Planet {
   private readonly spores: Points<BufferGeometry, PointsMaterial>;
   private readonly satelliteOrbit: Group | null;
   private readonly baseAuraOpacity: number;
+  private readonly fullBodyColor = new Color('#ffffff');
+  private readonly mutedBodyColor = new Color('#e3e5ec');
   private elapsedSeconds = 0;
   private selected = false;
   private hovered = false;
+  private muted = false;
 
   constructor(
     definition: PlanetDefinition,
@@ -126,10 +130,17 @@ export class Planet {
       10,
       deltaSeconds,
     );
+    this.selectableMesh.material.color.lerp(
+      this.selected || this.hovered || !this.muted
+        ? this.fullBodyColor
+        : this.mutedBodyColor,
+      1 - Math.exp(-deltaSeconds * 8),
+    );
   }
 
-  setSelected(selected: boolean): void {
+  setSelected(selected: boolean, muted = false): void {
     this.selected = selected;
+    this.muted = muted;
   }
 
   setHovered(hovered: boolean): void {

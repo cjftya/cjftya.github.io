@@ -20,7 +20,7 @@ interface GardenConnection {
 }
 
 const BASE_CONNECTION_COLOR = new Color('#66749a');
-const ACTIVE_CONNECTION_COLOR = new Color('#b6ddff');
+const WHITE = new Color('#ffffff');
 
 export class CosmicGarden {
   readonly object = new Group();
@@ -52,6 +52,7 @@ export class CosmicGarden {
   private readonly firstPosition = new Vector3();
   private readonly secondPosition = new Vector3();
   private readonly selectedColor = new Color();
+  private readonly selectedPlanetColor = new Color();
   private selectedProjectId: string | null = null;
   private elapsedSeconds = 0;
 
@@ -168,13 +169,20 @@ export class CosmicGarden {
   }
 
   private updateColors(): void {
+    const selectedPlanet = this.planets.find(
+      (planet) => planet.project.id === this.selectedProjectId,
+    );
+    this.selectedPlanetColor
+      .set(selectedPlanet?.project.planet.surface.baseColor ?? '#b6ddff')
+      .lerp(WHITE, 0.34);
+
     this.connections.forEach((connection, index) => {
       const positionIndex = index * 6;
       const selected =
         connection.first.project.id === this.selectedProjectId ||
         connection.second.project.id === this.selectedProjectId;
       this.selectedColor.copy(
-        selected ? ACTIVE_CONNECTION_COLOR : BASE_CONNECTION_COLOR,
+        selected ? this.selectedPlanetColor : BASE_CONNECTION_COLOR,
       );
       this.selectedColor.toArray(this.connectionColors, positionIndex);
       this.selectedColor
@@ -185,7 +193,7 @@ export class CosmicGarden {
     this.planets.forEach((planet, index) => {
       const selected = planet.project.id === this.selectedProjectId;
       const color = selected
-        ? ACTIVE_CONNECTION_COLOR
+        ? this.selectedPlanetColor
         : (this.planetColors[index] ?? BASE_CONNECTION_COLOR);
       color.toArray(this.nodeColors, index * 3);
     });

@@ -2,10 +2,13 @@ import {
   AdditiveBlending,
   BufferAttribute,
   BufferGeometry,
+  Color,
   Group,
+  MathUtils,
   Points,
   PointsMaterial,
 } from 'three';
+import type { GalaxyAtmosphere } from '../../data/Project';
 import { MeteorField } from './MeteorField';
 
 interface PointFieldOptions {
@@ -46,6 +49,12 @@ export class SpaceBackdrop {
     opacity: 0.2,
   });
   private readonly meteors = new MeteorField();
+  private readonly targetFarStarColor = new Color('#dce6ff');
+  private readonly targetDustColor = new Color('#8ea6d8');
+  private targetStarOpacity = 0.82;
+  private targetDustOpacity = 0.2;
+  private targetMotionScale = 1;
+  private motionScale = 1;
   private readonly prefersReducedMotion = window.matchMedia(
     '(prefers-reduced-motion: reduce)',
   ).matches;
@@ -56,14 +65,43 @@ export class SpaceBackdrop {
 
   update(deltaSeconds: number): void {
     this.meteors.update(deltaSeconds);
+    const colorMix = 1 - Math.exp(-deltaSeconds * 3.5);
+    this.farStars.material.color.lerp(this.targetFarStarColor, colorMix);
+    this.nearDust.material.color.lerp(this.targetDustColor, colorMix);
+    this.farStars.material.opacity = MathUtils.damp(
+      this.farStars.material.opacity,
+      this.targetStarOpacity,
+      4,
+      deltaSeconds,
+    );
+    this.nearDust.material.opacity = MathUtils.damp(
+      this.nearDust.material.opacity,
+      this.targetDustOpacity,
+      4,
+      deltaSeconds,
+    );
+    this.motionScale = MathUtils.damp(
+      this.motionScale,
+      this.targetMotionScale,
+      4,
+      deltaSeconds,
+    );
 
     if (this.prefersReducedMotion) {
       return;
     }
 
-    this.farStars.points.rotation.y += deltaSeconds * 0.002;
-    this.nearDust.points.rotation.y -= deltaSeconds * 0.006;
-    this.nearDust.points.rotation.x += deltaSeconds * 0.0015;
+    this.farStars.points.rotation.y += deltaSeconds * 0.002 * this.motionScale;
+    this.nearDust.points.rotation.y -= deltaSeconds * 0.006 * this.motionScale;
+    this.nearDust.points.rotation.x += deltaSeconds * 0.0015 * this.motionScale;
+  }
+
+  setAtmosphere(atmosphere: GalaxyAtmosphere): void {
+    this.targetFarStarColor.set(atmosphere.starColor);
+    this.targetDustColor.set(atmosphere.dustColor);
+    this.targetStarOpacity = atmosphere.starOpacity;
+    this.targetDustOpacity = atmosphere.dustOpacity;
+    this.targetMotionScale = atmosphere.motionScale;
   }
 
   dispose(): void {

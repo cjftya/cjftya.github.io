@@ -1,19 +1,35 @@
 {
-  "version": 2,
+  "version": 3,
   "galaxies": [
     {
       "id": "jelly-garden",
       "name": "Jelly Garden",
       "description": "독립적으로 자라나는 프로젝트 행성계",
       "color": "#ffd28a",
-      "order": 10
+      "order": 10,
+      "atmosphere": {
+        "backgroundColor": "#071015",
+        "starColor": "#ffe8b6",
+        "dustColor": "#68d8c5",
+        "starOpacity": 0.9,
+        "dustOpacity": 0.27,
+        "motionScale": 1
+      }
     },
     {
       "id": "pages-archive",
       "name": "Pages Archive",
       "description": "GitHub Pages에 남아 있는 초기 웹 프로젝트",
       "color": "#b79cff",
-      "order": 20
+      "order": 20,
+      "atmosphere": {
+        "backgroundColor": "#080719",
+        "starColor": "#d9ddff",
+        "dustColor": "#8170cb",
+        "starOpacity": 0.62,
+        "dustOpacity": 0.12,
+        "motionScale": 0.48
+      }
     }
   ],
   "projects": [
