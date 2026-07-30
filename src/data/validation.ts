@@ -25,6 +25,14 @@ const galaxySchema = z.object({
   description: z.string().trim().min(1),
   color: colorSchema,
   order: z.number().int(),
+  atmosphere: z.object({
+    backgroundColor: colorSchema,
+    starColor: colorSchema,
+    dustColor: colorSchema,
+    starOpacity: z.number().min(0).max(1),
+    dustOpacity: z.number().min(0).max(1),
+    motionScale: z.number().min(0).max(2),
+  }),
 });
 
 const projectSchema = z.object({
@@ -76,7 +84,7 @@ const projectSchema = z.object({
 
 const projectCollectionSchema = z
   .object({
-    version: z.literal(2),
+    version: z.literal(3),
     galaxies: z.array(galaxySchema).min(1),
     projects: z.array(projectSchema),
   })

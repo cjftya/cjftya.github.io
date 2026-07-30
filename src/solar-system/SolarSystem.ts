@@ -113,7 +113,8 @@ export class SolarSystem {
     }
 
     for (const planet of this.planets) {
-      planet.setSelected(planet.project.id === projectId);
+      const selected = planet.project.id === projectId;
+      planet.setSelected(selected, projectId !== null && !selected);
     }
   }
 
@@ -154,7 +155,7 @@ export class SolarSystem {
       const active = planet.project.galaxyId === galaxy.id;
       planet.orbitPlane.visible = active;
       this.orbitByProjectId.get(planet.project.id)!.object.visible = active;
-      planet.setSelected(false);
+      planet.setSelected(false, false);
       planet.setHovered(false);
 
       if (active) {

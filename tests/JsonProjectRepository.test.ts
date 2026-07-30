@@ -11,6 +11,14 @@ describe('JsonProjectRepository', () => {
       description: 'Earlier in the selector.',
       color: '#b79cff',
       order: 1,
+      atmosphere: {
+        backgroundColor: '#080719',
+        starColor: '#d9ddff',
+        dustColor: '#8170cb',
+        starOpacity: 0.62,
+        dustOpacity: 0.12,
+        motionScale: 0.48,
+      },
     });
     const fetcher = vi.fn(async () => Response.json(collection, { status: 200 }));
     const repository = new JsonProjectRepository('/data/projects.json', fetcher);

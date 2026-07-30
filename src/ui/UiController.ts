@@ -174,9 +174,14 @@ export class UiController {
     });
 
     if (project === null) {
+      this.viewport.style.removeProperty('--project-color');
       return;
     }
 
+    this.viewport.style.setProperty(
+      '--project-color',
+      project.planet.surface.baseColor,
+    );
     this.projectName.textContent = project.name;
     this.projectStatus.textContent = PROJECT_STATUS_LABELS[project.status];
     this.projectStatus.dataset.status = project.status;
@@ -204,6 +209,7 @@ export class UiController {
       label.className = 'planet-label';
       label.type = 'button';
       label.dataset.projectId = project.id;
+      label.style.setProperty('--planet-color', project.planet.surface.baseColor);
       label.textContent = project.name;
       label.setAttribute('aria-label', `${project.name} 프로젝트 보기`);
       label.setAttribute('aria-pressed', 'false');
