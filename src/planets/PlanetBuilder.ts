@@ -8,6 +8,7 @@ import {
 import { Planet } from '../solar-system/Planet';
 import type { PlanetDefinition } from './PlanetDefinition';
 import { sampleSeededNoise } from './generators/seededNoise';
+import { sampleSurfacePattern } from './generators/surfacePattern';
 
 export class PlanetBuilder {
   async build(definition: PlanetDefinition): Promise<Planet> {
@@ -91,18 +92,20 @@ export class PlanetBuilder {
     const position = geometry.getAttribute('position');
     const colors = new Float32Array(position.count * 3);
     const baseColor = new Color(definition.planet.surface.baseColor);
+    const color = new Color();
 
     for (let index = 0; index < position.count; index += 1) {
-      const noise = sampleSeededNoise(
-        position.getX(index) * 1.7,
-        position.getY(index) * 1.7,
-        position.getZ(index) * 1.7,
-        definition.planet.seed + 97,
+      const x = position.getX(index);
+      const y = position.getY(index);
+      const z = position.getZ(index);
+      const length = Math.hypot(x, y, z);
+      const pattern = sampleSurfacePattern(
+        x / length,
+        y / length,
+        z / length,
+        definition.planet.seed,
       );
-      const variation = noise - 0.5;
-      const color = baseColor
-        .clone()
-        .offsetHSL(variation * 0.025, variation * 0.08, variation * 0.16);
+      color.copy(baseColor).offsetHSL(pattern * 0.035, pattern * 0.12, pattern * 0.21);
       color.toArray(colors, index * 3);
     }
 
