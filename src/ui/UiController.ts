@@ -13,6 +13,12 @@ interface UiCallbacks {
   onHoverProject: (projectId: string | null) => void;
 }
 
+interface PlanetLabelRenderState {
+  visible: boolean;
+  x: number;
+  y: number;
+}
+
 export class UiController {
   readonly viewport: HTMLElement;
   readonly canvas: HTMLCanvasElement;
@@ -34,9 +40,12 @@ export class UiController {
   private readonly closeButton: HTMLButtonElement;
   private readonly galaxyButtons = new Map<string, HTMLButtonElement>();
   private readonly planetLabels = new Map<string, HTMLButtonElement>();
+  private readonly planetLabelRenderStates = new Map<string, PlanetLabelRenderState>();
   private readyTimer: number | undefined;
   private travelTimer: number | undefined;
   private galaxyTravelTimer: number | undefined;
+  private travelFrame: number | undefined;
+  private galaxyTravelFrame: number | undefined;
 
   constructor(
     root: HTMLElement,
@@ -189,6 +198,7 @@ export class UiController {
 
   showProjects(projects: Project[]): void {
     this.planetLabels.clear();
+    this.planetLabelRenderStates.clear();
     const labels = projects.map((project) => {
       const label = document.createElement('button');
       label.className = 'planet-label';
@@ -198,6 +208,11 @@ export class UiController {
       label.setAttribute('aria-label', `${project.name} 프로젝트 보기`);
       label.setAttribute('aria-pressed', 'false');
       this.planetLabels.set(project.id, label);
+      this.planetLabelRenderStates.set(project.id, {
+        visible: false,
+        x: Number.NaN,
+        y: Number.NaN,
+      });
       return label;
     });
 
@@ -244,16 +259,26 @@ export class UiController {
 
   updatePlanetLabel(projectId: string, x: number, y: number, visible: boolean): void {
     const label = this.planetLabels.get(projectId);
+    const renderState = this.planetLabelRenderStates.get(projectId);
 
-    if (label === undefined) {
+    if (label === undefined || renderState === undefined) {
       return;
     }
 
-    label.hidden = !visible;
+    if (renderState.visible !== visible) {
+      label.hidden = !visible;
+      renderState.visible = visible;
+    }
 
     if (visible) {
-      label.style.left = `${x}px`;
-      label.style.top = `${y}px`;
+      const roundedX = Math.round(x * 4) / 4;
+      const roundedY = Math.round(y * 4) / 4;
+
+      if (renderState.x !== roundedX || renderState.y !== roundedY) {
+        label.style.transform = `translate3d(${roundedX}px, ${roundedY}px, 0) translate(-50%, calc(-100% - 0.35rem))`;
+        renderState.x = roundedX;
+        renderState.y = roundedY;
+      }
     }
   }
 
@@ -273,6 +298,12 @@ export class UiController {
     }
     if (this.galaxyTravelTimer !== undefined) {
       window.clearTimeout(this.galaxyTravelTimer);
+    }
+    if (this.travelFrame !== undefined) {
+      window.cancelAnimationFrame(this.travelFrame);
+    }
+    if (this.galaxyTravelFrame !== undefined) {
+      window.cancelAnimationFrame(this.galaxyTravelFrame);
     }
     this.closeButton.removeEventListener('click', this.handleClose);
     this.galaxySwitcher.removeEventListener('click', this.handleGalaxyClick);
@@ -348,13 +379,18 @@ export class UiController {
     if (this.travelTimer !== undefined) {
       window.clearTimeout(this.travelTimer);
     }
+    if (this.travelFrame !== undefined) {
+      window.cancelAnimationFrame(this.travelFrame);
+    }
 
     this.viewport.classList.remove('is-traveling');
-    void this.viewport.offsetWidth;
-    this.viewport.classList.add('is-traveling');
-    this.travelTimer = window.setTimeout(() => {
-      this.viewport.classList.remove('is-traveling');
-    }, 760);
+    this.travelFrame = window.requestAnimationFrame(() => {
+      this.travelFrame = undefined;
+      this.viewport.classList.add('is-traveling');
+      this.travelTimer = window.setTimeout(() => {
+        this.viewport.classList.remove('is-traveling');
+      }, 760);
+    });
   }
 
   private playGalaxyTravelEffect(): void {
@@ -365,13 +401,18 @@ export class UiController {
     if (this.galaxyTravelTimer !== undefined) {
       window.clearTimeout(this.galaxyTravelTimer);
     }
+    if (this.galaxyTravelFrame !== undefined) {
+      window.cancelAnimationFrame(this.galaxyTravelFrame);
+    }
 
     this.viewport.classList.remove('is-switching-galaxy');
-    void this.viewport.offsetWidth;
-    this.viewport.classList.add('is-switching-galaxy');
-    this.galaxyTravelTimer = window.setTimeout(() => {
-      this.viewport.classList.remove('is-switching-galaxy');
-    }, 860);
+    this.galaxyTravelFrame = window.requestAnimationFrame(() => {
+      this.galaxyTravelFrame = undefined;
+      this.viewport.classList.add('is-switching-galaxy');
+      this.galaxyTravelTimer = window.setTimeout(() => {
+        this.viewport.classList.remove('is-switching-galaxy');
+      }, 860);
+    });
   }
 
   private findLabel(target: EventTarget | null): HTMLButtonElement | null {
