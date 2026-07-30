@@ -500,15 +500,14 @@ h1 {
 .project-panel::after {
   position: absolute;
   z-index: -1;
-  top: 0;
-  right: 0.8rem;
-  left: 0.8rem;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgb(172 225 255 / 42%), transparent);
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(90deg, transparent, rgb(172 225 255 / 42%), transparent)
+    50% 0 / calc(100% - 1.6rem) 1px no-repeat;
   content: '';
   pointer-events: none;
   animation: panel-scan 5.5s ease-in-out infinite;
-  will-change: transform, opacity;
+  will-change: background-position, opacity;
 }
 
 .observation-signal {
@@ -798,7 +797,7 @@ h1 {
   0%,
   100% {
     opacity: 0;
-    transform: translateY(0);
+    background-position: 50% 0;
   }
 
   18%,
@@ -808,7 +807,7 @@ h1 {
 
   88% {
     opacity: 0;
-    transform: translateY(38rem);
+    background-position: 50% 100%;
   }
 }
 
