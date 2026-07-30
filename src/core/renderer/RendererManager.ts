@@ -2,6 +2,25 @@ import { ACESFilmicToneMapping, SRGBColorSpace, WebGLRenderer } from 'three';
 
 const DEFAULT_MAX_PIXEL_RATIO = 1.5;
 const REDUCED_MAX_PIXEL_RATIO = 1.2;
+const DEFAULT_RENDER_PIXEL_BUDGET = 5_000_000;
+const MIN_RENDER_PIXEL_RATIO = 0.75;
+
+export function calculateRenderPixelRatio(
+  width: number,
+  height: number,
+  devicePixelRatio: number,
+  maxPixelRatio: number,
+  pixelBudget = DEFAULT_RENDER_PIXEL_BUDGET,
+): number {
+  const cssPixelCount = Math.max(width * height, 1);
+  const requestedPixelRatio = Math.min(Math.max(devicePixelRatio, 1), maxPixelRatio);
+  const budgetPixelRatio = Math.sqrt(pixelBudget / cssPixelCount);
+
+  return Math.min(
+    requestedPixelRatio,
+    Math.max(MIN_RENDER_PIXEL_RATIO, budgetPixelRatio),
+  );
+}
 
 export class RendererManager {
   readonly renderer: WebGLRenderer;
@@ -30,8 +49,10 @@ export class RendererManager {
   }
 
   resize(width: number, height: number): void {
-    const pixelRatio = Math.min(
-      Math.max(window.devicePixelRatio, 1),
+    const pixelRatio = calculateRenderPixelRatio(
+      width,
+      height,
+      window.devicePixelRatio,
       this.maxPixelRatio,
     );
 
