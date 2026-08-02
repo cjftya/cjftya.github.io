@@ -33,6 +33,29 @@ const galaxySchema = z.object({
     dustOpacity: z.number().min(0).max(1),
     motionScale: z.number().min(0).max(2),
   }),
+  starProfile: z.object({
+    seed: z.number().int(),
+    colors: z.object({
+      base: colorSchema,
+      middle: colorSchema,
+      hot: colorSchema,
+    }),
+    patternScale: z.number().min(1).max(12),
+    flowSpeed: z.number().min(0).max(0.2),
+    pulseAmount: z.number().min(0).max(0.05),
+    corona: z
+      .object({
+        color: colorSchema,
+        innerScale: z.number().min(1.1).max(2),
+        outerScale: z.number().min(1.5).max(3),
+        irregularity: z.number().min(0).max(0.18),
+        opacity: z.number().min(0).max(0.3),
+      })
+      .refine((corona) => corona.outerScale > corona.innerScale, {
+        message: 'outerScale must be greater than innerScale',
+        path: ['outerScale'],
+      }),
+  }),
 });
 
 const projectSchema = z.object({
@@ -84,7 +107,7 @@ const projectSchema = z.object({
 
 const projectCollectionSchema = z
   .object({
-    version: z.literal(3),
+    version: z.literal(4),
     galaxies: z.array(galaxySchema).min(1),
     projects: z.array(projectSchema),
   })

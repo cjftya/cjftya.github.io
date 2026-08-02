@@ -19,6 +19,7 @@ describe('JsonProjectRepository', () => {
         dustOpacity: 0.12,
         motionScale: 0.48,
       },
+      starProfile: structuredClone(collection.galaxies[0]!.starProfile),
     });
     const fetcher = vi.fn(async () => Response.json(collection, { status: 200 }));
     const repository = new JsonProjectRepository('/data/projects.json', fetcher);

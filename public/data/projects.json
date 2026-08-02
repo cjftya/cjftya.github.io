@@ -1,5 +1,5 @@
 {
-  "version": 3,
+  "version": 4,
   "galaxies": [
     {
       "id": "jelly-garden",
@@ -14,6 +14,24 @@
         "starOpacity": 0.9,
         "dustOpacity": 0.27,
         "motionScale": 1
+      },
+      "starProfile": {
+        "seed": 4101,
+        "colors": {
+          "base": "#f6a85f",
+          "middle": "#ffd27d",
+          "hot": "#fff4c7"
+        },
+        "patternScale": 3.4,
+        "flowSpeed": 0.055,
+        "pulseAmount": 0.018,
+        "corona": {
+          "color": "#ff9e6d",
+          "innerScale": 1.64,
+          "outerScale": 2.25,
+          "irregularity": 0.075,
+          "opacity": 0.14
+        }
       }
     },
     {
@@ -29,6 +47,24 @@
         "starOpacity": 0.62,
         "dustOpacity": 0.12,
         "motionScale": 0.48
+      },
+      "starProfile": {
+        "seed": 4202,
+        "colors": {
+          "base": "#776ce0",
+          "middle": "#b9adff",
+          "hot": "#f3f4ff"
+        },
+        "patternScale": 7.2,
+        "flowSpeed": 0.018,
+        "pulseAmount": 0.008,
+        "corona": {
+          "color": "#8c82ff",
+          "innerScale": 1.46,
+          "outerScale": 1.86,
+          "irregularity": 0.025,
+          "opacity": 0.095
+        }
       }
     }
   ],

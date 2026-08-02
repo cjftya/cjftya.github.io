@@ -35,6 +35,12 @@ describe('public/data/projects.json', () => {
     expect(collection.galaxies[0]!.atmosphere.motionScale).toBeGreaterThan(
       collection.galaxies[1]!.atmosphere.motionScale,
     );
+    expect(collection.galaxies[0]!.starProfile.patternScale).toBeLessThan(
+      collection.galaxies[1]!.starProfile.patternScale,
+    );
+    expect(collection.galaxies[0]!.starProfile.corona.outerScale).toBeGreaterThan(
+      collection.galaxies[1]!.starProfile.corona.outerScale,
+    );
     expect(
       collection.projects.filter((project) => project.galaxyId === 'jelly-garden'),
     ).toHaveLength(6);
