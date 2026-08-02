@@ -7,7 +7,7 @@
 
 ```json
 {
-  "version": 3,
+  "version": 4,
   "galaxies": [],
   "projects": []
 }
@@ -15,7 +15,7 @@
 
 | 필드       | 필수 | 의미                                |
 | ---------- | ---- | ----------------------------------- |
-| `version`  | 예   | schema 버전. 현재는 정수 `3`만 허용 |
+| `version`  | 예   | schema 버전. 현재는 정수 `4`만 허용 |
 | `galaxies` | 예   | 은하계 선택 UI와 시각 테마 정보     |
 | `projects` | 예   | 프로젝트 객체 배열                  |
 
@@ -32,6 +32,7 @@
 | `color`       | string  | `#RRGGBB` 형식의 중심별·전환 효과 기준색   |
 | `order`       | integer | 은하계 선택기 표시 순서                    |
 | `atmosphere`  | object  | 배경색·별빛·우주 먼지·움직임의 분위기 설정 |
+| `starProfile` | object  | 중심 항성의 표면·흐름·맥동·광륜 설정       |
 
 은하계 ID는 중복될 수 없고, 프로젝트는 반드시 등록된 은하계 하나를 참조해야 합니다.
 은하계를 바꾸면 해당 그룹의 행성·궤도·별자리만 표시됩니다.
@@ -48,6 +49,27 @@
 | `atmosphere.motionScale`     | `0..2`    | 별과 먼지의 느린 회전 속도 배율 |
 
 전환 시 기존 point field를 다시 만들지 않고 색·투명도·회전 배율만 부드럽게 보간합니다.
+
+### 중심 항성 프로필
+
+| 필드                  | 타입·범위 | 의미                           |
+| --------------------- | --------- | ------------------------------ |
+| `starProfile.seed`    | integer   | 표면과 광륜 형태를 재현할 seed |
+| `colors.base`         | `#RRGGBB` | 대류 무늬의 어두운 색          |
+| `colors.middle`       | `#RRGGBB` | 대류 무늬의 주 색              |
+| `colors.hot`          | `#RRGGBB` | 밝은 기포·가장자리 색          |
+| `patternScale`        | `1..12`   | 무늬 크기. 클수록 조밀함       |
+| `flowSpeed`           | `0..0.2`  | 표면 무늬 흐름 속도            |
+| `pulseAmount`         | `0..0.05` | 젤리처럼 호흡하는 크기 변화량  |
+| `corona.color`        | `#RRGGBB` | 두 겹 광륜의 기준색            |
+| `corona.innerScale`   | `1.1..2`  | 안쪽 광륜 크기                 |
+| `corona.outerScale`   | `1.5..3`  | 바깥 광륜 크기                 |
+| `corona.irregularity` | `0..0.18` | seed 기반 광륜 실루엣 변형량   |
+| `corona.opacity`      | `0..0.3`  | 안쪽 광륜의 기준 투명도        |
+
+`corona.outerScale`은 `innerScale`보다 커야 합니다. 항성 표면은 단일 경량 셰이더로
+계산하며 이미지 텍스처를 사용하지 않습니다. 광륜 geometry는 은하계 전환 때만 다시
+만들고 animation frame에서는 새 객체나 GPU buffer를 만들지 않습니다.
 
 ## 프로젝트 필드
 

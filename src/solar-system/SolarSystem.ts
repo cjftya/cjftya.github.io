@@ -89,7 +89,7 @@ export class SolarSystem {
       const projectId = planet.project.id;
       const selected = projectId === this.selectedProjectId;
       const hovered = projectId === this.hoveredProjectId;
-      planet.update(deltaSeconds, selected);
+      planet.update(deltaSeconds);
       this.orbitByProjectId.get(projectId)?.update(deltaSeconds, selected, hovered);
     }
 
@@ -138,10 +138,15 @@ export class SolarSystem {
     return this.activeLabelAnchors;
   }
 
-  getProjectWorldPosition(projectId: string): Vector3 | null {
+  copyProjectWorldPosition(projectId: string, target: Vector3): boolean {
     const planet = this.planetByProjectId.get(projectId);
 
-    return planet?.selectableMesh.getWorldPosition(new Vector3()) ?? null;
+    if (planet === undefined) {
+      return false;
+    }
+
+    planet.selectableMesh.getWorldPosition(target);
+    return true;
   }
 
   setActiveGalaxy(galaxy: Galaxy): void {
@@ -173,7 +178,7 @@ export class SolarSystem {
       garden.object.visible = galaxyId === galaxy.id;
       garden.setSelected(null);
     });
-    this.sun.setColor(galaxy.color);
+    this.sun.setProfile(galaxy.starProfile);
   }
 
   dispose(): void {
