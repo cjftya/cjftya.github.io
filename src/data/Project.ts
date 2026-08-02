@@ -10,6 +10,29 @@ export interface GalaxyAtmosphere {
   motionScale: number;
 }
 
+export interface StarColors {
+  base: string;
+  middle: string;
+  hot: string;
+}
+
+export interface StarCoronaProfile {
+  color: string;
+  innerScale: number;
+  outerScale: number;
+  irregularity: number;
+  opacity: number;
+}
+
+export interface StarProfile {
+  seed: number;
+  colors: StarColors;
+  patternScale: number;
+  flowSpeed: number;
+  pulseAmount: number;
+  corona: StarCoronaProfile;
+}
+
 export interface Galaxy {
   id: string;
   name: string;
@@ -17,6 +40,7 @@ export interface Galaxy {
   color: string;
   order: number;
   atmosphere: GalaxyAtmosphere;
+  starProfile: StarProfile;
 }
 
 export interface ProjectLinks {
@@ -83,7 +107,7 @@ export interface Project {
 }
 
 export interface ProjectCollection {
-  version: 3;
+  version: 4;
   galaxies: Galaxy[];
   projects: Project[];
 }

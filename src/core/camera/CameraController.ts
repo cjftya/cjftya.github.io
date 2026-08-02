@@ -1,5 +1,8 @@
 import { PerspectiveCamera, Vector3 } from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { FocusFollower } from './FocusFollower';
+
+export type FocusTargetResolver = (target: Vector3) => boolean;
 
 interface CameraTransition {
   startPosition: Vector3;
@@ -22,9 +25,13 @@ export class CameraController {
   private readonly homePosition = new Vector3(0, 7, 13);
   private readonly homeTarget = new Vector3();
   private readonly focusDirection = new Vector3(0.85, 0.55, 1).normalize();
+  private readonly focusFollower = new FocusFollower();
+  private readonly resolvedFocusTarget = new Vector3();
+  private readonly focusMovement = new Vector3();
   private readonly prefersReducedMotion = window.matchMedia(
     '(prefers-reduced-motion: reduce)',
   ).matches;
+  private focusTargetResolver: FocusTargetResolver | undefined;
   private transition: CameraTransition | undefined;
 
   constructor(canvas: HTMLCanvasElement, aspect: number) {
@@ -46,20 +53,31 @@ export class CameraController {
     this.camera.updateProjectionMatrix();
   }
 
-  focusOn(target: Vector3, planetRadius: number): void {
+  focusOn(resolveTarget: FocusTargetResolver, planetRadius: number): void {
+    if (!resolveTarget(this.resolvedFocusTarget)) {
+      return;
+    }
+
+    const target = this.resolvedFocusTarget;
     const distance = Math.max(planetRadius * 4.5, 3.2);
     const endPosition = target
       .clone()
       .add(this.focusDirection.clone().multiplyScalar(distance));
 
+    this.focusTargetResolver = resolveTarget;
+    this.focusFollower.begin(target);
     this.startTransition(endPosition, target, planetRadius);
   }
 
   resetFocus(): void {
+    this.focusTargetResolver = undefined;
+    this.focusFollower.clear();
     this.startTransition(this.homePosition, this.homeTarget, null);
   }
 
   update(deltaSeconds: number): void {
+    this.updateFocusedTarget();
+
     if (this.transition !== undefined) {
       this.updateTransition(deltaSeconds);
       return;
@@ -124,6 +142,29 @@ export class CameraController {
     if (progress === 1) {
       this.finishTransition(transition);
     }
+  }
+
+  private updateFocusedTarget(): void {
+    if (
+      this.focusTargetResolver === undefined ||
+      !this.focusTargetResolver(this.resolvedFocusTarget) ||
+      !this.focusFollower.update(this.resolvedFocusTarget, this.focusMovement)
+    ) {
+      return;
+    }
+
+    const transition = this.transition;
+
+    if (transition === undefined) {
+      this.camera.position.add(this.focusMovement);
+      this.controls.target.add(this.focusMovement);
+      return;
+    }
+
+    transition.startPosition.add(this.focusMovement);
+    transition.startTarget.add(this.focusMovement);
+    transition.endPosition.add(this.focusMovement);
+    transition.endTarget.add(this.focusMovement);
   }
 
   private finishTransition(transition: CameraTransition): void {

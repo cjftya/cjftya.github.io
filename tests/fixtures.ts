@@ -2,7 +2,7 @@ import type { ProjectCollection } from '../src/data/Project';
 
 export function createValidProjectCollection(): ProjectCollection {
   return {
-    version: 3,
+    version: 4,
     galaxies: [
       {
         id: 'sample-galaxy',
@@ -17,6 +17,24 @@ export function createValidProjectCollection(): ProjectCollection {
           starOpacity: 0.88,
           dustOpacity: 0.25,
           motionScale: 1,
+        },
+        starProfile: {
+          seed: 4101,
+          colors: {
+            base: '#f6a85f',
+            middle: '#ffd27d',
+            hot: '#fff4c7',
+          },
+          patternScale: 3.4,
+          flowSpeed: 0.055,
+          pulseAmount: 0.018,
+          corona: {
+            color: '#ff9e6d',
+            innerScale: 1.64,
+            outerScale: 2.25,
+            irregularity: 0.075,
+            opacity: 0.14,
+          },
         },
       },
     ],

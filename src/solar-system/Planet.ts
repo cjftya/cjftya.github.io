@@ -83,14 +83,12 @@ export class Planet {
     }
   }
 
-  update(deltaSeconds: number, orbitPaused = false): void {
+  update(deltaSeconds: number): void {
     const { orbit, rotation } = this.project.planet;
     const direction = rotation.direction === 'clockwise' ? -1 : 1;
     this.elapsedSeconds += deltaSeconds;
 
-    if (!orbitPaused) {
-      this.orbitPlane.rotation.y += orbit.speed * deltaSeconds;
-    }
+    this.orbitPlane.rotation.y += orbit.speed * deltaSeconds;
 
     this.spinGroup.rotation.y += direction * rotation.speed * deltaSeconds;
     this.spores.rotation.y += direction * deltaSeconds * 0.16;

@@ -56,8 +56,11 @@ pan은 끄고 damping과 최소·최대 거리를 설정합니다. OrbitControls
 
 행성 선택 시 `focusOn()`이 현재 카메라 위치와 행성 위치 사이를 0.75초 동안
 ease-out 보간합니다. 이동 중에는 controls 입력을 잠시 막고 완료 후 선택 행성을
-새 target으로 사용합니다. 선택 해제 시 `resetFocus()`가 태양계 기본 위치로
-복귀합니다. 사용자가 reduced motion을 요청한 환경에서는 보간 없이 즉시 이동합니다.
+새 target으로 사용합니다. `FocusFollower`는 매 프레임 행성의 공전 이동량만 계산해
+카메라 위치와 controls target에 함께 더합니다. 따라서 카메라는 행성을 따라가면서도
+사용자가 만든 상대 회전·줌 시점을 보존하고, 행성 자전은 따라가지 않습니다. 선택 해제
+시 `resetFocus()`가 태양계 기본 위치로 복귀합니다. 사용자가 reduced motion을 요청한
+환경에서는 보간 없이 즉시 이동합니다.
 
 ### SolarSystem
 
@@ -66,7 +69,7 @@ ease-out 보간합니다. 이동 중에는 controls 입력을 잠시 막고 완�
 - `Sun`을 한 개 소유합니다.
 - 프로젝트마다 `Planet`과 `Orbit`을 한 개씩 만듭니다.
 - 은하계마다 `CosmicGarden`을 하나씩 만들고 활성 은하계의 별자리만 갱신합니다.
-- 은하계를 바꾸면 비활성 행성·궤도·raycast 대상을 숨기고 중심별 색을 바꿉니다.
+- 은하계를 바꾸면 비활성 행성·궤도·raycast 대상을 숨기고 항성 프로필을 바꿉니다.
 - animation frame마다 각 `Planet.update(delta)`를 호출합니다.
 - raycast 대상 mesh와 프로젝트의 대응 관계를 보관합니다.
 - 프로젝트 ID와 런타임 행성의 대응 관계를 보관해 카메라용 world position을
@@ -76,8 +79,11 @@ ease-out 보간합니다. 이동 중에는 controls 입력을 잠시 막고 완�
 
 ### Sun
 
-중앙 구체, 두 겹의 반투명 광륜과 point light를 소유합니다. reduced motion 설정을
-따르는 아주 약한 맥동 외에는 행성 데이터와 무관합니다.
+중앙 구체, 두 겹의 반투명 광륜과 point light를 소유합니다. 단일 경량 셰이더가
+`starProfile`의 3단계 색상, seed, 무늬 크기와 흐름 속도로 대류 무늬를 만듭니다.
+두 광륜 geometry는 seed 기반으로 한 번 변형해 은하마다 다른 실루엣을 만들고 서로
+반대 방향으로 천천히 움직입니다. 이미지 텍스처나 후처리 효과는 추가하지 않으며,
+reduced motion 환경에서는 표면 흐름·광륜 회전·맥동을 모두 정지합니다.
 
 ### Orbit
 
@@ -94,7 +100,7 @@ ease-out 보간합니다. 이동 중에는 controls 입력을 잠시 막고 완�
 - 행성 주변의 생명광과 빛 입자
 - 고리가 없는 행성의 작은 위성
 - 선택·호버 강조
-- 선택 중 공전 일시 정지
+- 선택 중에도 유지되는 공전
 - mesh와 material dispose
 
 프로젝트 메타데이터를 보관하지만 데이터 파일을 직접 읽지는 않습니다.
@@ -156,7 +162,7 @@ export interface ProjectRepository {
 바꿉니다.
 `App`은 선택 상태의 단일 조정자이며 아래 네 작업을 함께 수행합니다.
 
-1. `SolarSystem.setSelected()`로 선택 강조와 공전 정지를 적용합니다.
+1. `SolarSystem.setSelected()`로 선택 강조를 적용합니다.
 2. `CameraController.focusOn()` 또는 `resetFocus()`로 카메라를 이동합니다.
 3. `UiController.showSelection()`으로 상세 패널을 표시하거나 닫습니다.
 4. browser history에 선택 상태를 기록해 뒤로가기를 전체 화면 복귀로 연결합니다.
