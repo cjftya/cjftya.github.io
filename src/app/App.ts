@@ -261,11 +261,10 @@ export class App {
       return;
     }
 
-    const worldPosition = this.solarSystem.getProjectWorldPosition(project.id);
-
-    if (worldPosition !== null) {
-      this.cameraController.focusOn(worldPosition, project.planet.shape.radius);
-    }
+    this.cameraController.focusOn(
+      (target) => this.solarSystem.copyProjectWorldPosition(project.id, target),
+      project.planet.shape.radius,
+    );
   }
 
   private applyGalaxy(galaxy: Galaxy, animate: boolean): void {

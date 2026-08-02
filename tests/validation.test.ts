@@ -50,6 +50,20 @@ describe('parseProjectCollection', () => {
     expect(() => parseProjectCollection(input)).toThrow(/starOpacity/);
   });
 
+  it('rejects a star profile with an inverted corona', () => {
+    const input = createValidProjectCollection();
+    input.galaxies[0]!.starProfile.corona.outerScale = 1.4;
+
+    expect(() => parseProjectCollection(input)).toThrow(/outerScale/);
+  });
+
+  it('rejects an excessive star pulse', () => {
+    const input = createValidProjectCollection();
+    input.galaxies[0]!.starProfile.pulseAmount = 0.08;
+
+    expect(() => parseProjectCollection(input)).toThrow(/pulseAmount/);
+  });
+
   it('rejects an invalid rotation direction', () => {
     const input = createValidProjectCollection() as unknown as {
       projects: Array<{ planet: { rotation: { direction: string } } }>;
