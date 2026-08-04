@@ -373,7 +373,8 @@
       "order": 10,
       "tags": ["웹 실험", "2D 물리", "PixiJS"],
       "links": {
-        "github": null
+        "github": null,
+        "page": "/projects/viola/"
       },
       "details": {
         "category": "브라우저 물리 실험",
