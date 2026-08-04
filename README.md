@@ -24,7 +24,6 @@ seed 기반 광륜 실루엣을 가집니다.
 
 GitHub Pages 저장소 자체를 제외한 공개 저장소를 행성으로 표시합니다.
 
-- Lottery Chart
 - Rainbow
 - LLM Android Leak Checker
 - Jelly Tracer
@@ -33,10 +32,11 @@ GitHub Pages 저장소 자체를 제외한 공개 저장소를 행성으로 표�
 
 ## Pages Archive
 
-GitHub Pages에 종속된 초기 웹 프로젝트는 별도 은하계로 표시합니다.
+GitHub Pages에서 직접 실행되는 웹 프로젝트를 별도 은하계로 표시합니다.
 
 - Viola
 - Wedding Card
+- Uriel
 
 Pages Archive의 상세 패널에는 Viola와 Wedding Card의 공개 페이지로 이동하는 `보기`
 버튼을 표시합니다. 두 프로젝트의 원본 정적 경로는 아래 레거시 프로젝트 규칙으로
