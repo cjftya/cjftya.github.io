@@ -38,13 +38,11 @@ GitHub Pages에서 직접 실행되는 웹 프로젝트를 별도 은하계로 �
 - Wedding Card
 - Uriel
 
-Pages Archive의 상세 패널에는 Viola와 Wedding Card의 공개 페이지로 이동하는 `보기`
-버튼을 표시합니다. 두 프로젝트의 원본 정적 경로는 아래 레거시 프로젝트 규칙으로
-그대로 유지합니다.
+Pages Archive의 상세 패널은 등록된 `보기`와 GitHub 버튼을 모두 표시합니다. Jelly
+Garden은 GitHub 버튼만 표시하고, Wedding Card는 두 버튼을 모두 숨깁니다. 기존 웹
+프로젝트의 원본 정적 경로는 아래 레거시 프로젝트 규칙으로 그대로 유지합니다.
 
 은하계 정보, 프로젝트 링크와 행성 설정은 `public/data/projects.json`에서 관리합니다.
-상세 패널의 액션은 Pages Archive에서만 표시합니다. Jelly Garden의 GitHub 링크는
-WebGL 대체 목록에서는 사용할 수 있지만 3D 상세 패널에는 표시하지 않습니다.
 
 ## 레거시 프로젝트
 
