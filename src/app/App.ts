@@ -115,6 +115,24 @@ export class App {
     this.rendererManager.dispose();
   }
 
+  pause(): void {
+    if (this.disposed) {
+      return;
+    }
+
+    this.rendererManager.renderer.setAnimationLoop(null);
+    this.clock.stop();
+  }
+
+  resume(): void {
+    if (this.disposed) {
+      return;
+    }
+
+    this.syncRenderLoopWithVisibility();
+    this.handleResize();
+  }
+
   private readonly animate = (timeMs: number): void => {
     const elapsedMs = timeMs - this.lastRenderTimeMs;
 
@@ -220,8 +238,7 @@ export class App {
 
   private syncRenderLoopWithVisibility(): void {
     if (document.hidden) {
-      this.rendererManager.renderer.setAnimationLoop(null);
-      this.clock.stop();
+      this.pause();
       return;
     }
 
