@@ -1,4 +1,5 @@
 import type { Galaxy, Project, ProjectStatus } from '../data/Project';
+import { getProjectDetailActions } from './projectActionPolicy';
 
 const PROJECT_STATUS_LABELS: Record<ProjectStatus, string> = {
   active: '진행 중',
@@ -196,11 +197,12 @@ export class UiController {
     this.projectSummary.textContent =
       project.summary || '이 프로젝트에는 아직 소개가 등록되지 않았어요.';
     this.projectDescription.textContent = project.details.description;
-    this.projectPageLink.textContent = `${project.name} 열기`;
-    this.showLink(this.projectPageLink, project.links.page ?? null);
-    this.showLink(this.projectGithubLink, project.links.github);
+    const detailActions = getProjectDetailActions(project);
+    this.projectPageLink.textContent = `${project.name} 보기`;
+    this.showLink(this.projectPageLink, detailActions.page);
+    this.showLink(this.projectGithubLink, detailActions.github);
     this.projectActions.hidden =
-      project.links.page === undefined && project.links.github === null;
+      detailActions.page === null && detailActions.github === null;
     this.playTravelEffect();
     this.projectTechStack.replaceChildren(
       ...project.details.techStack.map((technology) => {

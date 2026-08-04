@@ -420,7 +420,8 @@
       "order": 20,
       "tags": ["모바일 웹", "청첩장", "캔버스"],
       "links": {
-        "github": null
+        "github": null,
+        "page": "/projects/weddingcard/"
       },
       "details": {
         "category": "모바일 웹 아카이브",

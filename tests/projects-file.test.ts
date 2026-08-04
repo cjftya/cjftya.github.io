@@ -69,7 +69,10 @@ describe('public/data/projects.json', () => {
     });
     expect(
       collection.projects.find((project) => project.id === 'wedding-card')?.links,
-    ).toEqual({ github: null });
+    ).toEqual({
+      github: null,
+      page: '/projects/weddingcard/',
+    });
     expect(
       collection.projects.every(
         (project) =>

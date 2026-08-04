@@ -38,12 +38,13 @@ GitHub Pages에 종속된 초기 웹 프로젝트는 별도 은하계로 표시�
 - Viola
 - Wedding Card
 
-Viola의 상세 패널에는 새 인터랙티브 아카이브로 이동하는 내부 바로가기를 표시합니다.
-Wedding Card는 별도 액션 없이 보관하며, 두 프로젝트의 원본 정적 경로는 아래 레거시
-프로젝트 규칙으로 그대로 유지합니다.
+Pages Archive의 상세 패널에는 Viola와 Wedding Card의 공개 페이지로 이동하는 `보기`
+버튼을 표시합니다. 두 프로젝트의 원본 정적 경로는 아래 레거시 프로젝트 규칙으로
+그대로 유지합니다.
 
 은하계 정보, 프로젝트 링크와 행성 설정은 `public/data/projects.json`에서 관리합니다.
-`links.page`와 `links.github`가 모두 없으면 상세 패널의 액션 영역 전체를 숨깁니다.
+상세 패널의 액션은 Pages Archive에서만 표시합니다. Jelly Garden의 GitHub 링크는
+WebGL 대체 목록에서는 사용할 수 있지만 3D 상세 패널에는 표시하지 않습니다.
 
 ## 레거시 프로젝트
 
@@ -132,7 +133,7 @@ Pull Request에서는 lint, test, build까지만 실행하며 실제 배포는 �
 2. 프로젝트가 속할 `galaxyId`를 선택합니다.
 3. 목록 순서는 배열 위치가 아니라 `order`로 정합니다.
 4. 프로젝트 설명, 기술 스택과 `planet` 표현 설정을 입력합니다.
-5. 상세 액션이 필요 없으면 `links.github`를 `null`로 둡니다.
+5. Pages Archive의 공개 페이지는 `links.page`에 내부 경로를 입력합니다.
 6. `npm run test`로 스키마와 중복 ID를 검사합니다.
 7. `npm run dev`로 은하계 전환, 행성과 링크를 확인합니다.
 
