@@ -11,6 +11,10 @@ for (const directory of legacyDirectories) {
   await cp(resolve(repositoryRoot, directory), resolve(outputRoot, directory), {
     recursive: true,
     force: true,
+    filter: (source) => {
+      if (directory !== 'projects') return true;
+      return source !== resolve(repositoryRoot, 'projects', 'viola');
+    },
   });
 }
 
