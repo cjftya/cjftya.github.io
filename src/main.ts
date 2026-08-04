@@ -1,4 +1,5 @@
 import { App } from './app/App';
+import { handlePageHide, handlePageShow } from './app/pageLifecycle';
 import { JsonProjectRepository } from './data/JsonProjectRepository';
 import './styles/main.css';
 import { renderWebGlFallback } from './ui/UiController';
@@ -21,7 +22,8 @@ async function bootstrap(): Promise<void> {
   try {
     const app = new App(appRoot);
     await app.start();
-    window.addEventListener('pagehide', () => app.dispose(), { once: true });
+    window.addEventListener('pagehide', (event) => handlePageHide(app, event));
+    window.addEventListener('pageshow', () => handlePageShow(app));
   } catch (error) {
     console.error('WebGL renderer initialization failed.', error);
     const collection = await loadFallbackProjects();
