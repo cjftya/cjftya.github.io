@@ -367,18 +367,18 @@
       "id": "viola",
       "galaxyId": "pages-archive",
       "name": "Viola",
-      "summary": "p5.js로 충돌, 파티클, 제약 조건을 실험한 브라우저 물리 놀이터예요.",
-      "status": "legacy",
+      "summary": "2013년부터 만든 46개의 2D 물리·파티클 실험을 다시 실행하는 인터랙티브 아카이브예요.",
+      "status": "active",
       "featured": false,
       "order": 10,
-      "tags": ["웹 실험", "물리 엔진", "캔버스"],
+      "tags": ["웹 실험", "2D 물리", "PixiJS"],
       "links": {
         "github": null
       },
       "details": {
         "category": "브라우저 물리 실험",
-        "description": "도형 충돌과 반응, 스프링과 제약 조건, 파티클 장면을 직접 구현하며 2D 물리와 오브젝트 관리 구조를 실험한 초기 웹 프로젝트예요.",
-        "techStack": ["JavaScript", "p5.js", "Canvas 2D"]
+        "description": "도형 충돌과 반응, 스프링과 제약 조건, 고밀도 파티클 등 오래된 토이 프로젝트 46개를 원본 로직 중심으로 보존하고 공통 물리 코어 위에서 실행해요.",
+        "techStack": ["TypeScript", "PixiJS", "WebGL", "Vite"]
       },
       "planet": {
         "seed": 3107,

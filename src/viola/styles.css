@@ -1,0 +1,435 @@
+:root {
+  color: #e8fff8;
+  background: #081014;
+  font-family: Inter, Pretendard, 'Noto Sans KR', system-ui, sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+* {
+  box-sizing: border-box;
+}
+html {
+  min-width: 320px;
+  background: #081014;
+}
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background: radial-gradient(circle at 78% 8%, #15342f 0, transparent 32rem), #081014;
+}
+button,
+input {
+  font: inherit;
+}
+button {
+  color: inherit;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+.archive-shell {
+  width: min(1460px, 100%);
+  margin: 0 auto;
+  padding: 28px clamp(18px, 4vw, 72px) 48px;
+}
+.archive-hero {
+  position: relative;
+  min-height: 440px;
+  padding: 24px 0 52px;
+  border-bottom: 1px solid #294049;
+}
+.archive-home {
+  color: #91f5cf;
+  font:
+    600 11px/1.2 ui-monospace,
+    monospace;
+  letter-spacing: 0.18em;
+  text-decoration: none;
+}
+.archive-kicker,
+.section-index {
+  margin: 110px 0 8px;
+  color: #6d928c;
+  font:
+    500 11px/1.3 ui-monospace,
+    monospace;
+  letter-spacing: 0.18em;
+}
+.archive-hero h1 {
+  margin: 0;
+  color: #effff9;
+  font:
+    300 clamp(76px, 15vw, 188px)/0.88 Georgia,
+    serif;
+  letter-spacing: -0.07em;
+}
+.archive-intro {
+  max-width: 660px;
+  margin: 32px 0 0 auto;
+  color: #a9c3bc;
+  font-size: clamp(15px, 1.5vw, 19px);
+  line-height: 1.75;
+  word-break: keep-all;
+}
+.archive-stats {
+  display: flex;
+  gap: clamp(24px, 5vw, 70px);
+  margin-top: 52px;
+  color: #6d928c;
+  font:
+    500 11px/1.4 ui-monospace,
+    monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.archive-stats b {
+  display: block;
+  color: #91f5cf;
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+.archive-browser {
+  padding: 82px 0;
+}
+.browser-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 24px;
+}
+.browser-heading .section-index {
+  margin: 0 0 10px;
+}
+.browser-heading h2 {
+  margin: 0;
+  font:
+    400 clamp(32px, 5vw, 64px)/1.1 Georgia,
+    serif;
+}
+.search-box input {
+  width: min(340px, 42vw);
+  padding: 13px 2px;
+  color: #d9eee8;
+  border: 0;
+  border-bottom: 1px solid #48666f;
+  outline: 0;
+  background: transparent;
+}
+.search-box input:focus {
+  border-color: #91f5cf;
+}
+.category-tabs {
+  display: flex;
+  gap: 8px;
+  margin-top: 42px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+.category-tabs button {
+  flex: 0 0 auto;
+  padding: 9px 13px;
+  border: 1px solid #294049;
+  border-radius: 99px;
+  color: #839f98;
+  background: transparent;
+  cursor: pointer;
+}
+.category-tabs button:hover,
+.category-tabs button.is-active {
+  border-color: #67e8bd;
+  color: #dffff4;
+  background: #15342f;
+}
+.category-tabs small {
+  margin-left: 5px;
+  color: #67e8bd;
+}
+.date-note {
+  margin: 18px 0 30px;
+  color: #607c76;
+  font-size: 12px;
+}
+.experiment-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-top: 1px solid #294049;
+  border-left: 1px solid #294049;
+}
+.experiment-card {
+  position: relative;
+  min-height: 284px;
+  padding: 24px;
+  border: 0;
+  border-right: 1px solid #294049;
+  border-bottom: 1px solid #294049;
+  text-align: left;
+  background: rgba(7, 18, 20, 0.5);
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    transform 0.2s;
+}
+.experiment-card:hover {
+  z-index: 1;
+  background: #102823;
+  transform: translateY(-3px);
+  box-shadow: 0 16px 42px #0007;
+}
+.experiment-card__topline {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: #66827c;
+  font:
+    500 10px/1.3 ui-monospace,
+    monospace;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.experiment-card__category {
+  color: #67e8bd;
+}
+.experiment-card strong {
+  display: block;
+  margin-top: 44px;
+  color: #eafff7;
+  font:
+    400 28px/1.08 Georgia,
+    serif;
+}
+.experiment-card__summary {
+  display: block;
+  margin-top: 15px;
+  color: #91aaa4;
+  font-size: 13px;
+  line-height: 1.65;
+  word-break: keep-all;
+}
+.experiment-card__original {
+  display: block;
+  margin-top: 16px;
+  color: #526d67;
+  font:
+    10px/1.3 ui-monospace,
+    monospace;
+}
+.experiment-card__start {
+  position: absolute;
+  right: 22px;
+  bottom: 20px;
+  color: #91f5cf;
+  font-size: 12px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.experiment-card:hover .experiment-card__start,
+.experiment-card:focus-visible .experiment-card__start {
+  opacity: 1;
+}
+.empty-state {
+  grid-column: 1 / -1;
+  min-height: 220px;
+  margin: 0;
+  display: grid;
+  place-items: center;
+  color: #839f98;
+  border-right: 1px solid #294049;
+  border-bottom: 1px solid #294049;
+}
+.archive-footer {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 24px;
+  border-top: 1px solid #294049;
+  color: #526d67;
+  font:
+    10px/1.4 ui-monospace,
+    monospace;
+  letter-spacing: 0.14em;
+}
+
+.play-shell {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  width: 100%;
+  height: 100dvh;
+  min-height: 560px;
+  padding: 18px clamp(14px, 2.5vw, 38px);
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 45%, #102a27 0, #081014 58%);
+}
+.play-header {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 20px;
+  min-height: 78px;
+  border-bottom: 1px solid #294049;
+}
+.back-button,
+.reset-button {
+  width: max-content;
+  padding: 10px 0;
+  border: 0;
+  color: #91f5cf;
+  background: transparent;
+  cursor: pointer;
+}
+.reset-button {
+  justify-self: end;
+  color: #8ca69f;
+}
+.back-button:hover,
+.reset-button:hover {
+  color: #effff9;
+}
+.play-title {
+  text-align: center;
+}
+.play-title p {
+  margin: 0 0 5px;
+  color: #617f78;
+  font:
+    9px/1.2 ui-monospace,
+    monospace;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.play-title h1 {
+  margin: 0;
+  font:
+    400 clamp(22px, 3vw, 36px)/1 Georgia,
+    serif;
+}
+.canvas-frame {
+  position: relative;
+  min-height: 0;
+  margin: 18px 0;
+  border: 1px solid #294049;
+  overflow: hidden;
+  background: #071012;
+  box-shadow: inset 0 0 80px #0007;
+}
+.pixi-stage {
+  width: 100%;
+  height: 100%;
+  min-height: 320px;
+  touch-action: none;
+}
+.pixi-stage canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: crosshair;
+}
+.play-hint {
+  position: absolute;
+  left: 18px;
+  bottom: 16px;
+  max-width: min(360px, calc(100% - 36px));
+  padding: 11px 14px;
+  border-left: 2px solid #67e8bd;
+  color: #b9d1cb;
+  background: #06100ddd;
+  pointer-events: none;
+}
+.play-hint span {
+  color: #67e8bd;
+  font:
+    9px/1 ui-monospace,
+    monospace;
+  letter-spacing: 0.14em;
+}
+.play-hint p {
+  margin: 5px 0 0;
+  font-size: 12px;
+}
+.play-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  min-height: 42px;
+  color: #68837d;
+  font-size: 11px;
+}
+.play-footer p {
+  margin: 0;
+}
+.play-footer span {
+  font-family: ui-monospace, monospace;
+  white-space: nowrap;
+}
+
+@media (max-width: 900px) {
+  .experiment-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .archive-hero {
+    min-height: 380px;
+  }
+  .archive-kicker {
+    margin-top: 84px;
+  }
+}
+
+@media (max-width: 620px) {
+  .archive-shell {
+    padding-inline: 14px;
+  }
+  .archive-hero {
+    min-height: 0;
+  }
+  .archive-intro {
+    margin-top: 26px;
+  }
+  .archive-stats {
+    gap: 24px;
+  }
+  .browser-heading {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .search-box input {
+    width: 100%;
+  }
+  .experiment-grid {
+    grid-template-columns: 1fr;
+  }
+  .experiment-card {
+    min-height: 250px;
+  }
+  .play-shell {
+    padding: 10px;
+  }
+  .play-header {
+    grid-template-columns: auto 1fr auto;
+    gap: 10px;
+  }
+  .play-title p {
+    display: none;
+  }
+  .play-title h1 {
+    font-size: 20px;
+  }
+  .canvas-frame {
+    margin: 10px 0;
+  }
+  .play-footer {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .experiment-card {
+    transition: none;
+  }
+}
