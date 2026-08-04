@@ -37,7 +37,7 @@
     {
       "id": "pages-archive",
       "name": "Pages Archive",
-      "description": "GitHub Pages에 남아 있는 초기 웹 프로젝트",
+      "description": "GitHub Pages에서 이어지는 웹 프로젝트",
       "color": "#b79cff",
       "order": 20,
       "atmosphere": {
@@ -70,52 +70,6 @@
   ],
   "projects": [
     {
-      "id": "lottery-chart",
-      "galaxyId": "jelly-garden",
-      "name": "Lottery Chart",
-      "summary": "로또 당첨 데이터를 수집해 번호 출현 패턴과 조합 후보를 분석하는 프로젝트예요.",
-      "status": "legacy",
-      "featured": false,
-      "order": 10,
-      "tags": ["로또", "데이터 분석"],
-      "links": {
-        "github": "https://github.com/cjftya/lotterychart"
-      },
-      "details": {
-        "category": "데이터 분석 실험",
-        "description": "동행복권 회차 데이터를 API와 CSV로 적재하고, 최근 회차의 번호별 출현 빈도를 계산해 조건에 맞는 조합 후보를 생성해요.",
-        "techStack": ["Python", "Requests", "Beautiful Soup", "CSV"]
-      },
-      "planet": {
-        "seed": 2101,
-        "orbit": {
-          "radius": 4.3,
-          "speed": 0.105,
-          "startAngle": 10,
-          "inclination": 2
-        },
-        "rotation": {
-          "speed": 0.18,
-          "direction": "counterclockwise",
-          "axisTilt": 7
-        },
-        "shape": {
-          "radius": 0.5,
-          "roughness": 0.045,
-          "frequency": 2.2
-        },
-        "surface": {
-          "baseColor": "#f6c85f"
-        },
-        "ring": {
-          "enabled": false,
-          "color": "#fff1bd",
-          "width": 0.14,
-          "tilt": 0
-        }
-      }
-    },
-    {
       "id": "rainbow",
       "galaxyId": "jelly-garden",
       "name": "Rainbow",
@@ -123,14 +77,24 @@
       "status": "legacy",
       "featured": false,
       "order": 20,
-      "tags": ["암호화폐", "시장 분석", "자동화"],
+      "tags": [
+        "암호화폐",
+        "시장 분석",
+        "자동화"
+      ],
       "links": {
         "github": "https://github.com/cjftya/rainbow"
       },
       "details": {
         "category": "시장 분석 자동화",
         "description": "Binance의 현물·선물 OHLCV 데이터를 병렬로 수집하고, 주기별 롱·숏 조건 분석과 Telegram 알림 흐름을 실험한 Python 서비스예요.",
-        "techStack": ["Python", "Flask", "CCXT", "APScheduler", "Telegram Bot API"]
+        "techStack": [
+          "Python",
+          "Flask",
+          "CCXT",
+          "APScheduler",
+          "Telegram Bot API"
+        ]
       },
       "planet": {
         "seed": 2202,
@@ -169,7 +133,11 @@
       "status": "active",
       "featured": false,
       "order": 30,
-      "tags": ["Android", "메모리 누수", "로컬 LLM"],
+      "tags": [
+        "Android",
+        "메모리 누수",
+        "로컬 LLM"
+      ],
       "links": {
         "github": "https://github.com/cjftya/llm-android-leakchecker"
       },
@@ -221,14 +189,23 @@
       "status": "active",
       "featured": true,
       "order": 40,
-      "tags": ["Android", "성능 분석", "포렌식"],
+      "tags": [
+        "Android",
+        "성능 분석",
+        "포렌식"
+      ],
       "links": {
         "github": "https://github.com/cjftya/jelly_tracer"
       },
       "details": {
         "category": "Android 성능 포렌식",
         "description": "실행·블로킹·스케줄링 시간을 분리하고 Point Scan, Insight Scan, Context Scan을 통해 앱 실행 지연의 원인과 주변 시스템 부하를 단계적으로 좁혀요.",
-        "techStack": ["Python", "Perfetto Trace Processor", "Pandas", "Gemma"]
+        "techStack": [
+          "Python",
+          "Perfetto Trace Processor",
+          "Pandas",
+          "Gemma"
+        ]
       },
       "planet": {
         "seed": 2404,
@@ -267,7 +244,11 @@
       "status": "active",
       "featured": false,
       "order": 50,
-      "tags": ["AI 에이전트", "시뮬레이션", "기억 시스템"],
+      "tags": [
+        "AI 에이전트",
+        "시뮬레이션",
+        "기억 시스템"
+      ],
       "links": {
         "github": "https://github.com/cjftya/jelly_sim_v1"
       },
@@ -319,7 +300,11 @@
       "status": "active",
       "featured": true,
       "order": 60,
-      "tags": ["Android", "Markdown", "문서 도구"],
+      "tags": [
+        "Android",
+        "Markdown",
+        "문서 도구"
+      ],
       "links": {
         "github": "https://github.com/cjftya/jelly_markdown"
       },
@@ -371,7 +356,11 @@
       "status": "active",
       "featured": false,
       "order": 10,
-      "tags": ["웹 실험", "2D 물리", "PixiJS"],
+      "tags": [
+        "웹 실험",
+        "2D 물리",
+        "PixiJS"
+      ],
       "links": {
         "github": null,
         "page": "/projects/viola/"
@@ -379,7 +368,12 @@
       "details": {
         "category": "브라우저 물리 실험",
         "description": "도형 충돌과 반응, 스프링과 제약 조건, 고밀도 파티클 등 오래된 토이 프로젝트 46개를 원본 로직 중심으로 보존하고 공통 물리 코어 위에서 실행해요.",
-        "techStack": ["TypeScript", "PixiJS", "WebGL", "Vite"]
+        "techStack": [
+          "TypeScript",
+          "PixiJS",
+          "WebGL",
+          "Vite"
+        ]
       },
       "planet": {
         "seed": 3107,
@@ -418,7 +412,11 @@
       "status": "archived",
       "featured": false,
       "order": 20,
-      "tags": ["모바일 웹", "청첩장", "캔버스"],
+      "tags": [
+        "모바일 웹",
+        "청첩장",
+        "캔버스"
+      ],
       "links": {
         "github": null,
         "page": "/projects/weddingcard/"
@@ -426,7 +424,12 @@
       "details": {
         "category": "모바일 웹 아카이브",
         "description": "초대 문구, 일정, 지도, 갤러리와 입자 효과를 하나의 세로형 화면에 구성하고 터치 탐색에 맞춰 제작한 개인용 웹 프로젝트예요.",
-        "techStack": ["JavaScript", "p5.js", "Viewer.js", "Canvas 2D"]
+        "techStack": [
+          "JavaScript",
+          "p5.js",
+          "Viewer.js",
+          "Canvas 2D"
+        ]
       },
       "planet": {
         "seed": 3208,
@@ -454,6 +457,58 @@
           "color": "#ffd8ea",
           "width": 0.14,
           "tilt": 0
+        }
+      }
+    },
+    {
+      "id": "uriel",
+      "galaxyId": "pages-archive",
+      "name": "Uriel",
+      "summary": "로또 번호를 원형과 선택표 위의 도형으로 바꾸고 회차별 형태 변화를 탐색하는 시각화 프로젝트예요.",
+      "status": "active",
+      "featured": true,
+      "order": 30,
+      "tags": [
+        "로또",
+        "패턴 시각화",
+        "데이터 탐색"
+      ],
+      "links": {
+        "github": null
+      },
+      "details": {
+        "category": "로또 패턴 시각화",
+        "description": "1~45 번호를 원 둘레와 실제 선택표 배치에 대응시켜, 여섯 번호가 만드는 다각형의 형태와 회차별 변화를 비교하고 탐색해요.",
+        "techStack": [
+          "TypeScript"
+        ]
+      },
+      "planet": {
+        "seed": 3309,
+        "orbit": {
+          "radius": 10.9,
+          "speed": 0.041,
+          "startAngle": 318,
+          "inclination": 4
+        },
+        "rotation": {
+          "speed": 0.15,
+          "direction": "counterclockwise",
+          "axisTilt": 23
+        },
+        "shape": {
+          "radius": 0.76,
+          "roughness": 0.07,
+          "frequency": 3.3
+        },
+        "surface": {
+          "baseColor": "#f0bd72"
+        },
+        "ring": {
+          "enabled": true,
+          "color": "#e8d7ff",
+          "width": 0.17,
+          "tilt": 16
         }
       }
     }
