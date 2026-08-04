@@ -679,6 +679,18 @@ h1 {
   background: linear-gradient(135deg, #a6e3d6, #a9c9ff);
 }
 
+.project-page-link {
+  min-width: 9rem;
+  justify-content: center;
+  color: #f8f7ff;
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--project-color) 76%, #ffffff),
+    color-mix(in srgb, var(--project-color) 72%, #68d8c5)
+  );
+  box-shadow: 0 0 1.15rem color-mix(in srgb, var(--project-color) 24%, transparent);
+}
+
 .project-link:hover,
 .project-link:focus-visible {
   background: #c5f5eb;
@@ -687,6 +699,15 @@ h1 {
 .project-github-link:hover,
 .project-github-link:focus-visible {
   background: linear-gradient(135deg, #c5f5eb, #c6dcff);
+}
+
+.project-page-link:hover,
+.project-page-link:focus-visible {
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--project-color) 64%, #ffffff),
+    color-mix(in srgb, var(--project-color) 58%, #9ff4e5)
+  );
 }
 
 @media (max-width: 640px) {

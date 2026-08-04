@@ -94,6 +94,20 @@ describe('parseProjectCollection', () => {
     expect(() => parseProjectCollection(input)).toThrow(/GitHub URL/);
   });
 
+  it('allows an internal project page action', () => {
+    const input = createValidProjectCollection();
+    input.projects[0]!.links.page = '/projects/sample-project/';
+
+    expect(parseProjectCollection(input)).toEqual(input);
+  });
+
+  it('rejects an external project page action', () => {
+    const input = createValidProjectCollection();
+    input.projects[0]!.links.page = 'https://example.com/projects/sample-project/';
+
+    expect(() => parseProjectCollection(input)).toThrow(/project path/);
+  });
+
   it('allows a project with no detail-page action', () => {
     const input = createValidProjectCollection();
     input.projects[0]!.links.github = null;

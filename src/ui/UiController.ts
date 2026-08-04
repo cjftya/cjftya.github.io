@@ -35,6 +35,7 @@ export class UiController {
   private readonly projectSummary: HTMLElement;
   private readonly projectDescription: HTMLElement;
   private readonly projectTechStack: HTMLElement;
+  private readonly projectPageLink: HTMLAnchorElement;
   private readonly projectGithubLink: HTMLAnchorElement;
   private readonly projectActions: HTMLElement;
   private readonly closeButton: HTMLButtonElement;
@@ -107,6 +108,7 @@ export class UiController {
               <ul class="project-tech-stack"></ul>
             </section>
             <div class="project-actions">
+              <a class="project-link project-page-link"></a>
               <a
                 class="project-link project-github-link"
                 target="_blank"
@@ -134,6 +136,11 @@ export class UiController {
     this.projectSummary = this.requireElement(root, '.project-summary');
     this.projectDescription = this.requireElement(root, '.project-description');
     this.projectTechStack = this.requireElement(root, '.project-tech-stack');
+    this.projectPageLink = this.requireElement(
+      root,
+      '.project-page-link',
+      HTMLAnchorElement,
+    );
     this.projectGithubLink = this.requireElement(
       root,
       '.project-github-link',
@@ -189,8 +196,11 @@ export class UiController {
     this.projectSummary.textContent =
       project.summary || '이 프로젝트에는 아직 소개가 등록되지 않았어요.';
     this.projectDescription.textContent = project.details.description;
+    this.projectPageLink.textContent = `${project.name} 열기`;
+    this.showLink(this.projectPageLink, project.links.page ?? null);
     this.showLink(this.projectGithubLink, project.links.github);
-    this.projectActions.hidden = project.links.github === null;
+    this.projectActions.hidden =
+      project.links.page === undefined && project.links.github === null;
     this.playTravelEffect();
     this.projectTechStack.replaceChildren(
       ...project.details.techStack.map((technology) => {
@@ -483,17 +493,21 @@ export function renderWebGlFallback(
       .filter((project) => project.galaxyId === galaxy.id)
       .map((project) => {
         const item = document.createElement('li');
+        const destination = project.links.page ?? project.links.github;
         const name =
-          project.links.github === null
+          destination === null
             ? document.createElement('strong')
             : document.createElement('a');
         const summary = document.createElement('span');
 
         name.textContent = project.name;
-        if (name instanceof HTMLAnchorElement && project.links.github !== null) {
-          name.href = project.links.github;
-          name.target = '_blank';
-          name.rel = 'noreferrer';
+        if (name instanceof HTMLAnchorElement && destination !== null) {
+          name.href = destination;
+
+          if (project.links.page === undefined) {
+            name.target = '_blank';
+            name.rel = 'noreferrer';
+          }
         }
         summary.textContent = project.summary;
         item.append(name, summary);
