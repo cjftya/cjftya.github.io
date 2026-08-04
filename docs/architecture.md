@@ -26,7 +26,9 @@ flowchart TD
 6. 로딩이 끝나면 `PlanetPicker`가 선택 이벤트를 `App`에 전달합니다.
 7. `App`이 행성 선택, 카메라 포커스, UI 상세 정보와 브라우저 history를 함께
    갱신합니다.
-8. 앱 종료 시 `dispose()`가 이벤트, WebGL 리소스와 controls를 정리합니다.
+8. 다른 페이지로 완전히 이탈할 때 `dispose()`가 이벤트, WebGL 리소스와 controls를
+   정리합니다. 뒤로가기 캐시에 들어갈 때는 렌더만 일시정지하고, 복귀 시 기존 장면을
+   다시 시작합니다.
 
 오류는 `App` 경계에서 잡습니다. 자세한 검증 경로는 콘솔에 남고, 화면에는 짧은 오류
 상태가 표시됩니다.
@@ -110,6 +112,8 @@ reduced motion 환경에서는 표면 흐름·광륜 회전·맥동을 모두 �
 데스크톱은 디스플레이 주사율을 따르고, coarse pointer를 사용하는 모바일 환경은
 30fps로 제한합니다. 문서가 background 상태가 되면 animation loop를 중지하고,
 다시 보일 때 clock과 loop를 재시작해 숨겨진 탭에서 GPU를 사용하지 않습니다.
+`pagehide.persisted`가 참인 뒤로가기 캐시 전환에서는 WebGL 리소스를 폐기하지 않고
+렌더만 멈춥니다. `pageshow`로 복원되면 viewport 크기를 다시 읽고 loop를 재시작합니다.
 
 ## 행성 생성
 
