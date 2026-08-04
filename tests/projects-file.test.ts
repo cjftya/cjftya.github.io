@@ -14,7 +14,6 @@ describe('public/data/projects.json', () => {
       'pages-archive',
     ]);
     expect(collection.projects.map((project) => project.id)).toEqual([
-      'lottery-chart',
       'rainbow',
       'llm-android-leakchecker',
       'jelly-tracer',
@@ -22,6 +21,7 @@ describe('public/data/projects.json', () => {
       'jelly-markdown',
       'viola',
       'wedding-card',
+      'uriel',
     ]);
     expect(collection.projects).toHaveLength(8);
     expect(
@@ -43,10 +43,10 @@ describe('public/data/projects.json', () => {
     );
     expect(
       collection.projects.filter((project) => project.galaxyId === 'jelly-garden'),
-    ).toHaveLength(6);
+    ).toHaveLength(5);
     expect(
       collection.projects.filter((project) => project.galaxyId === 'pages-archive'),
-    ).toHaveLength(2);
+    ).toHaveLength(3);
     expect(
       collection.projects
         .filter((project) => project.galaxyId === 'jelly-garden')
