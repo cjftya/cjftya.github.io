@@ -59,11 +59,17 @@ describe('public/data/projects.json', () => {
     expect(
       collection.projects
         .filter((project) => project.galaxyId === 'pages-archive')
-        .every(
-          (project) =>
-            Object.keys(project.links).length === 1 && project.links.github === null,
-        ),
+        .every((project) => project.links.github === null),
     ).toBe(true);
+    expect(
+      collection.projects.find((project) => project.id === 'viola')?.links,
+    ).toEqual({
+      github: null,
+      page: '/projects/viola/',
+    });
+    expect(
+      collection.projects.find((project) => project.id === 'wedding-card')?.links,
+    ).toEqual({ github: null });
     expect(
       collection.projects.every(
         (project) =>

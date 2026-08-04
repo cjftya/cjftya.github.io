@@ -10,6 +10,14 @@ const githubLinkSchema = z
     'Must be an absolute GitHub URL',
   );
 
+const projectPageLinkSchema = z
+  .string()
+  .trim()
+  .regex(
+    /^\/projects\/[a-z0-9]+(?:-[a-z0-9]+)*\/$/,
+    'Must be an absolute project path ending with a slash',
+  );
+
 const colorSchema = z
   .string()
   .regex(/^#[0-9a-fA-F]{6}$/, 'Must be a six-digit hexadecimal color');
@@ -69,6 +77,7 @@ const projectSchema = z.object({
   tags: z.array(z.string().trim().min(1)),
   links: z.object({
     github: githubLinkSchema.nullable(),
+    page: projectPageLinkSchema.optional(),
   }),
   details: z.object({
     category: z.string().trim().min(1),

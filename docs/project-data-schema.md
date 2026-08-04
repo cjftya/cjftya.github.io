@@ -83,7 +83,7 @@
 | `featured` | boolean  | 예   | 향후 강조 표시에 사용할 값               |
 | `order`    | integer  | 예   | 같은 은하계 안에서의 표시 순서           |
 | `tags`     | string[] | 예   | 검색·분류용 태그. 없으면 빈 배열         |
-| `links`    | object   | 예   | 상세 패널의 선택적 GitHub 액션           |
+| `links`    | object   | 예   | 상세 패널의 선택적 프로젝트 액션         |
 | `details`  | object   | 예   | 상세 패널에 표시할 설명과 기술 정보      |
 | `planet`   | object   | 예   | 행성 표현 설정                           |
 
@@ -91,13 +91,15 @@
 
 ## 링크
 
-| 필드           | 타입             | 의미                       |
-| -------------- | ---------------- | -------------------------- |
-| `links.github` | string 또는 null | 선택적 프로젝트 GitHub URL |
+| 필드           | 타입             | 의미                             |
+| -------------- | ---------------- | -------------------------------- |
+| `links.github` | string 또는 null | 선택적 프로젝트 GitHub URL       |
+| `links.page`   | string 또는 생략 | 선택적 내부 프로젝트 페이지 경로 |
 
-문자열이면 `https://github.com/`으로 시작하는 완전한 URL이어야 합니다. `null`이면
-상세 패널의 액션 영역 전체를 숨기며 WebGL 대체 화면에서도 링크를 만들지 않습니다.
-Viola와 Wedding Card가 이 규칙을 사용합니다.
+`links.github` 문자열은 `https://github.com/`으로 시작하는 완전한 URL이어야 합니다.
+`links.page`는 `/projects/{slug}/` 형식의 내부 절대 경로만 허용합니다. 두 링크가 모두
+없으면 상세 패널의 액션 영역 전체를 숨기며 WebGL 대체 화면에서도 링크를 만들지
+않습니다. Viola는 내부 페이지 링크를 사용하고 Wedding Card는 액션 없이 보관합니다.
 
 ## 상세 정보
 

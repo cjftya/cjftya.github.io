@@ -45,6 +45,7 @@ export interface Galaxy {
 
 export interface ProjectLinks {
   github: string | null;
+  page?: string;
 }
 
 export interface ProjectDetails {
