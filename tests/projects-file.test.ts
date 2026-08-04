@@ -74,6 +74,12 @@ describe('public/data/projects.json', () => {
       page: '/projects/weddingcard/',
     });
     expect(
+      collection.projects.find((project) => project.id === 'uriel')?.links,
+    ).toEqual({
+      github: null,
+      page: '/projects/uriel/',
+    });
+    expect(
       collection.projects.every(
         (project) =>
           project.details.description.length > 0 &&

@@ -50,6 +50,7 @@ Garden은 GitHub 버튼만 표시하고, Wedding Card는 두 버튼을 모두 �
 
 - `/projects/viola/`
 - `/projects/weddingcard/`
+- `/projects/uriel/`
 - 두 프로젝트가 함께 사용하는 `/shared/`
 
 `npm run build`가 Vite 결과를 만든 뒤 `projects/`와 `shared/`를 원래 경로 그대로

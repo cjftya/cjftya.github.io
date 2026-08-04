@@ -474,13 +474,16 @@
         "데이터 탐색"
       ],
       "links": {
-        "github": null
+        "github": null,
+        "page": "/projects/uriel/"
       },
       "details": {
         "category": "로또 패턴 시각화",
         "description": "1~45 번호를 원 둘레와 실제 선택표 배치에 대응시켜, 여섯 번호가 만드는 다각형의 형태와 회차별 변화를 비교하고 탐색해요.",
         "techStack": [
-          "TypeScript"
+          "React",
+          "TypeScript",
+          "SVG"
         ]
       },
       "planet": {
