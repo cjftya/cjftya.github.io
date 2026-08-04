@@ -97,9 +97,10 @@
 | `links.page`   | string 또는 생략 | 선택적 내부 프로젝트 페이지 경로 |
 
 `links.github` 문자열은 `https://github.com/`으로 시작하는 완전한 URL이어야 합니다.
-`links.page`는 `/projects/{slug}/` 형식의 내부 절대 경로만 허용합니다. 두 링크가 모두
-없으면 상세 패널의 액션 영역 전체를 숨기며 WebGL 대체 화면에서도 링크를 만들지
-않습니다. Viola는 내부 페이지 링크를 사용하고 Wedding Card는 액션 없이 보관합니다.
+`links.page`는 `/projects/{slug}/` 형식의 내부 절대 경로만 허용합니다. 상세 패널은
+Pages Archive에 속한 프로젝트의 링크만 액션으로 표시하고 Jelly Garden에서는 링크가
+있어도 액션 영역을 숨깁니다. 두 링크가 모두 없으면 WebGL 대체 화면에서도 링크를
+만들지 않습니다. Viola와 Wedding Card는 각각의 내부 페이지 링크를 사용합니다.
 
 ## 상세 정보
 
