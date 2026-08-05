@@ -9,6 +9,12 @@ import {
 import { findShapeCandidates } from './analysis/candidates';
 import { metricsForDraw } from './analysis/geometry';
 import { buildHistoryFrame } from './analysis/history';
+import {
+  describePatternComparison,
+  evaluateCandidates,
+  similarityFactors,
+} from './analysis/validation';
+import type { CandidateValidation } from './analysis/validation';
 import { MetricChart, metricDefinitions } from './components/MetricChart';
 import type { MetricKey } from './components/MetricChart';
 import { ShapeStage } from './components/ShapeStage';
@@ -16,6 +22,7 @@ import { loadBundledDraws, parseDrawCsv } from './data';
 import type { HistoryMode, LayoutMode, LottoDraw } from './types';
 
 const PLAY_INTERVALS = [1200, 700, 350] as const;
+const CANDIDATE_COUNTS = [6, 12, 24, 50, 100] as const;
 
 const historyModeCopy: Record<HistoryMode, { label: string; description: string }> = {
   independent: {
@@ -41,6 +48,7 @@ export function App() {
   const [metric, setMetric] = useState<MetricKey>('area');
   const [isPlaying, setIsPlaying] = useState(false);
   const [speedIndex, setSpeedIndex] = useState(1);
+  const [candidateCount, setCandidateCount] = useState<number>(6);
   const [error, setError] = useState<string | null>(null);
   const [sourceLabel, setSourceLabel] = useState('기본 데이터');
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -113,9 +121,20 @@ export function App() {
   );
   const candidateResult = useMemo(
     () =>
-      draws.length === 0 ? null : findShapeCandidates(draws, deferredIndex, layout),
+      draws.length === 0
+        ? null
+        : findShapeCandidates(draws, deferredIndex, layout, 100),
     [deferredIndex, draws, layout],
   );
+  const candidates = useMemo(
+    () => candidateResult?.candidates.slice(0, candidateCount) ?? [],
+    [candidateCount, candidateResult],
+  );
+  const validation = useMemo(() => {
+    const actual = draws[deferredIndex + 1];
+    if (actual === undefined || candidates.length === 0) return null;
+    return evaluateCandidates(candidates, actual, layout);
+  }, [candidates, deferredIndex, draws, layout]);
 
   const handleFile = async (file: File | undefined) => {
     if (file === undefined) return;
@@ -332,23 +351,71 @@ export function App() {
                 <span className="card-index">03</span>
                 <h2>다음 형태 후보</h2>
               </div>
-              <span>12,000 조합 탐색</span>
+              <div className="candidate-controls">
+                <span>12,000 조합 탐색</span>
+                <label>
+                  후보 수
+                  <select
+                    value={candidateCount}
+                    onChange={(event) => setCandidateCount(Number(event.target.value))}
+                  >
+                    {CANDIDATE_COUNTS.map((count) => (
+                      <option key={count} value={count}>
+                        {count}개
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
             </div>
             <p className="candidate-intro">
-              최근 24개 도형 벡터의 가중 평균과 짧은 변화량에 가까운 조합이에요.
+              {draws[deferredIndex]?.round}회까지의 최근 24개 도형 벡터만 사용했어요.
+              실제 다음 결과를 후보 순서에 영향을 주지 않고 별도로 비교해요.
             </p>
+            {validation === null ? (
+              <div className="validation-pending">
+                <div>
+                  <strong>검증 대기 중</strong>
+                  <p>최신 회차 다음 결과가 아직 없어 후보만 표시해요.</p>
+                </div>
+                {index > 0 && (
+                  <button type="button" onClick={() => moveTo(index - 1)}>
+                    직전 회차 검증 보기
+                  </button>
+                )}
+              </div>
+            ) : (
+              <ValidationSummary validation={validation} />
+            )}
             <ol className="candidate-list">
-              {candidateResult?.candidates.map((candidate, candidateIndex) => (
-                <li key={candidate.numbers.join('-')}>
-                  <span className="candidate-rank">
-                    {String(candidateIndex + 1).padStart(2, '0')}
-                  </span>
-                  <NumberRow numbers={candidate.numbers} compact />
-                  <span className="candidate-score">
-                    Δ {candidate.score.toFixed(3)}
-                  </span>
-                </li>
-              ))}
+              {candidates.map((candidate, candidateIndex) => {
+                const evaluation = validation?.evaluations[candidateIndex];
+                return (
+                  <li
+                    key={candidate.numbers.join('-')}
+                    className={
+                      evaluation === validation?.bestByNumbers ||
+                      evaluation === validation?.bestByShape
+                        ? 'is-result-highlight'
+                        : undefined
+                    }
+                  >
+                    <span className="candidate-rank">
+                      {String(candidateIndex + 1).padStart(2, '0')}
+                    </span>
+                    <NumberRow numbers={candidate.numbers} compact />
+                    <span className="candidate-result-stats">
+                      {evaluation !== undefined && (
+                        <span>
+                          <b>{evaluation.matchedNumbers.length}/6 일치</b>
+                          <b>도형 {evaluation.shapeSimilarity.toFixed(1)}</b>
+                        </span>
+                      )}
+                      <small>예측 Δ {candidate.score.toFixed(3)}</small>
+                    </span>
+                  </li>
+                );
+              })}
             </ol>
           </section>
         </aside>
@@ -359,13 +426,122 @@ export function App() {
         <div>
           <h2>예측기가 아니라 가설을 시험하는 관측 장치예요.</h2>
           <p>
-            보너스 번호와 당첨금은 사용하지 않아요. 여섯 번호를 좌표로 바꾼 뒤 중심,
-            면적, 둘레, 조밀도, 방향을 계산해요. 후보는 이 도형 특징에 가까운 조합일
-            뿐이며, 독립 무작위 추첨에서 당첨 확률을 높인다는 뜻은 아니에요.
+            보너스 번호와 당첨금은 사용하지 않아요. 예측 Δ는 중심·면적·조밀도·퍼짐·
+            방향으로 후보 순서를 정하고, 결과 도형 유사도는 둘레까지 포함한 7개 축의
+            차이를 정규화해 0~100으로 환산해요. 실제 결과는 순위를 다시 정하는 데 쓰지
+            않으며, 독립 무작위 추첨에서 당첨 확률을 높인다는 뜻은 아니에요.
           </p>
         </div>
       </section>
     </main>
+  );
+}
+
+function ValidationSummary({ validation }: { validation: CandidateValidation }) {
+  const numberBest = validation.bestByNumbers;
+  const shapeBest = validation.bestByShape;
+  return (
+    <section className="validation-summary" aria-label="실제 다음 회차 검증 결과">
+      <div className="actual-result">
+        <div>
+          <span>ACTUAL NEXT DRAW</span>
+          <strong>{validation.actual.round}회 실제 당첨번호</strong>
+        </div>
+        <NumberRow numbers={validation.actual.numbers} compact />
+      </div>
+
+      <div className="validation-highlights">
+        <div>
+          <span>최고 번호 일치</span>
+          <strong>{numberBest.matchedNumbers.length}/6</strong>
+          <small>
+            예측 {numberBest.rank}위
+            {numberBest.matchedNumbers.length > 0
+              ? ` · ${numberBest.matchedNumbers.join(', ')} 일치`
+              : ' · 일치 번호 없음'}
+          </small>
+        </div>
+        <div>
+          <span>최고 도형 유사도</span>
+          <strong>{shapeBest.shapeSimilarity.toFixed(1)}</strong>
+          <small>예측 {shapeBest.rank}위 · 순위는 사후 변경하지 않음</small>
+        </div>
+      </div>
+
+      <div className="validation-detail-grid">
+        <div className="factor-panel">
+          <h3>실제 도형과 가장 가까운 후보</h3>
+          <div className="factor-list">
+            {similarityFactors.map((factor) => (
+              <div key={factor.key}>
+                <span>{factor.label}</span>
+                <i>
+                  <b
+                    style={{
+                      width: `${shapeBest.factorSimilarities[factor.key].toFixed(1)}%`,
+                    }}
+                  />
+                </i>
+                <strong>{shapeBest.factorSimilarities[factor.key].toFixed(0)}</strong>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="pattern-panel">
+          <h3>번호 패턴 비교 · 예측 {numberBest.rank}위</h3>
+          <div className="pattern-table">
+            <span />
+            <b>후보</b>
+            <b>실제</b>
+            <span>홀짝</span>
+            <strong>
+              {numberBest.patterns.oddCount}:{6 - numberBest.patterns.oddCount}
+            </strong>
+            <strong>
+              {validation.actualPatterns.oddCount}:
+              {6 - validation.actualPatterns.oddCount}
+            </strong>
+            <span>저·고</span>
+            <strong>
+              {numberBest.patterns.lowCount}:{6 - numberBest.patterns.lowCount}
+            </strong>
+            <strong>
+              {validation.actualPatterns.lowCount}:
+              {6 - validation.actualPatterns.lowCount}
+            </strong>
+            <span>합계</span>
+            <strong>{numberBest.patterns.sum}</strong>
+            <strong>{validation.actualPatterns.sum}</strong>
+            <span>연속쌍</span>
+            <strong>{numberBest.patterns.consecutivePairs}</strong>
+            <strong>{validation.actualPatterns.consecutivePairs}</strong>
+            <span>평균 간격</span>
+            <strong>{numberBest.patterns.averageGap.toFixed(1)}</strong>
+            <strong>{validation.actualPatterns.averageGap.toFixed(1)}</strong>
+          </div>
+          <p>
+            {describePatternComparison(numberBest.patterns, validation.actualPatterns)}
+          </p>
+        </div>
+      </div>
+
+      <div className="match-distribution">
+        <div>
+          <h3>번호 일치 분포</h3>
+          <p>무작위 기대는 같은 수의 고정 후보가 균등 추첨과 만난 평균값이에요.</p>
+        </div>
+        <div className="distribution-grid">
+          {validation.matchDistribution.map((row) => (
+            <div key={row.label}>
+              <span>{row.label}</span>
+              <strong>{row.observed}</strong>
+              <small>무작위 {row.expected.toFixed(1)}</small>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }
 

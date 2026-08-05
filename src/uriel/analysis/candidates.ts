@@ -13,9 +13,13 @@ export function findShapeCandidates(
   const target = estimateNextMetrics(draws, index, layout);
   const random = createRandom((draws[index]?.round ?? index + 1) * 2654435761);
   const candidates: Candidate[] = [];
+  const combinations = new Set<string>();
 
   for (let sample = 0; sample < SAMPLE_COUNT; sample += 1) {
     const numbers = randomNumbers(random);
+    const combination = numbers.join('-');
+    if (combinations.has(combination)) continue;
+    combinations.add(combination);
     const metrics = metricsForNumbers(numbers, layout);
     const score = metricDistance(metrics, target);
 

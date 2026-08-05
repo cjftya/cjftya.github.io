@@ -40,3 +40,11 @@ export interface Candidate {
   metrics: ShapeMetrics;
   score: number;
 }
+
+export interface NumberPatterns {
+  oddCount: number;
+  lowCount: number;
+  sum: number;
+  consecutivePairs: number;
+  averageGap: number;
+}
