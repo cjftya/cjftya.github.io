@@ -41,6 +41,13 @@ export interface Candidate {
   score: number;
 }
 
+export interface CandidateMethod {
+  searchSpace: number;
+  featureCount: number;
+  transitionNeighbors: number;
+  diversified: boolean;
+}
+
 export interface NumberPatterns {
   oddCount: number;
   lowCount: number;

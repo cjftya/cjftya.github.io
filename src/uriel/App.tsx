@@ -352,7 +352,10 @@ export function App() {
                 <h2>다음 형태 후보</h2>
               </div>
               <div className="candidate-controls">
-                <span>12,000 조합 탐색</span>
+                <span>
+                  고정 {candidateResult?.method.searchSpace.toLocaleString('ko-KR')}{' '}
+                  조합
+                </span>
                 <label>
                   후보 수
                   <select
@@ -369,8 +372,16 @@ export function App() {
               </div>
             </div>
             <p className="candidate-intro">
-              {draws[deferredIndex]?.round}회까지의 최근 24개 도형 벡터만 사용했어요.
-              실제 다음 결과를 후보 순서에 영향을 주지 않고 별도로 비교해요.
+              {draws[deferredIndex]?.round}회까지의 8·24·72회 흐름과 과거 유사 상태
+              {candidateResult !== null &&
+              candidateResult.method.transitionNeighbors > 0
+                ? ` ${candidateResult.method.transitionNeighbors}개`
+                : ''}
+              의 다음 이동을 결합했어요.{' '}
+              {layout === 'board'
+                ? `7×7 전용 ${candidateResult?.method.featureCount ?? 35}개 특징과 후보 다양화를 적용했어요.`
+                : '원형 특징과 후보 다양화를 적용했어요.'}
+              실제 다음 결과는 후보 순서에 영향을 주지 않고 별도로 비교해요.
             </p>
             {validation === null ? (
               <div className="validation-pending">
@@ -426,10 +437,12 @@ export function App() {
         <div>
           <h2>예측기가 아니라 가설을 시험하는 관측 장치예요.</h2>
           <p>
-            보너스 번호와 당첨금은 사용하지 않아요. 예측 Δ는 중심·면적·조밀도·퍼짐·
-            방향으로 후보 순서를 정하고, 결과 도형 유사도는 둘레까지 포함한 7개 축의
-            차이를 정규화해 0~100으로 환산해요. 실제 결과는 순위를 다시 정하는 데 쓰지
-            않으며, 독립 무작위 추첨에서 당첨 확률을 높인다는 뜻은 아니에요.
+            보너스 번호와 당첨금은 사용하지 않아요. 예측 Δ는 중심·면적·둘레·조밀도·
+            퍼짐·방향을 포함하고, 7×7에서는 행·열 분포, 경계, 거리, 볼록껍질, 인접성,
+            최소 신장 트리와 대칭성을 함께 비교해요. 조합 공간에 고정된 40,000개를
+            탐색한 뒤 번호 중복을 줄여 후보군의 범위를 넓혀요. 실제 결과는 순위를 다시
+            정하는 데 쓰지 않으며, 독립 무작위 추첨의 당첨 확률을 높였다고 확정하는
+            기능은 아니에요.
           </p>
         </div>
       </section>
