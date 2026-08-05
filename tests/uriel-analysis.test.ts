@@ -84,9 +84,35 @@ describe('Uriel data and candidate search', () => {
   });
 
   it('can expose one hundred distinct candidates', () => {
-    const candidates = findShapeCandidates(draws, 2, 'circle', 100).candidates;
+    const result = findShapeCandidates(draws, 2, 'circle', 100);
+    const candidates = result.candidates;
     expect(candidates).toHaveLength(100);
     expect(new Set(candidates.map(({ numbers }) => numbers.join('-'))).size).toBe(100);
+    expect(result.method).toMatchObject({
+      searchSpace: 40000,
+      featureCount: 8,
+      diversified: true,
+    });
+    expect(new Set(candidates.flatMap(({ numbers }) => numbers)).size).toBeGreaterThan(
+      40,
+    );
+  });
+
+  it('uses expanded board features and known-only similar transitions', () => {
+    const history = Array.from({ length: 14 }, (_, index): LottoDraw => ({
+      round: index + 1,
+      date: `2026-01-${String(index + 1).padStart(2, '0')}`,
+      numbers: [1, 8, 15, 22, 29, 36].map((number) => ((number + index - 1) % 45) + 1),
+    }));
+    const changedFuture = history.map((draw, index) =>
+      index > 11 ? { ...draw, numbers: [2, 9, 16, 23, 30, 37] } : draw,
+    );
+    const first = findShapeCandidates(history, 11, 'board', 12);
+    const second = findShapeCandidates(changedFuture, 11, 'board', 12);
+
+    expect(first).toEqual(second);
+    expect(first.method.featureCount).toBe(35);
+    expect(first.method.transitionNeighbors).toBeGreaterThan(0);
   });
 
   it('does not use the actual next draw while building candidates', () => {
