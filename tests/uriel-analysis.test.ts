@@ -3,6 +3,11 @@ import { readFile } from 'node:fs/promises';
 import { findShapeCandidates } from '../src/uriel/analysis/candidates';
 import { pointForNumber, metricsForNumbers } from '../src/uriel/analysis/geometry';
 import { buildHistoryFrame } from '../src/uriel/analysis/history';
+import {
+  evaluateCandidates,
+  patternsForNumbers,
+  shapeSimilarity,
+} from '../src/uriel/analysis/validation';
 import { parseDrawCsv } from '../src/uriel/data';
 import type { LottoDraw } from '../src/uriel/types';
 
@@ -76,5 +81,65 @@ describe('Uriel data and candidate search', () => {
       expect(candidate.numbers).toHaveLength(6);
       expect(new Set(candidate.numbers).size).toBe(6);
     });
+  });
+
+  it('can expose one hundred distinct candidates', () => {
+    const candidates = findShapeCandidates(draws, 2, 'circle', 100).candidates;
+    expect(candidates).toHaveLength(100);
+    expect(new Set(candidates.map(({ numbers }) => numbers.join('-'))).size).toBe(100);
+  });
+
+  it('does not use the actual next draw while building candidates', () => {
+    const changedFuture = [
+      ...draws.slice(0, 2),
+      { ...draws[2]!, numbers: [1, 2, 3, 4, 5, 6] },
+    ];
+    expect(findShapeCandidates(draws, 1, 'circle', 6)).toEqual(
+      findShapeCandidates(changedFuture, 1, 'circle', 6),
+    );
+  });
+
+  it('compares candidates with the next draw without changing prediction rank', () => {
+    const actual = draws[2]!;
+    const candidates = [
+      {
+        numbers: draws[0]!.numbers,
+        metrics: metricsForNumbers(draws[0]!.numbers, 'board'),
+        score: 0.1,
+      },
+      {
+        numbers: actual.numbers,
+        metrics: metricsForNumbers(actual.numbers, 'board'),
+        score: 0.2,
+      },
+    ];
+    const validation = evaluateCandidates(candidates, actual, 'board');
+
+    expect(validation.evaluations.map(({ rank }) => rank)).toEqual([1, 2]);
+    expect(validation.bestByNumbers.rank).toBe(2);
+    expect(validation.bestByNumbers.matchedNumbers).toHaveLength(6);
+    expect(validation.bestByShape.rank).toBe(2);
+    expect(validation.bestByShape.shapeSimilarity).toBeCloseTo(100);
+    expect(
+      validation.matchDistribution.reduce((sum, row) => sum + row.observed, 0),
+    ).toBe(2);
+    expect(
+      validation.matchDistribution.reduce((sum, row) => sum + row.expected, 0),
+    ).toBeCloseTo(2);
+  });
+
+  it('calculates stable number patterns and bounded shape similarity', () => {
+    expect(patternsForNumbers([1, 2, 11, 22, 34, 45])).toEqual({
+      oddCount: 3,
+      lowCount: 4,
+      sum: 115,
+      consecutivePairs: 1,
+      averageGap: 8.8,
+    });
+    const first = metricsForNumbers(draws[0]!.numbers, 'circle');
+    const second = metricsForNumbers(draws[1]!.numbers, 'circle');
+    expect(shapeSimilarity(first, first)).toBe(100);
+    expect(shapeSimilarity(first, second)).toBeGreaterThan(0);
+    expect(shapeSimilarity(first, second)).toBeLessThanOrEqual(100);
   });
 });
