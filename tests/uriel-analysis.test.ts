@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { readFile } from 'node:fs/promises';
-import { findShapeCandidates } from '../src/uriel/analysis/candidates';
+import {
+  findBaselineCandidates,
+  findShapeCandidates,
+} from '../src/uriel/analysis/candidates';
 import { pointForNumber, metricsForNumbers } from '../src/uriel/analysis/geometry';
 import { buildHistoryFrame } from '../src/uriel/analysis/history';
 import {
@@ -113,6 +116,40 @@ describe('Uriel data and candidate search', () => {
     expect(first).toEqual(second);
     expect(first.method.featureCount).toBe(35);
     expect(first.method.transitionNeighbors).toBeGreaterThan(0);
+  });
+
+  it('trains the ridge transition only on known history and layers the portfolio', () => {
+    const history = Array.from({ length: 96 }, (_, index): LottoDraw => ({
+      round: index + 1,
+      date: `2026-01-${String((index % 28) + 1).padStart(2, '0')}`,
+      numbers: [1, 8, 15, 22, 29, 36].map(
+        (number, offset) => ((number + index * (offset + 1) - 1) % 45) + 1,
+      ),
+    }));
+    const changedFuture = history.map((draw, index) =>
+      index > 89 ? { ...draw, numbers: [3, 10, 17, 24, 31, 38] } : draw,
+    );
+    const first = findShapeCandidates(history, 89, 'board', 100, 'hybrid');
+    const second = findShapeCandidates(changedFuture, 89, 'board', 100, 'hybrid');
+
+    expect(first).toEqual(second);
+    expect(first.method.ridgeTrainingSamples).toBeGreaterThanOrEqual(72);
+    expect(first.method.portfolio).toEqual({
+      explore: 55,
+      focus: 35,
+      confidence: 10,
+    });
+    expect(new Set(first.candidates.map(({ tier }) => tier))).toEqual(
+      new Set(['explore', 'focus', 'confidence']),
+    );
+  });
+
+  it('keeps the previous numerical model as an isolated baseline', () => {
+    const baseline = findBaselineCandidates(draws, 2, 'board', 12);
+    expect(baseline.method.model).toBe('baseline');
+    expect(baseline.method.ridgeTrainingSamples).toBe(0);
+    expect(baseline.method.portfolio).toBeUndefined();
+    expect(baseline.candidates.every(({ tier }) => tier === undefined)).toBe(true);
   });
 
   it('does not use the actual next draw while building candidates', () => {
