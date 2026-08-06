@@ -1,5 +1,7 @@
 export type LayoutMode = 'circle' | 'board';
 export type HistoryMode = 'independent' | 'cumulative' | 'decay';
+export type CandidateModel = 'baseline' | 'hybrid';
+export type CandidateTier = 'explore' | 'focus' | 'confidence';
 
 export interface LottoDraw {
   round: number;
@@ -39,13 +41,17 @@ export interface Candidate {
   numbers: readonly number[];
   metrics: ShapeMetrics;
   score: number;
+  tier?: CandidateTier;
 }
 
 export interface CandidateMethod {
+  model: CandidateModel;
   searchSpace: number;
   featureCount: number;
   transitionNeighbors: number;
   diversified: boolean;
+  ridgeTrainingSamples: number;
+  portfolio?: Record<CandidateTier, number>;
 }
 
 export interface NumberPatterns {

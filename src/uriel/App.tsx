@@ -19,10 +19,15 @@ import { MetricChart, metricDefinitions } from './components/MetricChart';
 import type { MetricKey } from './components/MetricChart';
 import { ShapeStage } from './components/ShapeStage';
 import { loadBundledDraws, parseDrawCsv } from './data';
-import type { HistoryMode, LayoutMode, LottoDraw } from './types';
+import type { CandidateModel, HistoryMode, LayoutMode, LottoDraw } from './types';
 
 const PLAY_INTERVALS = [1200, 700, 350] as const;
 const CANDIDATE_COUNTS = [6, 12, 24, 50, 100] as const;
+const tierLabel = {
+  explore: '탐색',
+  focus: '집중',
+  confidence: '고확신',
+} as const;
 
 const historyModeCopy: Record<HistoryMode, { label: string; description: string }> = {
   independent: {
@@ -49,6 +54,7 @@ export function App() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [speedIndex, setSpeedIndex] = useState(1);
   const [candidateCount, setCandidateCount] = useState<number>(6);
+  const [candidateModel, setCandidateModel] = useState<CandidateModel>('hybrid');
   const [error, setError] = useState<string | null>(null);
   const [sourceLabel, setSourceLabel] = useState('기본 데이터');
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -123,8 +129,8 @@ export function App() {
     () =>
       draws.length === 0
         ? null
-        : findShapeCandidates(draws, deferredIndex, layout, 100),
-    [deferredIndex, draws, layout],
+        : findShapeCandidates(draws, deferredIndex, layout, 100, candidateModel),
+    [candidateModel, deferredIndex, draws, layout],
   );
   const candidates = useMemo(
     () => candidateResult?.candidates.slice(0, candidateCount) ?? [],
@@ -371,16 +377,43 @@ export function App() {
                 </label>
               </div>
             </div>
+            <div className="candidate-model-control">
+              <span>후보 모델</span>
+              <div className="segmented-control">
+                <ToggleButton
+                  active={candidateModel === 'baseline'}
+                  onClick={() => setCandidateModel('baseline')}
+                >
+                  기존 수치
+                </ToggleButton>
+                <ToggleButton
+                  active={candidateModel === 'hybrid'}
+                  onClick={() => setCandidateModel('hybrid')}
+                >
+                  하이브리드
+                </ToggleButton>
+              </div>
+            </div>
             <p className="candidate-intro">
-              {draws[deferredIndex]?.round}회까지의 8·24·72회 흐름과 과거 유사 상태
-              {candidateResult !== null &&
-              candidateResult.method.transitionNeighbors > 0
-                ? ` ${candidateResult.method.transitionNeighbors}개`
-                : ''}
-              의 다음 이동을 결합했어요.{' '}
+              {candidateModel === 'hybrid' ? (
+                <>
+                  기존 수치·유사 상태 전이·Ridge 도형 전이를 함께 사용해요. Ridge는 현재
+                  시점 이전{' '}
+                  {candidateResult?.method.ridgeTrainingSamples.toLocaleString(
+                    'ko-KR',
+                  ) ?? 0}
+                  개 전이만 학습하고, 후보는 탐색·집중·고확신 계층으로 나눠요.
+                </>
+              ) : (
+                <>
+                  {draws[deferredIndex]?.round}회까지의 8·24·72회 흐름과 과거 유사 상태{' '}
+                  {candidateResult?.method.transitionNeighbors ?? 0}개의 다음 이동만
+                  결합한 기준 모델이에요.
+                </>
+              )}{' '}
               {layout === 'board'
-                ? `7×7 전용 ${candidateResult?.method.featureCount ?? 35}개 특징과 후보 다양화를 적용했어요.`
-                : '원형 특징과 후보 다양화를 적용했어요.'}
+                ? `7×7 전용 ${candidateResult?.method.featureCount ?? 35}개 특징을 사용해요.`
+                : '원형 특징을 사용해요.'}
               실제 다음 결과는 후보 순서에 영향을 주지 않고 별도로 비교해요.
             </p>
             {validation === null ? (
@@ -422,7 +455,12 @@ export function App() {
                           <b>도형 {evaluation.shapeSimilarity.toFixed(1)}</b>
                         </span>
                       )}
-                      <small>예측 Δ {candidate.score.toFixed(3)}</small>
+                      <small>
+                        {candidate.tier !== undefined
+                          ? `${tierLabel[candidate.tier]} · `
+                          : ''}
+                        예측 Δ {candidate.score.toFixed(3)}
+                      </small>
                     </span>
                   </li>
                 );
@@ -440,9 +478,10 @@ export function App() {
             보너스 번호와 당첨금은 사용하지 않아요. 예측 Δ는 중심·면적·둘레·조밀도·
             퍼짐·방향을 포함하고, 7×7에서는 행·열 분포, 경계, 거리, 볼록껍질, 인접성,
             최소 신장 트리와 대칭성을 함께 비교해요. 조합 공간에 고정된 40,000개를
-            탐색한 뒤 번호 중복을 줄여 후보군의 범위를 넓혀요. 실제 결과는 순위를 다시
-            정하는 데 쓰지 않으며, 독립 무작위 추첨의 당첨 확률을 높였다고 확정하는
-            기능은 아니에요.
+            탐색해요. 하이브리드는 현재 시점 이전 기록으로만 규제된 도형 전이를
+            학습하고, 넓게 덮는 탐색 후보와 5·6개를 겨냥한 집중·고확신 후보를 함께
+            유지해요. 실제 결과는 순위를 다시 정하는 데 쓰지 않으며, 독립 무작위 추첨의
+            당첨 확률을 높였다고 확정하는 기능은 아니에요.
           </p>
         </div>
       </section>

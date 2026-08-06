@@ -747,6 +747,23 @@ input:focus-visible {
   line-height: 1.55;
 }
 
+.candidate-model-control {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: -4px 0 15px;
+}
+
+.candidate-model-control > span {
+  color: #666974;
+  font-size: 0.64rem;
+}
+
+.candidate-model-control .segmented-control button {
+  padding: 6px 11px;
+  font-size: 0.66rem;
+}
+
 .card-heading > .candidate-controls {
   display: grid;
   justify-items: end;
