@@ -871,6 +871,34 @@ input:focus-visible {
   line-height: 1.5;
 }
 
+.purchase-validation > .capture-ceiling {
+  grid-column: 1 / -1;
+  gap: 7px;
+}
+
+.capture-ceiling > div {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--line);
+}
+
+.capture-ceiling i {
+  display: grid;
+  gap: 2px;
+  padding: 7px 5px;
+  background: #0d0f16;
+  font-style: normal;
+  text-align: center;
+}
+
+.capture-ceiling i b {
+  color: #d8d1c7;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 0.86rem;
+  font-weight: 400;
+}
+
 .purchase-validation > p.is-success {
   color: var(--gold);
 }
@@ -952,6 +980,38 @@ input:focus-visible {
 .candidate-model-control .segmented-control button {
   padding: 6px 11px;
   font-size: 0.66rem;
+}
+
+.shape-scenario-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  margin: -4px 0 17px;
+  border: 1px solid var(--line);
+  background: var(--line);
+}
+
+.shape-scenario-summary > div {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  padding: 11px 12px;
+  background: #10121a;
+}
+
+.shape-scenario-summary span,
+.shape-scenario-summary small {
+  color: #696b76;
+  font-size: 0.56rem;
+}
+
+.shape-scenario-summary strong {
+  overflow: hidden;
+  color: #c8a875;
+  font-size: 0.68rem;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .card-heading > .candidate-controls {

@@ -11,6 +11,7 @@ import { metricsForDraw } from './analysis/geometry';
 import { buildHistoryFrame } from './analysis/history';
 import { buildPurchasePortfolio, diagnosePurchasePortfolio } from './analysis/purchase';
 import type { PurchaseDiagnostics } from './analysis/purchase';
+import { forecastBoardShapeTransitions } from './analysis/shapeTransition';
 import {
   describePatternComparison,
   evaluateCandidates,
@@ -30,6 +31,7 @@ import type {
   LottoDraw,
   PurchasePortfolio,
   PurchaseRole,
+  PurchaseStrategy,
 } from './types';
 
 const PLAY_INTERVALS = [1200, 700, 350] as const;
@@ -77,7 +79,9 @@ export function App() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [speedIndex, setSpeedIndex] = useState(1);
   const [candidateCount, setCandidateCount] = useState<number>(6);
-  const [candidateModel, setCandidateModel] = useState<CandidateModel>('hybrid');
+  const [candidateModel, setCandidateModel] = useState<CandidateModel>('baseline');
+  const [purchaseStrategy, setPurchaseStrategy] =
+    useState<PurchaseStrategy>('shape-transition');
   const [purchaseAnchor, setPurchaseAnchor] = useState<{
     index: number;
     layout: LayoutMode;
@@ -155,62 +159,96 @@ export function App() {
   );
   const hybridCandidateResult = useMemo(
     () =>
-      draws.length === 0
+      draws.length === 0 || candidateModel !== 'hybrid'
         ? null
         : findShapeCandidates(draws, deferredIndex, layout, 100, 'hybrid'),
+    [candidateModel, deferredIndex, draws, layout],
+  );
+  const baselineCandidateResult = useMemo(
+    () =>
+      draws.length === 0
+        ? null
+        : findShapeCandidates(draws, deferredIndex, layout, 100, 'baseline'),
     [deferredIndex, draws, layout],
   );
-  const candidateResult = useMemo(
+  const shapeTransitionResult = useMemo(
     () =>
-      candidateModel === 'hybrid' || draws.length === 0
-        ? hybridCandidateResult
-        : findShapeCandidates(draws, deferredIndex, layout, 100, 'baseline'),
-    [candidateModel, deferredIndex, draws, hybridCandidateResult, layout],
+      draws.length === 0 ||
+      (candidateModel !== 'shape-transition' && purchaseStrategy !== 'shape-transition')
+        ? null
+        : findShapeCandidates(draws, deferredIndex, 'board', 100, 'shape-transition'),
+    [candidateModel, deferredIndex, draws, purchaseStrategy],
   );
+  const shapeForecast = useMemo(
+    () =>
+      draws.length === 0 ||
+      (candidateModel !== 'shape-transition' && purchaseStrategy !== 'shape-transition')
+        ? null
+        : forecastBoardShapeTransitions(draws, deferredIndex),
+    [candidateModel, deferredIndex, draws, purchaseStrategy],
+  );
+  const candidateResult = useMemo(() => {
+    if (candidateModel === 'baseline') return baselineCandidateResult;
+    if (candidateModel === 'shape-transition') return shapeTransitionResult;
+    return hybridCandidateResult;
+  }, [
+    baselineCandidateResult,
+    candidateModel,
+    hybridCandidateResult,
+    shapeTransitionResult,
+  ]);
   const candidates = useMemo(
     () => candidateResult?.candidates.slice(0, candidateCount) ?? [],
     [candidateCount, candidateResult],
   );
+  const candidateLayout: LayoutMode =
+    candidateModel === 'shape-transition' ? 'board' : layout;
   const validation = useMemo(() => {
     const actual = draws[deferredIndex + 1];
     if (actual === undefined || candidates.length === 0) return null;
-    return evaluateCandidates(candidates, actual, layout);
-  }, [candidates, deferredIndex, draws, layout]);
+    return evaluateCandidates(candidates, actual, candidateLayout);
+  }, [candidateLayout, candidates, deferredIndex, draws]);
+  const purchaseResearchResult =
+    purchaseStrategy === 'shape-transition'
+      ? shapeTransitionResult
+      : baselineCandidateResult;
+  const purchaseLayout: LayoutMode =
+    purchaseStrategy === 'shape-transition' ? 'board' : layout;
   const activePurchaseAnchor =
-    purchaseAnchor?.index === deferredIndex && purchaseAnchor.layout === layout
+    purchaseAnchor?.index === deferredIndex && purchaseAnchor.layout === purchaseLayout
       ? purchaseAnchor.candidate
       : null;
   const purchasePortfolio = useMemo(
     () =>
-      hybridCandidateResult === null
+      purchaseResearchResult === null
         ? null
         : buildPurchasePortfolio(
-            hybridCandidateResult.candidates,
-            layout,
+            purchaseResearchResult.candidates,
+            purchaseLayout,
             activePurchaseAnchor,
           ),
-    [activePurchaseAnchor, hybridCandidateResult, layout],
+    [activePurchaseAnchor, purchaseLayout, purchaseResearchResult],
   );
   const purchaseValidation = useMemo(() => {
     const actual = draws[deferredIndex + 1];
     if (actual === undefined || purchasePortfolio === null) return null;
-    return evaluateCandidates(purchasePortfolio.games, actual, layout);
-  }, [deferredIndex, draws, layout, purchasePortfolio]);
+    return evaluateCandidates(purchasePortfolio.games, actual, purchaseLayout);
+  }, [deferredIndex, draws, purchaseLayout, purchasePortfolio]);
   const purchaseDiagnostics = useMemo(() => {
     const actual = draws[deferredIndex + 1];
     if (
       actual === undefined ||
       purchasePortfolio === null ||
-      hybridCandidateResult === null
+      purchaseResearchResult === null
     ) {
       return null;
     }
     return diagnosePurchasePortfolio(
       purchasePortfolio,
-      hybridCandidateResult.candidates,
+      purchaseResearchResult.candidates,
       actual.numbers,
     );
-  }, [deferredIndex, draws, hybridCandidateResult, purchasePortfolio]);
+  }, [deferredIndex, draws, purchasePortfolio, purchaseResearchResult]);
 
   const handleFile = async (file: File | undefined) => {
     if (file === undefined) return;
@@ -429,10 +467,27 @@ export function App() {
               </div>
               <span>실제 구매 상한 고정</span>
             </div>
+            <div className="candidate-model-control purchase-strategy-control">
+              <span>선정 방식</span>
+              <div className="segmented-control">
+                <ToggleButton
+                  active={purchaseStrategy === 'shape-transition'}
+                  onClick={() => setPurchaseStrategy('shape-transition')}
+                >
+                  7×7 형태 전이
+                </ToggleButton>
+                <ToggleButton
+                  active={purchaseStrategy === 'baseline'}
+                  onClick={() => setPurchaseStrategy('baseline')}
+                >
+                  기존 수치 비교
+                </ToggleButton>
+              </div>
+            </div>
             <p className="purchase-intro">
-              검증되지 않은 재정렬은 하지 않고 연구 상위 10개를 그대로 보존한 채 집중
-              4·가설 3·분산 2·완결 1로 역할을 나눠요. 마지막 게임은 아래 후보 목록에서
-              직접 바꿀 수 있어요.
+              {purchaseStrategy === 'shape-transition'
+                ? '최근 96회 순차 검증에서 가장 나았던 7×7 형태 전이 상위 10게임을 사용해요. 최근 3회 경로와 닮은 과거 흐름의 다음 형태를 세 시나리오로 나눠요.'
+                : '비교를 위해 기존 수치 모델의 상위 10게임을 순서 변경 없이 사용해요.'}
             </p>
             {purchasePortfolio?.userAnchorUsed === true && (
               <button
@@ -462,6 +517,14 @@ export function App() {
                     ))}
                   </div>
                   <small>금색 8개는 모델 공통 지지가 높은 핵심 번호예요.</small>
+                  {purchaseStrategy === 'shape-transition' &&
+                    shapeForecast !== null && (
+                      <small>
+                        과거 유사 경로 {shapeForecast.neighbors}개 · 형태 시나리오{' '}
+                        {shapeForecast.scenarios.length}개 · 경로 분리 신뢰{' '}
+                        {(shapeForecast.confidence * 100).toFixed(0)}%
+                      </small>
+                    )}
                 </div>
                 {purchaseValidation !== null && purchaseDiagnostics !== null && (
                   <PurchaseValidationSummary
@@ -552,10 +615,27 @@ export function App() {
                 >
                   하이브리드
                 </ToggleButton>
+                <ToggleButton
+                  active={candidateModel === 'shape-transition'}
+                  onClick={() => {
+                    setLayout('board');
+                    setCandidateModel('shape-transition');
+                  }}
+                >
+                  7×7 형태 전이
+                </ToggleButton>
               </div>
             </div>
             <p className="candidate-intro">
-              {candidateModel === 'hybrid' ? (
+              {candidateModel === 'shape-transition' ? (
+                <>
+                  최근 3회 형태의 위치·크기·방향·볼록껍질·거리·인접성·행열 엔트로피
+                  흐름과 닮은 과거 경로{' '}
+                  {candidateResult?.method.shapeSequenceNeighbors ?? 0}개를 찾아, 다음
+                  형태를 {candidateResult?.method.shapeScenarioCount ?? 0}개 시나리오로
+                  분리해요.
+                </>
+              ) : candidateModel === 'hybrid' ? (
                 <>
                   기존 수치·유사 상태 전이·Ridge 도형 전이를 함께 사용해요. Ridge는 현재
                   시점 이전{' '}
@@ -571,11 +651,27 @@ export function App() {
                   결합한 기준 모델이에요.
                 </>
               )}{' '}
-              {layout === 'board'
+              {layout === 'board' && candidateModel !== 'shape-transition'
                 ? `7×7 전용 ${candidateResult?.method.featureCount ?? 35}개 특징을 사용해요.`
-                : '원형 특징을 사용해요.'}
+                : candidateModel === 'shape-transition'
+                  ? ' 번호 점수와 섞지 않은 독립 형태 실험이에요.'
+                  : '원형 특징을 사용해요.'}
               실제 다음 결과는 후보 순서에 영향을 주지 않고 별도로 비교해요.
             </p>
+            {candidateModel === 'shape-transition' && shapeForecast !== null && (
+              <div className="shape-scenario-summary">
+                {shapeForecast.scenarios.map((scenario, scenarioIndex) => (
+                  <div key={`${scenario.label}-${scenarioIndex}`}>
+                    <span>예상 {scenarioIndex + 1}</span>
+                    <strong>{scenario.label}</strong>
+                    <small>
+                      가중 {(scenario.probability * 100).toFixed(1)}% · 과거{' '}
+                      {scenario.support}건
+                    </small>
+                  </div>
+                ))}
+              </div>
+            )}
             {validation === null ? (
               <div className="validation-pending">
                 <div>
@@ -627,13 +723,19 @@ export function App() {
                       <button
                         type="button"
                         className={isPurchaseAnchor ? 'is-selected' : undefined}
-                        onClick={() =>
+                        onClick={() => {
+                          setPurchaseStrategy(
+                            candidateModel === 'shape-transition'
+                              ? 'shape-transition'
+                              : 'baseline',
+                          );
                           setPurchaseAnchor({
                             index: deferredIndex,
-                            layout,
+                            layout:
+                              candidateModel === 'shape-transition' ? 'board' : layout,
                             candidate,
-                          })
-                        }
+                          });
+                        }}
                       >
                         {isPurchaseAnchor ? '10번 선택됨' : '10번으로 선택'}
                       </button>
@@ -655,11 +757,15 @@ export function App() {
             퍼짐·방향을 포함하고, 7×7에서는 행·열 분포, 경계, 거리, 볼록껍질, 인접성,
             최소 신장 트리와 대칭성을 함께 비교해요. 조합 공간에 고정된 40,000개를
             탐색해요. 하이브리드는 현재 시점 이전 기록으로만 규제된 도형 전이를
-            학습하고, 연구 후보 100개는 가설 검증에 유지해요. 구매용 10게임은 검증된
-            상위 순위를 보존하며 집중·가설·분산·완결 역할로 나누고, 우선 번호 포착·조합
-            생성·10게임 압축 중 어느 단계에서 실제 번호가 빠졌는지 따로 기록해요. 실제
-            결과는 순위를 다시 정하는 데 쓰지 않으며, 독립 무작위 추첨의 당첨 확률을
-            높였다고 확정하는 기능은 아니에요.
+            학습하고, 7×7 형태 전이는 최근 3회 경로와 닮은 과거 경로 뒤의 형태만
+            독립적으로 군집화해요. 비교용으로는 기존 수치 상위 10개를 비교 기준으로
+            남겨요. 실사용 기본값은 최근 96회 순차 검증에서 기본형과 무작위보다 높았던
+            7×7 형태 전이 상위 10개예요. 최근 3회 형태 경로와 닮은 과거 경로 24개의 다음
+            형태를 세 시나리오로 군집화하고, 4만 개 고정 조합에서 가까운 형태를 찾아요.
+            성능이 낮았던 가중 휠 공동 최적화는 제거했어요. 상위 10·12·14·16·18 번호군의
+            도달 상한과 연구 생성·10게임 압축 손실을 따로 기록하며, 실제 결과는 순위를
+            다시 정하는 데 쓰지 않아요. 독립 무작위 추첨의 당첨 확률을 높였다고 확정하는
+            기능은 아니에요.
           </p>
         </div>
       </section>
@@ -697,6 +803,21 @@ function PurchaseValidationSummary({
         <strong>{diagnostics.researchBestMatch}/6</strong>
         <small>
           {portfolio.userAnchorUsed ? '10번 직접 선택 반영' : '10번 자동 고확신'}
+        </small>
+      </div>
+      <div className="capture-ceiling">
+        <span>번호군 도달 상한</span>
+        <div>
+          {diagnostics.poolCaptures.map((capture) => (
+            <i key={capture.size}>
+              <small>상위 {capture.size}</small>
+              <b>{capture.matches.length}/6</b>
+            </i>
+          ))}
+        </div>
+        <small>
+          연구 달성 {(diagnostics.researchEfficiency * 100).toFixed(0)}% · 10게임 보존{' '}
+          {(diagnostics.compressionEfficiency * 100).toFixed(0)}%
         </small>
       </div>
       <p className={`is-${diagnostics.bottleneck}`}>{diagnostics.message}</p>

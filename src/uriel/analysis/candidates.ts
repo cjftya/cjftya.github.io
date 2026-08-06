@@ -9,6 +9,11 @@ import type {
   ShapeMetrics,
 } from '../types';
 import { metricsForDraw, metricsForNumbers } from './geometry';
+import {
+  boardShapeDistance,
+  boardShapeFeatures,
+  forecastBoardShapeTransitions,
+} from './shapeTransition';
 
 const SEARCH_SPACE = 40000;
 const TOTAL_COMBINATIONS = 8145060;
@@ -92,6 +97,7 @@ const BOARD_FEATURES: readonly FeatureDefinition[] = [
 
 const FIXED_COMBINATIONS = buildFixedCombinations();
 let cachedBasis: { layout: LayoutMode; values: CandidateBasis[] } | null = null;
+const cachedShapeBasis = new Map<LayoutMode, CandidateBasis[]>();
 
 export function findShapeCandidates(
   draws: readonly LottoDraw[],
@@ -100,6 +106,23 @@ export function findShapeCandidates(
   count = 6,
   model: CandidateModel = 'hybrid',
 ): { candidates: Candidate[]; target: ShapeMetrics; method: CandidateMethod } {
+  if (model === 'shape-transition') {
+    const forecast = forecastBoardShapeTransitions(draws, index);
+    return {
+      candidates: shapeTransitionCandidates(layout, forecast.scenarios, count),
+      target: forecast.metrics,
+      method: {
+        model,
+        searchSpace: SEARCH_SPACE,
+        featureCount: forecast.currentFeatures.length,
+        transitionNeighbors: 0,
+        diversified: true,
+        ridgeTrainingSamples: 0,
+        shapeSequenceNeighbors: forecast.neighbors,
+        shapeScenarioCount: forecast.scenarios.length,
+      },
+    };
+  }
   const estimate = estimateTarget(draws, index, layout);
   const definitions = featureDefinitions(layout);
   const candidates =
@@ -120,6 +143,50 @@ export function findShapeCandidates(
       portfolio: model === 'hybrid' ? countByTier(candidates) : undefined,
     },
   };
+}
+
+function shapeTransitionCandidates(
+  layout: LayoutMode,
+  scenarios: readonly { features: readonly number[]; probability: number }[],
+  count: number,
+): Candidate[] {
+  const ranked = shapeCandidateBasis(layout)
+    .map((basis): ScoredBasis => {
+      const distance = Math.min(
+        ...scenarios.map(
+          (scenario) =>
+            boardShapeDistance(basis.features, scenario.features) /
+            Math.max(Math.sqrt(scenario.probability), 0.35),
+        ),
+      );
+      return {
+        ...basis,
+        distance,
+        hypothesis: 'transition',
+      };
+    })
+    .sort((left, right) => left.distance - right.distance)
+    .slice(0, Math.max(DIVERSITY_POOL_SIZE, count * 16));
+
+  return diversifyCandidates(ranked, count, {
+    tier: 'explore',
+    overlapPenalty: 0.24,
+    exposurePenalty: 0.12,
+    unseenBonus: 0.024,
+    fourSetBonus: 0.003,
+  });
+}
+
+function shapeCandidateBasis(layout: LayoutMode): CandidateBasis[] {
+  const cached = cachedShapeBasis.get(layout);
+  if (cached !== undefined) return cached;
+  const values = FIXED_COMBINATIONS.map((numbers) => ({
+    numbers,
+    metrics: metricsForNumbers(numbers, layout),
+    features: boardShapeFeatures(numbers),
+  }));
+  cachedShapeBasis.set(layout, values);
+  return values;
 }
 
 export function findBaselineCandidates(
