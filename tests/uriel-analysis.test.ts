@@ -7,6 +7,10 @@ import {
 import { pointForNumber, metricsForNumbers } from '../src/uriel/analysis/geometry';
 import { buildHistoryFrame } from '../src/uriel/analysis/history';
 import {
+  buildPurchasePortfolio,
+  diagnosePurchasePortfolio,
+} from '../src/uriel/analysis/purchase';
+import {
   evaluateCandidates,
   patternsForNumbers,
   shapeSimilarity,
@@ -150,6 +154,71 @@ describe('Uriel data and candidate search', () => {
     expect(baseline.method.ridgeTrainingSamples).toBe(0);
     expect(baseline.method.portfolio).toBeUndefined();
     expect(baseline.candidates.every(({ tier }) => tier === undefined)).toBe(true);
+  });
+
+  it('compresses the research pool into ten role-balanced purchase games', () => {
+    const history = Array.from({ length: 96 }, (_, index): LottoDraw => ({
+      round: index + 1,
+      date: `2026-01-${String((index % 28) + 1).padStart(2, '0')}`,
+      numbers: [1, 8, 15, 22, 29, 36].map(
+        (number, offset) => ((number + index * (offset + 1) - 1) % 45) + 1,
+      ),
+    }));
+    const research = findShapeCandidates(history, 89, 'board', 100, 'hybrid');
+    const purchase = buildPurchasePortfolio(research.candidates, 'board');
+
+    expect(purchase.games).toHaveLength(10);
+    expect(new Set(purchase.games.map(({ numbers }) => numbers.join('-'))).size).toBe(
+      10,
+    );
+    expect(new Set(purchase.games.map(({ numbers }) => numbers.join('-')))).toEqual(
+      new Set(research.candidates.slice(0, 10).map(({ numbers }) => numbers.join('-'))),
+    );
+    expect(purchase.priorityNumbers).toHaveLength(18);
+    expect(purchase.coreNumbers).toHaveLength(8);
+    expect(
+      purchase.games.reduce<Record<string, number>>((counts, game) => {
+        counts[game.purchaseRole] = (counts[game.purchaseRole] ?? 0) + 1;
+        return counts;
+      }, {}),
+    ).toEqual({ focus: 4, hypothesis: 3, coverage: 2, anchor: 1 });
+    const hypothesisGames = purchase.games.filter(
+      ({ purchaseRole }) => purchaseRole === 'hypothesis',
+    );
+    expect(hypothesisGames).toHaveLength(3);
+    expect(
+      hypothesisGames.every(({ hypothesis }) =>
+        ['baseline', 'transition', 'ridge'].includes(hypothesis ?? ''),
+      ),
+    ).toBe(true);
+  });
+
+  it('keeps a direct shape selection as the tenth purchase game', () => {
+    const research = findShapeCandidates(draws, 2, 'circle', 100, 'hybrid');
+    const selected = research.candidates.at(-1)!;
+    const purchase = buildPurchasePortfolio(research.candidates, 'circle', selected);
+
+    expect(purchase.userAnchorUsed).toBe(true);
+    expect(purchase.games.at(-1)?.numbers).toEqual(selected.numbers);
+    expect(purchase.games.at(-1)?.purchaseRole).toBe('anchor');
+  });
+
+  it('diagnoses where a known result leaves the purchase pipeline', () => {
+    const research = findShapeCandidates(draws, 1, 'board', 100, 'hybrid');
+    const purchase = buildPurchasePortfolio(research.candidates, 'board');
+    const diagnostics = diagnosePurchasePortfolio(
+      purchase,
+      research.candidates,
+      draws[2]!.numbers,
+    );
+
+    expect(diagnostics.priorityMatches.length).toBeLessThanOrEqual(6);
+    expect(diagnostics.researchBestMatch).toBeGreaterThanOrEqual(
+      diagnostics.purchaseBestMatch,
+    );
+    expect(['number-pool', 'combination', 'compression', 'success']).toContain(
+      diagnostics.bottleneck,
+    );
   });
 
   it('does not use the actual next draw while building candidates', () => {
