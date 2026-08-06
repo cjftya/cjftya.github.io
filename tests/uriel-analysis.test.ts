@@ -11,6 +11,10 @@ import {
   diagnosePurchasePortfolio,
 } from '../src/uriel/analysis/purchase';
 import {
+  boardShapeFeatures,
+  forecastBoardShapeTransitions,
+} from '../src/uriel/analysis/shapeTransition';
+import {
   evaluateCandidates,
   patternsForNumbers,
   shapeSimilarity,
@@ -156,7 +160,7 @@ describe('Uriel data and candidate search', () => {
     expect(baseline.candidates.every(({ tier }) => tier === undefined)).toBe(true);
   });
 
-  it('compresses the research pool into ten role-balanced purchase games', () => {
+  it('keeps the selected model signal in ten role-balanced purchase games', () => {
     const history = Array.from({ length: 96 }, (_, index): LottoDraw => ({
       round: index + 1,
       date: `2026-01-${String((index % 28) + 1).padStart(2, '0')}`,
@@ -171,9 +175,16 @@ describe('Uriel data and candidate search', () => {
     expect(new Set(purchase.games.map(({ numbers }) => numbers.join('-'))).size).toBe(
       10,
     );
-    expect(new Set(purchase.games.map(({ numbers }) => numbers.join('-')))).toEqual(
-      new Set(research.candidates.slice(0, 10).map(({ numbers }) => numbers.join('-'))),
-    );
+    expect(
+      purchase.games.every(
+        ({ numbers }) =>
+          numbers.length === 6 &&
+          new Set(numbers).size === 6 &&
+          numbers.every((number) => number >= 1 && number <= 45),
+      ),
+    ).toBe(true);
+    expect(purchase.optimizedScenarioCount).toBe(0);
+    expect(purchase.topTenRetained).toBe(10);
     expect(purchase.priorityNumbers).toHaveLength(18);
     expect(purchase.coreNumbers).toHaveLength(8);
     expect(
@@ -186,11 +197,9 @@ describe('Uriel data and candidate search', () => {
       ({ purchaseRole }) => purchaseRole === 'hypothesis',
     );
     expect(hypothesisGames).toHaveLength(3);
-    expect(
-      hypothesisGames.every(({ hypothesis }) =>
-        ['baseline', 'transition', 'ridge'].includes(hypothesis ?? ''),
-      ),
-    ).toBe(true);
+    expect(hypothesisGames.every(({ reason }) => reason.includes('선택 모델'))).toBe(
+      true,
+    );
   });
 
   it('keeps a direct shape selection as the tenth purchase game', () => {
@@ -203,6 +212,59 @@ describe('Uriel data and candidate search', () => {
     expect(purchase.games.at(-1)?.purchaseRole).toBe('anchor');
   });
 
+  it('keeps the selected research top ten without recombination', () => {
+    const research = findShapeCandidates(draws, 2, 'board', 100, 'baseline');
+    const purchase = buildPurchasePortfolio(research.candidates, 'board');
+
+    expect(new Set(purchase.games.map(({ numbers }) => numbers.join('-')))).toEqual(
+      new Set(research.candidates.slice(0, 10).map(({ numbers }) => numbers.join('-'))),
+    );
+    expect(purchase.optimizedScenarioCount).toBe(0);
+    expect(purchase.topTenRetained).toBe(10);
+  });
+
+  it('predicts 7x7 shape paths independently without reading the future', () => {
+    const history = Array.from({ length: 40 }, (_, index): LottoDraw => ({
+      round: index + 1,
+      date: `2026-02-${String((index % 28) + 1).padStart(2, '0')}`,
+      numbers: [1, 8, 15, 22, 29, 36].map(
+        (number, offset) => ((number + index * (offset + 1) - 1) % 45) + 1,
+      ),
+    }));
+    const changedFuture = history.map((draw, index) =>
+      index > 34 ? { ...draw, numbers: [3, 9, 18, 27, 36, 45] } : draw,
+    );
+    const forecast = forecastBoardShapeTransitions(history, 34);
+
+    expect(boardShapeFeatures(history[34]!.numbers)).toHaveLength(19);
+    expect(forecast).toEqual(forecastBoardShapeTransitions(changedFuture, 34));
+    expect(forecast.neighbors).toBe(24);
+    expect(forecast.scenarios.length).toBeGreaterThanOrEqual(1);
+    expect(forecast.scenarios.length).toBeLessThanOrEqual(3);
+    expect(
+      forecast.scenarios.reduce((sum, scenario) => sum + scenario.probability, 0),
+    ).toBeCloseTo(1);
+  });
+
+  it('exposes the sequence shape model as a separate candidate experiment', () => {
+    const history = Array.from({ length: 40 }, (_, index): LottoDraw => ({
+      round: index + 1,
+      date: `2026-03-${String((index % 28) + 1).padStart(2, '0')}`,
+      numbers: [2, 9, 16, 23, 30, 37].map(
+        (number, offset) => ((number + index * (offset + 1) - 1) % 45) + 1,
+      ),
+    }));
+    const result = findShapeCandidates(history, 34, 'board', 100, 'shape-transition');
+
+    expect(result.candidates).toHaveLength(100);
+    expect(result.method).toMatchObject({
+      model: 'shape-transition',
+      featureCount: 19,
+      shapeSequenceNeighbors: 24,
+    });
+    expect(result.method.shapeScenarioCount).toBeGreaterThanOrEqual(1);
+  });
+
   it('diagnoses where a known result leaves the purchase pipeline', () => {
     const research = findShapeCandidates(draws, 1, 'board', 100, 'hybrid');
     const purchase = buildPurchasePortfolio(research.candidates, 'board');
@@ -213,6 +275,16 @@ describe('Uriel data and candidate search', () => {
     );
 
     expect(diagnostics.priorityMatches.length).toBeLessThanOrEqual(6);
+    expect(diagnostics.poolCaptures.map(({ size }) => size)).toEqual([
+      10, 12, 14, 16, 18,
+    ]);
+    expect(diagnostics.reachableBestMatch).toBe(
+      diagnostics.poolCaptures.find(({ size }) => size === 14)?.matches.length,
+    );
+    expect(diagnostics.researchEfficiency).toBeGreaterThanOrEqual(0);
+    expect(diagnostics.researchEfficiency).toBeLessThanOrEqual(1);
+    expect(diagnostics.compressionEfficiency).toBeGreaterThanOrEqual(0);
+    expect(diagnostics.compressionEfficiency).toBeLessThanOrEqual(1);
     expect(diagnostics.researchBestMatch).toBeGreaterThanOrEqual(
       diagnostics.purchaseBestMatch,
     );
