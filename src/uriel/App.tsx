@@ -9,6 +9,8 @@ import {
 import { findShapeCandidates } from './analysis/candidates';
 import { metricsForDraw } from './analysis/geometry';
 import { buildHistoryFrame } from './analysis/history';
+import { buildPurchasePortfolio, diagnosePurchasePortfolio } from './analysis/purchase';
+import type { PurchaseDiagnostics } from './analysis/purchase';
 import {
   describePatternComparison,
   evaluateCandidates,
@@ -19,7 +21,16 @@ import { MetricChart, metricDefinitions } from './components/MetricChart';
 import type { MetricKey } from './components/MetricChart';
 import { ShapeStage } from './components/ShapeStage';
 import { loadBundledDraws, parseDrawCsv } from './data';
-import type { CandidateModel, HistoryMode, LayoutMode, LottoDraw } from './types';
+import type {
+  Candidate,
+  CandidateHypothesis,
+  CandidateModel,
+  HistoryMode,
+  LayoutMode,
+  LottoDraw,
+  PurchasePortfolio,
+  PurchaseRole,
+} from './types';
 
 const PLAY_INTERVALS = [1200, 700, 350] as const;
 const CANDIDATE_COUNTS = [6, 12, 24, 50, 100] as const;
@@ -28,6 +39,18 @@ const tierLabel = {
   focus: '집중',
   confidence: '고확신',
 } as const;
+const purchaseRoleLabel: Record<PurchaseRole, string> = {
+  focus: '집중',
+  hypothesis: '가설',
+  coverage: '분산',
+  anchor: '완결',
+};
+const hypothesisLabel: Record<CandidateHypothesis, string> = {
+  baseline: '최근 흐름',
+  transition: '유사 전이',
+  ridge: 'Ridge',
+  consensus: '모델 합의',
+};
 
 const historyModeCopy: Record<HistoryMode, { label: string; description: string }> = {
   independent: {
@@ -55,6 +78,11 @@ export function App() {
   const [speedIndex, setSpeedIndex] = useState(1);
   const [candidateCount, setCandidateCount] = useState<number>(6);
   const [candidateModel, setCandidateModel] = useState<CandidateModel>('hybrid');
+  const [purchaseAnchor, setPurchaseAnchor] = useState<{
+    index: number;
+    layout: LayoutMode;
+    candidate: Candidate;
+  } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [sourceLabel, setSourceLabel] = useState('기본 데이터');
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -125,12 +153,19 @@ export function App() {
     () => buildHistoryFrame(draws, index, historyMode, halfLife, layout),
     [draws, halfLife, historyMode, index, layout],
   );
-  const candidateResult = useMemo(
+  const hybridCandidateResult = useMemo(
     () =>
       draws.length === 0
         ? null
-        : findShapeCandidates(draws, deferredIndex, layout, 100, candidateModel),
-    [candidateModel, deferredIndex, draws, layout],
+        : findShapeCandidates(draws, deferredIndex, layout, 100, 'hybrid'),
+    [deferredIndex, draws, layout],
+  );
+  const candidateResult = useMemo(
+    () =>
+      candidateModel === 'hybrid' || draws.length === 0
+        ? hybridCandidateResult
+        : findShapeCandidates(draws, deferredIndex, layout, 100, 'baseline'),
+    [candidateModel, deferredIndex, draws, hybridCandidateResult, layout],
   );
   const candidates = useMemo(
     () => candidateResult?.candidates.slice(0, candidateCount) ?? [],
@@ -141,6 +176,41 @@ export function App() {
     if (actual === undefined || candidates.length === 0) return null;
     return evaluateCandidates(candidates, actual, layout);
   }, [candidates, deferredIndex, draws, layout]);
+  const activePurchaseAnchor =
+    purchaseAnchor?.index === deferredIndex && purchaseAnchor.layout === layout
+      ? purchaseAnchor.candidate
+      : null;
+  const purchasePortfolio = useMemo(
+    () =>
+      hybridCandidateResult === null
+        ? null
+        : buildPurchasePortfolio(
+            hybridCandidateResult.candidates,
+            layout,
+            activePurchaseAnchor,
+          ),
+    [activePurchaseAnchor, hybridCandidateResult, layout],
+  );
+  const purchaseValidation = useMemo(() => {
+    const actual = draws[deferredIndex + 1];
+    if (actual === undefined || purchasePortfolio === null) return null;
+    return evaluateCandidates(purchasePortfolio.games, actual, layout);
+  }, [deferredIndex, draws, layout, purchasePortfolio]);
+  const purchaseDiagnostics = useMemo(() => {
+    const actual = draws[deferredIndex + 1];
+    if (
+      actual === undefined ||
+      purchasePortfolio === null ||
+      hybridCandidateResult === null
+    ) {
+      return null;
+    }
+    return diagnosePurchasePortfolio(
+      purchasePortfolio,
+      hybridCandidateResult.candidates,
+      actual.numbers,
+    );
+  }, [deferredIndex, draws, hybridCandidateResult, purchasePortfolio]);
 
   const handleFile = async (file: File | undefined) => {
     if (file === undefined) return;
@@ -351,11 +421,101 @@ export function App() {
             <MetricChart draws={draws} index={index} layout={layout} metric={metric} />
           </section>
 
-          <section className="analysis-card candidate-card">
+          <section className="analysis-card purchase-card">
             <div className="card-heading">
               <div>
                 <span className="card-index">03</span>
-                <h2>다음 형태 후보</h2>
+                <h2>구매용 10게임</h2>
+              </div>
+              <span>실제 구매 상한 고정</span>
+            </div>
+            <p className="purchase-intro">
+              검증되지 않은 재정렬은 하지 않고 연구 상위 10개를 그대로 보존한 채 집중
+              4·가설 3·분산 2·완결 1로 역할을 나눠요. 마지막 게임은 아래 후보 목록에서
+              직접 바꿀 수 있어요.
+            </p>
+            {purchasePortfolio?.userAnchorUsed === true && (
+              <button
+                type="button"
+                className="purchase-reset"
+                onClick={() => setPurchaseAnchor(null)}
+              >
+                10번을 자동 고확신으로 복원
+              </button>
+            )}
+            {purchasePortfolio !== null && (
+              <>
+                <div className="number-pool-summary">
+                  <span>우선 번호 18</span>
+                  <div>
+                    {purchasePortfolio.priorityNumbers.map((number) => (
+                      <i
+                        key={number}
+                        className={
+                          purchasePortfolio.coreNumbers.includes(number)
+                            ? 'is-core'
+                            : undefined
+                        }
+                      >
+                        {number}
+                      </i>
+                    ))}
+                  </div>
+                  <small>금색 8개는 모델 공통 지지가 높은 핵심 번호예요.</small>
+                </div>
+                {purchaseValidation !== null && purchaseDiagnostics !== null && (
+                  <PurchaseValidationSummary
+                    portfolio={purchasePortfolio}
+                    validation={purchaseValidation}
+                    diagnostics={purchaseDiagnostics}
+                  />
+                )}
+                {purchaseValidation === null && (
+                  <div className="purchase-pending">
+                    최신 회차는 결과 전이에요. 10게임은 현재까지 알려진 기록만
+                    사용했어요.
+                  </div>
+                )}
+                <ol className="purchase-list">
+                  {purchasePortfolio.games.map((candidate, candidateIndex) => {
+                    const evaluation = purchaseValidation?.evaluations[candidateIndex];
+                    return (
+                      <li
+                        key={`${candidate.purchaseRole}-${candidate.numbers.join('-')}`}
+                        className={
+                          candidate.isUserAnchor === true ? 'is-user-anchor' : undefined
+                        }
+                      >
+                        <span className={`purchase-role is-${candidate.purchaseRole}`}>
+                          {purchaseRoleLabel[candidate.purchaseRole]}
+                        </span>
+                        <span className="candidate-rank">
+                          {String(candidateIndex + 1).padStart(2, '0')}
+                        </span>
+                        <NumberRow numbers={candidate.numbers} compact />
+                        <span className="purchase-game-detail">
+                          <b>
+                            {evaluation === undefined
+                              ? candidate.hypothesis === undefined
+                                ? '도형 포트폴리오'
+                                : hypothesisLabel[candidate.hypothesis]
+                              : `${evaluation.matchedNumbers.length}/6 일치`}
+                          </b>
+                          <small>{candidate.reason}</small>
+                        </span>
+                      </li>
+                    );
+                  })}
+                </ol>
+              </>
+            )}
+          </section>
+
+          <section className="analysis-card candidate-card">
+            <div className="card-heading">
+              <div>
+                <span className="card-index">04</span>
+                <h2>연구용 형태 후보</h2>
               </div>
               <div className="candidate-controls">
                 <span>
@@ -434,6 +594,9 @@ export function App() {
             <ol className="candidate-list">
               {candidates.map((candidate, candidateIndex) => {
                 const evaluation = validation?.evaluations[candidateIndex];
+                const isPurchaseAnchor =
+                  activePurchaseAnchor?.numbers.join('-') ===
+                  candidate.numbers.join('-');
                 return (
                   <li
                     key={candidate.numbers.join('-')}
@@ -448,7 +611,7 @@ export function App() {
                       {String(candidateIndex + 1).padStart(2, '0')}
                     </span>
                     <NumberRow numbers={candidate.numbers} compact />
-                    <span className="candidate-result-stats">
+                    <div className="candidate-result-stats">
                       {evaluation !== undefined && (
                         <span>
                           <b>{evaluation.matchedNumbers.length}/6 일치</b>
@@ -461,7 +624,20 @@ export function App() {
                           : ''}
                         예측 Δ {candidate.score.toFixed(3)}
                       </small>
-                    </span>
+                      <button
+                        type="button"
+                        className={isPurchaseAnchor ? 'is-selected' : undefined}
+                        onClick={() =>
+                          setPurchaseAnchor({
+                            index: deferredIndex,
+                            layout,
+                            candidate,
+                          })
+                        }
+                      >
+                        {isPurchaseAnchor ? '10번 선택됨' : '10번으로 선택'}
+                      </button>
+                    </div>
                   </li>
                 );
               })}
@@ -479,13 +655,52 @@ export function App() {
             퍼짐·방향을 포함하고, 7×7에서는 행·열 분포, 경계, 거리, 볼록껍질, 인접성,
             최소 신장 트리와 대칭성을 함께 비교해요. 조합 공간에 고정된 40,000개를
             탐색해요. 하이브리드는 현재 시점 이전 기록으로만 규제된 도형 전이를
-            학습하고, 넓게 덮는 탐색 후보와 5·6개를 겨냥한 집중·고확신 후보를 함께
-            유지해요. 실제 결과는 순위를 다시 정하는 데 쓰지 않으며, 독립 무작위 추첨의
-            당첨 확률을 높였다고 확정하는 기능은 아니에요.
+            학습하고, 연구 후보 100개는 가설 검증에 유지해요. 구매용 10게임은 검증된
+            상위 순위를 보존하며 집중·가설·분산·완결 역할로 나누고, 우선 번호 포착·조합
+            생성·10게임 압축 중 어느 단계에서 실제 번호가 빠졌는지 따로 기록해요. 실제
+            결과는 순위를 다시 정하는 데 쓰지 않으며, 독립 무작위 추첨의 당첨 확률을
+            높였다고 확정하는 기능은 아니에요.
           </p>
         </div>
       </section>
     </main>
+  );
+}
+
+function PurchaseValidationSummary({
+  portfolio,
+  validation,
+  diagnostics,
+}: {
+  portfolio: PurchasePortfolio;
+  validation: CandidateValidation;
+  diagnostics: PurchaseDiagnostics;
+}) {
+  return (
+    <section className="purchase-validation" aria-label="구매용 10게임 검증 결과">
+      <div>
+        <span>10게임 최고</span>
+        <strong>{diagnostics.purchaseBestMatch}/6</strong>
+        <small>예측 {validation.bestByNumbers.rank}번 게임</small>
+      </div>
+      <div>
+        <span>우선 번호 포착</span>
+        <strong>{diagnostics.priorityMatches.length}/6</strong>
+        <small>
+          {diagnostics.priorityMatches.length > 0
+            ? diagnostics.priorityMatches.join(', ')
+            : '일치 번호 없음'}
+        </small>
+      </div>
+      <div>
+        <span>연구 100개 최고</span>
+        <strong>{diagnostics.researchBestMatch}/6</strong>
+        <small>
+          {portfolio.userAnchorUsed ? '10번 직접 선택 반영' : '10번 자동 고확신'}
+        </small>
+      </div>
+      <p className={`is-${diagnostics.bottleneck}`}>{diagnostics.message}</p>
+    </section>
   );
 }
 

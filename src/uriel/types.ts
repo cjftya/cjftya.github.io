@@ -2,6 +2,8 @@ export type LayoutMode = 'circle' | 'board';
 export type HistoryMode = 'independent' | 'cumulative' | 'decay';
 export type CandidateModel = 'baseline' | 'hybrid';
 export type CandidateTier = 'explore' | 'focus' | 'confidence';
+export type CandidateHypothesis = 'baseline' | 'transition' | 'ridge' | 'consensus';
+export type PurchaseRole = 'focus' | 'hypothesis' | 'coverage' | 'anchor';
 
 export interface LottoDraw {
   round: number;
@@ -42,6 +44,22 @@ export interface Candidate {
   metrics: ShapeMetrics;
   score: number;
   tier?: CandidateTier;
+  hypothesis?: CandidateHypothesis;
+}
+
+export interface PurchaseCandidate extends Candidate {
+  purchaseRole: PurchaseRole;
+  reason: string;
+  researchRank?: number;
+  isUserAnchor?: boolean;
+}
+
+export interface PurchasePortfolio {
+  games: PurchaseCandidate[];
+  priorityNumbers: readonly number[];
+  coreNumbers: readonly number[];
+  userAnchorUsed: boolean;
+  researchPoolSize: number;
 }
 
 export interface CandidateMethod {

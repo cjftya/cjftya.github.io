@@ -1,5 +1,6 @@
 import type {
   Candidate,
+  CandidateHypothesis,
   CandidateMethod,
   CandidateModel,
   CandidateTier,
@@ -38,6 +39,7 @@ interface CandidateBasis {
 
 interface ScoredBasis extends CandidateBasis {
   distance: number;
+  hypothesis?: CandidateHypothesis;
 }
 
 interface HypothesisScore extends CandidateBasis {
@@ -248,6 +250,7 @@ function selectExplore(
       metrics: candidate.metrics,
       features: candidate.features,
       distance: hypothesisDistance(candidate, hypothesis),
+      hypothesis: hypothesisName(hypothesis),
     });
   });
   return diversifyCandidates(ranked, count, {
@@ -275,6 +278,7 @@ function selectPortfolioTier(
       metrics: candidate.metrics,
       features: candidate.features,
       distance: score(candidate),
+      hypothesis: 'consensus',
     }))
     .sort((left, right) => left.distance - right.distance)
     .slice(0, DIVERSITY_POOL_SIZE);
@@ -292,6 +296,12 @@ function hypothesisDistance(candidate: HypothesisScore, hypothesis: number): num
   if (hypothesis === 0) return candidate.baselineDistance;
   if (hypothesis === 1) return candidate.transitionDistance;
   return candidate.ridgeDistance;
+}
+
+function hypothesisName(hypothesis: number): CandidateHypothesis {
+  if (hypothesis === 0) return 'baseline';
+  if (hypothesis === 1) return 'transition';
+  return 'ridge';
 }
 
 function allocatePortfolio(count: number): Record<CandidateTier, number> {
@@ -651,11 +661,12 @@ function diversifyCandidates(
     fourNumberSubsets(chosen.numbers).forEach((key) => coveredFourSets.add(key));
   }
 
-  return selected.map(({ numbers, metrics, distance }) => ({
+  return selected.map(({ numbers, metrics, distance, hypothesis }) => ({
     numbers,
     metrics,
     score: distance,
     tier: options.tier,
+    hypothesis,
   }));
 }
 
