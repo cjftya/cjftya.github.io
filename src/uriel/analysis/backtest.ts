@@ -1,14 +1,18 @@
-import type { Candidate, LottoDraw } from '../types';
+import type { Candidate, LottoDraw } from "../types";
 import {
   ablationStrategies,
   buildCombinationAnalysis,
   mainCombinationStrategies,
-} from './combination';
-import type { CombinationStrategy } from './combination';
-import { buildPurchasePortfolio } from './purchase';
+} from "./combination";
+import type { CombinationStrategy } from "./combination";
+import { buildPurchasePortfolio } from "./purchase";
 
 export type BacktestStrategy =
-  'legacy' | 'legacy-portfolio' | CombinationStrategy | 'full-no-diversity' | 'random';
+  | "legacy"
+  | "legacy-portfolio"
+  | CombinationStrategy
+  | "full-no-diversity"
+  | "random";
 
 export interface BacktestOptions {
   rounds: number;
@@ -68,14 +72,15 @@ export interface RoundStrategyResult {
 export interface BacktestRoundResult {
   round: number;
   candidateRecall: Record<number, number>;
-  oracleMax: number;
+  legacyOracleMax: number;
   strategies: Partial<Record<BacktestStrategy, RoundStrategyResult>>;
 }
 
 export interface FailureCase {
   round: number;
   candidateRecall: number;
-  oracleMax: number;
+  strategyOracleMax: number;
+  legacyOracleMax: number;
   top100Max: number;
   top10Max: number;
   conversionLoss: number;
@@ -97,7 +102,7 @@ export interface BacktestResult {
     success: readonly FailureCase[];
   };
   bestStrategy: BacktestStrategy;
-  bottleneck: 'candidate-engine' | 'combination-engine' | 'mixed';
+  bottleneck: "candidate-engine" | "combination-engine" | "mixed";
   bottleneckMessage: string;
 }
 
@@ -112,21 +117,21 @@ const DEFAULT_OPTIONS: BacktestOptions = {
 };
 
 export const strategyLabels: Record<BacktestStrategy, string> = {
-  legacy: '기존 Uriel',
-  'legacy-portfolio': '기존 + Diversity',
-  number: 'Number 중심',
-  pair: 'Pair 중심',
-  'pair-triple': 'Pair + Triple',
-  shape: 'Shape 중심',
-  transition: 'Shape Transition',
-  hybrid: 'Number + Pair + Shape',
-  'full-hybrid': 'Full Hybrid',
-  'full-no-pair': 'Full − Pair',
-  'full-no-triple': 'Full − Triple',
-  'full-no-shape': 'Full − Shape',
-  'full-no-transition': 'Full − Transition',
-  'full-no-diversity': 'Full − Diversity',
-  random: 'Random Monte Carlo',
+  legacy: "기존 Uriel",
+  "legacy-portfolio": "기존 + Diversity",
+  number: "Number 중심",
+  pair: "Pair 중심",
+  "pair-triple": "Pair + Triple",
+  shape: "Shape 중심",
+  transition: "Shape Transition",
+  hybrid: "Number + Pair + Shape",
+  "full-hybrid": "Full Hybrid",
+  "full-no-pair": "Full − Pair",
+  "full-no-triple": "Full − Triple",
+  "full-no-shape": "Full − Shape",
+  "full-no-transition": "Full − Transition",
+  "full-no-diversity": "Full − Diversity",
+  random: "Random Monte Carlo",
 };
 
 export function runWalkForwardBacktest(
@@ -136,17 +141,22 @@ export function runWalkForwardBacktest(
 ): BacktestResult {
   const options = sanitizeOptions({ ...DEFAULT_OPTIONS, ...requested });
   if (draws.length <= MINIMUM_HISTORY) {
-    throw new Error(`Walk-forward 검증에는 최소 ${MINIMUM_HISTORY + 1}회가 필요해요.`);
+    throw new Error(
+      `Walk-forward 검증에는 최소 ${MINIMUM_HISTORY + 1}회가 필요해요.`,
+    );
   }
   const endIndex = draws.length - 2;
-  const startIndex = Math.max(MINIMUM_HISTORY - 1, endIndex - options.rounds + 1);
+  const startIndex = Math.max(
+    MINIMUM_HISTORY - 1,
+    endIndex - options.rounds + 1,
+  );
   const totalRounds = endIndex - startIndex + 1;
   const deterministicStrategies: BacktestStrategy[] = [
-    'legacy',
-    'legacy-portfolio',
+    "legacy",
+    "legacy-portfolio",
     ...mainCombinationStrategies,
     ...(options.includeAblation
-      ? [...ablationStrategies, 'full-no-diversity' as const]
+      ? [...ablationStrategies, "full-no-diversity" as const]
       : []),
   ];
   const roundResults: BacktestRoundResult[] = [];
@@ -166,13 +176,14 @@ export function runWalkForwardBacktest(
         countMatches(analysis.candidateRanking.slice(0, size), actual.numbers),
       ]),
     );
-    const oracleMax = candidateRecall[options.poolSize] ?? 0;
-    const strategies: Partial<Record<BacktestStrategy, RoundStrategyResult>> = {};
+    const candidateOracleMax = candidateRecall[options.poolSize] ?? 0;
+    const strategies: Partial<Record<BacktestStrategy, RoundStrategyResult>> =
+      {};
 
     const legacyTop100 = analysis.legacyResearch;
     const legacyTop10 = legacyTop100.slice(0, 10);
-    const legacyPortfolio = buildPurchasePortfolio(legacyTop100, 'board');
-    const legacyOracle = countMatches(
+    const legacyPortfolio = buildPurchasePortfolio(legacyTop100, "board");
+    const legacyOracleMax = countMatches(
       legacyPortfolio.priorityNumbers.slice(0, options.poolSize),
       actual.numbers,
     );
@@ -181,47 +192,47 @@ export function runWalkForwardBacktest(
       legacyTop10,
       legacyTop10,
       actual.numbers,
-      legacyOracle,
+      legacyOracleMax,
     );
-    strategies['legacy-portfolio'] = evaluateStrategy(
+    strategies["legacy-portfolio"] = evaluateStrategy(
       legacyTop100,
       legacyTop10,
       legacyPortfolio.games,
       actual.numbers,
-      legacyOracle,
+      legacyOracleMax,
     );
 
     mainCombinationStrategies.forEach((strategy) => {
       const research = analysis.researchByStrategy[strategy];
-      const portfolio = buildPurchasePortfolio(research, 'board').games;
+      const portfolio = buildPurchasePortfolio(research, "board").games;
       strategies[strategy] = evaluateStrategy(
         research,
         research.slice(0, 10),
         portfolio,
         actual.numbers,
-        oracleMax,
+        candidateOracleMax,
       );
     });
 
     if (options.includeAblation) {
       ablationStrategies.forEach((strategy) => {
         const research = analysis.researchByStrategy[strategy];
-        const portfolio = buildPurchasePortfolio(research, 'board').games;
+        const portfolio = buildPurchasePortfolio(research, "board").games;
         strategies[strategy] = evaluateStrategy(
           research,
           research.slice(0, 10),
           portfolio,
           actual.numbers,
-          oracleMax,
+          candidateOracleMax,
         );
       });
-      const full = analysis.researchByStrategy['full-hybrid'];
-      strategies['full-no-diversity'] = evaluateStrategy(
+      const full = analysis.researchByStrategy["full-hybrid"];
+      strategies["full-no-diversity"] = evaluateStrategy(
         full,
         full.slice(0, 10),
         full.slice(0, 10),
         actual.numbers,
-        oracleMax,
+        candidateOracleMax,
       );
     }
 
@@ -236,7 +247,7 @@ export function runWalkForwardBacktest(
     roundResults.push({
       round: actual.round,
       candidateRecall,
-      oracleMax,
+      legacyOracleMax,
       strategies,
     });
     onProgress?.(roundResults.length, totalRounds, actual.round);
@@ -247,7 +258,7 @@ export function runWalkForwardBacktest(
   );
   summaries.push(summarizeRandom(randomHits, options));
   const ranked = summaries
-    .filter(({ strategy }) => strategy !== 'random')
+    .filter(({ strategy }) => strategy !== "random")
     .sort(
       (left, right) =>
         right.fourPlusRate - left.fourPlusRate ||
@@ -255,11 +266,15 @@ export function runWalkForwardBacktest(
         right.sixRate - left.sixRate ||
         right.averageMaxHit - left.averageMaxHit,
     );
-  const bestStrategy = ranked[0]?.strategy ?? 'legacy';
-  const failures = classifyFailures(roundResults, bestStrategy);
+  const bestStrategy = ranked[0]?.strategy ?? "legacy";
+  const failures = classifyFailures(
+    roundResults,
+    bestStrategy,
+    options.poolSize,
+  );
   const candidateFailureRate =
     roundResults.filter(
-      (round) => (round.strategies[bestStrategy]?.oracleMax ?? 0) <= 3,
+      (round) => (round.candidateRecall[options.poolSize] ?? 0) <= 3,
     ).length / Math.max(roundResults.length, 1);
   const conversionFailureRate =
     roundResults.filter(
@@ -269,14 +284,14 @@ export function runWalkForwardBacktest(
     ).length / Math.max(roundResults.length, 1);
   const bottleneck =
     Math.abs(candidateFailureRate - conversionFailureRate) < 0.08
-      ? 'mixed'
+      ? "mixed"
       : candidateFailureRate > conversionFailureRate
-        ? 'candidate-engine'
-        : 'combination-engine';
+        ? "candidate-engine"
+        : "combination-engine";
   const bottleneckMessage =
-    bottleneck === 'candidate-engine'
+    bottleneck === "candidate-engine"
       ? `후보 Pool ${options.poolSize}가 4개 미만을 담은 회차가 ${(candidateFailureRate * 100).toFixed(1)}%로, 후보 생성이 더 큰 병목이에요.`
-      : bottleneck === 'combination-engine'
+      : bottleneck === "combination-engine"
         ? `Oracle 4+인데 Top-10 4+로 전환하지 못한 회차가 ${(conversionFailureRate * 100).toFixed(1)}%로, 조합 압축이 더 큰 병목이에요.`
         : `후보 생성 실패 ${(candidateFailureRate * 100).toFixed(1)}%와 조합 전환 실패 ${(conversionFailureRate * 100).toFixed(1)}%가 함께 나타나요.`;
 
@@ -316,7 +331,9 @@ function evaluateStrategy(
   };
 }
 
-function summarizeRecall(rounds: readonly BacktestRoundResult[]): RecallSummary[] {
+function summarizeRecall(
+  rounds: readonly BacktestRoundResult[],
+): RecallSummary[] {
   return POOL_SIZES.map((poolSize) => {
     const values = rounds.map((round) => round.candidateRecall[poolSize] ?? 0);
     return {
@@ -334,7 +351,9 @@ function summarizeStrategy(
   strategy: BacktestStrategy,
   rounds: readonly BacktestRoundResult[],
 ): StrategySummary {
-  const records = rounds.map((round) => round.strategies[strategy]!).filter(Boolean);
+  const records = rounds
+    .map((round) => round.strategies[strategy]!)
+    .filter(Boolean);
   const hits = records.map(({ top10Max }) => top10Max);
   const top100 = records.map(({ top100Max }) => top100Max);
   return {
@@ -362,7 +381,7 @@ function summarizeRandom(
     (count) => count / options.monteCarloRuns,
   );
   return {
-    strategy: 'random',
+    strategy: "random",
     label: `${strategyLabels.random} × ${options.monteCarloRuns}`,
     hitDistribution: normalizedDistribution,
     averageMaxHit: mean(hits),
@@ -422,24 +441,42 @@ function emptyConversion(): ConversionSummary {
 function classifyFailures(
   rounds: readonly BacktestRoundResult[],
   strategy: BacktestStrategy,
-): BacktestResult['failures'] {
-  const cases = rounds.map((round): FailureCase => {
-    const result = round.strategies[strategy]!;
-    return {
-      round: round.round,
-      candidateRecall: result.oracleMax,
-      oracleMax: result.oracleMax,
-      top100Max: result.top100Max,
-      top10Max: result.top10Max,
-      conversionLoss: result.conversionLoss,
-    };
-  });
+  poolSize: number,
+): BacktestResult["failures"] {
+  const cases = rounds.map((round) =>
+    buildFailureCase(round, strategy, poolSize),
+  );
   return {
     combinationLoss: cases
-      .filter(({ oracleMax, top10Max }) => oracleMax >= 5 && top10Max <= 3)
+      .filter(
+        ({ strategyOracleMax, top10Max }) =>
+          strategyOracleMax >= 5 && top10Max <= 3,
+      )
       .slice(-20),
-    candidateFailure: cases.filter(({ oracleMax }) => oracleMax <= 3).slice(-20),
+    candidateFailure: cases
+      .filter(({ candidateRecall }) => candidateRecall <= 3)
+      .slice(-20),
     success: cases.filter(({ top10Max }) => top10Max >= 4).slice(-20),
+  };
+}
+
+export function buildFailureCase(
+  round: BacktestRoundResult,
+  strategy: BacktestStrategy,
+  poolSize: number,
+): FailureCase {
+  const result = round.strategies[strategy];
+  if (result === undefined) {
+    throw new Error(`${strategy} 전략의 ${round.round}회 결과가 없어요.`);
+  }
+  return {
+    round: round.round,
+    candidateRecall: round.candidateRecall[poolSize] ?? 0,
+    strategyOracleMax: result.oracleMax,
+    legacyOracleMax: round.legacyOracleMax,
+    top100Max: result.top100Max,
+    top10Max: result.top10Max,
+    conversionLoss: result.conversionLoss,
   };
 }
 
@@ -449,7 +486,7 @@ function randomPortfolio(seed: number): Candidate[] {
   const seen = new Set<string>();
   while (games.length < 10) {
     const numbers = sampleNumbers(random);
-    const key = numbers.join('-');
+    const key = numbers.join("-");
     if (seen.has(key)) continue;
     seen.add(key);
     games.push({
@@ -494,16 +531,23 @@ function maximumMatch(
   actual: readonly number[],
 ): number {
   return candidates.reduce(
-    (maximum, candidate) => Math.max(maximum, countMatches(candidate.numbers, actual)),
+    (maximum, candidate) =>
+      Math.max(maximum, countMatches(candidate.numbers, actual)),
     0,
   );
 }
 
-function countMatches(left: readonly number[], right: readonly number[]): number {
+function countMatches(
+  left: readonly number[],
+  right: readonly number[],
+): number {
   return left.filter((number) => right.includes(number)).length;
 }
 
-function hitDistribution(values: readonly number[], expectedTotal: number): number[] {
+function hitDistribution(
+  values: readonly number[],
+  expectedTotal: number,
+): number[] {
   const distribution = Array(7).fill(0) as number[];
   values.forEach((value) => {
     distribution[Math.min(Math.max(Math.round(value), 0), 6)]! += 1;
@@ -514,7 +558,8 @@ function hitDistribution(values: readonly number[], expectedTotal: number): numb
 
 function rate(values: readonly number[], threshold: number): number {
   return (
-    values.filter((value) => value >= threshold).length / Math.max(values.length, 1)
+    values.filter((value) => value >= threshold).length /
+    Math.max(values.length, 1)
   );
 }
 
@@ -526,9 +571,14 @@ function mean(values: readonly number[]): number {
 function sanitizeOptions(options: BacktestOptions): BacktestOptions {
   return {
     rounds: Math.min(Math.max(Math.round(options.rounds), 24), 384),
-    poolSize: [10, 12, 15, 18, 20].includes(options.poolSize) ? options.poolSize : 15,
+    poolSize: [10, 12, 15, 18, 20].includes(options.poolSize)
+      ? options.poolSize
+      : 15,
     seed: options.seed >>> 0,
-    monteCarloRuns: Math.min(Math.max(Math.round(options.monteCarloRuns), 8), 128),
+    monteCarloRuns: Math.min(
+      Math.max(Math.round(options.monteCarloRuns), 8),
+      128,
+    ),
     includeAblation: options.includeAblation,
   };
 }
