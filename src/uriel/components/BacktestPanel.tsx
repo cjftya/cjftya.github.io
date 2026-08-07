@@ -1,45 +1,46 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from "react";
 import type {
   BacktestOptions,
   BacktestResult,
   BacktestStrategy,
   FailureCase,
   StrategySummary,
-} from '../analysis/backtest';
-import { strategyLabels } from '../analysis/backtest';
-import type { LottoDraw } from '../types';
+} from "../analysis/backtest";
+import { strategyLabels } from "../analysis/backtest";
+import type { LottoDraw } from "../types";
 
 interface BacktestPanelProps {
   draws: readonly LottoDraw[];
 }
 
 interface WorkerCompleteMessage {
-  type: 'complete';
+  type: "complete";
   result: BacktestResult;
 }
 
 interface WorkerErrorMessage {
-  type: 'error';
+  type: "error";
   message: string;
 }
 
 interface WorkerProgressMessage {
-  type: 'progress';
+  type: "progress";
   completed: number;
   total: number;
   round: number;
 }
 
-type WorkerMessage = WorkerCompleteMessage | WorkerErrorMessage | WorkerProgressMessage;
+type WorkerMessage =
+  WorkerCompleteMessage | WorkerErrorMessage | WorkerProgressMessage;
 
 const ROUND_OPTIONS = [48, 96, 192, 384] as const;
 const POOL_OPTIONS = [10, 12, 15, 18, 20] as const;
 const ABLATION_KEYS = new Set<BacktestStrategy>([
-  'full-no-pair',
-  'full-no-triple',
-  'full-no-shape',
-  'full-no-transition',
-  'full-no-diversity',
+  "full-no-pair",
+  "full-no-triple",
+  "full-no-shape",
+  "full-no-transition",
+  "full-no-diversity",
 ]);
 
 export function BacktestPanel({ draws }: BacktestPanelProps) {
@@ -62,9 +63,9 @@ export function BacktestPanel({ draws }: BacktestPanelProps) {
   const run = () => {
     workerRef.current?.terminate();
     const worker = new Worker(
-      new URL('../workers/backtest.worker.ts', import.meta.url),
+      new URL("../workers/backtest.worker.ts", import.meta.url),
       {
-        type: 'module',
+        type: "module",
       },
     );
     workerRef.current = worker;
@@ -79,19 +80,19 @@ export function BacktestPanel({ draws }: BacktestPanelProps) {
       monteCarloRuns: 32,
     };
     worker.onmessage = (event: MessageEvent<WorkerMessage>) => {
-      if (event.data.type === 'progress') {
+      if (event.data.type === "progress") {
         setProgress(event.data);
         return;
       }
       setIsRunning(false);
-      if (event.data.type === 'complete') setResult(event.data.result);
+      if (event.data.type === "complete") setResult(event.data.result);
       else setError(event.data.message);
       worker.terminate();
       workerRef.current = null;
     };
     worker.onerror = () => {
       setIsRunning(false);
-      setError('백테스트 Worker에서 오류가 발생했어요.');
+      setError("백테스트 Worker에서 오류가 발생했어요.");
       worker.terminate();
       workerRef.current = null;
     };
@@ -108,8 +109,9 @@ export function BacktestPanel({ draws }: BacktestPanelProps) {
         <span>미래 정보 차단 · seed 20260807</span>
       </div>
       <p className="backtest-intro">
-        후보 번호 Recall과 조합 전환을 분리하고, 실제 구매 상한인 Top-10의 4+ tail을
-        우선 비교해요. 계산은 별도 Worker에서 실행돼 화면을 멈추지 않아요.
+        후보 번호 Recall과 조합 전환을 분리하고, 실제 구매 상한인 Top-10의 4+
+        tail을 우선 비교해요. 계산은 별도 Worker에서 실행돼 화면을 멈추지
+        않아요.
       </p>
       <div className="backtest-controls">
         <label>
@@ -152,18 +154,18 @@ export function BacktestPanel({ draws }: BacktestPanelProps) {
           disabled={isRunning}
           onClick={run}
         >
-          {isRunning ? '계산 중…' : '백테스트 실행'}
+          {isRunning ? "계산 중…" : "백테스트 실행"}
         </button>
       </div>
       {isRunning && (
         <div className="backtest-running" role="status">
           <i />
           <span>
-            Candidate Engine → Combination Engine → Top-10 Portfolio를 순차 검증하고
-            있어요.
+            Candidate Engine → Combination Engine → Top-10 Portfolio를 순차
+            검증하고 있어요.
             {progress !== null && (
               <b>
-                {progress.completed}/{progress.total} · {progress.round}회 ·{' '}
+                {progress.completed}/{progress.total} · {progress.round}회 ·{" "}
                 {((progress.completed / progress.total) * 100).toFixed(0)}%
               </b>
             )}
@@ -177,7 +179,9 @@ export function BacktestPanel({ draws }: BacktestPanelProps) {
 }
 
 function BacktestReport({ result }: { result: BacktestResult }) {
-  const main = result.strategies.filter(({ strategy }) => !ABLATION_KEYS.has(strategy));
+  const main = result.strategies.filter(
+    ({ strategy }) => !ABLATION_KEYS.has(strategy),
+  );
   const ablation = result.strategies.filter(({ strategy }) =>
     ABLATION_KEYS.has(strategy),
   );
@@ -189,18 +193,19 @@ function BacktestReport({ result }: { result: BacktestResult }) {
     <div className="backtest-report">
       <div className="backtest-verdict">
         <span className={`bottleneck is-${result.bottleneck}`}>
-          {result.bottleneck === 'candidate-engine'
-            ? 'Candidate 병목'
-            : result.bottleneck === 'combination-engine'
-              ? 'Combination 병목'
-              : '혼합 병목'}
+          {result.bottleneck === "candidate-engine"
+            ? "Candidate 병목"
+            : result.bottleneck === "combination-engine"
+              ? "Combination 병목"
+              : "혼합 병목"}
         </span>
         <div>
           <strong>{result.bottleneckMessage}</strong>
           <p>
-            {result.startRound.toLocaleString('ko-KR')}–
-            {result.endRound.toLocaleString('ko-KR')}회 · {result.evaluatedRounds}회
-            검증 · 최고 전략 {strategyLabels[result.bestStrategy]}
+            {result.startRound.toLocaleString("ko-KR")}–
+            {result.endRound.toLocaleString("ko-KR")}회 ·{" "}
+            {result.evaluatedRounds}회 검증 · 최고 전략{" "}
+            {strategyLabels[result.bestStrategy]}
           </p>
         </div>
         <button type="button" onClick={() => downloadResult(result)}>
@@ -231,7 +236,9 @@ function BacktestReport({ result }: { result: BacktestResult }) {
                 <tr
                   key={row.poolSize}
                   className={
-                    row.poolSize === result.options.poolSize ? 'is-active' : undefined
+                    row.poolSize === result.options.poolSize
+                      ? "is-active"
+                      : undefined
                   }
                 >
                   <th>Top {row.poolSize}</th>
@@ -265,11 +272,23 @@ function BacktestReport({ result }: { result: BacktestResult }) {
         copy={`${strategyLabels[result.bestStrategy]}이 후보 Pool 안의 번호를 실제 10게임에 얼마나 살렸는지 보여줘요.`}
       >
         <div className="conversion-grid">
-          <Conversion label="Oracle 4 → 4+" value={best.conversion.oracle4To4} />
-          <Conversion label="Oracle 5 → 4+" value={best.conversion.oracle5To4} />
+          <Conversion
+            label="Oracle 4 → 4+"
+            value={best.conversion.oracle4To4}
+          />
+          <Conversion
+            label="Oracle 5 → 4+"
+            value={best.conversion.oracle5To4}
+          />
           <Conversion label="Oracle 5 → 5" value={best.conversion.oracle5To5} />
-          <Conversion label="Oracle 6 → 4+" value={best.conversion.oracle6To4} />
-          <Conversion label="Oracle 6 → 5+" value={best.conversion.oracle6To5} />
+          <Conversion
+            label="Oracle 6 → 4+"
+            value={best.conversion.oracle6To4}
+          />
+          <Conversion
+            label="Oracle 6 → 5+"
+            value={best.conversion.oracle6To5}
+          />
           <Conversion label="Oracle 6 → 6" value={best.conversion.oracle6To6} />
           <div className="conversion-stat is-loss">
             <span>평균 Conversion Loss</span>
@@ -299,7 +318,7 @@ function BacktestReport({ result }: { result: BacktestResult }) {
       >
         <div className="failure-grid">
           <FailureList
-            title="A · Oracle ≥ 5 / Top-10 ≤ 3"
+            title="A · Strategy Oracle ≥ 5 / Top-10 ≤ 3"
             rows={result.failures.combinationLoss}
           />
           <FailureList
@@ -312,7 +331,7 @@ function BacktestReport({ result }: { result: BacktestResult }) {
 
       <ReportSection
         title="회차별 파이프라인"
-        copy="후보 Recall → Oracle → Research Top-100 → Purchase Top-10 손실을 직접 확인해요."
+        copy="후보 Recall과 선택 전략 Oracle, Legacy Oracle을 분리해 Research Top-100 → Purchase Top-10 손실을 확인해요."
       >
         <div className="table-scroll">
           <table className="backtest-table round-table">
@@ -320,7 +339,8 @@ function BacktestReport({ result }: { result: BacktestResult }) {
               <tr>
                 <th>회차</th>
                 <th>Recall {result.options.poolSize}</th>
-                <th>Oracle</th>
+                <th>Strategy Oracle</th>
+                <th>Legacy Oracle</th>
                 <th>Top-100</th>
                 <th>Top-10</th>
                 <th>Loss</th>
@@ -334,11 +354,14 @@ function BacktestReport({ result }: { result: BacktestResult }) {
                   const row = round.strategies[result.bestStrategy]!;
                   return (
                     <tr key={round.round}>
-                      <th>{round.round.toLocaleString('ko-KR')}</th>
+                      <th>{round.round.toLocaleString("ko-KR")}</th>
                       <td>{round.candidateRecall[result.options.poolSize]}</td>
                       <td>{row.oracleMax}</td>
+                      <td>{round.legacyOracleMax}</td>
                       <td>{row.top100Max}</td>
-                      <td className={row.top10Max >= 4 ? 'tail-cell' : undefined}>
+                      <td
+                        className={row.top10Max >= 4 ? "tail-cell" : undefined}
+                      >
                         {row.top10Max}
                       </td>
                       <td>{row.conversionLoss}</td>
@@ -350,8 +373,8 @@ function BacktestReport({ result }: { result: BacktestResult }) {
         </div>
       </ReportSection>
       <p className="backtest-caveat">
-        로또 추첨은 무작위로 간주해요. 이 결과는 과거 Walk-forward 비교이며 미래 당첨을
-        보장하지 않아요. 희귀한 4–6개 적중은 표본 변동이 커 Random ×{' '}
+        로또 추첨은 무작위로 간주해요. 이 결과는 과거 Walk-forward 비교이며 미래
+        당첨을 보장하지 않아요. 희귀한 4–6개 적중은 표본 변동이 커 Random ×{" "}
         {result.options.monteCarloRuns} 반복과 함께 해석해야 해요.
       </p>
     </div>
@@ -371,11 +394,14 @@ function StrategyTable({
 }) {
   return (
     <div className="table-scroll">
-      <table className={`backtest-table strategy-table${compact ? ' is-compact' : ''}`}>
+      <table
+        className={`backtest-table strategy-table${compact ? " is-compact" : ""}`}
+      >
         <thead>
           <tr>
             <th>Strategy</th>
-            {!compact && [0, 1, 2, 3, 4, 5, 6].map((hit) => <th key={hit}>{hit}</th>)}
+            {!compact &&
+              [0, 1, 2, 3, 4, 5, 6].map((hit) => <th key={hit}>{hit}</th>)}
             <th>평균 Max</th>
             <th>3+</th>
             <th>4+</th>
@@ -388,7 +414,7 @@ function StrategyTable({
           {rows.map((row) => (
             <tr
               key={row.strategy}
-              className={row.strategy === best ? 'is-best' : undefined}
+              className={row.strategy === best ? "is-best" : undefined}
             >
               <th>{row.label}</th>
               {!compact &&
@@ -439,7 +465,7 @@ function Conversion({
   return (
     <div className="conversion-stat">
       <span>{label}</span>
-      <strong>{value.eligible === 0 ? '—' : percent(value.rate)}</strong>
+      <strong>{value.eligible === 0 ? "—" : percent(value.rate)}</strong>
       <small>
         {value.successes} / {value.eligible}회
       </small>
@@ -447,7 +473,13 @@ function Conversion({
   );
 }
 
-function FailureList({ title, rows }: { title: string; rows: readonly FailureCase[] }) {
+function FailureList({
+  title,
+  rows,
+}: {
+  title: string;
+  rows: readonly FailureCase[];
+}) {
   return (
     <div className="failure-list">
       <h4>{title}</h4>
@@ -462,7 +494,8 @@ function FailureList({ title, rows }: { title: string; rows: readonly FailureCas
               <li key={row.round}>
                 <b>{row.round}회</b>
                 <span>
-                  R {row.candidateRecall} · O {row.oracleMax} · 100 {row.top100Max} · 10{' '}
+                  R {row.candidateRecall} · S-O {row.strategyOracleMax} · L-O{" "}
+                  {row.legacyOracleMax} · 100 {row.top100Max} · 10{" "}
                   {row.top10Max}
                 </span>
               </li>
@@ -475,10 +508,10 @@ function FailureList({ title, rows }: { title: string; rows: readonly FailureCas
 
 function downloadResult(result: BacktestResult) {
   const blob = new Blob([JSON.stringify(result, null, 2)], {
-    type: 'application/json',
+    type: "application/json",
   });
   const url = URL.createObjectURL(blob);
-  const anchor = document.createElement('a');
+  const anchor = document.createElement("a");
   anchor.href = url;
   anchor.download = `uriel-backtest-${result.startRound}-${result.endRound}.json`;
   anchor.click();
