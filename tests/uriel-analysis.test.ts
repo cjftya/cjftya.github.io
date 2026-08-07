@@ -4,6 +4,7 @@ import {
   findBaselineCandidates,
   findShapeCandidates,
 } from '../src/uriel/analysis/candidates';
+import { buildCombinationAnalysis } from '../src/uriel/analysis/combination';
 import { pointForNumber, metricsForNumbers } from '../src/uriel/analysis/geometry';
 import { buildHistoryFrame } from '../src/uriel/analysis/history';
 import {
@@ -183,8 +184,9 @@ describe('Uriel data and candidate search', () => {
           numbers.every((number) => number >= 1 && number <= 45),
       ),
     ).toBe(true);
-    expect(purchase.optimizedScenarioCount).toBe(0);
-    expect(purchase.topTenRetained).toBe(10);
+    expect(purchase.optimizedScenarioCount).toBe(80);
+    expect(purchase.topTenRetained).toBeGreaterThan(0);
+    expect(purchase.topTenRetained).toBeLessThanOrEqual(10);
     expect(purchase.priorityNumbers).toHaveLength(18);
     expect(purchase.coreNumbers).toHaveLength(8);
     expect(
@@ -212,15 +214,21 @@ describe('Uriel data and candidate search', () => {
     expect(purchase.games.at(-1)?.purchaseRole).toBe('anchor');
   });
 
-  it('keeps the selected research top ten without recombination', () => {
+  it('optimizes the selected research pool without inventing combinations', () => {
     const research = findShapeCandidates(draws, 2, 'board', 100, 'baseline');
     const purchase = buildPurchasePortfolio(research.candidates, 'board');
 
-    expect(new Set(purchase.games.map(({ numbers }) => numbers.join('-')))).toEqual(
-      new Set(research.candidates.slice(0, 10).map(({ numbers }) => numbers.join('-'))),
+    const researchKeys = new Set(
+      research.candidates.map(({ numbers }) => numbers.join('-')),
     );
-    expect(purchase.optimizedScenarioCount).toBe(0);
-    expect(purchase.topTenRetained).toBe(10);
+    expect(
+      purchase.games.every(({ numbers }) => researchKeys.has(numbers.join('-'))),
+    ).toBe(true);
+    expect(purchase.optimizedScenarioCount).toBe(80);
+    expect(purchase.topTenRetained).toBeGreaterThan(0);
+    expect(
+      new Set(purchase.games.flatMap(({ numbers }) => numbers)).size,
+    ).toBeGreaterThan(15);
   });
 
   it('predicts 7x7 shape paths independently without reading the future', () => {
@@ -276,10 +284,10 @@ describe('Uriel data and candidate search', () => {
 
     expect(diagnostics.priorityMatches.length).toBeLessThanOrEqual(6);
     expect(diagnostics.poolCaptures.map(({ size }) => size)).toEqual([
-      10, 12, 14, 16, 18,
+      10, 12, 15, 18, 20,
     ]);
     expect(diagnostics.reachableBestMatch).toBe(
-      diagnostics.poolCaptures.find(({ size }) => size === 14)?.matches.length,
+      diagnostics.poolCaptures.find(({ size }) => size === 15)?.matches.length,
     );
     expect(diagnostics.researchEfficiency).toBeGreaterThanOrEqual(0);
     expect(diagnostics.researchEfficiency).toBeLessThanOrEqual(1);
@@ -302,6 +310,31 @@ describe('Uriel data and candidate search', () => {
       findShapeCandidates(changedFuture, 1, 'circle', 6),
     );
   });
+
+  it('separates a deterministic number pool from combination strategies', () => {
+    const history = Array.from({ length: 100 }, (_, index): LottoDraw => ({
+      round: index + 1,
+      date: `2026-04-${String((index % 28) + 1).padStart(2, '0')}`,
+      numbers: [1, 8, 15, 22, 29, 36].map(
+        (number, offset) => ((number + index * (offset + 1) - 1) % 45) + 1,
+      ),
+    }));
+    const changedFuture = history.map((draw, index) =>
+      index > 89 ? { ...draw, numbers: [3, 10, 17, 24, 31, 38] } : draw,
+    );
+    const first = buildCombinationAnalysis(history, 89, 15, false);
+    const second = buildCombinationAnalysis(changedFuture, 89, 15, false);
+
+    expect(first).toEqual(second);
+    expect(first.candidatePool).toHaveLength(15);
+    expect(first.rawCombinationCount).toBe(5005);
+    expect(first.researchByStrategy['full-hybrid']).toHaveLength(100);
+    expect(
+      first.researchByStrategy['full-hybrid'].every(({ numbers }) =>
+        numbers.every((number) => first.candidatePool.includes(number)),
+      ),
+    ).toBe(true);
+  }, 15_000);
 
   it('compares candidates with the next draw without changing prediction rank', () => {
     const actual = draws[2]!;

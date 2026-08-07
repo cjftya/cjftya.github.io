@@ -33,9 +33,9 @@ export interface PurchaseDiagnostics {
 }
 
 /**
- * Keeps the selected research model's ten strongest distinct combinations.
- * Walk-forward validation showed that scenario-wheel recombination diluted the
- * model signal, so the purchase layer no longer rewrites proven research ranks.
+ * Converts the research ranking into a ten-game portfolio. The optimizer keeps
+ * rank quality as the dominant signal while reducing duplicate five-number
+ * hypotheses and increasing candidate-number/four-set coverage.
  */
 export function buildPurchasePortfolio(
   researchCandidates: readonly Candidate[],
@@ -54,7 +54,7 @@ export function buildPurchasePortfolio(
   const priorityNumbers = numberRanking.slice(0, PRIORITY_NUMBER_COUNT);
   const coreNumbers = numberRanking.slice(0, CORE_NUMBER_COUNT);
   const anchor = resolveAnchor(pool, layout, userAnchor);
-  const selected = rankedPortfolio(pool, anchor);
+  const selected = optimizedPortfolio(pool, anchor, priorityNumbers);
   const userAnchorUsed = userAnchor !== undefined && userAnchor !== null;
   const games = assignRoles(selected, anchor, coreNumbers, userAnchorUsed);
   const topTen = new Set(
@@ -67,22 +67,74 @@ export function buildPurchasePortfolio(
     coreNumbers,
     userAnchorUsed,
     researchPoolSize: pool.length,
-    optimizedScenarioCount: 0,
+    optimizedScenarioCount: Math.min(pool.length, 80),
     topTenRetained: games.filter((game) => topTen.has(candidateKey(game))).length,
   };
 }
 
-function rankedPortfolio(
+function optimizedPortfolio(
   pool: readonly RankedCandidate[],
   anchor: RankedCandidate,
+  priorityNumbers: readonly number[],
 ): RankedCandidate[] {
   const anchorKey = candidateKey(anchor.candidate);
-  return [
-    ...pool
-      .filter(({ candidate }) => candidateKey(candidate) !== anchorKey)
-      .slice(0, 9),
-    anchor,
-  ];
+  const available = pool
+    .filter(({ candidate }) => candidateKey(candidate) !== anchorKey)
+    .slice(0, 80);
+  const selected: RankedCandidate[] = [];
+  const numberUses = Array(46).fill(0) as number[];
+  const fourSets = new Set<string>();
+
+  while (selected.length < PURCHASE_GAME_COUNT - 1 && available.length > 0) {
+    let bestIndex = 0;
+    let bestValue = Number.NEGATIVE_INFINITY;
+    available.forEach((entry, entryIndex) => {
+      const comparison = [...selected, anchor];
+      const maximumOverlap = comparison.reduce(
+        (maximum, other) =>
+          Math.max(
+            maximum,
+            countMatches(entry.candidate.numbers, other.candidate.numbers),
+          ),
+        0,
+      );
+      const rankQuality = 1 - (entry.rank - 1) / Math.max(pool.length, 1);
+      const prioritySupport =
+        countMatches(entry.candidate.numbers, priorityNumbers.slice(0, 12)) / 6;
+      const unseen = entry.candidate.numbers.filter(
+        (number) => numberUses[number] === 0,
+      ).length;
+      const novelFourSets = fourNumberSubsets(entry.candidate.numbers).filter(
+        (key) => !fourSets.has(key),
+      ).length;
+      const exposure =
+        selected.length === 0
+          ? 0
+          : Math.max(
+              ...entry.candidate.numbers.map((number) => numberUses[number] ?? 0),
+            ) / selected.length;
+      const value =
+        rankQuality * 0.66 +
+        prioritySupport * 0.1 +
+        unseen * 0.025 +
+        novelFourSets * 0.0025 -
+        (maximumOverlap / 6) ** 2 * 0.3 -
+        exposure * 0.055;
+      if (value > bestValue) {
+        bestValue = value;
+        bestIndex = entryIndex;
+      }
+    });
+    const [chosen] = available.splice(bestIndex, 1);
+    if (chosen === undefined) break;
+    selected.push(chosen);
+    chosen.candidate.numbers.forEach((number) => {
+      numberUses[number] = numberUses[number]! + 1;
+    });
+    fourNumberSubsets(chosen.candidate.numbers).forEach((key) => fourSets.add(key));
+  }
+
+  return [...selected, anchor];
 }
 
 export function diagnosePurchasePortfolio(
@@ -93,14 +145,14 @@ export function diagnosePurchasePortfolio(
   const priorityMatches = actualNumbers.filter((number) =>
     portfolio.priorityNumbers.includes(number),
   );
-  const poolCaptures = [10, 12, 14, 16, 18].map((size) => ({
+  const poolCaptures = [10, 12, 15, 18, 20].map((size) => ({
     size,
     matches: actualNumbers.filter((number) =>
       portfolio.priorityNumbers.slice(0, size).includes(number),
     ),
   }));
   const reachableBestMatch =
-    poolCaptures.find(({ size }) => size === 14)?.matches.length ?? 0;
+    poolCaptures.find(({ size }) => size === 15)?.matches.length ?? 0;
   const researchBestMatch = maximumMatch(researchCandidates, actualNumbers);
   const purchaseBestMatch = maximumMatch(portfolio.games, actualNumbers);
   const researchEfficiency = ratio(researchBestMatch, reachableBestMatch);
@@ -126,14 +178,14 @@ export function diagnosePurchasePortfolio(
     return {
       ...common,
       bottleneck: 'number-pool',
-      message: `상위 14개 번호군이 실제 번호를 ${reachableBestMatch}개만 포착해, 조합 단계에서 4개 적중은 불가능했어요.`,
+      message: `상위 15개 번호군이 실제 번호를 ${reachableBestMatch}개만 포착해, 조합 단계에서 4개 적중은 불가능했어요.`,
     };
   }
   if (researchBestMatch < 4) {
     return {
       ...common,
       bottleneck: 'combination',
-      message: `상위 14개에는 실제 번호가 ${reachableBestMatch}개 있었지만 연구 100개가 한 조합에 4개를 모으지 못했어요.`,
+      message: `상위 15개에는 실제 번호가 ${reachableBestMatch}개 있었지만 연구 100개가 한 조합에 4개를 모으지 못했어요.`,
     };
   }
   return {
@@ -186,14 +238,14 @@ function assignRoles(
       toPurchaseCandidate(
         entry,
         'hypothesis',
-        `선택 모델의 연구 ${entry.rank}위 가설을 순서 변경 없이 보존`,
+        `선택 모델의 연구 ${entry.rank}위 가설을 Diversity 포트폴리오에 유지`,
       ),
     ),
     ...coverageEntries.map((entry) =>
       toPurchaseCandidate(
         entry,
         'coverage',
-        `선택 모델의 연구 ${entry.rank}위를 재정렬 없이 보존`,
+        `선택 모델의 연구 ${entry.rank}위로 번호·4-number Coverage 확장`,
       ),
     ),
     toPurchaseCandidate(
@@ -282,6 +334,24 @@ function uniqueCandidates(candidates: readonly Candidate[]): Candidate[] {
     seen.add(key);
     return true;
   });
+}
+
+function fourNumberSubsets(numbers: readonly number[]): string[] {
+  const result: string[] = [];
+  for (let first = 0; first < numbers.length - 3; first += 1) {
+    for (let second = first + 1; second < numbers.length - 2; second += 1) {
+      for (let third = second + 1; third < numbers.length - 1; third += 1) {
+        for (let fourth = third + 1; fourth < numbers.length; fourth += 1) {
+          result.push(
+            [numbers[first], numbers[second], numbers[third], numbers[fourth]].join(
+              '-',
+            ),
+          );
+        }
+      }
+    }
+  }
+  return result;
 }
 
 function candidateKey(candidate: Pick<Candidate, 'numbers'>): string {
