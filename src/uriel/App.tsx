@@ -7,6 +7,7 @@ import {
   useState,
 } from 'react';
 import { findShapeCandidates } from './analysis/candidates';
+import { buildCombinationAnalysis } from './analysis/combination';
 import { metricsForDraw } from './analysis/geometry';
 import { buildHistoryFrame } from './analysis/history';
 import { buildPurchasePortfolio, diagnosePurchasePortfolio } from './analysis/purchase';
@@ -20,6 +21,7 @@ import {
 import type { CandidateValidation } from './analysis/validation';
 import { MetricChart, metricDefinitions } from './components/MetricChart';
 import type { MetricKey } from './components/MetricChart';
+import { BacktestPanel } from './components/BacktestPanel';
 import { ShapeStage } from './components/ShapeStage';
 import { loadBundledDraws, parseDrawCsv } from './data';
 import type {
@@ -211,23 +213,38 @@ export function App() {
   const purchaseResearchResult =
     purchaseStrategy === 'shape-transition'
       ? shapeTransitionResult
-      : baselineCandidateResult;
+      : purchaseStrategy === 'full-hybrid'
+        ? null
+        : baselineCandidateResult;
+  const combinationAnalysis = useMemo(
+    () =>
+      draws.length === 0 || purchaseStrategy !== 'full-hybrid'
+        ? null
+        : buildCombinationAnalysis(draws, deferredIndex, 15, false),
+    [deferredIndex, draws, purchaseStrategy],
+  );
+  const purchaseResearchCandidates =
+    purchaseStrategy === 'full-hybrid'
+      ? (combinationAnalysis?.researchByStrategy['full-hybrid'] ?? null)
+      : (purchaseResearchResult?.candidates ?? null);
   const purchaseLayout: LayoutMode =
-    purchaseStrategy === 'shape-transition' ? 'board' : layout;
+    purchaseStrategy === 'shape-transition' || purchaseStrategy === 'full-hybrid'
+      ? 'board'
+      : layout;
   const activePurchaseAnchor =
     purchaseAnchor?.index === deferredIndex && purchaseAnchor.layout === purchaseLayout
       ? purchaseAnchor.candidate
       : null;
   const purchasePortfolio = useMemo(
     () =>
-      purchaseResearchResult === null
+      purchaseResearchCandidates === null
         ? null
         : buildPurchasePortfolio(
-            purchaseResearchResult.candidates,
+            purchaseResearchCandidates,
             purchaseLayout,
             activePurchaseAnchor,
           ),
-    [activePurchaseAnchor, purchaseLayout, purchaseResearchResult],
+    [activePurchaseAnchor, purchaseLayout, purchaseResearchCandidates],
   );
   const purchaseValidation = useMemo(() => {
     const actual = draws[deferredIndex + 1];
@@ -239,16 +256,16 @@ export function App() {
     if (
       actual === undefined ||
       purchasePortfolio === null ||
-      purchaseResearchResult === null
+      purchaseResearchCandidates === null
     ) {
       return null;
     }
     return diagnosePurchasePortfolio(
       purchasePortfolio,
-      purchaseResearchResult.candidates,
+      purchaseResearchCandidates,
       actual.numbers,
     );
-  }, [deferredIndex, draws, purchasePortfolio, purchaseResearchResult]);
+  }, [deferredIndex, draws, purchasePortfolio, purchaseResearchCandidates]);
 
   const handleFile = async (file: File | undefined) => {
     if (file === undefined) return;
@@ -471,6 +488,12 @@ export function App() {
               <span>선정 방식</span>
               <div className="segmented-control">
                 <ToggleButton
+                  active={purchaseStrategy === 'full-hybrid'}
+                  onClick={() => setPurchaseStrategy('full-hybrid')}
+                >
+                  조합 Hybrid
+                </ToggleButton>
+                <ToggleButton
                   active={purchaseStrategy === 'shape-transition'}
                   onClick={() => setPurchaseStrategy('shape-transition')}
                 >
@@ -485,9 +508,11 @@ export function App() {
               </div>
             </div>
             <p className="purchase-intro">
-              {purchaseStrategy === 'shape-transition'
-                ? '최근 96회 순차 검증에서 가장 나았던 7×7 형태 전이 상위 10게임을 사용해요. 최근 3회 경로와 닮은 과거 흐름의 다음 형태를 세 시나리오로 나눠요.'
-                : '비교를 위해 기존 수치 모델의 상위 10게임을 순서 변경 없이 사용해요.'}
+              {purchaseStrategy === 'full-hybrid'
+                ? '후보 번호 Top 15와 조합 평가를 분리해요. Number·Pair·Triple·원형·7×7·형태 전이·모델 합의를 조합 단위로 평가한 뒤, 점수와 Coverage·Diversity를 함께 최적화해 10게임을 만들어요.'
+                : purchaseStrategy === 'shape-transition'
+                  ? '최근 96회 순차 검증에서 가장 나았던 7×7 형태 전이 상위 10게임을 사용해요. 최근 3회 경로와 닮은 과거 흐름의 다음 형태를 세 시나리오로 나눠요.'
+                  : '기존 수치 모델의 연구 순위를 유지하면서 Coverage·Diversity로 10게임을 구성해요.'}
             </p>
             {purchasePortfolio?.userAnchorUsed === true && (
               <button
@@ -517,6 +542,16 @@ export function App() {
                     ))}
                   </div>
                   <small>금색 8개는 모델 공통 지지가 높은 핵심 번호예요.</small>
+                  {purchaseStrategy === 'full-hybrid' &&
+                    combinationAnalysis !== null && (
+                      <small>
+                        Candidate Pool 15 · 원시 조합{' '}
+                        {combinationAnalysis.rawCombinationCount.toLocaleString(
+                          'ko-KR',
+                        )}
+                        개 · Research Top 100 → Portfolio Top 10
+                      </small>
+                    )}
                   {purchaseStrategy === 'shape-transition' &&
                     shapeForecast !== null && (
                       <small>
@@ -748,6 +783,8 @@ export function App() {
         </aside>
       </div>
 
+      <BacktestPanel draws={draws} />
+
       <section className="method-note">
         <span className="card-index">METHOD</span>
         <div>
@@ -762,10 +799,13 @@ export function App() {
             남겨요. 실사용 기본값은 최근 96회 순차 검증에서 기본형과 무작위보다 높았던
             7×7 형태 전이 상위 10개예요. 최근 3회 형태 경로와 닮은 과거 경로 24개의 다음
             형태를 세 시나리오로 군집화하고, 4만 개 고정 조합에서 가까운 형태를 찾아요.
-            성능이 낮았던 가중 휠 공동 최적화는 제거했어요. 상위 10·12·14·16·18 번호군의
-            도달 상한과 연구 생성·10게임 압축 손실을 따로 기록하며, 실제 결과는 순위를
-            다시 정하는 데 쓰지 않아요. 독립 무작위 추첨의 당첨 확률을 높였다고 확정하는
-            기능은 아니에요.
+            조합 Hybrid는 후보 번호와 최종 조합 평가를 분리하고 Pair·Triple·원형·7×7·
+            형태 전이·모델 합의를 별도 Feature로 유지해요. 상위 10·12·15·18·20 번호군의
+            Candidate Recall, Oracle, Research Top-100, Purchase Top-10을 따로 기록하며,
+            Top-10은 연구 순위와 Coverage·Diversity를 함께 최적화해요. 전략별
+            Walk-forward, Ablation, seed 고정 Random Monte Carlo 결과는 아래 진단에서
+            비교할 수 있어요. 실제 결과는 순위를 다시 정하는 데 쓰지 않으며, 독립 무작위
+            추첨의 당첨 확률을 높였다고 확정하는 기능은 아니에요.
           </p>
         </div>
       </section>

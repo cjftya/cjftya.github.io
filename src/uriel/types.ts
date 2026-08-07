@@ -4,7 +4,7 @@ export type CandidateModel = 'baseline' | 'hybrid' | 'shape-transition';
 export type CandidateTier = 'explore' | 'focus' | 'confidence';
 export type CandidateHypothesis = 'baseline' | 'transition' | 'ridge' | 'consensus';
 export type PurchaseRole = 'focus' | 'hypothesis' | 'coverage' | 'anchor';
-export type PurchaseStrategy = 'baseline' | 'shape-transition';
+export type PurchaseStrategy = 'baseline' | 'shape-transition' | 'full-hybrid';
 
 export interface LottoDraw {
   round: number;

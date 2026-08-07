@@ -42,6 +42,21 @@ Pages Archive의 상세 패널은 등록된 `보기`와 GitHub 버튼을 모두 
 Garden은 GitHub 버튼만 표시하고, Wedding Card는 두 버튼을 모두 숨깁니다. 기존 웹
 프로젝트의 원본 정적 경로는 아래 레거시 프로젝트 규칙으로 그대로 유지합니다.
 
+### Uriel 분석 엔진
+
+Uriel은 후보 번호 생성과 6개 조합 평가를 분리합니다. 기존 수치·하이브리드·7×7 형태
+전이 모델의 합의로 Top 10/12/15/18/20 Candidate Pool Recall을 측정하고, 기본 Top 15
+안의 5,005개 조합을 Number·Pair·Triple·원형·번호표·형태 전이 Feature로 독립 평가해
+Research Top 100을 만듭니다. 구매용 Top 10은 연구 순위만 복사하지 않고 점수,
+번호 Coverage, 조합 간 Diversity, 4-number subset Coverage를 함께 최적화합니다.
+
+화면의 Walk-forward 진단은 Candidate Recall, Oracle Max, Top-100 Max, Top-10 Max,
+Oracle→Top-10 Conversion과 0~6 Hit Distribution을 전략별로 비교합니다. 기존 Uriel,
+Number, Pair, Pair+Triple, Shape, Shape Transition, Hybrid, Full Hybrid 및 Ablation을 같은
+과거 시점에서 검증하고, Random은 고정 seed로 32회 Monte Carlo 반복합니다. 계산은 Web
+Worker에서 실행되며 최근 48/96/192/384회 범위를 선택할 수 있습니다. 모든 통계와
+정규화는 예측 시점까지 알려진 기록만 사용합니다.
+
 은하계 정보, 프로젝트 링크와 행성 설정은 `public/data/projects.json`에서 관리합니다.
 
 ## 레거시 프로젝트
