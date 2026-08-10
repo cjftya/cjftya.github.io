@@ -46,6 +46,8 @@ export function BacktestPanel({ draws }: BacktestPanelProps) {
   const [rounds, setRounds] = useState<number>(96);
   const [poolSize, setPoolSize] = useState<number>(15);
   const [includeAblation, setIncludeAblation] = useState(true);
+  const [generationMode, setGenerationMode] =
+    useState<BacktestOptions['generationMode']>('full-enumeration');
   const [result, setResult] = useState<BacktestResult | null>(null);
   const [isRunning, setIsRunning] = useState(false);
   const [progress, setProgress] = useState<WorkerProgressMessage | null>(null);
@@ -75,6 +77,7 @@ export function BacktestPanel({ draws }: BacktestPanelProps) {
       rounds,
       poolSize,
       includeAblation,
+      generationMode,
       seed: 20260807,
       monteCarloRuns: 32,
     };
@@ -108,8 +111,9 @@ export function BacktestPanel({ draws }: BacktestPanelProps) {
         <span>미래 정보 차단 · seed 20260807</span>
       </div>
       <p className="backtest-intro">
-        후보 번호 Recall과 조합 전환을 분리하고, 실제 구매 상한인 Top-10의 4+ tail을
-        우선 비교해요. 계산은 별도 Worker에서 실행돼 화면을 멈추지 않아요.
+        Candidate → Generation → Top-100 → Top-10 손실을 분리하고, 실제 구매 상한인
+        Top-10의 5+ tail을 우선 비교해요. 계산은 별도 Worker에서 실행돼 화면을 멈추지
+        않아요.
       </p>
       <div className="backtest-controls">
         <label>
@@ -123,6 +127,18 @@ export function BacktestPanel({ draws }: BacktestPanelProps) {
                 최근 {value}회
               </option>
             ))}
+          </select>
+        </label>
+        <label>
+          조합 생성
+          <select
+            value={generationMode}
+            onChange={(event) =>
+              setGenerationMode(event.target.value as BacktestOptions['generationMode'])
+            }
+          >
+            <option value="current">현재 방식</option>
+            <option value="full-enumeration">전수조합 진단</option>
           </select>
         </label>
         <label>
@@ -181,9 +197,12 @@ function BacktestReport({ result }: { result: BacktestResult }) {
   const ablation = result.strategies.filter(({ strategy }) =>
     ABLATION_KEYS.has(strategy),
   );
-  const best = result.strategies.find(
-    ({ strategy }) => strategy === result.bestStrategy,
-  )!;
+  const bestCombination = result.strategies.find(
+    ({ strategy }) => strategy === result.bestCombinationStrategy,
+  );
+  const best =
+    bestCombination ??
+    result.strategies.find(({ strategy }) => strategy === result.bestStrategy)!;
 
   return (
     <div className="backtest-report">
@@ -249,6 +268,99 @@ function BacktestReport({ result }: { result: BacktestResult }) {
         </div>
       </ReportSection>
 
+      {bestCombination?.pipeline !== undefined && (
+        <ReportSection
+          title="5+ Opportunity Conversion"
+          copy={`${bestCombination.label}의 Candidate → Generation → Top-100 → Top-10 단계별 tail 보존율이에요.`}
+        >
+          <div className="table-scroll">
+            <table className="backtest-table pipeline-table">
+              <thead>
+                <tr>
+                  <th>기준</th>
+                  <th>Candidate</th>
+                  <th>Generation</th>
+                  <th>Top-100</th>
+                  <th>Top-10</th>
+                </tr>
+              </thead>
+              <tbody>
+                {(
+                  [
+                    ['4+', bestCombination.pipeline.fourPlus],
+                    ['5+', bestCombination.pipeline.fivePlus],
+                    ['6', bestCombination.pipeline.six],
+                  ] as const
+                ).map(([label, pipeline]) => (
+                  <tr key={label}>
+                    <th>{label}</th>
+                    <td>{pipeline.candidateOpportunities}</td>
+                    <td>{pipeline.generationSuccesses}</td>
+                    <td>{pipeline.top100Successes}</td>
+                    <td className="tail-cell">{pipeline.top10Successes}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </ReportSection>
+      )}
+
+      {result.options.generationMode === 'full-enumeration' &&
+        result.fiveHitOpportunities.length > 0 && (
+          <ReportSection
+            title={`5-hit Opportunity ${result.fiveHitOpportunities.length}회`}
+            copy="Candidate Recall 5+ 회차의 전략별 Best 5-hit Rank를 전수조합에서 확인해요."
+          >
+            <div className="opportunity-list">
+              {result.fiveHitOpportunities.map((opportunity) => (
+                <details key={opportunity.round}>
+                  <summary>
+                    <b>{opportunity.round}회</b>
+                    <span>
+                      Candidate {opportunity.candidateRecall} → Generation{' '}
+                      {opportunity.generationMaxHit} · Loss {opportunity.generationLoss}
+                    </span>
+                  </summary>
+                  <div className="table-scroll">
+                    <table className="backtest-table">
+                      <thead>
+                        <tr>
+                          <th>Strategy</th>
+                          <th>Best 5 Rank</th>
+                          <th>Score</th>
+                          <th>Top-100</th>
+                          <th>Top-10</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {Object.entries(opportunity.strategies).map(
+                          ([strategy, diagnostic]) => (
+                            <tr key={strategy}>
+                              <th>{strategyLabels[strategy as BacktestStrategy]}</th>
+                              <td>
+                                {diagnostic?.rankOfBest5HitCombination?.toLocaleString(
+                                  'ko-KR',
+                                ) ?? '—'}
+                              </td>
+                              <td>
+                                {diagnostic?.scoreOfBest5HitCombination?.toFixed(4) ??
+                                  '—'}
+                              </td>
+                              <td>{diagnostic?.top100MaxHit ?? '—'}</td>
+                              <td>{diagnostic?.top10MaxHit ?? '—'}</td>
+                            </tr>
+                          ),
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </details>
+              ))}
+            </div>
+          </ReportSection>
+        )}
+
       <ReportSection
         title="Top-10 Hit Distribution"
         copy="평균보다 4+·5+·6 tail을 우선해 전략을 정렬해요."
@@ -262,7 +374,7 @@ function BacktestReport({ result }: { result: BacktestResult }) {
 
       <ReportSection
         title="Oracle → Top-10 Conversion"
-        copy={`${strategyLabels[result.bestStrategy]}이 후보 Pool 안의 번호를 실제 10게임에 얼마나 살렸는지 보여줘요.`}
+        copy={`${best.label}이 후보 Pool 안의 번호를 실제 10게임에 얼마나 살렸는지 보여줘요.`}
       >
         <div className="conversion-grid">
           <Conversion label="Oracle 4 → 4+" value={best.conversion.oracle4To4} />
@@ -287,7 +399,7 @@ function BacktestReport({ result }: { result: BacktestResult }) {
           <StrategyTable
             rows={[best, ...ablation]}
             total={result.evaluatedRounds}
-            best={result.bestStrategy}
+            best={result.bestCombinationStrategy}
             compact
           />
         </ReportSection>
@@ -312,7 +424,7 @@ function BacktestReport({ result }: { result: BacktestResult }) {
 
       <ReportSection
         title="회차별 파이프라인"
-        copy="후보 Recall과 선택 전략 Oracle, Legacy Oracle을 분리해 Research Top-100 → Purchase Top-10 손실을 확인해요."
+        copy="Candidate → Generation → Research Top-100 → Purchase Top-10 손실을 단계별로 확인해요."
       >
         <div className="table-scroll">
           <table className="backtest-table round-table">
@@ -320,11 +432,11 @@ function BacktestReport({ result }: { result: BacktestResult }) {
               <tr>
                 <th>회차</th>
                 <th>Recall {result.options.poolSize}</th>
-                <th>Strategy Oracle</th>
+                <th>Generation</th>
                 <th>Legacy Oracle</th>
                 <th>Top-100</th>
                 <th>Top-10</th>
-                <th>Loss</th>
+                <th>G / R / C Loss</th>
               </tr>
             </thead>
             <tbody>
@@ -332,7 +444,7 @@ function BacktestReport({ result }: { result: BacktestResult }) {
                 .slice(-24)
                 .reverse()
                 .map((round) => {
-                  const row = round.strategies[result.bestStrategy]!;
+                  const row = round.strategies[result.bestCombinationStrategy]!;
                   return (
                     <tr key={round.round}>
                       <th>{round.round.toLocaleString('ko-KR')}</th>
@@ -343,8 +455,8 @@ function BacktestReport({ result }: { result: BacktestResult }) {
                       >
                         {round.candidateRecall[result.options.poolSize]}
                       </td>
-                      <td title={formatMatches(row.strategyOracleMatches)}>
-                        {row.strategyOracleMax}
+                      <td title={formatMatches(round.combinationGenerationMatches)}>
+                        {round.combinationGenerationMaxHit}
                       </td>
                       <td title={formatMatches(round.legacyOracleMatches)}>
                         {round.legacyOracleMax}
@@ -353,7 +465,10 @@ function BacktestReport({ result }: { result: BacktestResult }) {
                       <td className={row.top10Max >= 4 ? 'tail-cell' : undefined}>
                         {row.top10Max}
                       </td>
-                      <td>{row.conversionLoss}</td>
+                      <td>
+                        {round.generationLoss} / {row.rankingLoss ?? '—'} /{' '}
+                        {row.finalCompressionLoss}
+                      </td>
                     </tr>
                   );
                 })}
@@ -474,13 +589,13 @@ function FailureList({ title, rows }: { title: string; rows: readonly FailureCas
               <li key={row.round}>
                 <b>{row.round}회</b>
                 <span>
-                  R {row.candidateRecall} · S-O {row.strategyOracleMax} · L-O{' '}
-                  {row.legacyOracleMax} · 100 {row.top100Max} · 10 {row.top10Max}
+                  R {row.candidateRecall} · G {row.generationMaxHit} · 100{' '}
+                  {row.top100Max} · 10 {row.top10Max}
                 </span>
                 <small>
-                  R [{formatMatches(row.candidateMatches)}] · S-O [
-                  {formatMatches(row.strategyOracleMatches)}] · L-O [
-                  {formatMatches(row.legacyOracleMatches)}]
+                  Loss {row.generationLoss} / {row.rankingLoss ?? '—'} /{' '}
+                  {row.finalCompressionLoss} · Candidate [
+                  {formatMatches(row.candidateMatches)}]
                 </small>
               </li>
             ))}

@@ -2,9 +2,16 @@ import type { Candidate, LottoDraw } from '../types';
 import {
   ablationStrategies,
   buildCombinationAnalysis,
+  combinationScoreFor,
   mainCombinationStrategies,
+  scoreContributionFor,
 } from './combination';
-import type { CombinationStrategy } from './combination';
+import type {
+  CombinationGenerationMode,
+  CombinationScoreContribution,
+  CombinationStrategy,
+  CombinationVector,
+} from './combination';
 import { buildPurchasePortfolio } from './purchase';
 
 export type BacktestStrategy =
@@ -16,6 +23,7 @@ export interface BacktestOptions {
   seed: number;
   monteCarloRuns: number;
   includeAblation: boolean;
+  generationMode: CombinationGenerationMode;
 }
 
 export interface RecallSummary {
@@ -55,6 +63,42 @@ export interface StrategySummary {
   sixRate: number;
   portfolioImprovementRounds: number;
   conversion: ConversionSummary;
+  pipeline?: TailPipelineSummary;
+}
+
+export interface TailStageConversion {
+  candidateOpportunities: number;
+  generationSuccesses: number;
+  top100Successes: number;
+  top10Successes: number;
+  candidateToGenerationRate: number;
+  candidateToTop100Rate: number;
+  candidateToTop10Rate: number;
+}
+
+export interface TailPipelineSummary {
+  fourPlus: TailStageConversion;
+  fivePlus: TailStageConversion;
+  six: TailStageConversion;
+}
+
+export interface BestHitCombinationDiagnostic {
+  rank: number;
+  score: number;
+  scorePercentile: number;
+  numbers: readonly number[];
+  matchedNumbers: readonly number[];
+  featureContribution: CombinationScoreContribution;
+}
+
+export interface StrategyRankingDiagnostic {
+  bestFiveHitCombination: BestHitCombinationDiagnostic | null;
+  scorePercentiles: {
+    fiveHit: number | null;
+    fourHit: number | null;
+    threeHit: number | null;
+    randomCombination: number;
+  };
 }
 
 export interface RoundStrategyResult {
@@ -64,13 +108,23 @@ export interface RoundStrategyResult {
   top100Max: number;
   naiveTop10Max: number;
   top10Max: number;
+  rankingLoss: number | null;
+  finalCompressionLoss: number;
   conversionLoss: number;
+  rankingDiagnostic?: StrategyRankingDiagnostic;
 }
 
 export interface BacktestRoundResult {
   round: number;
   candidateRecall: Record<number, number>;
   candidateMatches: Record<number, readonly number[]>;
+  combinationGenerationMaxHit: number;
+  combinationGenerationBestNumbers: readonly number[];
+  combinationGenerationMatches: readonly number[];
+  generationLoss: number;
+  rawCombinationCount: number;
+  expectedCombinationCount: number;
+  generationComplete: boolean;
   legacyOracleMax: number;
   legacyOracleMatches: readonly number[];
   strategies: Partial<Record<BacktestStrategy, RoundStrategyResult>>;
@@ -85,13 +139,39 @@ export interface FailureCase {
   strategyOracleSource: RoundStrategyResult['strategyOracleSource'];
   legacyOracleMax: number;
   legacyOracleMatches: readonly number[];
+  generationMaxHit: number;
   top100Max: number;
   top10Max: number;
+  generationLoss: number;
+  rankingLoss: number | null;
+  finalCompressionLoss: number;
   conversionLoss: number;
 }
 
+export interface FiveHitOpportunity {
+  round: number;
+  candidateRecall: number;
+  candidateMatches: readonly number[];
+  generationMaxHit: number;
+  generationLoss: number;
+  rawCombinationCount: number;
+  strategies: Partial<
+    Record<
+      CombinationStrategy,
+      {
+        top100MaxHit: number;
+        top10MaxHit: number;
+        rankOfBest5HitCombination: number | null;
+        scoreOfBest5HitCombination: number | null;
+        scorePercentile: number | null;
+        featureContribution: CombinationScoreContribution | null;
+      }
+    >
+  >;
+}
+
 export interface BacktestResult {
-  metricSchemaVersion: 2;
+  metricSchemaVersion: 3;
   generatedAt: string;
   dataAsOfRound: number;
   startRound: number;
@@ -101,12 +181,14 @@ export interface BacktestResult {
   recall: readonly RecallSummary[];
   strategies: readonly StrategySummary[];
   rounds: readonly BacktestRoundResult[];
+  fiveHitOpportunities: readonly FiveHitOpportunity[];
   failures: {
     combinationLoss: readonly FailureCase[];
     candidateFailure: readonly FailureCase[];
     success: readonly FailureCase[];
   };
   bestStrategy: BacktestStrategy;
+  bestCombinationStrategy: CombinationStrategy;
   bottleneck: 'candidate-engine' | 'combination-engine' | 'mixed';
   bottleneckMessage: string;
 }
@@ -119,6 +201,7 @@ const DEFAULT_OPTIONS: BacktestOptions = {
   seed: 20260807,
   monteCarloRuns: 32,
   includeAblation: true,
+  generationMode: 'current',
 };
 
 export const strategyLabels: Record<BacktestStrategy, string> = {
@@ -169,6 +252,7 @@ export function runWalkForwardBacktest(
       index,
       options.poolSize,
       options.includeAblation,
+      options.generationMode,
     );
     const candidateMatches = Object.fromEntries(
       POOL_SIZES.map((size) => [
@@ -180,6 +264,15 @@ export function runWalkForwardBacktest(
       POOL_SIZES.map((size) => [size, candidateMatches[size]?.length ?? 0]),
     );
     const candidateOracleMatches = candidateMatches[options.poolSize] ?? [];
+    const generationBest = bestGeneratedCombination(
+      analysis.generatedCombinations,
+      actual.numbers,
+    );
+    const combinationGenerationMaxHit = generationBest.matchedNumbers.length;
+    const generationLoss = Math.max(
+      candidateOracleMatches.length - combinationGenerationMaxHit,
+      0,
+    );
     const strategies: Partial<Record<BacktestStrategy, RoundStrategyResult>> = {};
 
     const legacyTop100 = analysis.legacyResearch;
@@ -197,6 +290,8 @@ export function runWalkForwardBacktest(
       actual.numbers,
       legacyOracleMatches,
       'legacy-priority',
+      undefined,
+      undefined,
     );
     strategies['legacy-portfolio'] = evaluateStrategy(
       legacyTop100,
@@ -205,11 +300,23 @@ export function runWalkForwardBacktest(
       actual.numbers,
       legacyOracleMatches,
       'legacy-priority',
+      undefined,
+      undefined,
     );
 
     mainCombinationStrategies.forEach((strategy) => {
       const research = analysis.researchByStrategy[strategy];
       const portfolio = buildPurchasePortfolio(research, 'board').games;
+      const rankingDiagnostic =
+        options.generationMode === 'full-enumeration' &&
+        candidateOracleMatches.length >= 5
+          ? diagnoseStrategyRanking(
+              analysis.generatedCombinations,
+              strategy,
+              actual.numbers,
+              analysis.seed,
+            )
+          : undefined;
       strategies[strategy] = evaluateStrategy(
         research,
         research.slice(0, 10),
@@ -217,6 +324,8 @@ export function runWalkForwardBacktest(
         actual.numbers,
         candidateOracleMatches,
         'candidate-pool',
+        combinationGenerationMaxHit,
+        rankingDiagnostic,
       );
     });
 
@@ -224,6 +333,16 @@ export function runWalkForwardBacktest(
       ablationStrategies.forEach((strategy) => {
         const research = analysis.researchByStrategy[strategy];
         const portfolio = buildPurchasePortfolio(research, 'board').games;
+        const rankingDiagnostic =
+          options.generationMode === 'full-enumeration' &&
+          candidateOracleMatches.length >= 5
+            ? diagnoseStrategyRanking(
+                analysis.generatedCombinations,
+                strategy,
+                actual.numbers,
+                analysis.seed,
+              )
+            : undefined;
         strategies[strategy] = evaluateStrategy(
           research,
           research.slice(0, 10),
@@ -231,6 +350,8 @@ export function runWalkForwardBacktest(
           actual.numbers,
           candidateOracleMatches,
           'candidate-pool',
+          combinationGenerationMaxHit,
+          rankingDiagnostic,
         );
       });
       const full = analysis.researchByStrategy['full-hybrid'];
@@ -241,6 +362,8 @@ export function runWalkForwardBacktest(
         actual.numbers,
         candidateOracleMatches,
         'candidate-pool',
+        combinationGenerationMaxHit,
+        strategies['full-hybrid']?.rankingDiagnostic,
       );
     }
 
@@ -256,38 +379,54 @@ export function runWalkForwardBacktest(
       round: actual.round,
       candidateRecall,
       candidateMatches,
+      combinationGenerationMaxHit,
+      combinationGenerationBestNumbers: generationBest.numbers,
+      combinationGenerationMatches: generationBest.matchedNumbers,
+      generationLoss,
+      rawCombinationCount: analysis.rawCombinationCount,
+      expectedCombinationCount: analysis.expectedCombinationCount,
+      generationComplete: analysis.generationComplete,
       legacyOracleMax,
       legacyOracleMatches,
       strategies,
     };
-    assertBacktestRoundMetrics(roundResult, options.poolSize);
+    assertBacktestRoundMetrics(roundResult, options.poolSize, options.generationMode);
     roundResults.push(roundResult);
     onProgress?.(roundResults.length, totalRounds, actual.round);
   }
 
   const summaries = deterministicStrategies.map((strategy) =>
-    summarizeStrategy(strategy, roundResults),
+    summarizeStrategy(strategy, roundResults, options.poolSize),
   );
   summaries.push(summarizeRandom(randomHits, options));
   const ranked = summaries
     .filter(({ strategy }) => strategy !== 'random')
     .sort(
       (left, right) =>
-        right.fourPlusRate - left.fourPlusRate ||
         right.fivePlusRate - left.fivePlusRate ||
         right.sixRate - left.sixRate ||
+        right.fourPlusRate - left.fourPlusRate ||
+        right.threePlusRate - left.threePlusRate ||
         right.averageMaxHit - left.averageMaxHit,
     );
   const bestStrategy = ranked[0]?.strategy ?? 'legacy';
-  const failures = classifyFailures(roundResults, bestStrategy, options.poolSize);
+  const bestCombinationStrategy =
+    (ranked.find(({ strategy }) =>
+      mainCombinationStrategies.includes(strategy as CombinationStrategy),
+    )?.strategy as CombinationStrategy | undefined) ?? 'full-hybrid';
+  const failures = classifyFailures(
+    roundResults,
+    bestCombinationStrategy,
+    options.poolSize,
+  );
   const candidateFailureRate =
     roundResults.filter((round) => (round.candidateRecall[options.poolSize] ?? 0) <= 3)
       .length / Math.max(roundResults.length, 1);
   const conversionFailureRate =
     roundResults.filter(
       (round) =>
-        (round.strategies[bestStrategy]?.strategyOracleMax ?? 0) >= 4 &&
-        (round.strategies[bestStrategy]?.top10Max ?? 0) < 4,
+        (round.strategies[bestCombinationStrategy]?.strategyOracleMax ?? 0) >= 4 &&
+        (round.strategies[bestCombinationStrategy]?.top10Max ?? 0) < 4,
     ).length / Math.max(roundResults.length, 1);
   const bottleneck =
     Math.abs(candidateFailureRate - conversionFailureRate) < 0.08
@@ -303,7 +442,7 @@ export function runWalkForwardBacktest(
         : `후보 생성 실패 ${(candidateFailureRate * 100).toFixed(1)}%와 조합 전환 실패 ${(conversionFailureRate * 100).toFixed(1)}%가 함께 나타나요.`;
 
   return {
-    metricSchemaVersion: 2,
+    metricSchemaVersion: 3,
     generatedAt: new Date().toISOString(),
     dataAsOfRound: draws.at(-1)?.round ?? 0,
     startRound: roundResults[0]?.round ?? 0,
@@ -313,8 +452,14 @@ export function runWalkForwardBacktest(
     recall: summarizeRecall(roundResults),
     strategies: summaries,
     rounds: roundResults,
+    fiveHitOpportunities: buildFiveHitOpportunities(
+      roundResults,
+      options.poolSize,
+      options.includeAblation,
+    ),
     failures,
     bestStrategy,
+    bestCombinationStrategy,
     bottleneck,
     bottleneckMessage,
   };
@@ -327,6 +472,8 @@ function evaluateStrategy(
   actual: readonly number[],
   strategyOracleMatches: readonly number[],
   strategyOracleSource: RoundStrategyResult['strategyOracleSource'],
+  generationMaxHit: number | undefined,
+  rankingDiagnostic: StrategyRankingDiagnostic | undefined,
 ): RoundStrategyResult {
   const top100Max = maximumMatch(research, actual);
   const naiveTop10Max = maximumMatch(naive, actual);
@@ -338,7 +485,11 @@ function evaluateStrategy(
     top100Max,
     naiveTop10Max,
     top10Max,
+    rankingLoss:
+      generationMaxHit === undefined ? null : Math.max(generationMaxHit - top100Max, 0),
+    finalCompressionLoss: Math.max(top100Max - top10Max, 0),
     conversionLoss: Math.max(strategyOracleMatches.length - top10Max, 0),
+    ...(rankingDiagnostic === undefined ? {} : { rankingDiagnostic }),
   };
 }
 
@@ -359,6 +510,7 @@ function summarizeRecall(rounds: readonly BacktestRoundResult[]): RecallSummary[
 function summarizeStrategy(
   strategy: BacktestStrategy,
   rounds: readonly BacktestRoundResult[],
+  poolSize: number,
 ): StrategySummary {
   const records = rounds.map((round) => round.strategies[strategy]!).filter(Boolean);
   const hits = records.map(({ top10Max }) => top10Max);
@@ -377,6 +529,9 @@ function summarizeStrategy(
       ({ top10Max, naiveTop10Max }) => top10Max > naiveTop10Max,
     ).length,
     conversion: summarizeConversion(rounds, strategy),
+    ...(records[0]?.strategyOracleSource === 'candidate-pool'
+      ? { pipeline: summarizeTailPipeline(rounds, strategy, poolSize) }
+      : {}),
   };
 }
 
@@ -399,6 +554,43 @@ function summarizeRandom(
     sixRate: rate(hits, 6),
     portfolioImprovementRounds: 0,
     conversion: emptyConversion(),
+  };
+}
+
+function summarizeTailPipeline(
+  rounds: readonly BacktestRoundResult[],
+  strategy: BacktestStrategy,
+  poolSize: number,
+): TailPipelineSummary {
+  const summarize = (threshold: number): TailStageConversion => {
+    const eligible = rounds.filter(
+      (round) => (round.candidateRecall[poolSize] ?? 0) >= threshold,
+    );
+    const candidateOpportunities = eligible.length;
+    const generationSuccesses = eligible.filter(
+      (round) => round.combinationGenerationMaxHit >= threshold,
+    ).length;
+    const top100Successes = eligible.filter(
+      (round) => (round.strategies[strategy]?.top100Max ?? 0) >= threshold,
+    ).length;
+    const top10Successes = eligible.filter(
+      (round) => (round.strategies[strategy]?.top10Max ?? 0) >= threshold,
+    ).length;
+    return {
+      candidateOpportunities,
+      generationSuccesses,
+      top100Successes,
+      top10Successes,
+      candidateToGenerationRate:
+        generationSuccesses / Math.max(candidateOpportunities, 1),
+      candidateToTop100Rate: top100Successes / Math.max(candidateOpportunities, 1),
+      candidateToTop10Rate: top10Successes / Math.max(candidateOpportunities, 1),
+    };
+  };
+  return {
+    fourPlus: summarize(4),
+    fivePlus: summarize(5),
+    six: summarize(6),
   };
 }
 
@@ -445,6 +637,134 @@ function emptyConversion(): ConversionSummary {
   };
 }
 
+function buildFiveHitOpportunities(
+  rounds: readonly BacktestRoundResult[],
+  poolSize: number,
+  includeAblation: boolean,
+): FiveHitOpportunity[] {
+  const strategies = [
+    ...mainCombinationStrategies,
+    ...(includeAblation ? ablationStrategies : []),
+  ];
+  return rounds
+    .filter((round) => (round.candidateRecall[poolSize] ?? 0) >= 5)
+    .map((round) => ({
+      round: round.round,
+      candidateRecall: round.candidateRecall[poolSize] ?? 0,
+      candidateMatches: round.candidateMatches[poolSize] ?? [],
+      generationMaxHit: round.combinationGenerationMaxHit,
+      generationLoss: round.generationLoss,
+      rawCombinationCount: round.rawCombinationCount,
+      strategies: Object.fromEntries(
+        strategies.map((strategy) => {
+          const result = round.strategies[strategy];
+          const bestFive = result?.rankingDiagnostic?.bestFiveHitCombination;
+          return [
+            strategy,
+            {
+              top100MaxHit: result?.top100Max ?? 0,
+              top10MaxHit: result?.top10Max ?? 0,
+              rankOfBest5HitCombination: bestFive?.rank ?? null,
+              scoreOfBest5HitCombination: bestFive?.score ?? null,
+              scorePercentile: bestFive?.scorePercentile ?? null,
+              featureContribution: bestFive?.featureContribution ?? null,
+            },
+          ];
+        }),
+      ),
+    }));
+}
+
+function bestGeneratedCombination(
+  generated: readonly CombinationVector[],
+  actual: readonly number[],
+): { numbers: readonly number[]; matchedNumbers: readonly number[] } {
+  let bestNumbers: readonly number[] = [];
+  let bestMatches: readonly number[] = [];
+  generated.forEach(({ numbers }) => {
+    const matches = matchingNumbers(numbers, actual);
+    if (
+      matches.length > bestMatches.length ||
+      (matches.length === bestMatches.length &&
+        combinationKey(numbers).localeCompare(combinationKey(bestNumbers)) < 0)
+    ) {
+      bestNumbers = numbers;
+      bestMatches = matches;
+    }
+  });
+  return { numbers: bestNumbers, matchedNumbers: bestMatches };
+}
+
+export function diagnoseStrategyRanking(
+  generated: readonly CombinationVector[],
+  strategy: CombinationStrategy,
+  actual: readonly number[],
+  seed: number,
+): StrategyRankingDiagnostic {
+  const scored = generated.map((vector) => ({
+    vector,
+    score: combinationScoreFor(vector.features, strategy),
+    matches: matchingNumbers(vector.numbers, actual),
+  }));
+  const bestForHit = (minimum: number, maximum = minimum) =>
+    scored
+      .filter(({ matches }) => matches.length >= minimum && matches.length <= maximum)
+      .sort(compareScored)[0];
+  const bestFive = bestForHit(5, 6);
+  const bestFour = bestForHit(4);
+  const bestThree = bestForHit(3);
+  const random = scored[seed % Math.max(scored.length, 1)];
+  const rankOf = (target: (typeof scored)[number] | undefined): number | null => {
+    if (target === undefined) return null;
+    return (
+      1 + scored.filter((candidate) => compareScored(candidate, target) < 0).length
+    );
+  };
+  const percentileOf = (target: (typeof scored)[number] | undefined) => {
+    const rank = rankOf(target);
+    return rank === null ? null : (scored.length - rank + 1) / scored.length;
+  };
+  const bestFiveRank = rankOf(bestFive);
+  return {
+    bestFiveHitCombination:
+      bestFive === undefined || bestFiveRank === null
+        ? null
+        : {
+            rank: bestFiveRank,
+            score: bestFive.score,
+            scorePercentile: percentileOf(bestFive) ?? 0,
+            numbers: bestFive.vector.numbers,
+            matchedNumbers: bestFive.matches,
+            featureContribution: scoreContributionFor(
+              bestFive.vector.features,
+              strategy,
+            ),
+          },
+    scorePercentiles: {
+      fiveHit: percentileOf(bestFive),
+      fourHit: percentileOf(bestFour),
+      threeHit: percentileOf(bestThree),
+      randomCombination: percentileOf(random) ?? 0,
+    },
+  };
+}
+
+function compareScored(
+  left: { vector: CombinationVector; score: number },
+  right: { vector: CombinationVector; score: number },
+): number {
+  return (
+    right.score - left.score ||
+    combinationKey(left.vector.numbers).localeCompare(
+      combinationKey(right.vector.numbers),
+    )
+  );
+}
+
+function combinationKey(numbers: readonly number[]): string {
+  return numbers.join('-');
+}
+
 function classifyFailures(
   rounds: readonly BacktestRoundResult[],
   strategy: BacktestStrategy,
@@ -482,8 +802,12 @@ export function buildFailureCase(
     strategyOracleSource: result.strategyOracleSource,
     legacyOracleMax: round.legacyOracleMax,
     legacyOracleMatches: round.legacyOracleMatches,
+    generationMaxHit: round.combinationGenerationMaxHit,
     top100Max: result.top100Max,
     top10Max: result.top10Max,
+    generationLoss: round.generationLoss,
+    rankingLoss: result.rankingLoss,
+    finalCompressionLoss: result.finalCompressionLoss,
     conversionLoss: result.conversionLoss,
   };
 }
@@ -491,6 +815,7 @@ export function buildFailureCase(
 export function assertBacktestRoundMetrics(
   round: BacktestRoundResult,
   poolSize: number,
+  generationMode: CombinationGenerationMode = 'current',
 ): void {
   POOL_SIZES.forEach((size) => {
     if (
@@ -502,6 +827,35 @@ export function assertBacktestRoundMetrics(
     }
   });
   const candidateMatches = round.candidateMatches[poolSize] ?? [];
+  if (round.combinationGenerationMaxHit !== round.combinationGenerationMatches.length) {
+    throw new Error(
+      `${round.round}회 Combination Generation 지표가 적중 번호와 달라요.`,
+    );
+  }
+  if (round.rawCombinationCount > round.expectedCombinationCount) {
+    throw new Error(`${round.round}회 생성 조합 수가 전수조합 수를 초과해요.`);
+  }
+  if (
+    generationMode === 'full-enumeration' &&
+    (!round.generationComplete ||
+      round.rawCombinationCount !== round.expectedCombinationCount)
+  ) {
+    throw new Error(`${round.round}회 Full Enumeration 조합이 누락됐어요.`);
+  }
+  if (
+    generationMode === 'full-enumeration' &&
+    round.combinationGenerationMaxHit !== candidateMatches.length
+  ) {
+    throw new Error(
+      `${round.round}회 Full Enumeration Generation Max가 Candidate Recall과 달라요.`,
+    );
+  }
+  if (
+    round.generationLoss !==
+    Math.max(candidateMatches.length - round.combinationGenerationMaxHit, 0)
+  ) {
+    throw new Error(`${round.round}회 Generation Loss 지표가 달라요.`);
+  }
   if (round.legacyOracleMax !== round.legacyOracleMatches.length) {
     throw new Error(`${round.round}회 Legacy Oracle 지표가 적중 번호와 달라요.`);
   }
@@ -530,9 +884,33 @@ export function assertBacktestRoundMetrics(
       throw new Error(`${round.round}회 ${strategy} Top-10이 Top-100을 초과해요.`);
     }
     if (
+      result.rankingLoss !==
+      (result.strategyOracleSource === 'candidate-pool'
+        ? Math.max(round.combinationGenerationMaxHit - result.top100Max, 0)
+        : null)
+    ) {
+      throw new Error(`${round.round}회 ${strategy} Ranking Loss 지표가 달라요.`);
+    }
+    if (
+      result.finalCompressionLoss !== Math.max(result.top100Max - result.top10Max, 0)
+    ) {
+      throw new Error(
+        `${round.round}회 ${strategy} Final Compression Loss 지표가 달라요.`,
+      );
+    }
+    if (
       result.conversionLoss !== Math.max(result.strategyOracleMax - result.top10Max, 0)
     ) {
       throw new Error(`${round.round}회 ${strategy} Conversion Loss 지표가 달라요.`);
+    }
+    if (
+      result.strategyOracleSource === 'candidate-pool' &&
+      result.conversionLoss !==
+        round.generationLoss + (result.rankingLoss ?? 0) + result.finalCompressionLoss
+    ) {
+      throw new Error(
+        `${round.round}회 ${strategy} 단계별 Loss 합계가 Conversion Loss와 달라요.`,
+      );
     }
   });
 }
@@ -635,5 +1013,7 @@ function sanitizeOptions(options: BacktestOptions): BacktestOptions {
     seed: options.seed >>> 0,
     monteCarloRuns: Math.min(Math.max(Math.round(options.monteCarloRuns), 8), 128),
     includeAblation: options.includeAblation,
+    generationMode:
+      options.generationMode === 'full-enumeration' ? 'full-enumeration' : 'current',
   };
 }
