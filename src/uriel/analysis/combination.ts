@@ -522,6 +522,25 @@ export function combinationScoreFor(
   );
 }
 
+export const combinationFeatureKeys: readonly (keyof CombinationFeatureVector)[] = [
+  'individualNumberScore',
+  'pairScore',
+  'tripleScore',
+  'circleShapeScore',
+  'gridShapeScore',
+  'shapeTransitionScore',
+  'frequencyBalance',
+  'recencyBalance',
+  'oddEvenBalance',
+  'lowHighBalance',
+  'rangeBalance',
+  'gapBalance',
+  'sumBalance',
+  'spatialDensity',
+  'modelAgreement',
+  'modelDisagreement',
+];
+
 export function scoreContributionFor(
   features: CombinationFeatureVector,
   strategy: CombinationStrategy,
