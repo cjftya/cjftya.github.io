@@ -58,7 +58,9 @@ export interface StrategySummary {
 }
 
 export interface RoundStrategyResult {
-  oracleMax: number;
+  strategyOracleMax: number;
+  strategyOracleMatches: readonly number[];
+  strategyOracleSource: 'candidate-pool' | 'legacy-priority';
   top100Max: number;
   naiveTop10Max: number;
   top10Max: number;
@@ -68,21 +70,28 @@ export interface RoundStrategyResult {
 export interface BacktestRoundResult {
   round: number;
   candidateRecall: Record<number, number>;
+  candidateMatches: Record<number, readonly number[]>;
   legacyOracleMax: number;
+  legacyOracleMatches: readonly number[];
   strategies: Partial<Record<BacktestStrategy, RoundStrategyResult>>;
 }
 
 export interface FailureCase {
   round: number;
   candidateRecall: number;
+  candidateMatches: readonly number[];
   strategyOracleMax: number;
+  strategyOracleMatches: readonly number[];
+  strategyOracleSource: RoundStrategyResult['strategyOracleSource'];
   legacyOracleMax: number;
+  legacyOracleMatches: readonly number[];
   top100Max: number;
   top10Max: number;
   conversionLoss: number;
 }
 
 export interface BacktestResult {
+  metricSchemaVersion: 2;
   generatedAt: string;
   dataAsOfRound: number;
   startRound: number;
@@ -161,35 +170,41 @@ export function runWalkForwardBacktest(
       options.poolSize,
       options.includeAblation,
     );
-    const candidateRecall = Object.fromEntries(
+    const candidateMatches = Object.fromEntries(
       POOL_SIZES.map((size) => [
         size,
-        countMatches(analysis.candidateRanking.slice(0, size), actual.numbers),
+        matchingNumbers(analysis.candidateRanking.slice(0, size), actual.numbers),
       ]),
     );
-    const candidateOracleMax = candidateRecall[options.poolSize] ?? 0;
+    const candidateRecall = Object.fromEntries(
+      POOL_SIZES.map((size) => [size, candidateMatches[size]?.length ?? 0]),
+    );
+    const candidateOracleMatches = candidateMatches[options.poolSize] ?? [];
     const strategies: Partial<Record<BacktestStrategy, RoundStrategyResult>> = {};
 
     const legacyTop100 = analysis.legacyResearch;
     const legacyTop10 = legacyTop100.slice(0, 10);
     const legacyPortfolio = buildPurchasePortfolio(legacyTop100, 'board');
-    const legacyOracleMax = countMatches(
+    const legacyOracleMatches = matchingNumbers(
       legacyPortfolio.priorityNumbers.slice(0, options.poolSize),
       actual.numbers,
     );
+    const legacyOracleMax = legacyOracleMatches.length;
     strategies.legacy = evaluateStrategy(
       legacyTop100,
       legacyTop10,
       legacyTop10,
       actual.numbers,
-      legacyOracleMax,
+      legacyOracleMatches,
+      'legacy-priority',
     );
     strategies['legacy-portfolio'] = evaluateStrategy(
       legacyTop100,
       legacyTop10,
       legacyPortfolio.games,
       actual.numbers,
-      legacyOracleMax,
+      legacyOracleMatches,
+      'legacy-priority',
     );
 
     mainCombinationStrategies.forEach((strategy) => {
@@ -200,7 +215,8 @@ export function runWalkForwardBacktest(
         research.slice(0, 10),
         portfolio,
         actual.numbers,
-        candidateOracleMax,
+        candidateOracleMatches,
+        'candidate-pool',
       );
     });
 
@@ -213,7 +229,8 @@ export function runWalkForwardBacktest(
           research.slice(0, 10),
           portfolio,
           actual.numbers,
-          candidateOracleMax,
+          candidateOracleMatches,
+          'candidate-pool',
         );
       });
       const full = analysis.researchByStrategy['full-hybrid'];
@@ -222,7 +239,8 @@ export function runWalkForwardBacktest(
         full.slice(0, 10),
         full.slice(0, 10),
         actual.numbers,
-        candidateOracleMax,
+        candidateOracleMatches,
+        'candidate-pool',
       );
     }
 
@@ -234,12 +252,16 @@ export function runWalkForwardBacktest(
       randomHits.push(maximumMatch(randomPortfolio(seed), actual.numbers));
     }
 
-    roundResults.push({
+    const roundResult: BacktestRoundResult = {
       round: actual.round,
       candidateRecall,
+      candidateMatches,
       legacyOracleMax,
+      legacyOracleMatches,
       strategies,
-    });
+    };
+    assertBacktestRoundMetrics(roundResult, options.poolSize);
+    roundResults.push(roundResult);
     onProgress?.(roundResults.length, totalRounds, actual.round);
   }
 
@@ -259,13 +281,12 @@ export function runWalkForwardBacktest(
   const bestStrategy = ranked[0]?.strategy ?? 'legacy';
   const failures = classifyFailures(roundResults, bestStrategy, options.poolSize);
   const candidateFailureRate =
-    roundResults.filter(
-      (round) => (round.candidateRecall[options.poolSize] ?? 0) <= 3,
-    ).length / Math.max(roundResults.length, 1);
+    roundResults.filter((round) => (round.candidateRecall[options.poolSize] ?? 0) <= 3)
+      .length / Math.max(roundResults.length, 1);
   const conversionFailureRate =
     roundResults.filter(
       (round) =>
-        (round.strategies[bestStrategy]?.oracleMax ?? 0) >= 4 &&
+        (round.strategies[bestStrategy]?.strategyOracleMax ?? 0) >= 4 &&
         (round.strategies[bestStrategy]?.top10Max ?? 0) < 4,
     ).length / Math.max(roundResults.length, 1);
   const bottleneck =
@@ -282,6 +303,7 @@ export function runWalkForwardBacktest(
         : `후보 생성 실패 ${(candidateFailureRate * 100).toFixed(1)}%와 조합 전환 실패 ${(conversionFailureRate * 100).toFixed(1)}%가 함께 나타나요.`;
 
   return {
+    metricSchemaVersion: 2,
     generatedAt: new Date().toISOString(),
     dataAsOfRound: draws.at(-1)?.round ?? 0,
     startRound: roundResults[0]?.round ?? 0,
@@ -303,17 +325,20 @@ function evaluateStrategy(
   naive: readonly Candidate[],
   portfolio: readonly Candidate[],
   actual: readonly number[],
-  oracle: number,
+  strategyOracleMatches: readonly number[],
+  strategyOracleSource: RoundStrategyResult['strategyOracleSource'],
 ): RoundStrategyResult {
   const top100Max = maximumMatch(research, actual);
   const naiveTop10Max = maximumMatch(naive, actual);
   const top10Max = maximumMatch(portfolio, actual);
   return {
-    oracleMax: oracle,
+    strategyOracleMax: strategyOracleMatches.length,
+    strategyOracleMatches,
+    strategyOracleSource,
     top100Max,
     naiveTop10Max,
     top10Max,
-    conversionLoss: Math.max(oracle - top10Max, 0),
+    conversionLoss: Math.max(strategyOracleMatches.length - top10Max, 0),
   };
 }
 
@@ -383,7 +408,7 @@ function summarizeConversion(
 ): ConversionSummary {
   const conversion = (oracle: number, target: number): ConversionRate => {
     const eligible = rounds.filter(
-      (round) => round.strategies[strategy]?.oracleMax === oracle,
+      (round) => round.strategies[strategy]?.strategyOracleMax === oracle,
     );
     const successes = eligible.filter(
       (round) => (round.strategies[strategy]?.top10Max ?? 0) >= target,
@@ -429,8 +454,7 @@ function classifyFailures(
   return {
     combinationLoss: cases
       .filter(
-        ({ strategyOracleMax, top10Max }) =>
-          strategyOracleMax >= 5 && top10Max <= 3,
+        ({ strategyOracleMax, top10Max }) => strategyOracleMax >= 5 && top10Max <= 3,
       )
       .slice(-20),
     candidateFailure: cases
@@ -452,12 +476,65 @@ export function buildFailureCase(
   return {
     round: round.round,
     candidateRecall: round.candidateRecall[poolSize] ?? 0,
-    strategyOracleMax: result.oracleMax,
+    candidateMatches: round.candidateMatches[poolSize] ?? [],
+    strategyOracleMax: result.strategyOracleMax,
+    strategyOracleMatches: result.strategyOracleMatches,
+    strategyOracleSource: result.strategyOracleSource,
     legacyOracleMax: round.legacyOracleMax,
+    legacyOracleMatches: round.legacyOracleMatches,
     top100Max: result.top100Max,
     top10Max: result.top10Max,
     conversionLoss: result.conversionLoss,
   };
+}
+
+export function assertBacktestRoundMetrics(
+  round: BacktestRoundResult,
+  poolSize: number,
+): void {
+  POOL_SIZES.forEach((size) => {
+    if (
+      (round.candidateRecall[size] ?? 0) !== (round.candidateMatches[size] ?? []).length
+    ) {
+      throw new Error(
+        `${round.round}회 Top-${size} Candidate Recall 지표가 적중 번호와 달라요.`,
+      );
+    }
+  });
+  const candidateMatches = round.candidateMatches[poolSize] ?? [];
+  if (round.legacyOracleMax !== round.legacyOracleMatches.length) {
+    throw new Error(`${round.round}회 Legacy Oracle 지표가 적중 번호와 달라요.`);
+  }
+
+  Object.entries(round.strategies).forEach(([strategy, result]) => {
+    if (result === undefined) return;
+    const expectedMatches =
+      result.strategyOracleSource === 'candidate-pool'
+        ? candidateMatches
+        : round.legacyOracleMatches;
+    if (
+      result.strategyOracleMax !== result.strategyOracleMatches.length ||
+      !sameNumbers(result.strategyOracleMatches, expectedMatches)
+    ) {
+      throw new Error(
+        `${round.round}회 ${strategy} Strategy Oracle 지표가 원본과 달라요.`,
+      );
+    }
+    if (
+      result.strategyOracleSource === 'candidate-pool' &&
+      result.top100Max > result.strategyOracleMax
+    ) {
+      throw new Error(`${round.round}회 ${strategy} Top-100이 Oracle을 초과해요.`);
+    }
+    if (result.top10Max > result.top100Max) {
+      throw new Error(`${round.round}회 ${strategy} Top-10이 Top-100을 초과해요.`);
+    }
+    if (
+      result.conversionLoss !== Math.max(result.strategyOracleMax - result.top10Max, 0)
+    ) {
+      throw new Error(`${round.round}회 ${strategy} Conversion Loss 지표가 달라요.`);
+    }
+  });
 }
 
 function randomPortfolio(seed: number): Candidate[] {
@@ -518,6 +595,17 @@ function maximumMatch(
 
 function countMatches(left: readonly number[], right: readonly number[]): number {
   return left.filter((number) => right.includes(number)).length;
+}
+
+function matchingNumbers(pool: readonly number[], actual: readonly number[]): number[] {
+  return actual.filter((number) => pool.includes(number));
+}
+
+function sameNumbers(left: readonly number[], right: readonly number[]): boolean {
+  return (
+    left.length === right.length &&
+    left.every((number, index) => number === right[index])
+  );
 }
 
 function hitDistribution(values: readonly number[], expectedTotal: number): number[] {

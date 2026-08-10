@@ -336,9 +336,19 @@ function BacktestReport({ result }: { result: BacktestResult }) {
                   return (
                     <tr key={round.round}>
                       <th>{round.round.toLocaleString('ko-KR')}</th>
-                      <td>{round.candidateRecall[result.options.poolSize]}</td>
-                      <td>{row.oracleMax}</td>
-                      <td>{round.legacyOracleMax}</td>
+                      <td
+                        title={formatMatches(
+                          round.candidateMatches[result.options.poolSize],
+                        )}
+                      >
+                        {round.candidateRecall[result.options.poolSize]}
+                      </td>
+                      <td title={formatMatches(row.strategyOracleMatches)}>
+                        {row.strategyOracleMax}
+                      </td>
+                      <td title={formatMatches(round.legacyOracleMatches)}>
+                        {round.legacyOracleMax}
+                      </td>
                       <td>{row.top100Max}</td>
                       <td className={row.top10Max >= 4 ? 'tail-cell' : undefined}>
                         {row.top10Max}
@@ -467,6 +477,11 @@ function FailureList({ title, rows }: { title: string; rows: readonly FailureCas
                   R {row.candidateRecall} · S-O {row.strategyOracleMax} · L-O{' '}
                   {row.legacyOracleMax} · 100 {row.top100Max} · 10 {row.top10Max}
                 </span>
+                <small>
+                  R [{formatMatches(row.candidateMatches)}] · S-O [
+                  {formatMatches(row.strategyOracleMatches)}] · L-O [
+                  {formatMatches(row.legacyOracleMatches)}]
+                </small>
               </li>
             ))}
         </ul>
@@ -494,4 +509,8 @@ function cell(count: number, total: number): string {
 
 function percent(value: number): string {
   return `${(value * 100).toFixed(1)}%`;
+}
+
+function formatMatches(numbers: readonly number[] | undefined): string {
+  return numbers?.join(', ') || '없음';
 }
