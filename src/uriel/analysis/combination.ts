@@ -227,9 +227,16 @@ export function buildCombinationAnalysis(
   poolSize = 15,
   includeAblation = true,
   generationMode: CombinationGenerationMode = 'current',
+  candidateRankingOverride?: readonly number[],
+  strategyOverride?: readonly CombinationStrategy[],
 ): CombinationAnalysis {
   const safePoolSize = Math.min(Math.max(poolSize, 10), MAX_POOL_SIZE);
-  const candidateContext = buildCandidateContext(draws, index, safePoolSize);
+  const candidateContext = buildCandidateContext(
+    draws,
+    index,
+    safePoolSize,
+    candidateRankingOverride,
+  );
   const { candidatePool, candidateRanking, legacyResearch, signals } = candidateContext;
   const combinations = combinationsOfSix(candidatePool);
   const known = draws.slice(0, index + 1);
@@ -247,9 +254,12 @@ export function buildCombinationAnalysis(
       shapeForecast.scenarios,
     ),
   }));
-  const requestedStrategies = includeAblation
-    ? [...mainCombinationStrategies, ...ablationStrategies]
-    : [...mainCombinationStrategies];
+  const requestedStrategies =
+    strategyOverride === undefined
+      ? includeAblation
+        ? [...mainCombinationStrategies, ...ablationStrategies]
+        : [...mainCombinationStrategies]
+      : [...new Set(strategyOverride)];
   const researchByStrategy = Object.fromEntries(
     requestedStrategies.map((strategy) => [
       strategy,
@@ -257,11 +267,11 @@ export function buildCombinationAnalysis(
     ]),
   ) as Record<CombinationStrategy, CombinationCandidate[]>;
 
-  if (!includeAblation) {
-    ablationStrategies.forEach((strategy) => {
+  [...mainCombinationStrategies, ...ablationStrategies].forEach((strategy) => {
+    if (!requestedStrategies.includes(strategy)) {
       researchByStrategy[strategy] = [];
-    });
-  }
+    }
+  });
 
   return {
     candidatePool,
@@ -295,6 +305,7 @@ function buildCandidateContext(
   draws: readonly LottoDraw[],
   index: number,
   poolSize: number,
+  candidateRankingOverride?: readonly number[],
 ): CandidatePoolAnalysis & { signals: NumberSignals } {
   const baseline = findShapeCandidates(draws, index, 'board', 100, 'baseline');
   const hybrid = findShapeCandidates(draws, index, 'board', 100, 'hybrid');
@@ -307,19 +318,40 @@ function buildCandidateContext(
   );
   const models = [baseline.candidates, hybrid.candidates, transition.candidates];
   const signals = buildNumberSignals(draws.slice(0, index + 1), models);
-  const candidateRanking = Array.from(
+  const currentRanking = Array.from(
     { length: 45 },
     (_, numberIndex) => numberIndex + 1,
   ).sort(
     (left, right) =>
       signals.consensus[right]! - signals.consensus[left]! || left - right,
   );
+  const candidateRanking =
+    candidateRankingOverride === undefined
+      ? currentRanking
+      : normalizeCandidateRankingOverride(candidateRankingOverride, currentRanking);
   return {
     candidatePool: candidateRanking.slice(0, poolSize),
     candidateRanking,
     legacyResearch: transition.candidates,
     signals,
   };
+}
+
+function normalizeCandidateRankingOverride(
+  override: readonly number[],
+  fallback: readonly number[],
+): number[] {
+  const selected: number[] = [];
+  [...override, ...fallback].forEach((number) => {
+    if (!Number.isInteger(number) || number < 1 || number > 45) {
+      throw new Error(`Candidate ranking override contains invalid number ${number}.`);
+    }
+    if (!selected.includes(number)) selected.push(number);
+  });
+  if (selected.length !== 45) {
+    throw new Error('Candidate ranking override must resolve all 45 numbers.');
+  }
+  return selected;
 }
 
 function buildNumberSignals(

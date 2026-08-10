@@ -96,7 +96,7 @@ const BOARD_FEATURES: readonly FeatureDefinition[] = [
 ];
 
 const FIXED_COMBINATIONS = buildFixedCombinations();
-let cachedBasis: { layout: LayoutMode; values: CandidateBasis[] } | null = null;
+const cachedCandidateBasis = new Map<LayoutMode, CandidateBasis[]>();
 const cachedShapeBasis = new Map<LayoutMode, CandidateBasis[]>();
 
 export function findShapeCandidates(
@@ -150,8 +150,8 @@ function shapeTransitionCandidates(
   scenarios: readonly { features: readonly number[]; probability: number }[],
   count: number,
 ): Candidate[] {
-  const ranked = shapeCandidateBasis(layout)
-    .map((basis): ScoredBasis => {
+  const ranked = selectBestStable(
+    shapeCandidateBasis(layout).map((basis): ScoredBasis => {
       const distance = Math.min(
         ...scenarios.map(
           (scenario) =>
@@ -164,9 +164,10 @@ function shapeTransitionCandidates(
         distance,
         hypothesis: 'transition',
       };
-    })
-    .sort((left, right) => left.distance - right.distance)
-    .slice(0, Math.max(DIVERSITY_POOL_SIZE, count * 16));
+    }),
+    Math.max(DIVERSITY_POOL_SIZE, count * 16),
+    (left, right) => left.distance - right.distance,
+  );
 
   return diversifyCandidates(ranked, count, {
     tier: 'explore',
@@ -212,13 +213,14 @@ function baselineCandidates(
   definitions: readonly FeatureDefinition[],
   count: number,
 ): Candidate[] {
-  const ranked = candidateBasis(layout)
-    .map((basis): ScoredBasis => ({
+  const ranked = selectBestStable(
+    candidateBasis(layout).map((basis): ScoredBasis => ({
       ...basis,
       distance: featureDistance(basis.features, target, definitions),
-    }))
-    .sort((left, right) => left.distance - right.distance)
-    .slice(0, Math.max(DIVERSITY_POOL_SIZE, count * 12));
+    })),
+    Math.max(DIVERSITY_POOL_SIZE, count * 12),
+    (left, right) => left.distance - right.distance,
+  );
   return diversifyCandidates(ranked, count);
 }
 
@@ -294,10 +296,11 @@ function selectExplore(
       ['ridgeDistance', 2],
     ] as const
   ).map(([key, hypothesis]) =>
-    [...scored]
-      .sort((left, right) => left[key] - right[key])
-      .slice(0, DIVERSITY_POOL_SIZE)
-      .map((candidate) => ({ candidate, hypothesis })),
+    selectBestStable(
+      scored,
+      DIVERSITY_POOL_SIZE,
+      (left, right) => left[key] - right[key],
+    ).map((candidate) => ({ candidate, hypothesis })),
   );
   const merged = pools
     .flat()
@@ -338,17 +341,19 @@ function selectPortfolioTier(
   score: (candidate: HypothesisScore) => number,
   overlapPenalty: number,
 ): Candidate[] {
-  const ranked = [...scored]
-    .filter((candidate) => !used.has(candidate.numbers.join('-')))
-    .map((candidate): ScoredBasis => ({
-      numbers: candidate.numbers,
-      metrics: candidate.metrics,
-      features: candidate.features,
-      distance: score(candidate),
-      hypothesis: 'consensus',
-    }))
-    .sort((left, right) => left.distance - right.distance)
-    .slice(0, DIVERSITY_POOL_SIZE);
+  const ranked = selectBestStable(
+    scored
+      .filter((candidate) => !used.has(candidate.numbers.join('-')))
+      .map((candidate): ScoredBasis => ({
+        numbers: candidate.numbers,
+        metrics: candidate.metrics,
+        features: candidate.features,
+        distance: score(candidate),
+        hypothesis: 'consensus',
+      })),
+    DIVERSITY_POOL_SIZE,
+    (left, right) => left.distance - right.distance,
+  );
   return diversifyCandidates(ranked, count, {
     tier,
     used,
@@ -655,12 +660,13 @@ function solveLinearSystem(
 }
 
 function candidateBasis(layout: LayoutMode): CandidateBasis[] {
-  if (cachedBasis?.layout === layout) return cachedBasis.values;
+  const cached = cachedCandidateBasis.get(layout);
+  if (cached !== undefined) return cached;
   const values = FIXED_COMBINATIONS.map((numbers) => {
     const metrics = metricsForNumbers(numbers, layout);
     return { numbers, metrics, features: encodeFeatures(numbers, metrics, layout) };
   });
-  cachedBasis = { layout, values };
+  cachedCandidateBasis.set(layout, values);
   return values;
 }
 
@@ -976,6 +982,69 @@ function mean(values: readonly number[]): number {
 
 function clamp(value: number, minimum: number, maximum: number): number {
   return Math.min(Math.max(value, minimum), maximum);
+}
+
+/**
+ * Returns the same stable Top-K that `values.sort(compare).slice(0, limit)` would
+ * produce, without sorting every one of the 40,000 search candidates.  The
+ * original index is the explicit tie breaker because Array#sort is stable.
+ */
+function selectBestStable<T>(
+  values: readonly T[],
+  limit: number,
+  compare: (left: T, right: T) => number,
+): T[] {
+  if (limit <= 0) return [];
+  if (values.length <= limit) return [...values].sort(compare);
+
+  interface IndexedValue {
+    value: T;
+    index: number;
+  }
+  const compareIndexed = (left: IndexedValue, right: IndexedValue) =>
+    compare(left.value, right.value) || left.index - right.index;
+  const heap: IndexedValue[] = [];
+  const isWorse = (left: IndexedValue, right: IndexedValue) =>
+    compareIndexed(left, right) > 0;
+  const swap = (left: number, right: number) => {
+    [heap[left], heap[right]] = [heap[right]!, heap[left]!];
+  };
+  const siftUp = (start: number) => {
+    let index = start;
+    while (index > 0) {
+      const parent = Math.floor((index - 1) / 2);
+      if (!isWorse(heap[index]!, heap[parent]!)) break;
+      swap(index, parent);
+      index = parent;
+    }
+  };
+  const siftDown = (start: number) => {
+    let index = start;
+    while (true) {
+      const left = index * 2 + 1;
+      const right = left + 1;
+      let worst = index;
+      if (left < heap.length && isWorse(heap[left]!, heap[worst]!)) worst = left;
+      if (right < heap.length && isWorse(heap[right]!, heap[worst]!)) worst = right;
+      if (worst === index) break;
+      swap(index, worst);
+      index = worst;
+    }
+  };
+
+  values.forEach((value, index) => {
+    const entry = { value, index };
+    if (heap.length < limit) {
+      heap.push(entry);
+      siftUp(heap.length - 1);
+      return;
+    }
+    if (compareIndexed(entry, heap[0]!) >= 0) return;
+    heap[0] = entry;
+    siftDown(0);
+  });
+
+  return heap.sort(compareIndexed).map(({ value }) => value);
 }
 
 function zeroMetrics(): ShapeMetrics {
