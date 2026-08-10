@@ -5,6 +5,7 @@ import {
   findShapeCandidates,
 } from '../src/uriel/analysis/candidates';
 import {
+  assertBacktestRoundMetrics,
   buildFailureCase,
   type BacktestRoundResult,
 } from '../src/uriel/analysis/backtest';
@@ -344,17 +345,23 @@ describe('Uriel data and candidate search', () => {
     const round: BacktestRoundResult = {
       round: 1109,
       candidateRecall: { 15: 3 },
+      candidateMatches: { 15: [3, 17, 41] },
       legacyOracleMax: 5,
+      legacyOracleMatches: [3, 17, 29, 34, 41],
       strategies: {
         'full-hybrid': {
-          oracleMax: 4,
-          top100Max: 4,
+          strategyOracleMax: 3,
+          strategyOracleMatches: [3, 17, 41],
+          strategyOracleSource: 'candidate-pool',
+          top100Max: 3,
           naiveTop10Max: 3,
           top10Max: 3,
-          conversionLoss: 1,
+          conversionLoss: 0,
         },
         legacy: {
-          oracleMax: 5,
+          strategyOracleMax: 5,
+          strategyOracleMatches: [3, 17, 29, 34, 41],
+          strategyOracleSource: 'legacy-priority',
           top100Max: 5,
           naiveTop10Max: 3,
           top10Max: 3,
@@ -363,16 +370,64 @@ describe('Uriel data and candidate search', () => {
       },
     };
 
-    expect(buildFailureCase(round, 'full-hybrid', 15)).toMatchObject({
+    const strategyFailure = buildFailureCase(round, 'full-hybrid', 15);
+    expect(strategyFailure).toMatchObject({
       candidateRecall: 3,
-      strategyOracleMax: 4,
+      candidateMatches: [3, 17, 41],
+      strategyOracleMax: 3,
+      strategyOracleMatches: [3, 17, 41],
+      strategyOracleSource: 'candidate-pool',
       legacyOracleMax: 5,
+      legacyOracleMatches: [3, 17, 29, 34, 41],
     });
-    expect(buildFailureCase(round, 'legacy', 15)).toMatchObject({
+    expect(strategyFailure).not.toHaveProperty('oracleMax');
+    expect(round.strategies['full-hybrid']).not.toHaveProperty('oracleMax');
+
+    const legacyFailure = buildFailureCase(round, 'legacy', 15);
+    expect(legacyFailure).toMatchObject({
       candidateRecall: 3,
       strategyOracleMax: 5,
+      strategyOracleSource: 'legacy-priority',
       legacyOracleMax: 5,
     });
+    assertBacktestRoundMetrics(round, 15);
+  });
+
+  it('derives round 1109 Top-15 recall only from the candidate ranking', async () => {
+    const fileUrl = new URL('../public/projects/uriel/data/draws.csv', import.meta.url);
+    const history = parseDrawCsv(await readFile(fileUrl, 'utf8'));
+    const actualIndex = history.findIndex(({ round }) => round === 1109);
+    const actual = history[actualIndex]!;
+    const analysis = buildCombinationAnalysis(history, actualIndex - 1, 15, false);
+    const candidatePool = analysis.candidateRanking.slice(0, 15);
+    const matches = actual.numbers.filter((number) => candidatePool.includes(number));
+
+    expect(matches).toEqual([13, 19, 40]);
+  }, 15_000);
+
+  it('rejects cross-wired candidate and strategy oracle metrics', () => {
+    const round: BacktestRoundResult = {
+      round: 1109,
+      candidateRecall: { 15: 3 },
+      candidateMatches: { 15: [3, 17, 41] },
+      legacyOracleMax: 5,
+      legacyOracleMatches: [3, 17, 29, 34, 41],
+      strategies: {
+        'full-hybrid': {
+          strategyOracleMax: 5,
+          strategyOracleMatches: [3, 17, 29, 34, 41],
+          strategyOracleSource: 'candidate-pool',
+          top100Max: 4,
+          naiveTop10Max: 3,
+          top10Max: 3,
+          conversionLoss: 2,
+        },
+      },
+    };
+
+    expect(() => assertBacktestRoundMetrics(round, 15)).toThrow(
+      'Strategy Oracle 지표가 원본과 달라요.',
+    );
   });
 
   it('compares candidates with the next draw without changing prediction rank', () => {
