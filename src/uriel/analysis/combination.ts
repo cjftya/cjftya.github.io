@@ -20,6 +20,8 @@ export type CombinationStrategy =
   | 'full-no-shape'
   | 'full-no-transition';
 
+export type CombinationGenerationMode = 'current' | 'full-enumeration';
+
 export interface CombinationFeatureVector {
   individualNumberScore: number;
   pairScore: number;
@@ -44,13 +46,41 @@ export interface CombinationCandidate extends Candidate {
   combinationScore: number;
 }
 
+export interface CombinationVector {
+  numbers: readonly number[];
+  metrics: ShapeMetrics;
+  features: CombinationFeatureVector;
+}
+
+export interface CombinationScoreContribution {
+  numberScore: number;
+  pairScore: number;
+  tripleScore: number;
+  shapeScore: number;
+  transitionScore: number;
+  balanceScore: number;
+  diversityScore: number;
+  ensembleScore: number;
+  finalScore: number;
+}
+
 export interface CombinationAnalysis {
   candidatePool: readonly number[];
   candidateRanking: readonly number[];
   researchByStrategy: Record<CombinationStrategy, CombinationCandidate[]>;
   legacyResearch: Candidate[];
+  generatedCombinations: readonly CombinationVector[];
+  generationMode: CombinationGenerationMode;
   rawCombinationCount: number;
+  expectedCombinationCount: number;
+  generationComplete: boolean;
   seed: number;
+}
+
+export interface CandidatePoolAnalysis {
+  candidatePool: readonly number[];
+  candidateRanking: readonly number[];
+  legacyResearch: Candidate[];
 }
 
 const RESEARCH_COUNT = 100;
@@ -196,33 +226,17 @@ export function buildCombinationAnalysis(
   index: number,
   poolSize = 15,
   includeAblation = true,
+  generationMode: CombinationGenerationMode = 'current',
 ): CombinationAnalysis {
   const safePoolSize = Math.min(Math.max(poolSize, 10), MAX_POOL_SIZE);
-  const baseline = findShapeCandidates(draws, index, 'board', 100, 'baseline');
-  const hybrid = findShapeCandidates(draws, index, 'board', 100, 'hybrid');
-  const transition = findShapeCandidates(
-    draws,
-    index,
-    'board',
-    100,
-    'shape-transition',
-  );
-  const models = [baseline.candidates, hybrid.candidates, transition.candidates];
-  const signals = buildNumberSignals(draws.slice(0, index + 1), models);
-  const candidateRanking = Array.from(
-    { length: 45 },
-    (_, numberIndex) => numberIndex + 1,
-  ).sort(
-    (left, right) =>
-      signals.consensus[right]! - signals.consensus[left]! || left - right,
-  );
-  const candidatePool = candidateRanking.slice(0, safePoolSize);
+  const candidateContext = buildCandidateContext(draws, index, safePoolSize);
+  const { candidatePool, candidateRanking, legacyResearch, signals } = candidateContext;
   const combinations = combinationsOfSix(candidatePool);
   const known = draws.slice(0, index + 1);
   const relationships = buildRelationshipStats(known);
   const targets = buildPatternTargets(known);
   const shapeForecast = forecastBoardShapeTransitions(draws, index);
-  const vectors = combinations.map((numbers) => ({
+  const vectors: CombinationVector[] = combinations.map((numbers) => ({
     numbers,
     metrics: metricsForNumbers(numbers, 'board'),
     features: combinationFeatures(
@@ -253,9 +267,58 @@ export function buildCombinationAnalysis(
     candidatePool,
     candidateRanking,
     researchByStrategy,
-    legacyResearch: transition.candidates,
+    legacyResearch,
+    generatedCombinations: vectors,
+    generationMode,
     rawCombinationCount: combinations.length,
+    expectedCombinationCount: choose(safePoolSize, 6),
+    generationComplete: combinations.length === choose(safePoolSize, 6),
     seed: deterministicSeed(draws[index]?.round ?? index + 1),
+  };
+}
+
+export function buildCandidatePoolAnalysis(
+  draws: readonly LottoDraw[],
+  index: number,
+  poolSize = 15,
+): CandidatePoolAnalysis {
+  const safePoolSize = Math.min(Math.max(poolSize, 10), MAX_POOL_SIZE);
+  const { candidatePool, candidateRanking, legacyResearch } = buildCandidateContext(
+    draws,
+    index,
+    safePoolSize,
+  );
+  return { candidatePool, candidateRanking, legacyResearch };
+}
+
+function buildCandidateContext(
+  draws: readonly LottoDraw[],
+  index: number,
+  poolSize: number,
+): CandidatePoolAnalysis & { signals: NumberSignals } {
+  const baseline = findShapeCandidates(draws, index, 'board', 100, 'baseline');
+  const hybrid = findShapeCandidates(draws, index, 'board', 100, 'hybrid');
+  const transition = findShapeCandidates(
+    draws,
+    index,
+    'board',
+    100,
+    'shape-transition',
+  );
+  const models = [baseline.candidates, hybrid.candidates, transition.candidates];
+  const signals = buildNumberSignals(draws.slice(0, index + 1), models);
+  const candidateRanking = Array.from(
+    { length: 45 },
+    (_, numberIndex) => numberIndex + 1,
+  ).sort(
+    (left, right) =>
+      signals.consensus[right]! - signals.consensus[left]! || left - right,
+  );
+  return {
+    candidatePool: candidateRanking.slice(0, poolSize),
+    candidateRanking,
+    legacyResearch: transition.candidates,
+    signals,
   };
 }
 
@@ -420,27 +483,13 @@ function combinationFeatures(
   };
 }
 
-function rankCombinations(
-  vectors: readonly {
-    numbers: readonly number[];
-    metrics: ShapeMetrics;
-    features: CombinationFeatureVector;
-  }[],
+export function rankCombinations(
+  vectors: readonly CombinationVector[],
   strategy: CombinationStrategy,
 ): CombinationCandidate[] {
-  const weights = STRATEGY_WEIGHTS[strategy];
   return vectors
     .map((vector): CombinationCandidate => {
-      const totalWeight = Object.values(weights).reduce(
-        (total, weight) => total + weight,
-        0,
-      );
-      const combinationScore =
-        Object.entries(weights).reduce(
-          (total, [feature, weight]) =>
-            total + vector.features[feature as keyof CombinationFeatureVector] * weight,
-          0,
-        ) / Math.max(totalWeight, 1e-9);
+      const combinationScore = combinationScoreFor(vector.features, strategy);
       return {
         ...vector,
         score: 1 - combinationScore,
@@ -453,6 +502,69 @@ function rankCombinations(
         right.combinationScore - left.combinationScore ||
         left.numbers.join('-').localeCompare(right.numbers.join('-')),
     );
+}
+
+export function combinationScoreFor(
+  features: CombinationFeatureVector,
+  strategy: CombinationStrategy,
+): number {
+  const weights = STRATEGY_WEIGHTS[strategy];
+  const totalWeight = Object.values(weights).reduce(
+    (total, weight) => total + weight,
+    0,
+  );
+  return (
+    Object.entries(weights).reduce(
+      (total, [feature, weight]) =>
+        total + features[feature as keyof CombinationFeatureVector] * weight,
+      0,
+    ) / Math.max(totalWeight, 1e-9)
+  );
+}
+
+export function scoreContributionFor(
+  features: CombinationFeatureVector,
+  strategy: CombinationStrategy,
+): CombinationScoreContribution {
+  const weights = STRATEGY_WEIGHTS[strategy];
+  const totalWeight = Math.max(
+    Object.values(weights).reduce((total, weight) => total + weight, 0),
+    1e-9,
+  );
+  const contribution = (feature: keyof CombinationFeatureVector) =>
+    (features[feature] * (weights[feature] ?? 0)) / totalWeight;
+  const sumFeatures = (featureNames: readonly (keyof CombinationFeatureVector)[]) =>
+    featureNames.reduce((total, feature) => total + contribution(feature), 0);
+  const result: CombinationScoreContribution = {
+    numberScore: contribution('individualNumberScore'),
+    pairScore: contribution('pairScore'),
+    tripleScore: contribution('tripleScore'),
+    shapeScore: sumFeatures(['circleShapeScore', 'gridShapeScore']),
+    transitionScore: contribution('shapeTransitionScore'),
+    balanceScore: sumFeatures([
+      'frequencyBalance',
+      'recencyBalance',
+      'oddEvenBalance',
+      'lowHighBalance',
+      'rangeBalance',
+      'gapBalance',
+      'sumBalance',
+      'spatialDensity',
+    ]),
+    diversityScore: contribution('modelDisagreement'),
+    ensembleScore: contribution('modelAgreement'),
+    finalScore: 0,
+  };
+  result.finalScore =
+    result.numberScore +
+    result.pairScore +
+    result.tripleScore +
+    result.shapeScore +
+    result.transitionScore +
+    result.balanceScore +
+    result.diversityScore +
+    result.ensembleScore;
+  return result;
 }
 
 function combinationsOfSix(numbers: readonly number[]): number[][] {
@@ -569,6 +681,16 @@ function without(
 
 function deterministicSeed(round: number): number {
   return (round * 2654435761) >>> 0;
+}
+
+function choose(total: number, selected: number): number {
+  if (selected < 0 || selected > total) return 0;
+  const smaller = Math.min(selected, total - selected);
+  let value = 1;
+  for (let index = 1; index <= smaller; index += 1) {
+    value = (value * (total - smaller + index)) / index;
+  }
+  return Math.round(value);
 }
 
 function sum(values: readonly number[]): number {

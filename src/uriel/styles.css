@@ -1599,6 +1599,39 @@ input:focus-visible {
   min-width: 620px;
 }
 
+.pipeline-table {
+  min-width: 560px;
+}
+
+.opportunity-list {
+  display: grid;
+  gap: 8px;
+}
+
+.opportunity-list details {
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.014);
+}
+
+.opportunity-list summary {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 14px;
+  color: #81838d;
+  font-size: 0.64rem;
+  cursor: pointer;
+}
+
+.opportunity-list summary b {
+  color: #d8d0c5;
+  font-weight: 600;
+}
+
+.opportunity-list .table-scroll {
+  border-width: 1px 0 0;
+}
+
 .conversion-grid {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));

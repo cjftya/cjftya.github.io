@@ -9,7 +9,11 @@ import {
   buildFailureCase,
   type BacktestRoundResult,
 } from '../src/uriel/analysis/backtest';
-import { buildCombinationAnalysis } from '../src/uriel/analysis/combination';
+import {
+  buildCandidatePoolAnalysis,
+  buildCombinationAnalysis,
+  scoreContributionFor,
+} from '../src/uriel/analysis/combination';
 import { pointForNumber, metricsForNumbers } from '../src/uriel/analysis/geometry';
 import { buildHistoryFrame } from '../src/uriel/analysis/history';
 import {
@@ -327,25 +331,44 @@ describe('Uriel data and candidate search', () => {
     const changedFuture = history.map((draw, index) =>
       index > 89 ? { ...draw, numbers: [3, 10, 17, 24, 31, 38] } : draw,
     );
-    const first = buildCombinationAnalysis(history, 89, 15, false);
-    const second = buildCombinationAnalysis(changedFuture, 89, 15, false);
+    const first = buildCombinationAnalysis(history, 89, 20, false, 'full-enumeration');
+    const second = buildCombinationAnalysis(
+      changedFuture,
+      89,
+      20,
+      false,
+      'full-enumeration',
+    );
 
     expect(first).toEqual(second);
-    expect(first.candidatePool).toHaveLength(15);
-    expect(first.rawCombinationCount).toBe(5005);
+    expect(first.candidatePool).toHaveLength(20);
+    expect(first.rawCombinationCount).toBe(38_760);
+    expect(first.expectedCombinationCount).toBe(38_760);
+    expect(first.generationComplete).toBe(true);
+    expect(first.generationMode).toBe('full-enumeration');
     expect(first.researchByStrategy['full-hybrid']).toHaveLength(100);
     expect(
       first.researchByStrategy['full-hybrid'].every(({ numbers }) =>
         numbers.every((number) => first.candidatePool.includes(number)),
       ),
     ).toBe(true);
-  }, 15_000);
+    const best = first.researchByStrategy['full-hybrid'][0]!;
+    const contribution = scoreContributionFor(best.features, 'full-hybrid');
+    expect(contribution.finalScore).toBeCloseTo(best.combinationScore);
+  }, 60_000);
 
   it('keeps candidate, strategy, and legacy oracle metrics isolated', () => {
     const round: BacktestRoundResult = {
       round: 1109,
       candidateRecall: { 15: 3 },
       candidateMatches: { 15: [3, 17, 41] },
+      combinationGenerationMaxHit: 3,
+      combinationGenerationBestNumbers: [3, 17, 29, 34, 40, 41],
+      combinationGenerationMatches: [3, 17, 41],
+      generationLoss: 0,
+      rawCombinationCount: 5005,
+      expectedCombinationCount: 5005,
+      generationComplete: true,
       legacyOracleMax: 5,
       legacyOracleMatches: [3, 17, 29, 34, 41],
       strategies: {
@@ -356,6 +379,8 @@ describe('Uriel data and candidate search', () => {
           top100Max: 3,
           naiveTop10Max: 3,
           top10Max: 3,
+          rankingLoss: 0,
+          finalCompressionLoss: 0,
           conversionLoss: 0,
         },
         legacy: {
@@ -365,6 +390,8 @@ describe('Uriel data and candidate search', () => {
           top100Max: 5,
           naiveTop10Max: 3,
           top10Max: 3,
+          rankingLoss: null,
+          finalCompressionLoss: 2,
           conversionLoss: 2,
         },
       },
@@ -405,11 +432,31 @@ describe('Uriel data and candidate search', () => {
     expect(matches).toEqual([13, 19, 40]);
   }, 15_000);
 
+  it('keeps round 1123 out of the corrected Top-20 five-hit opportunities', async () => {
+    const fileUrl = new URL('../public/projects/uriel/data/draws.csv', import.meta.url);
+    const history = parseDrawCsv(await readFile(fileUrl, 'utf8'));
+    const actualIndex = history.findIndex(({ round }) => round === 1123);
+    const actual = history[actualIndex]!;
+    const analysis = buildCandidatePoolAnalysis(history, actualIndex - 1, 20);
+    const matches = actual.numbers.filter((number) =>
+      analysis.candidatePool.includes(number),
+    );
+
+    expect(matches).toEqual([21, 24, 34, 35]);
+  }, 15_000);
+
   it('rejects cross-wired candidate and strategy oracle metrics', () => {
     const round: BacktestRoundResult = {
       round: 1109,
       candidateRecall: { 15: 3 },
       candidateMatches: { 15: [3, 17, 41] },
+      combinationGenerationMaxHit: 3,
+      combinationGenerationBestNumbers: [3, 17, 29, 34, 40, 41],
+      combinationGenerationMatches: [3, 17, 41],
+      generationLoss: 0,
+      rawCombinationCount: 5005,
+      expectedCombinationCount: 5005,
+      generationComplete: true,
       legacyOracleMax: 5,
       legacyOracleMatches: [3, 17, 29, 34, 41],
       strategies: {
@@ -420,6 +467,8 @@ describe('Uriel data and candidate search', () => {
           top100Max: 4,
           naiveTop10Max: 3,
           top10Max: 3,
+          rankingLoss: 0,
+          finalCompressionLoss: 1,
           conversionLoss: 2,
         },
       },
