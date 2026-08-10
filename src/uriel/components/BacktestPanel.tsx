@@ -32,7 +32,8 @@ interface WorkerProgressMessage {
 
 type WorkerMessage = WorkerCompleteMessage | WorkerErrorMessage | WorkerProgressMessage;
 
-const ROUND_OPTIONS = [48, 96, 192, 384] as const;
+type RoundRangeOption = 'recent-96' | 'recent-192' | 'previous-192' | 'custom';
+
 const POOL_OPTIONS = [10, 12, 15, 18, 20] as const;
 const ABLATION_KEYS = new Set<BacktestStrategy>([
   'full-no-pair',
@@ -43,7 +44,12 @@ const ABLATION_KEYS = new Set<BacktestStrategy>([
 ]);
 
 export function BacktestPanel({ draws }: BacktestPanelProps) {
-  const [rounds, setRounds] = useState<number>(96);
+  const dataAsOfRound = draws.at(-1)?.round ?? 0;
+  const previousEndRound = dataAsOfRound - 192;
+  const previousStartRound = previousEndRound - 191;
+  const [roundRange, setRoundRange] = useState<RoundRangeOption>('recent-96');
+  const [customStartRound, setCustomStartRound] = useState(String(previousStartRound));
+  const [customEndRound, setCustomEndRound] = useState(String(previousEndRound));
   const [poolSize, setPoolSize] = useState<number>(15);
   const [includeAblation, setIncludeAblation] = useState(true);
   const [generationMode, setGenerationMode] =
@@ -62,6 +68,19 @@ export function BacktestPanel({ draws }: BacktestPanelProps) {
   );
 
   const run = () => {
+    const startRound = Number(customStartRound);
+    const endRound = Number(customEndRound);
+    if (
+      roundRange === 'custom' &&
+      (customStartRound.trim() === '' ||
+        customEndRound.trim() === '' ||
+        !Number.isInteger(startRound) ||
+        !Number.isInteger(endRound))
+    ) {
+      setError('사용자 지정 구간의 시작 회차와 종료 회차를 입력해 주세요.');
+      return;
+    }
+
     workerRef.current?.terminate();
     const worker = new Worker(
       new URL('../workers/backtest.worker.ts', import.meta.url),
@@ -74,7 +93,20 @@ export function BacktestPanel({ draws }: BacktestPanelProps) {
     setProgress(null);
     setError(null);
     const options: Partial<BacktestOptions> = {
-      rounds,
+      rounds:
+        roundRange === 'recent-96'
+          ? 96
+          : roundRange === 'custom'
+            ? Math.max(endRound - startRound + 1, 24)
+            : 192,
+      rangeMode:
+        roundRange === 'previous-192'
+          ? 'previous-192'
+          : roundRange === 'custom'
+            ? 'custom'
+            : 'recent',
+      startRound: roundRange === 'custom' ? startRound : null,
+      endRound: roundRange === 'custom' ? endRound : null,
       poolSize,
       includeAblation,
       generationMode,
@@ -119,16 +151,47 @@ export function BacktestPanel({ draws }: BacktestPanelProps) {
         <label>
           검증 회차
           <select
-            value={rounds}
-            onChange={(event) => setRounds(Number(event.target.value))}
+            value={roundRange}
+            onChange={(event) => setRoundRange(event.target.value as RoundRangeOption)}
           >
-            {ROUND_OPTIONS.map((value) => (
-              <option key={value} value={value}>
-                최근 {value}회
-              </option>
-            ))}
+            <option value="recent-96">최근 96회</option>
+            <option value="recent-192">최근 192회</option>
+            <option value="previous-192">이전 192회</option>
+            <option value="custom">사용자 지정 구간</option>
           </select>
         </label>
+        {roundRange === 'previous-192' && (
+          <span className="backtest-range-preview">
+            자동 {previousStartRound.toLocaleString('ko-KR')}–
+            {previousEndRound.toLocaleString('ko-KR')}회
+          </span>
+        )}
+        {roundRange === 'custom' && (
+          <div className="backtest-custom-range">
+            <label>
+              시작 회차
+              <input
+                type="number"
+                min={1}
+                max={dataAsOfRound}
+                value={customStartRound}
+                onChange={(event) => setCustomStartRound(event.target.value)}
+                inputMode="numeric"
+              />
+            </label>
+            <label>
+              종료 회차
+              <input
+                type="number"
+                min={1}
+                max={dataAsOfRound}
+                value={customEndRound}
+                onChange={(event) => setCustomEndRound(event.target.value)}
+                inputMode="numeric"
+              />
+            </label>
+          </div>
+        )}
         <label>
           조합 생성
           <select
@@ -200,6 +263,9 @@ function BacktestReport({ result }: { result: BacktestResult }) {
   const bestCombination = result.strategies.find(
     ({ strategy }) => strategy === result.bestCombinationStrategy,
   );
+  const transition = result.strategies.find(
+    ({ strategy }) => strategy === 'transition',
+  );
   const best =
     bestCombination ??
     result.strategies.find(({ strategy }) => strategy === result.bestStrategy)!;
@@ -268,10 +334,10 @@ function BacktestReport({ result }: { result: BacktestResult }) {
         </div>
       </ReportSection>
 
-      {bestCombination?.pipeline !== undefined && (
+      {transition?.pipeline !== undefined && (
         <ReportSection
-          title="5+ Opportunity Conversion"
-          copy={`${bestCombination.label}의 Candidate → Generation → Top-100 → Top-10 단계별 tail 보존율이에요.`}
+          title="Candidate → Transition Pipeline"
+          copy="현재 Shape Transition의 Candidate → Generation → Top-100 → Final Top-10 단계별 4+/5+/6 보존 횟수예요."
         >
           <div className="table-scroll">
             <table className="backtest-table pipeline-table">
@@ -287,9 +353,9 @@ function BacktestReport({ result }: { result: BacktestResult }) {
               <tbody>
                 {(
                   [
-                    ['4+', bestCombination.pipeline.fourPlus],
-                    ['5+', bestCombination.pipeline.fivePlus],
-                    ['6', bestCombination.pipeline.six],
+                    ['4+', transition.pipeline.fourPlus],
+                    ['5+', transition.pipeline.fivePlus],
+                    ['6', transition.pipeline.six],
                   ] as const
                 ).map(([label, pipeline]) => (
                   <tr key={label}>
@@ -306,6 +372,48 @@ function BacktestReport({ result }: { result: BacktestResult }) {
         </ReportSection>
       )}
 
+      <ReportSection
+        title="Transition Tail Coverage"
+        copy="상위 7게임을 보존하고 31–80위에서 번호 중복이 낮은 3게임을 추가한 Before / After예요."
+      >
+        <div className="table-scroll">
+          <table className="backtest-table">
+            <thead>
+              <tr>
+                <th>구분</th>
+                <th>평균 Max</th>
+                <th>3+</th>
+                <th>4+</th>
+                <th>5+</th>
+                <th>6</th>
+              </tr>
+            </thead>
+            <tbody>
+              {(
+                [
+                  ['Before', result.portfolioExperiment.before],
+                  ['After', result.portfolioExperiment.after],
+                ] as const
+              ).map(([label, summary]) => (
+                <tr key={label}>
+                  <th>{label}</th>
+                  <td>{summary.averageMaxHit.toFixed(3)}</td>
+                  <td>{percent(summary.threePlusRate)}</td>
+                  <td>{percent(summary.fourPlusRate)}</td>
+                  <td className="tail-cell">{percent(summary.fivePlusRate)}</td>
+                  <td>{percent(summary.sixRate)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p>
+          개선 {result.portfolioExperiment.improvedRounds}회 · 유지{' '}
+          {result.portfolioExperiment.unchangedRounds}회 · 악화{' '}
+          {result.portfolioExperiment.worsenedRounds}회
+        </p>
+      </ReportSection>
+
       {result.options.generationMode === 'full-enumeration' &&
         result.fiveHitOpportunities.length > 0 && (
           <ReportSection
@@ -319,7 +427,10 @@ function BacktestReport({ result }: { result: BacktestResult }) {
                     <b>{opportunity.round}회</b>
                     <span>
                       Candidate {opportunity.candidateRecall} → Generation{' '}
-                      {opportunity.generationMaxHit} · Loss {opportunity.generationLoss}
+                      {opportunity.generationMaxHit} → Transition Top-100{' '}
+                      {opportunity.strategies.transition?.top100MaxHit ?? '—'} → Top-10{' '}
+                      {opportunity.strategies.transition?.top10MaxHitBefore ?? '—'} /{' '}
+                      {opportunity.strategies.transition?.top10MaxHit ?? '—'}
                     </span>
                   </summary>
                   <div className="table-scroll">
@@ -330,7 +441,8 @@ function BacktestReport({ result }: { result: BacktestResult }) {
                           <th>Best 5 Rank</th>
                           <th>Score</th>
                           <th>Top-100</th>
-                          <th>Top-10</th>
+                          <th>Top-10 Before</th>
+                          <th>Top-10 After</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -348,6 +460,7 @@ function BacktestReport({ result }: { result: BacktestResult }) {
                                   '—'}
                               </td>
                               <td>{diagnostic?.top100MaxHit ?? '—'}</td>
+                              <td>{diagnostic?.top10MaxHitBefore ?? '—'}</td>
                               <td>{diagnostic?.top10MaxHit ?? '—'}</td>
                             </tr>
                           ),

@@ -10,7 +10,11 @@ import { findShapeCandidates } from './analysis/candidates';
 import { buildCombinationAnalysis } from './analysis/combination';
 import { metricsForDraw } from './analysis/geometry';
 import { buildHistoryFrame } from './analysis/history';
-import { buildPurchasePortfolio, diagnosePurchasePortfolio } from './analysis/purchase';
+import {
+  buildPurchasePortfolio,
+  buildTailCoveragePortfolio,
+  diagnosePurchasePortfolio,
+} from './analysis/purchase';
 import type { PurchaseDiagnostics } from './analysis/purchase';
 import { forecastBoardShapeTransitions } from './analysis/shapeTransition';
 import {
@@ -218,7 +222,7 @@ export function App() {
         : baselineCandidateResult;
   const combinationAnalysis = useMemo(
     () =>
-      draws.length === 0 || purchaseStrategy !== 'full-hybrid'
+      draws.length === 0 || purchaseStrategy === 'baseline'
         ? null
         : buildCombinationAnalysis(draws, deferredIndex, 15, false),
     [deferredIndex, draws, purchaseStrategy],
@@ -226,7 +230,9 @@ export function App() {
   const purchaseResearchCandidates =
     purchaseStrategy === 'full-hybrid'
       ? (combinationAnalysis?.researchByStrategy['full-hybrid'] ?? null)
-      : (purchaseResearchResult?.candidates ?? null);
+      : purchaseStrategy === 'shape-transition'
+        ? (combinationAnalysis?.researchByStrategy.transition ?? null)
+        : (purchaseResearchResult?.candidates ?? null);
   const purchaseLayout: LayoutMode =
     purchaseStrategy === 'shape-transition' || purchaseStrategy === 'full-hybrid'
       ? 'board'
@@ -239,12 +245,23 @@ export function App() {
     () =>
       purchaseResearchCandidates === null
         ? null
-        : buildPurchasePortfolio(
-            purchaseResearchCandidates,
-            purchaseLayout,
-            activePurchaseAnchor,
-          ),
-    [activePurchaseAnchor, purchaseLayout, purchaseResearchCandidates],
+        : purchaseStrategy === 'shape-transition'
+          ? buildTailCoveragePortfolio(
+              purchaseResearchCandidates,
+              purchaseLayout,
+              activePurchaseAnchor,
+            )
+          : buildPurchasePortfolio(
+              purchaseResearchCandidates,
+              purchaseLayout,
+              activePurchaseAnchor,
+            ),
+    [
+      activePurchaseAnchor,
+      purchaseLayout,
+      purchaseResearchCandidates,
+      purchaseStrategy,
+    ],
   );
   const purchaseValidation = useMemo(() => {
     const actual = draws[deferredIndex + 1];

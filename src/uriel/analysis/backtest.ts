@@ -12,18 +12,26 @@ import type {
   CombinationStrategy,
   CombinationVector,
 } from './combination';
-import { buildPurchasePortfolio } from './purchase';
+import { buildPurchasePortfolio, buildTailCoverageGames } from './purchase';
+import { RankingDiagnosticsCollector } from './rankingDiagnostics';
+import type { RankingDiagnostics } from './rankingDiagnostics';
 
 export type BacktestStrategy =
   'legacy' | 'legacy-portfolio' | CombinationStrategy | 'full-no-diversity' | 'random';
 
+export type BacktestRangeMode = 'recent' | 'previous-192' | 'custom';
+
 export interface BacktestOptions {
   rounds: number;
+  rangeMode: BacktestRangeMode;
+  startRound: number | null;
+  endRound: number | null;
   poolSize: number;
   seed: number;
   monteCarloRuns: number;
   includeAblation: boolean;
   generationMode: CombinationGenerationMode;
+  includeRankingDiagnostics: boolean;
 }
 
 export interface RecallSummary {
@@ -64,6 +72,25 @@ export interface StrategySummary {
   portfolioImprovementRounds: number;
   conversion: ConversionSummary;
   pipeline?: TailPipelineSummary;
+}
+
+export interface PortfolioHitSummary {
+  hitDistribution: readonly number[];
+  averageMaxHit: number;
+  threePlusRate: number;
+  fourPlusRate: number;
+  fivePlusRate: number;
+  sixRate: number;
+}
+
+export interface PortfolioExperimentSummary {
+  strategy: 'transition';
+  method: 'tail-coverage';
+  before: PortfolioHitSummary;
+  after: PortfolioHitSummary;
+  improvedRounds: number;
+  unchangedRounds: number;
+  worsenedRounds: number;
 }
 
 export interface TailStageConversion {
@@ -111,6 +138,7 @@ export interface RoundStrategyResult {
   rankingLoss: number | null;
   finalCompressionLoss: number;
   conversionLoss: number;
+  baselineTop10Max?: number;
   rankingDiagnostic?: StrategyRankingDiagnostic;
 }
 
@@ -160,6 +188,7 @@ export interface FiveHitOpportunity {
       CombinationStrategy,
       {
         top100MaxHit: number;
+        top10MaxHitBefore: number;
         top10MaxHit: number;
         rankOfBest5HitCombination: number | null;
         scoreOfBest5HitCombination: number | null;
@@ -171,7 +200,7 @@ export interface FiveHitOpportunity {
 }
 
 export interface BacktestResult {
-  metricSchemaVersion: 3;
+  metricSchemaVersion: 4;
   generatedAt: string;
   dataAsOfRound: number;
   startRound: number;
@@ -181,6 +210,8 @@ export interface BacktestResult {
   recall: readonly RecallSummary[];
   strategies: readonly StrategySummary[];
   rounds: readonly BacktestRoundResult[];
+  rankingDiagnostics?: RankingDiagnostics;
+  portfolioExperiment: PortfolioExperimentSummary;
   fiveHitOpportunities: readonly FiveHitOpportunity[];
   failures: {
     combinationLoss: readonly FailureCase[];
@@ -193,15 +224,27 @@ export interface BacktestResult {
   bottleneckMessage: string;
 }
 
+export interface ResolvedBacktestRoundRange {
+  startHistoryIndex: number;
+  endHistoryIndex: number;
+  startRound: number;
+  endRound: number;
+  evaluatedRounds: number;
+}
+
 const POOL_SIZES = [10, 12, 15, 18, 20] as const;
 const MINIMUM_HISTORY = 96;
 const DEFAULT_OPTIONS: BacktestOptions = {
   rounds: 96,
+  rangeMode: 'recent',
+  startRound: null,
+  endRound: null,
   poolSize: 15,
   seed: 20260807,
   monteCarloRuns: 32,
   includeAblation: true,
   generationMode: 'current',
+  includeRankingDiagnostics: true,
 };
 
 export const strategyLabels: Record<BacktestStrategy, string> = {
@@ -222,18 +265,86 @@ export const strategyLabels: Record<BacktestStrategy, string> = {
   random: 'Random Monte Carlo',
 };
 
+export function resolveBacktestRoundRange(
+  draws: readonly LottoDraw[],
+  requested: Partial<BacktestOptions> = {},
+): ResolvedBacktestRoundRange {
+  const options = sanitizeOptions({ ...DEFAULT_OPTIONS, ...requested });
+  if (draws.length <= MINIMUM_HISTORY) {
+    throw new Error(`Walk-forward 검증에는 최소 ${MINIMUM_HISTORY + 1}회가 필요해요.`);
+  }
+
+  const latestActualIndex = draws.length - 1;
+  let actualStartIndex: number;
+  let actualEndIndex: number;
+
+  if (options.rangeMode === 'previous-192') {
+    actualEndIndex = latestActualIndex - 192;
+    actualStartIndex = actualEndIndex - 191;
+  } else if (options.rangeMode === 'custom') {
+    if (options.startRound === null || options.endRound === null) {
+      throw new Error('사용자 지정 구간의 시작 회차와 종료 회차를 입력해 주세요.');
+    }
+    if (options.startRound > options.endRound) {
+      throw new Error('시작 회차는 종료 회차보다 클 수 없어요.');
+    }
+    actualStartIndex = draws.findIndex(({ round }) => round === options.startRound);
+    actualEndIndex = draws.findIndex(({ round }) => round === options.endRound);
+    if (actualStartIndex < 0 || actualEndIndex < 0) {
+      throw new Error(
+        `사용자 지정 구간 ${options.startRound}–${options.endRound}회의 데이터가 없어요.`,
+      );
+    }
+  } else {
+    actualEndIndex = latestActualIndex;
+    actualStartIndex = Math.max(MINIMUM_HISTORY, actualEndIndex - options.rounds + 1);
+  }
+
+  if (actualStartIndex < MINIMUM_HISTORY || actualEndIndex < actualStartIndex) {
+    throw new Error(
+      `선택한 검증 구간에는 각 회차보다 앞선 ${MINIMUM_HISTORY}회 이상의 학습 데이터가 필요해요.`,
+    );
+  }
+
+  const startRound = draws[actualStartIndex]?.round;
+  const endRound = draws[actualEndIndex]?.round;
+  if (startRound === undefined || endRound === undefined) {
+    throw new Error('선택한 검증 구간이 현재 회차 데이터 범위를 벗어났어요.');
+  }
+
+  const evaluatedRounds = actualEndIndex - actualStartIndex + 1;
+  if (endRound - startRound + 1 !== evaluatedRounds) {
+    throw new Error(`선택한 ${startRound}–${endRound}회 구간에 누락된 회차가 있어요.`);
+  }
+
+  return {
+    startHistoryIndex: actualStartIndex - 1,
+    endHistoryIndex: actualEndIndex - 1,
+    startRound,
+    endRound,
+    evaluatedRounds,
+  };
+}
+
 export function runWalkForwardBacktest(
   draws: readonly LottoDraw[],
   requested: Partial<BacktestOptions> = {},
   onProgress?: (completed: number, total: number, round: number) => void,
 ): BacktestResult {
-  const options = sanitizeOptions({ ...DEFAULT_OPTIONS, ...requested });
+  const sanitizedOptions = sanitizeOptions({ ...DEFAULT_OPTIONS, ...requested });
   if (draws.length <= MINIMUM_HISTORY) {
     throw new Error(`Walk-forward 검증에는 최소 ${MINIMUM_HISTORY + 1}회가 필요해요.`);
   }
-  const endIndex = draws.length - 2;
-  const startIndex = Math.max(MINIMUM_HISTORY - 1, endIndex - options.rounds + 1);
-  const totalRounds = endIndex - startIndex + 1;
+  const range = resolveBacktestRoundRange(draws, sanitizedOptions);
+  const options: BacktestOptions = {
+    ...sanitizedOptions,
+    rounds: range.evaluatedRounds,
+    startRound: range.startRound,
+    endRound: range.endRound,
+  };
+  const startIndex = range.startHistoryIndex;
+  const endIndex = range.endHistoryIndex;
+  const totalRounds = range.evaluatedRounds;
   const deterministicStrategies: BacktestStrategy[] = [
     'legacy',
     'legacy-portfolio',
@@ -244,6 +355,14 @@ export function runWalkForwardBacktest(
   ];
   const roundResults: BacktestRoundResult[] = [];
   const randomHits: number[] = [];
+  const diagnosticStrategies = [
+    ...mainCombinationStrategies,
+    ...(options.includeAblation ? ablationStrategies : []),
+  ];
+  const rankingDiagnostics =
+    options.generationMode === 'full-enumeration' && options.includeRankingDiagnostics
+      ? new RankingDiagnosticsCollector(diagnosticStrategies)
+      : null;
 
   for (let index = startIndex; index <= endIndex; index += 1) {
     const actual = draws[index + 1]!;
@@ -274,6 +393,13 @@ export function runWalkForwardBacktest(
       0,
     );
     const strategies: Partial<Record<BacktestStrategy, RoundStrategyResult>> = {};
+
+    rankingDiagnostics?.addRound(
+      actual.round,
+      candidateOracleMatches.length,
+      analysis.generatedCombinations,
+      actual.numbers,
+    );
 
     const legacyTop100 = analysis.legacyResearch;
     const legacyTop10 = legacyTop100.slice(0, 10);
@@ -306,7 +432,11 @@ export function runWalkForwardBacktest(
 
     mainCombinationStrategies.forEach((strategy) => {
       const research = analysis.researchByStrategy[strategy];
-      const portfolio = buildPurchasePortfolio(research, 'board').games;
+      const baselinePortfolio = buildPurchasePortfolio(research, 'board').games;
+      const portfolio =
+        strategy === 'transition'
+          ? buildTailCoverageGames(research, 'board')
+          : baselinePortfolio;
       const rankingDiagnostic =
         options.generationMode === 'full-enumeration' &&
         candidateOracleMatches.length >= 5
@@ -317,7 +447,7 @@ export function runWalkForwardBacktest(
               analysis.seed,
             )
           : undefined;
-      strategies[strategy] = evaluateStrategy(
+      const evaluated = evaluateStrategy(
         research,
         research.slice(0, 10),
         portfolio,
@@ -327,6 +457,13 @@ export function runWalkForwardBacktest(
         combinationGenerationMaxHit,
         rankingDiagnostic,
       );
+      strategies[strategy] =
+        strategy === 'transition'
+          ? {
+              ...evaluated,
+              baselineTop10Max: maximumMatch(baselinePortfolio, actual.numbers),
+            }
+          : evaluated;
     });
 
     if (options.includeAblation) {
@@ -442,7 +579,7 @@ export function runWalkForwardBacktest(
         : `후보 생성 실패 ${(candidateFailureRate * 100).toFixed(1)}%와 조합 전환 실패 ${(conversionFailureRate * 100).toFixed(1)}%가 함께 나타나요.`;
 
   return {
-    metricSchemaVersion: 3,
+    metricSchemaVersion: 4,
     generatedAt: new Date().toISOString(),
     dataAsOfRound: draws.at(-1)?.round ?? 0,
     startRound: roundResults[0]?.round ?? 0,
@@ -452,6 +589,10 @@ export function runWalkForwardBacktest(
     recall: summarizeRecall(roundResults),
     strategies: summaries,
     rounds: roundResults,
+    portfolioExperiment: summarizePortfolioExperiment(roundResults),
+    ...(rankingDiagnostics === null
+      ? {}
+      : { rankingDiagnostics: rankingDiagnostics.build() }),
     fiveHitOpportunities: buildFiveHitOpportunities(
       roundResults,
       options.poolSize,
@@ -532,6 +673,36 @@ function summarizeStrategy(
     ...(records[0]?.strategyOracleSource === 'candidate-pool'
       ? { pipeline: summarizeTailPipeline(rounds, strategy, poolSize) }
       : {}),
+  };
+}
+
+function summarizePortfolioExperiment(
+  rounds: readonly BacktestRoundResult[],
+): PortfolioExperimentSummary {
+  const beforeHits = rounds.map((round) => {
+    const result = round.strategies.transition;
+    return result?.baselineTop10Max ?? result?.top10Max ?? 0;
+  });
+  const afterHits = rounds.map((round) => round.strategies.transition?.top10Max ?? 0);
+  const summary = (hits: readonly number[]): PortfolioHitSummary => ({
+    hitDistribution: hitDistribution(hits, rounds.length),
+    averageMaxHit: mean(hits),
+    threePlusRate: rate(hits, 3),
+    fourPlusRate: rate(hits, 4),
+    fivePlusRate: rate(hits, 5),
+    sixRate: rate(hits, 6),
+  });
+  return {
+    strategy: 'transition',
+    method: 'tail-coverage',
+    before: summary(beforeHits),
+    after: summary(afterHits),
+    improvedRounds: afterHits.filter((hit, index) => hit > (beforeHits[index] ?? 0))
+      .length,
+    unchangedRounds: afterHits.filter((hit, index) => hit === (beforeHits[index] ?? 0))
+      .length,
+    worsenedRounds: afterHits.filter((hit, index) => hit < (beforeHits[index] ?? 0))
+      .length,
   };
 }
 
@@ -663,6 +834,7 @@ function buildFiveHitOpportunities(
             strategy,
             {
               top100MaxHit: result?.top100Max ?? 0,
+              top10MaxHitBefore: result?.baselineTop10Max ?? result?.top10Max ?? 0,
               top10MaxHit: result?.top10Max ?? 0,
               rankOfBest5HitCombination: bestFive?.rank ?? null,
               scoreOfBest5HitCombination: bestFive?.score ?? null,
@@ -1007,13 +1179,30 @@ function mean(values: readonly number[]): number {
 }
 
 function sanitizeOptions(options: BacktestOptions): BacktestOptions {
+  const rangeMode: BacktestRangeMode =
+    options.rangeMode === 'previous-192' || options.rangeMode === 'custom'
+      ? options.rangeMode
+      : 'recent';
   return {
-    rounds: Math.min(Math.max(Math.round(options.rounds), 24), 384),
+    rounds:
+      rangeMode === 'previous-192'
+        ? 192
+        : Math.min(Math.max(Math.round(options.rounds), 24), 384),
+    rangeMode,
+    startRound:
+      options.startRound === null || !Number.isFinite(options.startRound)
+        ? null
+        : Math.round(options.startRound),
+    endRound:
+      options.endRound === null || !Number.isFinite(options.endRound)
+        ? null
+        : Math.round(options.endRound),
     poolSize: [10, 12, 15, 18, 20].includes(options.poolSize) ? options.poolSize : 15,
     seed: options.seed >>> 0,
     monteCarloRuns: Math.min(Math.max(Math.round(options.monteCarloRuns), 8), 128),
     includeAblation: options.includeAblation,
     generationMode:
       options.generationMode === 'full-enumeration' ? 'full-enumeration' : 'current',
+    includeRankingDiagnostics: options.includeRankingDiagnostics,
   };
 }

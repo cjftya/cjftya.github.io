@@ -18,6 +18,7 @@ import { pointForNumber, metricsForNumbers } from '../src/uriel/analysis/geometr
 import { buildHistoryFrame } from '../src/uriel/analysis/history';
 import {
   buildPurchasePortfolio,
+  buildTailCoveragePortfolio,
   diagnosePurchasePortfolio,
 } from '../src/uriel/analysis/purchase';
 import {
@@ -211,6 +212,17 @@ describe('Uriel data and candidate search', () => {
     expect(hypothesisGames.every(({ reason }) => reason.includes('선택 모델'))).toBe(
       true,
     );
+
+    const tailCoverage = buildTailCoveragePortfolio(research.candidates, 'board');
+    const tailGames = tailCoverage.games.filter(
+      ({ researchRank }) =>
+        researchRank !== undefined && researchRank >= 31 && researchRank <= 80,
+    );
+    expect(tailCoverage.games).toHaveLength(10);
+    expect(tailGames).toHaveLength(3);
+    expect(
+      new Set(tailCoverage.games.map(({ numbers }) => numbers.join('-'))).size,
+    ).toBe(10);
   });
 
   it('keeps a direct shape selection as the tenth purchase game', () => {

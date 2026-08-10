@@ -1394,7 +1394,8 @@ input:focus-visible {
   letter-spacing: 0.06em;
 }
 
-.backtest-controls select {
+.backtest-controls select,
+.backtest-controls input[type='number'] {
   min-width: 120px;
   padding: 8px 28px 8px 10px;
   border: 1px solid var(--line-strong);
@@ -1402,6 +1403,27 @@ input:focus-visible {
   background: #11131b;
   color: #ddd8cf;
   font: inherit;
+}
+
+.backtest-controls input[type='number'] {
+  padding-right: 10px;
+}
+
+.backtest-custom-range {
+  display: flex;
+  gap: 8px;
+}
+
+.backtest-custom-range input {
+  width: 104px;
+}
+
+.backtest-range-preview {
+  align-self: center;
+  min-height: 34px;
+  padding: 10px 4px 0;
+  color: #aaa69d;
+  font-size: 0.66rem;
 }
 
 .backtest-controls .backtest-checkbox {
@@ -1853,8 +1875,19 @@ input:focus-visible {
   .backtest-controls label:not(.backtest-checkbox) {
     flex: 1;
   }
-  .backtest-controls select {
+  .backtest-controls select,
+  .backtest-controls input[type='number'] {
     width: 100%;
+  }
+  .backtest-custom-range {
+    flex: 1 0 100%;
+  }
+  .backtest-custom-range label {
+    flex: 1;
+  }
+  .backtest-range-preview {
+    flex: 1 0 100%;
+    padding-top: 0;
   }
   .backtest-verdict {
     grid-template-columns: 1fr auto;

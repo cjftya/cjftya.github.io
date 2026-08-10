@@ -1,5 +1,11 @@
 # Uriel 5+ Combination Diagnostic
 
+> Correction (2026-08-10): a complete 1044–1235 recomputation and an independent
+> Candidate-only scan found Candidate Recall average `2.609375` and Candidate 4+
+> `42`, while Candidate 5+ remains `7`. The earlier `2.5833 / 36` values below are
+> superseded. See `uriel-ranking-enhancement-2026-08-10.md` for the corrected
+> baseline and ranking/compression results.
+
 ## Scope
 
 - Walk-forward rounds: 1044–1235 (192 rounds)
