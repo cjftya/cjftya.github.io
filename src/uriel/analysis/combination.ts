@@ -83,6 +83,13 @@ export interface CandidatePoolAnalysis {
   legacyResearch: Candidate[];
 }
 
+export interface CombinationVectorSample {
+  candidatePool: readonly number[];
+  candidateRanking: readonly number[];
+  vectors: readonly CombinationVector[];
+  totalCombinationCount: number;
+}
+
 const RESEARCH_COUNT = 100;
 const MAX_POOL_SIZE = 20;
 const RECENT_WINDOW = 48;
@@ -263,7 +270,7 @@ export function buildCombinationAnalysis(
   const researchByStrategy = Object.fromEntries(
     requestedStrategies.map((strategy) => [
       strategy,
-      rankCombinations(vectors, strategy).slice(0, RESEARCH_COUNT),
+      rankTopCombinations(vectors, strategy, RESEARCH_COUNT),
     ]),
   ) as Record<CombinationStrategy, CombinationCandidate[]>;
 
@@ -299,6 +306,53 @@ export function buildCandidatePoolAnalysis(
     safePoolSize,
   );
   return { candidatePool, candidateRanking, legacyResearch };
+}
+
+export function buildCombinationVectorSample(
+  draws: readonly LottoDraw[],
+  index: number,
+  poolSize: number,
+  candidateRankingOverride: readonly number[],
+  sampleCount: number,
+): CombinationVectorSample {
+  const safePoolSize = Math.min(Math.max(poolSize, 10), MAX_POOL_SIZE);
+  const candidateContext = buildCandidateContext(
+    draws,
+    index,
+    safePoolSize,
+    candidateRankingOverride,
+  );
+  const { candidatePool, candidateRanking, signals } = candidateContext;
+  const combinations = combinationsOfSix(candidatePool);
+  const known = draws.slice(0, index + 1);
+  const relationships = buildRelationshipStats(known);
+  const targets = buildPatternTargets(known);
+  const scenarios = forecastBoardShapeTransitions(draws, index).scenarios;
+  const count = Math.min(Math.max(Math.floor(sampleCount), 1), combinations.length);
+  const vectors = Array.from({ length: count }, (_, sampleIndex) => {
+    const combinationIndex = Math.min(
+      Math.floor(((sampleIndex + 0.5) * combinations.length) / count),
+      combinations.length - 1,
+    );
+    const numbers = combinations[combinationIndex]!;
+    return {
+      numbers,
+      metrics: metricsForNumbers(numbers, 'board'),
+      features: combinationFeatures(
+        numbers,
+        signals,
+        relationships,
+        targets,
+        scenarios,
+      ),
+    };
+  });
+  return {
+    candidatePool,
+    candidateRanking,
+    vectors,
+    totalCombinationCount: combinations.length,
+  };
 }
 
 function buildCandidateContext(
@@ -536,6 +590,23 @@ export function rankCombinations(
     );
 }
 
+export function rankTopCombinations(
+  vectors: readonly CombinationVector[],
+  strategy: CombinationStrategy,
+  limit: number,
+): CombinationCandidate[] {
+  const candidates = vectors.map((vector): CombinationCandidate => {
+    const combinationScore = combinationScoreFor(vector.features, strategy);
+    return {
+      ...vector,
+      score: 1 - combinationScore,
+      combinationScore,
+      hypothesis: strategy === 'transition' ? 'transition' : 'consensus',
+    };
+  });
+  return selectBestStable(candidates, limit, compareCombinationCandidates);
+}
+
 export function combinationScoreFor(
   features: CombinationFeatureVector,
   strategy: CombinationStrategy,
@@ -551,6 +622,16 @@ export function combinationScoreFor(
         total + features[feature as keyof CombinationFeatureVector] * weight,
       0,
     ) / Math.max(totalWeight, 1e-9)
+  );
+}
+
+function compareCombinationCandidates(
+  left: CombinationCandidate,
+  right: CombinationCandidate,
+): number {
+  return (
+    right.combinationScore - left.combinationScore ||
+    left.numbers.join('-').localeCompare(right.numbers.join('-'))
   );
 }
 
@@ -642,6 +723,62 @@ function combinations(numbers: readonly number[], size: number): number[][] {
   };
   visit(0);
   return result;
+}
+
+function selectBestStable<T>(
+  values: readonly T[],
+  limit: number,
+  compare: (left: T, right: T) => number,
+): T[] {
+  if (limit <= 0) return [];
+  if (values.length <= limit) return [...values].sort(compare);
+  interface IndexedValue {
+    value: T;
+    index: number;
+  }
+  const compareIndexed = (left: IndexedValue, right: IndexedValue) =>
+    compare(left.value, right.value) || left.index - right.index;
+  const heap: IndexedValue[] = [];
+  const isWorse = (left: IndexedValue, right: IndexedValue) =>
+    compareIndexed(left, right) > 0;
+  const swap = (left: number, right: number) => {
+    [heap[left], heap[right]] = [heap[right]!, heap[left]!];
+  };
+  const siftUp = (start: number) => {
+    let index = start;
+    while (index > 0) {
+      const parent = Math.floor((index - 1) / 2);
+      if (!isWorse(heap[index]!, heap[parent]!)) break;
+      swap(index, parent);
+      index = parent;
+    }
+  };
+  const siftDown = (start: number) => {
+    let index = start;
+    while (true) {
+      const left = index * 2 + 1;
+      const right = left + 1;
+      let worst = index;
+      if (left < heap.length && isWorse(heap[left]!, heap[worst]!)) worst = left;
+      if (right < heap.length && isWorse(heap[right]!, heap[worst]!)) worst = right;
+      if (worst === index) break;
+      swap(index, worst);
+      index = worst;
+    }
+  };
+
+  values.forEach((value, index) => {
+    const entry = { value, index };
+    if (heap.length < limit) {
+      heap.push(entry);
+      siftUp(heap.length - 1);
+      return;
+    }
+    if (compareIndexed(entry, heap[0]!) >= 0) return;
+    heap[0] = entry;
+    siftDown(0);
+  });
+  return heap.sort(compareIndexed).map(({ value }) => value);
 }
 
 function weightedMetricMean(

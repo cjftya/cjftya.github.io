@@ -366,7 +366,7 @@ export function runCandidatePhase2Evaluation(
     const actual = draws[index + 1]!;
     const built = currentOnly
       ? buildCurrentOnlyRoundDiagnostic(draws, index, actual)
-      : buildRoundDiagnostic(draws, index, actual, rankingIds);
+      : buildCandidateRoundDiagnostic(draws, index, actual, rankingIds);
     rounds.push(built);
     onProgress?.(rounds.length, range.evaluatedRounds, actual.round);
   }
@@ -487,6 +487,86 @@ function buildCurrentOnlyRoundDiagnostic(
   };
 }
 
+/**
+ * Builds only the three frozen Candidate sources required by Phase 3. It is
+ * intentionally equivalent to the corresponding rankings in the full Phase 2
+ * diagnostic, while avoiding unrelated Circle/Pair/experiment calculations.
+ */
+export function buildFrozenPhase3CandidateRoundDiagnostic(
+  draws: readonly LottoDraw[],
+  index: number,
+  actual: LottoDraw,
+): CandidateRoundDiagnostic {
+  const gridBaseline = supportFromCandidates(
+    findShapeCandidates(draws, index, 'board', 100, 'baseline').candidates,
+  );
+  const gridHybrid = supportFromCandidates(
+    findShapeCandidates(draws, index, 'board', 100, 'hybrid').candidates,
+  );
+  const gridTransition = supportFromCandidates(
+    findShapeCandidates(draws, index, 'board', 100, 'shape-transition').candidates,
+  );
+  const current = averageSignals([gridBaseline, gridHybrid, gridTransition]);
+  const decay = frequencySignal(draws.slice(0, index + 1), true);
+  const rankings = {
+    current: rankByScore(current),
+    decay: rankByScore(decay),
+    'grid-transition': rankByScore(gridTransition),
+  } satisfies Record<'current' | 'decay' | 'grid-transition', number[]>;
+  const positions = {
+    current: rankPositions(rankings.current),
+    decay: rankPositions(rankings.decay),
+    'grid-transition': rankPositions(rankings['grid-transition']),
+  };
+  const rankingResults = {
+    current: evaluateRoundRanking('current', rankings.current, actual.numbers),
+    decay: evaluateRoundRanking('decay', rankings.decay, actual.numbers),
+    'grid-transition': evaluateRoundRanking(
+      'grid-transition',
+      rankings['grid-transition'],
+      actual.numbers,
+    ),
+  };
+  return {
+    round: actual.round,
+    winningNumbers: actual.numbers,
+    transitionConfidence: forecastBoardShapeTransitions(draws, index).confidence,
+    rankings: rankingResults,
+    numbers: Array.from({ length: 45 }, (_, offset) => {
+      const number = offset + 1;
+      const currentRank = positions.current[number]!;
+      return {
+        number,
+        currentRank,
+        currentScore: current[number]!,
+        currentPercentile: rankPercentile(currentRank),
+        winning: actual.numbers.includes(number),
+        inCurrentTop20: currentRank <= PHASE2_CANDIDATE_POOL_SIZE,
+        features: {
+          numberScore: current[number]!,
+          pairSupport: 0,
+          tripleSupport: 0,
+          circleShapeSupport: 0,
+          gridShapeSupport: current[number]!,
+          transitionSupport: gridTransition[number]!,
+          frequency: 0,
+          recency: decay[number]!,
+          agreement: 0,
+          disagreement: 0,
+          independent: 0,
+          cumulative: 0,
+          decay: decay[number]!,
+        },
+        ranks: {
+          current: positions.current[number]!,
+          decay: positions.decay[number]!,
+          'grid-transition': positions['grid-transition'][number]!,
+        },
+      };
+    }),
+  };
+}
+
 function selectFrozenStrategy(
   experiments: readonly CandidateExperimentResult[],
 ): CandidateRankingId {
@@ -505,7 +585,7 @@ function selectFrozenStrategy(
   );
 }
 
-function buildRoundDiagnostic(
+export function buildCandidateRoundDiagnostic(
   draws: readonly LottoDraw[],
   index: number,
   actual: LottoDraw,
