@@ -1,6 +1,9 @@
 export type LayoutMode = 'circle' | 'board';
 export type HistoryMode = 'independent' | 'cumulative' | 'decay';
-export type AlgorithmId = 'baseline';
+export type AlgorithmId = 'baseline' | 'transition-tail';
+export type CandidateModel = 'baseline' | 'hybrid' | 'shape-transition';
+export type CandidateTier = 'explore' | 'focus' | 'confidence';
+export type CandidateHypothesis = 'baseline' | 'transition' | 'ridge' | 'consensus';
 export type PurchaseRole = 'focus' | 'hypothesis' | 'coverage' | 'anchor';
 
 export interface LottoDraw {
@@ -41,6 +44,8 @@ export interface Candidate {
   numbers: readonly number[];
   metrics: ShapeMetrics;
   score: number;
+  tier?: CandidateTier;
+  hypothesis?: CandidateHypothesis;
 }
 
 export interface PurchaseCandidate extends Candidate {
@@ -62,10 +67,15 @@ export interface PurchasePortfolio {
 
 export interface CandidateMethod {
   algorithmId: AlgorithmId;
+  sourceModel?: CandidateModel;
   searchSpace: number;
   featureCount: number;
   transitionNeighbors: number;
   diversified: boolean;
+  ridgeTrainingSamples?: number;
+  shapeSequenceNeighbors?: number;
+  shapeScenarioCount?: number;
+  portfolio?: Record<CandidateTier, number>;
 }
 
 export interface NumberPatterns {

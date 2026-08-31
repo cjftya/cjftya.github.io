@@ -1,4 +1,5 @@
 import type { LottoDraw } from '../types';
+import { algorithmDefinition } from './algorithmCatalog';
 import { runAlgorithm } from './algorithmRunner';
 import type { AlgorithmResult } from './algorithmRunner';
 import type { PredictionRequest, PredictionSnapshot } from './predictionTypes';
@@ -15,11 +16,12 @@ export function createPredictionSession(draws: readonly LottoDraw[]) {
       if (!Number.isInteger(index) || !draws[index]) {
         throw new Error('분석할 회차가 없어요.');
       }
+      const effectiveLayout = algorithmDefinition(algorithmId).fixedLayout ?? layout;
       const candidateResult = cached(
         results,
-        `${index}:${layout}:${algorithmId}`,
+        `${index}:${effectiveLayout}:${algorithmId}`,
         24,
-        () => runAlgorithm(algorithmId, draws, index, layout, 100),
+        () => runAlgorithm(algorithmId, draws, index, effectiveLayout, 100),
       );
       return {
         candidateResult,

@@ -200,7 +200,7 @@ export const BacktestPanel = memo(function BacktestPanel({
           </div>
         )}
         <span className="backtest-range-preview">
-          {layout === 'circle' ? '원형 좌표' : '7 × 7 번호표'}
+          {(method.fixedLayout ?? layout) === 'circle' ? '원형 좌표' : '7 × 7 번호표'}
         </span>
         <button
           type="button"

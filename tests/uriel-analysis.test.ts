@@ -12,6 +12,7 @@ import {
 } from '../src/uriel/analysis/candidates';
 import { metricsForNumbers } from '../src/uriel/analysis/geometry';
 import {
+  buildAlgorithmPurchasePortfolio,
   buildPurchasePortfolio,
   diagnosePurchasePortfolio,
 } from '../src/uriel/analysis/purchase';
@@ -23,7 +24,7 @@ import {
 import { parseDrawCsv } from '../src/uriel/data';
 import type { LottoDraw } from '../src/uriel/types';
 
-describe('Uriel 기본 알고리즘', () => {
+describe('Uriel 선택 알고리즘', () => {
   let draws: LottoDraw[];
 
   beforeAll(async () => {
@@ -35,9 +36,14 @@ describe('Uriel 기본 알고리즘', () => {
     );
   });
 
-  it('registers only the retained baseline method', () => {
+  it('registers the baseline and restored transition-tail methods', () => {
     expect(algorithmDefinitions).toEqual([
       expect.objectContaining({ id: 'baseline', label: '기본 방식' }),
+      expect.objectContaining({
+        id: 'transition-tail',
+        label: '형태 전이 + Tail Coverage',
+        fixedLayout: 'board',
+      }),
     ]);
     expect(DEFAULT_ALGORITHM_ID).toBe('baseline');
     expect(algorithmDefinition('baseline').description).not.toBe('');
@@ -48,7 +54,7 @@ describe('Uriel 기본 알고리즘', () => {
     (layout) => {
       const first = findBaselineCandidates(draws, 1238, layout, 100);
       const second = runAlgorithm('baseline', draws, 1238, layout, 100);
-      expect(second).toEqual(first);
+      expect(second).toEqual({ ...first, layout });
       expect(first.candidates).toHaveLength(100);
       expect(
         new Set(first.candidates.map(({ numbers }) => numbers.join('-'))).size,
@@ -68,6 +74,34 @@ describe('Uriel 기본 알고리즘', () => {
       });
     },
   );
+
+  it('restores the 7x7 transition ranking and tail-coverage purchase policy', () => {
+    const result = runAlgorithm('transition-tail', draws, 1238, 'circle', 100);
+    expect(result.layout).toBe('board');
+    expect(result.candidates).toHaveLength(100);
+    expect(
+      new Set(result.candidates.map(({ numbers }) => numbers.join('-'))).size,
+    ).toBe(100);
+    expect(result.method).toMatchObject({
+      algorithmId: 'transition-tail',
+      sourceModel: 'shape-transition',
+      searchSpace: 5_005,
+      featureCount: 16,
+    });
+
+    const purchase = buildAlgorithmPurchasePortfolio(
+      'transition-tail',
+      result.candidates,
+      result.layout,
+    );
+    expect(purchase.games).toHaveLength(10);
+    expect(
+      purchase.games.filter(
+        ({ researchRank }) =>
+          researchRank !== undefined && researchRank >= 31 && researchRank <= 80,
+      ),
+    ).toHaveLength(3);
+  });
 
   it('does not read a changed future result', () => {
     const changed = draws.map((draw, index) =>
