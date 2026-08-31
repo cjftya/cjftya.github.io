@@ -7,14 +7,16 @@ import {
 import { parseDrawCsv } from '../src/uriel/data';
 import type { LottoDraw } from '../src/uriel/types';
 
-const holdoutFull = process.env.URIEL_HOLDOUT_FULL === '1';
-
-describe('Uriel Walk-forward validation ranges', () => {
+describe('Uriel 기본 알고리즘 Walk-forward 구간', () => {
   let draws: LottoDraw[];
 
   beforeAll(async () => {
-    const fileUrl = new URL('../public/projects/uriel/data/draws.csv', import.meta.url);
-    draws = parseDrawCsv(await readFile(fileUrl, 'utf8'));
+    draws = parseDrawCsv(
+      await readFile(
+        new URL('../public/projects/uriel/data/draws.csv', import.meta.url),
+        'utf8',
+      ),
+    );
   });
 
   it.each([96, 192])('resolves the latest %i rounds', (rounds) => {
@@ -24,166 +26,85 @@ describe('Uriel Walk-forward validation ranges', () => {
       rangeMode: 'recent',
       rounds,
     });
-
     expect(range).toMatchObject({ startRound, endRound, evaluatedRounds: rounds });
     expect(draws[range.startHistoryIndex]?.round).toBe(startRound - 1);
     expect(draws[range.endHistoryIndex + 1]?.round).toBe(endRound);
   });
 
-  it('resolves the 192 rounds immediately before the latest 192 rounds', () => {
+  it('resolves the previous 192-round window', () => {
     const endRound = draws.at(-1)!.round - 192;
     const startRound = endRound - 191;
-    const range = resolveBacktestRoundRange(draws, {
-      rangeMode: 'previous-192',
-    });
-
-    expect(range).toMatchObject({
-      startRound,
-      endRound,
-      evaluatedRounds: 192,
-    });
-    expect(draws[range.startHistoryIndex]?.round).toBe(startRound - 1);
-    expect(draws[range.endHistoryIndex + 1]?.round).toBe(endRound);
+    expect(
+      resolveBacktestRoundRange(draws, { rangeMode: 'previous-192', rounds: 192 }),
+    ).toMatchObject({ startRound, endRound, evaluatedRounds: 192 });
   });
 
-  it('resolves an explicit custom range without using future draws', () => {
-    const range = resolveBacktestRoundRange(draws, {
-      rangeMode: 'custom',
-      startRound: 852,
-      endRound: 1043,
-    });
-
-    expect(range).toMatchObject({
-      startRound: 852,
-      endRound: 1043,
-      evaluatedRounds: 192,
-    });
-    for (
-      let historyIndex = range.startHistoryIndex;
-      historyIndex <= range.endHistoryIndex;
-      historyIndex += 1
-    ) {
-      expect(draws[historyIndex]?.round).toBeLessThan(
-        draws[historyIndex + 1]?.round ?? 0,
-      );
-    }
-  });
-
-  it('rejects invalid or under-trained custom ranges', () => {
+  it('rejects invalid, missing and under-trained custom ranges', () => {
     expect(() =>
       resolveBacktestRoundRange(draws, {
         rangeMode: 'custom',
-        startRound: 1043,
-        endRound: 852,
+        startRound: 100,
+        endRound: 90,
       }),
     ).toThrow('시작 회차는 종료 회차보다 클 수 없어요.');
     expect(() =>
       resolveBacktestRoundRange(draws, {
         rangeMode: 'custom',
-        startRound: 50,
-        endRound: 60,
+        startRound: 10,
+        endRound: 20,
       }),
-    ).toThrow('앞선 96회 이상의 학습 데이터');
+    ).toThrow('24회 이상의 학습 데이터');
     expect(() =>
       resolveBacktestRoundRange(draws, {
         rangeMode: 'custom',
-        startRound: 852,
-        endRound: draws.at(-1)!.round + 1,
+        startRound: 1238,
+        endRound: 2000,
       }),
     ).toThrow('데이터가 없어요.');
   });
-});
 
-describe.skipIf(!holdoutFull)('Uriel historical holdout validation', () => {
-  it('runs 852–1043 with the frozen Phase 1 settings', async () => {
-    const fileUrl = new URL('../public/projects/uriel/data/draws.csv', import.meta.url);
-    const draws = parseDrawCsv(await readFile(fileUrl, 'utf8'));
+  it('evaluates only the selected baseline method', () => {
     const result = runWalkForwardBacktest(draws, {
+      algorithmId: 'baseline',
+      layout: 'circle',
       rangeMode: 'custom',
-      startRound: 852,
-      endRound: 1043,
-      rounds: 192,
-      poolSize: 20,
-      generationMode: 'full-enumeration',
-      seed: 20260807,
-      monteCarloRuns: 32,
-      includeAblation: true,
-      includeRankingDiagnostics: true,
+      startRound: 1235,
+      endRound: 1239,
     });
-    const transition = result.strategies.find(
-      ({ strategy }) => strategy === 'transition',
-    );
-    const random = result.strategies.find(({ strategy }) => strategy === 'random');
-    const compact = {
-      startRound: result.startRound,
-      endRound: result.endRound,
-      evaluatedRounds: result.evaluatedRounds,
-      options: result.options,
-      recall: result.recall.find(({ poolSize }) => poolSize === 20),
-      transition,
-      transitionTailCoverage: result.portfolioExperiment,
-      random,
-      fiveHitOpportunities: result.fiveHitOpportunities.map((opportunity) => ({
-        round: opportunity.round,
-        candidateRecall: opportunity.candidateRecall,
-        candidateMatches: opportunity.candidateMatches,
-        generationMaxHit: opportunity.generationMaxHit,
-        transition: opportunity.strategies.transition,
-      })),
-      bestStrategy: result.bestStrategy,
-      bestCombinationStrategy: result.bestCombinationStrategy,
-      rankingDiagnosticRounds: result.rankingDiagnostics?.analyzedRounds ?? 0,
-    };
-
-    console.log(`URIEL_HOLDOUT_FULL_RESULT=${JSON.stringify(compact)}`);
     expect(result).toMatchObject({
-      startRound: 852,
-      endRound: 1043,
-      evaluatedRounds: 192,
+      metricSchemaVersion: 1,
+      startRound: 1235,
+      endRound: 1239,
+      evaluatedRounds: 5,
+      options: { algorithmId: 'baseline', layout: 'circle' },
     });
-    expect(result.options).toMatchObject({
-      poolSize: 20,
-      generationMode: 'full-enumeration',
-      seed: 20260807,
-      monteCarloRuns: 32,
-      includeAblation: true,
-    });
-    expect(compact.recall).toMatchObject({
-      distribution: [9, 25, 59, 55, 36, 8, 0],
-      average: 2.5625,
-      atLeastFourRate: 44 / 192,
-      atLeastFiveRate: 8 / 192,
-      allSixRate: 0,
-    });
-    expect(transition?.pipeline).toMatchObject({
-      fourPlus: {
-        candidateOpportunities: 44,
-        generationSuccesses: 44,
-        top100Successes: 8,
-        top10Successes: 1,
-      },
-      fivePlus: {
-        candidateOpportunities: 8,
-        generationSuccesses: 8,
-        top100Successes: 0,
-        top10Successes: 0,
-      },
-      six: {
-        candidateOpportunities: 0,
-        generationSuccesses: 0,
-        top100Successes: 0,
-        top10Successes: 0,
-      },
-    });
-    expect(result.portfolioExperiment.before).toMatchObject({
-      threePlusRate: 26 / 192,
-      fourPlusRate: 1 / 192,
-      fivePlusRate: 0,
-    });
-    expect(result.portfolioExperiment.after).toMatchObject({
-      threePlusRate: 35 / 192,
-      fourPlusRate: 1 / 192,
-      fivePlusRate: 0,
-    });
-  }, 1_800_000);
+    expect(result.candidates.map(({ candidateCount }) => candidateCount)).toEqual([
+      6, 12, 24, 50, 100,
+    ]);
+    expect(result.purchase.distribution).toHaveLength(7);
+    expect(result.rounds).toHaveLength(5);
+    expect(
+      result.rounds.every((round) =>
+        Object.values(round.candidateMaxHits).every((hits) => hits >= 0 && hits <= 6),
+      ),
+    ).toBe(true);
+  }, 30_000);
+
+  it('does not use rows after the selected validation range', () => {
+    const changedFuture = draws.map((draw) =>
+      draw.round > 1237 ? { ...draw, numbers: [1, 2, 3, 4, 5, 6] } : draw,
+    );
+    const options = {
+      algorithmId: 'baseline' as const,
+      layout: 'board' as const,
+      rangeMode: 'custom' as const,
+      startRound: 1235,
+      endRound: 1237,
+    };
+    const first = runWalkForwardBacktest(draws, options);
+    const second = runWalkForwardBacktest(changedFuture, options);
+    expect(second.rounds).toEqual(first.rounds);
+    expect(second.candidates).toEqual(first.candidates);
+    expect(second.purchase).toEqual(first.purchase);
+  }, 30_000);
 });

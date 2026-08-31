@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { metricsForDraw } from './analysis/geometry';
 import { buildHistoryFrame } from './analysis/history';
+import { DEFAULT_ALGORITHM_ID } from './analysis/algorithmCatalog';
 import { MetricChart, metricDefinitions } from './components/MetricChart';
 import type { MetricKey } from './components/MetricChart';
 import { BacktestPanel } from './components/BacktestPanel';
@@ -9,7 +10,7 @@ import { Metric, NumberRow, ToggleButton } from './components/DisplayPrimitives'
 import { Timeline } from './components/Timeline';
 import { ShapeStage } from './components/ShapeStage';
 import { loadBundledDraws, parseDrawCsv } from './data';
-import type { HistoryMode, LayoutMode, LottoDraw } from './types';
+import type { AlgorithmId, HistoryMode, LayoutMode, LottoDraw } from './types';
 
 const PLAY_INTERVALS = [1200, 700, 350] as const;
 const historyModeCopy: Record<HistoryMode, { label: string; description: string }> = {
@@ -31,6 +32,7 @@ export function App() {
   const [draws, setDraws] = useState<LottoDraw[]>([]);
   const [index, setIndex] = useState(0);
   const [layout, setLayout] = useState<LayoutMode>('circle');
+  const [algorithmId, setAlgorithmId] = useState<AlgorithmId>(DEFAULT_ALGORITHM_ID);
   const [historyMode, setHistoryMode] = useState<HistoryMode>('independent');
   const [halfLife, setHalfLife] = useState(18);
   const [metric, setMetric] = useState<MetricKey>('area');
@@ -318,14 +320,15 @@ export function App() {
             draws={draws}
             index={index}
             layout={layout}
+            algorithmId={algorithmId}
             isPlaying={isPlaying}
-            onLayoutChange={setLayout}
+            onAlgorithmChange={setAlgorithmId}
             onMove={moveTo}
           />
         </aside>
       </div>
 
-      <BacktestPanel draws={draws} />
+      <BacktestPanel draws={draws} algorithmId={algorithmId} layout={layout} />
 
       <section className="method-note">
         <span className="card-index">METHOD</span>
@@ -334,20 +337,12 @@ export function App() {
           <p>
             보너스 번호와 당첨금은 사용하지 않아요. 예측 Δ는 중심·면적·둘레·조밀도·
             퍼짐·방향을 포함하고, 7×7에서는 행·열 분포, 경계, 거리, 볼록껍질, 인접성,
-            최소 신장 트리와 대칭성을 함께 비교해요. 조합 공간에 고정된 40,000개를
-            탐색해요. 하이브리드는 현재 시점 이전 기록으로만 규제된 도형 전이를
-            학습하고, 7×7 형태 전이는 최근 3회 경로와 닮은 과거 경로 뒤의 형태만
-            독립적으로 군집화해요. 비교용으로는 기존 수치 상위 10개를 비교 기준으로
-            남겨요. 실사용 기본값은 최근 96회 순차 검증에서 기본형과 무작위보다 높았던
-            7×7 형태 전이 상위 10개예요. 최근 3회 형태 경로와 닮은 과거 경로 24개의 다음
-            형태를 세 시나리오로 군집화하고, 4만 개 고정 조합에서 가까운 형태를 찾아요.
-            조합 Hybrid는 후보 번호와 최종 조합 평가를 분리하고 Pair·Triple·원형·7×7·
-            형태 전이·모델 합의를 별도 Feature로 유지해요. 상위 10·12·15·18·20 번호군의
-            Candidate Recall, Oracle, Research Top-100, Purchase Top-10을 따로 기록하며,
-            Top-10은 연구 순위와 Coverage·Diversity를 함께 최적화해요. 전략별
-            Walk-forward, Ablation, seed 고정 Random Monte Carlo 결과는 아래 진단에서
-            비교할 수 있어요. 실제 결과는 순위를 다시 정하는 데 쓰지 않으며, 독립 무작위
-            추첨의 당첨 확률을 높였다고 확정하는 기능은 아니에요.
+            최소 신장 트리와 대칭성을 함께 비교해요. 현재는 기본 방식 하나만 목록에
+            등록되어 있고, 조합 공간에 고정된 40,000개를 탐색해요. 새로운 아이디어는
+            기존 코드를 섞지 않고 별도 알고리즘으로 등록한 뒤 같은 후보·구매·검증 UI와
+            Walk-forward 진단으로 비교할 수 있어요. 실제 결과는 순위를 다시 정하는 데
+            쓰지 않으며, 독립 무작위 추첨의 당첨 확률을 높였다고 확정하는 기능은
+            아니에요.
           </p>
         </div>
       </section>

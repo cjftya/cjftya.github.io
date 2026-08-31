@@ -22,7 +22,7 @@ export function usePrediction(
   const clientRef = useRef<PredictionClient | null>(null);
   const [state, setState] = useState<PredictionState | null>(null);
   const [attempt, setAttempt] = useState(0);
-  const { index, layout, candidateModel, purchaseStrategy } = request;
+  const { index, layout, algorithmId } = request;
   const key = predictionKey(request);
 
   useEffect(() => {
@@ -57,9 +57,8 @@ export function usePrediction(
 
   useEffect(() => {
     if (paused) clientRef.current?.pause();
-    else
-      clientRef.current?.request({ index, layout, candidateModel, purchaseStrategy });
-  }, [draws, attempt, index, layout, candidateModel, purchaseStrategy, paused]);
+    else clientRef.current?.request({ index, layout, algorithmId });
+  }, [draws, attempt, index, layout, algorithmId, paused]);
 
   const current =
     !paused && state?.draws === draws && (state.key === key || state.key === null)
