@@ -12,7 +12,15 @@ import { forecastBoardShapeTransitions } from '../src/uriel/analysis/shapeTransi
 import { parseDrawCsv } from '../src/uriel/data';
 
 const digest = (value: unknown) =>
-  createHash('sha256').update(JSON.stringify(value)).digest('hex');
+  createHash('sha256')
+    // V8 versions differ by ~4e-16 in fractional power calculations. Compare
+    // every rank/number exactly and scores to 10 decimals, not runtime bits.
+    .update(
+      JSON.stringify(value, (_, item) =>
+        typeof item === 'number' ? Number(item.toFixed(10)) : item,
+      ),
+    )
+    .digest('hex');
 
 it('preserves the pre-cleanup rankings, scores and portfolios in both layouts', async () => {
   // Recorded from master at 280f643 before optimizing. Fix the dataset boundary so
