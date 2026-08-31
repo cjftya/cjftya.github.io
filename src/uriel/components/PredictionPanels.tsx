@@ -292,7 +292,9 @@ export const PredictionPanels = memo(function PredictionPanels({
           </div>
           <div className="candidate-controls">
             <span>
-              고정 {candidateResult?.method.searchSpace.toLocaleString('ko-KR')} 조합
+              {candidateResult === null
+                ? '분석 준비 중'
+                : `고정 ${candidateResult.method.searchSpace.toLocaleString('ko-KR')} 조합`}
             </span>
             <label>
               후보 수
