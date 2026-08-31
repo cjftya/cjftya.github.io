@@ -1,3 +1,4 @@
+import { fourNumberSubsets } from './selection';
 import type {
   Candidate,
   LayoutMode,
@@ -418,24 +419,6 @@ function uniqueCandidates(candidates: readonly Candidate[]): Candidate[] {
     seen.add(key);
     return true;
   });
-}
-
-function fourNumberSubsets(numbers: readonly number[]): string[] {
-  const result: string[] = [];
-  for (let first = 0; first < numbers.length - 3; first += 1) {
-    for (let second = first + 1; second < numbers.length - 2; second += 1) {
-      for (let third = second + 1; third < numbers.length - 1; third += 1) {
-        for (let fourth = third + 1; fourth < numbers.length; fourth += 1) {
-          result.push(
-            [numbers[first], numbers[second], numbers[third], numbers[fourth]].join(
-              '-',
-            ),
-          );
-        }
-      }
-    }
-  }
-  return result;
 }
 
 function candidateKey(candidate: Pick<Candidate, 'numbers'>): string {
