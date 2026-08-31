@@ -4,7 +4,7 @@ import {
   algorithmDefinitions,
 } from '../analysis/algorithmCatalog';
 import {
-  buildPurchasePortfolio,
+  buildAlgorithmPurchasePortfolio,
   diagnosePurchasePortfolio,
 } from '../analysis/purchase';
 import { evaluateCandidates } from '../analysis/validation';
@@ -61,6 +61,7 @@ export const PredictionPanels = memo(function PredictionPanels({
     isPlaying,
   );
   const candidateResult = snapshot?.candidateResult ?? null;
+  const analysisLayout = candidateResult?.layout ?? method.fixedLayout ?? layout;
   const purchaseResearchCandidates = snapshot?.purchaseResearchCandidates ?? null;
   const candidates = useMemo(
     () => candidateResult?.candidates.slice(0, candidateCount) ?? [],
@@ -69,13 +70,13 @@ export const PredictionPanels = memo(function PredictionPanels({
   const validation = useMemo(() => {
     const actual = draws[index + 1];
     return actual && candidates.length
-      ? evaluateCandidates(candidates, actual, layout)
+      ? evaluateCandidates(candidates, actual, analysisLayout)
       : null;
-  }, [draws, index, candidates, layout]);
+  }, [draws, index, candidates, analysisLayout]);
   const activePurchaseAnchor =
     purchaseAnchor?.draws === draws &&
     purchaseAnchor.index === index &&
-    purchaseAnchor.layout === layout &&
+    purchaseAnchor.layout === analysisLayout &&
     purchaseAnchor.algorithmId === algorithmId
       ? purchaseAnchor.candidate
       : null;
@@ -83,18 +84,19 @@ export const PredictionPanels = memo(function PredictionPanels({
     () =>
       purchaseResearchCandidates === null
         ? null
-        : buildPurchasePortfolio(
+        : buildAlgorithmPurchasePortfolio(
+            algorithmId,
             purchaseResearchCandidates,
-            layout,
+            analysisLayout,
             activePurchaseAnchor,
           ),
-    [activePurchaseAnchor, layout, purchaseResearchCandidates],
+    [activePurchaseAnchor, algorithmId, analysisLayout, purchaseResearchCandidates],
   );
   const purchaseValidation = useMemo(() => {
     const actual = draws[index + 1];
     if (actual === undefined || purchasePortfolio === null) return null;
-    return evaluateCandidates(purchasePortfolio.games, actual, layout);
-  }, [index, draws, layout, purchasePortfolio]);
+    return evaluateCandidates(purchasePortfolio.games, actual, analysisLayout);
+  }, [index, draws, analysisLayout, purchasePortfolio]);
   const purchaseDiagnostics = useMemo(() => {
     const actual = draws[index + 1];
     if (
@@ -156,8 +158,9 @@ export const PredictionPanels = memo(function PredictionPanels({
         </div>
         {status}
         <p className="purchase-intro">
-          {method.description} 연구 후보 100개를 점수·번호 Coverage·조합 간 Diversity로
-          압축해 10게임을 만들어요.
+          {algorithmId === 'transition-tail'
+            ? `${method.description} 연구 상위 7게임에 31–80위 저중복 후보 3게임을 더해요.`
+            : `${method.description} 연구 후보 100개를 점수·번호 Coverage·조합 간 Diversity로 압축해 10게임을 만들어요.`}
         </p>
         {purchasePortfolio?.userAnchorUsed === true && (
           <button
@@ -186,7 +189,7 @@ export const PredictionPanels = memo(function PredictionPanels({
                   </i>
                 ))}
               </div>
-              <small>금색 8개는 기본 방식의 공통 지지가 높은 핵심 번호예요.</small>
+              <small>금색 8개는 선택 방식의 공통 지지가 높은 핵심 번호예요.</small>
             </div>
             {purchaseValidation !== null && purchaseDiagnostics !== null && (
               <PurchaseValidationSummary
@@ -268,12 +271,23 @@ export const PredictionPanels = memo(function PredictionPanels({
         {snapshot !== null && (
           <>
             <p className="candidate-intro">
-              {draws[index]?.round}회까지의 8·24·72회 흐름과 과거 유사 상태{' '}
-              {candidateResult?.method.transitionNeighbors ?? 0}개의 다음 이동만 결합한
-              기본 방식이에요.{' '}
-              {layout === 'board'
-                ? `7×7 전용 ${candidateResult?.method.featureCount ?? 35}개 특징을 사용해요.`
-                : '원형 특징을 사용해요.'}{' '}
+              {algorithmId === 'transition-tail' ? (
+                <>
+                  {draws[index]?.round}회까지의 공통 후보 15개에서 5,005개 조합을
+                  만들고, 7×7 형태 전이 시나리오{' '}
+                  {candidateResult?.method.shapeScenarioCount ?? 0}개로 연구 Top100을
+                  골라요.{' '}
+                </>
+              ) : (
+                <>
+                  {draws[index]?.round}회까지의 8·24·72회 흐름과 과거 유사 상태{' '}
+                  {candidateResult?.method.transitionNeighbors ?? 0}개의 다음 이동만
+                  결합한 기본 방식이에요.{' '}
+                  {analysisLayout === 'board'
+                    ? `7×7 전용 ${candidateResult?.method.featureCount ?? 35}개 특징을 사용해요. `
+                    : '원형 특징을 사용해요. '}
+                </>
+              )}
               실제 다음 결과는 후보 순서에 영향을 주지 않고 별도로 비교해요.
             </p>
             {validation === null ? (
@@ -326,7 +340,7 @@ export const PredictionPanels = memo(function PredictionPanels({
                           setPurchaseAnchor({
                             draws,
                             index,
-                            layout,
+                            layout: analysisLayout,
                             algorithmId,
                             candidate,
                           })

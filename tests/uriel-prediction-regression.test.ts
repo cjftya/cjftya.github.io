@@ -2,8 +2,12 @@ import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import { expect, it } from 'vitest';
 import { findBaselineCandidates } from '../src/uriel/analysis/candidates';
+import { runAlgorithm } from '../src/uriel/analysis/algorithmRunner';
 import { createPredictionSession } from '../src/uriel/analysis/predictionSession';
-import { buildPurchasePortfolio } from '../src/uriel/analysis/purchase';
+import {
+  buildAlgorithmPurchasePortfolio,
+  buildPurchasePortfolio,
+} from '../src/uriel/analysis/purchase';
 import { parseDrawCsv } from '../src/uriel/data';
 
 const digest = (value: unknown) =>
@@ -43,12 +47,30 @@ it('preserves the retained baseline predictions and purchases', async () => {
 
       const request = { index, layout, algorithmId: 'baseline' as const };
       const snapshot = analyze(request);
-      expect(snapshot.candidateResult).toEqual(result);
+      expect(snapshot.candidateResult).toEqual({ ...result, layout });
       expect(snapshot.purchaseResearchCandidates).toBe(
         snapshot.candidateResult.candidates,
       );
       expect(analyze(request)).toBe(snapshot);
     }
+  }
+
+  for (const index of [0, 1234, 1238]) {
+    const result = runAlgorithm('transition-tail', draws, index, 'circle', 100);
+    const purchase = buildAlgorithmPurchasePortfolio(
+      'transition-tail',
+      result.candidates,
+      result.layout,
+    );
+    expect(digest(purchase), `${index}:tail`).toBe(expected[`${index}:tail`]);
+
+    const snapshot = analyze({
+      index,
+      layout: 'circle',
+      algorithmId: 'transition-tail',
+    });
+    expect(snapshot.candidateResult).toEqual(result);
+    expect(snapshot.candidateResult.layout).toBe('board');
   }
 
   const request = {

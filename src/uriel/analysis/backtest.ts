@@ -1,6 +1,6 @@
 import type { AlgorithmId, LayoutMode, LottoDraw } from '../types';
 import { runAlgorithm } from './algorithmRunner';
-import { buildPurchasePortfolio } from './purchase';
+import { buildAlgorithmPurchasePortfolio } from './purchase';
 
 export type BacktestRangeMode = 'recent' | 'previous-192' | 'custom';
 
@@ -142,7 +142,11 @@ export function runWalkForwardBacktest(
         maximumMatch(prediction.candidates.slice(0, count), actual.numbers),
       ]),
     ) as Record<number, number>;
-    const purchase = buildPurchasePortfolio(prediction.candidates, options.layout);
+    const purchase = buildAlgorithmPurchasePortfolio(
+      options.algorithmId,
+      prediction.candidates,
+      prediction.layout,
+    );
     rounds.push({
       round: actual.round,
       candidateMaxHits,
