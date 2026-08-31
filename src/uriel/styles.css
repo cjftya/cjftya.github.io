@@ -740,6 +740,35 @@ input:focus-visible {
   text-align: right;
 }
 
+.analysis-progress {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 14px 0;
+  padding: 12px 14px;
+  border: 1px solid rgba(244, 198, 122, 0.2);
+  border-radius: 10px;
+  color: var(--ink-muted);
+  background: rgba(244, 198, 122, 0.04);
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.analysis-progress[role='alert'] {
+  color: #f1aaaa;
+}
+
+.analysis-progress button {
+  flex-shrink: 0;
+  padding: 7px 10px;
+  border: 1px solid currentColor;
+  border-radius: 6px;
+  color: inherit;
+  background: transparent;
+  cursor: pointer;
+}
+
 .candidate-intro {
   margin: -3px 0 15px;
   color: #787983;
