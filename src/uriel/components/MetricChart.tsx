@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import type { LayoutMode, LottoDraw, ShapeMetrics } from '../types';
 import { metricsForDraw } from '../analysis/geometry';
 
@@ -24,7 +25,12 @@ interface MetricChartProps {
   metric: MetricKey;
 }
 
-export function MetricChart({ draws, index, layout, metric }: MetricChartProps) {
+export const MetricChart = memo(function MetricChart({
+  draws,
+  index,
+  layout,
+  metric,
+}: MetricChartProps) {
   const start = Math.max(0, index - 71);
   const windowDraws = draws.slice(start, index + 1);
   const values = windowDraws.map((draw) => metricsForDraw(draw, layout)[metric]);
@@ -69,7 +75,7 @@ export function MetricChart({ draws, index, layout, metric }: MetricChartProps) 
       </div>
     </div>
   );
-}
+});
 
 export function formatMetric(metrics: ShapeMetrics, key: keyof ShapeMetrics): string {
   return key === 'orientation'

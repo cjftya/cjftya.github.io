@@ -1,3 +1,4 @@
+import { selectBestStable } from './selection';
 import type { Candidate, LayoutMode, LottoDraw, ShapeMetrics } from '../types';
 import { findShapeCandidates } from './candidates';
 import { metricsForNumbers } from './geometry';
@@ -236,6 +237,7 @@ export function buildCombinationAnalysis(
   generationMode: CombinationGenerationMode = 'current',
   candidateRankingOverride?: readonly number[],
   strategyOverride?: readonly CombinationStrategy[],
+  findCandidates: typeof findShapeCandidates = findShapeCandidates,
 ): CombinationAnalysis {
   const safePoolSize = Math.min(Math.max(poolSize, 10), MAX_POOL_SIZE);
   const candidateContext = buildCandidateContext(
@@ -243,6 +245,7 @@ export function buildCombinationAnalysis(
     index,
     safePoolSize,
     candidateRankingOverride,
+    findCandidates,
   );
   const { candidatePool, candidateRanking, legacyResearch, signals } = candidateContext;
   const combinations = combinationsOfSix(candidatePool);
@@ -360,16 +363,11 @@ function buildCandidateContext(
   index: number,
   poolSize: number,
   candidateRankingOverride?: readonly number[],
+  findCandidates: typeof findShapeCandidates = findShapeCandidates,
 ): CandidatePoolAnalysis & { signals: NumberSignals } {
-  const baseline = findShapeCandidates(draws, index, 'board', 100, 'baseline');
-  const hybrid = findShapeCandidates(draws, index, 'board', 100, 'hybrid');
-  const transition = findShapeCandidates(
-    draws,
-    index,
-    'board',
-    100,
-    'shape-transition',
-  );
+  const baseline = findCandidates(draws, index, 'board', 100, 'baseline');
+  const hybrid = findCandidates(draws, index, 'board', 100, 'hybrid');
+  const transition = findCandidates(draws, index, 'board', 100, 'shape-transition');
   const models = [baseline.candidates, hybrid.candidates, transition.candidates];
   const signals = buildNumberSignals(draws.slice(0, index + 1), models);
   const currentRanking = Array.from(
@@ -723,62 +721,6 @@ function combinations(numbers: readonly number[], size: number): number[][] {
   };
   visit(0);
   return result;
-}
-
-function selectBestStable<T>(
-  values: readonly T[],
-  limit: number,
-  compare: (left: T, right: T) => number,
-): T[] {
-  if (limit <= 0) return [];
-  if (values.length <= limit) return [...values].sort(compare);
-  interface IndexedValue {
-    value: T;
-    index: number;
-  }
-  const compareIndexed = (left: IndexedValue, right: IndexedValue) =>
-    compare(left.value, right.value) || left.index - right.index;
-  const heap: IndexedValue[] = [];
-  const isWorse = (left: IndexedValue, right: IndexedValue) =>
-    compareIndexed(left, right) > 0;
-  const swap = (left: number, right: number) => {
-    [heap[left], heap[right]] = [heap[right]!, heap[left]!];
-  };
-  const siftUp = (start: number) => {
-    let index = start;
-    while (index > 0) {
-      const parent = Math.floor((index - 1) / 2);
-      if (!isWorse(heap[index]!, heap[parent]!)) break;
-      swap(index, parent);
-      index = parent;
-    }
-  };
-  const siftDown = (start: number) => {
-    let index = start;
-    while (true) {
-      const left = index * 2 + 1;
-      const right = left + 1;
-      let worst = index;
-      if (left < heap.length && isWorse(heap[left]!, heap[worst]!)) worst = left;
-      if (right < heap.length && isWorse(heap[right]!, heap[worst]!)) worst = right;
-      if (worst === index) break;
-      swap(index, worst);
-      index = worst;
-    }
-  };
-
-  values.forEach((value, index) => {
-    const entry = { value, index };
-    if (heap.length < limit) {
-      heap.push(entry);
-      siftUp(heap.length - 1);
-      return;
-    }
-    if (compareIndexed(entry, heap[0]!) >= 0) return;
-    heap[0] = entry;
-    siftDown(0);
-  });
-  return heap.sort(compareIndexed).map(({ value }) => value);
 }
 
 function weightedMetricMean(

@@ -1,4 +1,4 @@
-import { useId } from 'react';
+import { memo, useId } from 'react';
 import { pointForNumber, pointsForNumbers } from '../analysis/geometry';
 import type { HistoryFrame, HistoryMode, LayoutMode, LottoDraw } from '../types';
 
@@ -13,7 +13,12 @@ interface ShapeStageProps {
   layout: LayoutMode;
 }
 
-export function ShapeStage({ draw, frame, historyMode, layout }: ShapeStageProps) {
+export const ShapeStage = memo(function ShapeStage({
+  draw,
+  frame,
+  historyMode,
+  layout,
+}: ShapeStageProps) {
   const glowId = useId().replace(/:/g, '');
   const selected = new Set(draw.numbers);
   const currentPoints = pointsForNumbers(draw.numbers, layout);
@@ -116,7 +121,7 @@ export function ShapeStage({ draw, frame, historyMode, layout }: ShapeStageProps
       )}
     </svg>
   );
-}
+});
 
 function CircleGuide() {
   return (
