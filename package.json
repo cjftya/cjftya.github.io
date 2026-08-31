@@ -13,6 +13,8 @@
     "format:check": "prettier --check .",
     "test": "vitest run",
     "test:watch": "vitest",
+    "data:update": "node scripts/update-uriel-data.mjs",
+    "data:check": "node scripts/update-uriel-data.mjs --check",
     "build": "tsc --noEmit && vite build && node scripts/copy-legacy.mjs",
     "preview": "vite preview"
   },
