@@ -17,10 +17,9 @@ describe('Uriel Walk-forward validation ranges', () => {
     draws = parseDrawCsv(await readFile(fileUrl, 'utf8'));
   });
 
-  it.each([
-    [96, 1140, 1235],
-    [192, 1044, 1235],
-  ])('resolves the latest %i rounds', (rounds, startRound, endRound) => {
+  it.each([96, 192])('resolves the latest %i rounds', (rounds) => {
+    const endRound = draws.at(-1)!.round;
+    const startRound = endRound - rounds + 1;
     const range = resolveBacktestRoundRange(draws, {
       rangeMode: 'recent',
       rounds,
@@ -32,17 +31,19 @@ describe('Uriel Walk-forward validation ranges', () => {
   });
 
   it('resolves the 192 rounds immediately before the latest 192 rounds', () => {
+    const endRound = draws.at(-1)!.round - 192;
+    const startRound = endRound - 191;
     const range = resolveBacktestRoundRange(draws, {
       rangeMode: 'previous-192',
     });
 
     expect(range).toMatchObject({
-      startRound: 852,
-      endRound: 1043,
+      startRound,
+      endRound,
       evaluatedRounds: 192,
     });
-    expect(draws[range.startHistoryIndex]?.round).toBe(851);
-    expect(draws[range.endHistoryIndex + 1]?.round).toBe(1043);
+    expect(draws[range.startHistoryIndex]?.round).toBe(startRound - 1);
+    expect(draws[range.endHistoryIndex + 1]?.round).toBe(endRound);
   });
 
   it('resolves an explicit custom range without using future draws', () => {
@@ -87,7 +88,7 @@ describe('Uriel Walk-forward validation ranges', () => {
       resolveBacktestRoundRange(draws, {
         rangeMode: 'custom',
         startRound: 852,
-        endRound: 1236,
+        endRound: draws.at(-1)!.round + 1,
       }),
     ).toThrow('데이터가 없어요.');
   });

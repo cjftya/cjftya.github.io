@@ -77,11 +77,14 @@ describe('Uriel history models', () => {
 });
 
 describe('Uriel data and candidate search', () => {
-  it('loads the bundled history through the latest published round', async () => {
+  it('preserves the research history and accepts newly published rounds', async () => {
     const fileUrl = new URL('../public/projects/uriel/data/draws.csv', import.meta.url);
     const bundled = parseDrawCsv(await readFile(fileUrl, 'utf8'));
-    expect(bundled).toHaveLength(1235);
-    expect(bundled.at(-1)).toEqual({
+    expect(bundled.length).toBeGreaterThanOrEqual(1235);
+    expect(bundled.map(({ round }) => round)).toEqual(
+      Array.from({ length: bundled.length }, (_, index) => index + 1),
+    );
+    expect(bundled.find(({ round }) => round === 1235)).toEqual({
       round: 1235,
       date: '2026-08-01',
       numbers: [6, 7, 11, 15, 39, 43],

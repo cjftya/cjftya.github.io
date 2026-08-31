@@ -3,7 +3,7 @@ import type { LottoDraw } from './types';
 const EXPECTED_COLUMN_COUNT = 8;
 
 export async function loadBundledDraws(): Promise<LottoDraw[]> {
-  const response = await fetch('/projects/uriel/data/draws.csv');
+  const response = await fetch('/projects/uriel/data/draws.csv', { cache: 'no-cache' });
 
   if (!response.ok) {
     throw new Error('기본 회차 데이터를 불러오지 못했어요.');

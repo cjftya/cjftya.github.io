@@ -6,6 +6,15 @@ on:
   pull_request:
     branches: [master]
   workflow_dispatch:
+    inputs:
+      update_data:
+        description: Check official Uriel results and fill missing rounds
+        type: boolean
+        default: true
+  schedule:
+    # Saturday 21:35 KST, with Sunday 09:35 KST as a delayed-publication retry.
+    - cron: '35 12 * * 6'
+    - cron: '35 0 * * 0'
 
 permissions:
   actions: read
@@ -18,11 +27,63 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  update-data:
+    if: >-
+      github.ref == 'refs/heads/master' &&
+      (github.event_name == 'schedule' ||
+       (github.event_name == 'workflow_dispatch' && inputs.update_data))
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    outputs:
+      revision: ${{ steps.commit.outputs.revision }}
+    steps:
+      - name: Checkout current master
+        uses: actions/checkout@v7
+        with:
+          ref: master
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Fill missing official draw results
+        run: npm run data:update
+
+      - name: Validate updated data before committing
+        run: npm test
+
+      - name: Commit only the verified data file
+        id: commit
+        run: |
+          if ! git diff --quiet -- public/projects/uriel/data/draws.csv; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add -- public/projects/uriel/data/draws.csv
+            git commit -m 'Update Uriel official draw results'
+            git push origin HEAD:master
+          fi
+          echo "revision=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
   build:
+    needs: update-data
+    if: >-
+      !cancelled() &&
+      (needs.update-data.result == 'success' || needs.update-data.result == 'skipped')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
+        with:
+          # Bot pushes do not trigger another push workflow. Build the updated
+          # commit in this run, rather than deploying the old event SHA.
+          ref: ${{ needs.update-data.outputs.revision || github.sha }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v7
@@ -54,8 +115,9 @@ jobs:
           include-hidden-files: true
 
   deploy:
-    if: github.event_name != 'pull_request'
     needs: build
+    if: >-
+      !cancelled() && github.event_name != 'pull_request' && needs.build.result == 'success'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
