@@ -1,3 +1,4 @@
+import { fourNumberSubsets, selectBestStable } from './selection';
 import type {
   Candidate,
   CandidateHypothesis,
@@ -682,26 +683,25 @@ function diversifyCandidates(
     fourSetBonus?: number;
   } = {},
 ): Candidate[] {
-  const available = ranked.filter(
-    (candidate) => !options.used?.has(candidate.numbers.join('-')),
-  );
+  const fourSetBonus = options.fourSetBonus ?? 0;
+  const available = ranked
+    .filter((candidate) => !options.used?.has(candidate.numbers.join('-')))
+    .map((candidate) => ({
+      candidate,
+      maximumOverlap: 0,
+      fourSets: fourSetBonus === 0 ? [] : fourNumberSubsets(candidate.numbers),
+    }));
   const selected: ScoredBasis[] = [];
   const numberUses = Array(46).fill(0) as number[];
   const coveredFourSets = new Set<string>();
   const overlapPenalty = options.overlapPenalty ?? 0.28;
   const exposurePenalty = options.exposurePenalty ?? 0.16;
   const unseenBonus = options.unseenBonus ?? 0.035;
-  const fourSetBonus = options.fourSetBonus ?? 0;
 
   while (selected.length < count && available.length > 0) {
     let bestIndex = 0;
     let bestScore = Number.POSITIVE_INFINITY;
-    available.forEach((candidate, candidateIndex) => {
-      const maximumOverlap = selected.reduce(
-        (maximum, other) =>
-          Math.max(maximum, overlap(candidate.numbers, other.numbers)),
-        0,
-      );
+    available.forEach(({ candidate, maximumOverlap, fourSets }, candidateIndex) => {
       const exposure =
         selected.length === 0
           ? 0
@@ -710,9 +710,7 @@ function diversifyCandidates(
       const unseenNumbers = candidate.numbers.filter(
         (number) => numberUses[number] === 0,
       ).length;
-      const novelFourSets = fourNumberSubsets(candidate.numbers).filter(
-        (key) => !coveredFourSets.has(key),
-      ).length;
+      const novelFourSets = fourSets.filter((key) => !coveredFourSets.has(key)).length;
       const selectionScore =
         candidate.distance +
         (maximumOverlap / 6) ** 2 * overlapPenalty +
@@ -724,14 +722,23 @@ function diversifyCandidates(
         bestIndex = candidateIndex;
       }
     });
-    const [chosen] = available.splice(bestIndex, 1);
-    if (chosen === undefined) break;
+    const [entry] = available.splice(bestIndex, 1);
+    if (entry === undefined) break;
+    const chosen = entry.candidate;
     selected.push(chosen);
     options.used?.add(chosen.numbers.join('-'));
     chosen.numbers.forEach((number) => {
       numberUses[number] = (numberUses[number] ?? 0) + 1;
     });
-    fourNumberSubsets(chosen.numbers).forEach((key) => coveredFourSets.add(key));
+    entry.fourSets.forEach((key) => coveredFourSets.add(key));
+    // Only the newly selected candidate can increase the existing maximum.
+    // This preserves scores and tie order without rescanning the selected history.
+    available.forEach((remaining) => {
+      remaining.maximumOverlap = Math.max(
+        remaining.maximumOverlap,
+        overlap(remaining.candidate.numbers, chosen.numbers),
+      );
+    });
   }
 
   return selected.map(({ numbers, metrics, distance, hypothesis }) => ({
@@ -741,24 +748,6 @@ function diversifyCandidates(
     tier: options.tier,
     hypothesis,
   }));
-}
-
-function fourNumberSubsets(numbers: readonly number[]): string[] {
-  const keys: string[] = [];
-  for (let first = 0; first < numbers.length - 3; first += 1) {
-    for (let second = first + 1; second < numbers.length - 2; second += 1) {
-      for (let third = second + 1; third < numbers.length - 1; third += 1) {
-        for (let fourth = third + 1; fourth < numbers.length; fourth += 1) {
-          keys.push(
-            [numbers[first], numbers[second], numbers[third], numbers[fourth]].join(
-              '-',
-            ),
-          );
-        }
-      }
-    }
-  }
-  return keys;
 }
 
 function encodeFeatures(
@@ -982,69 +971,6 @@ function mean(values: readonly number[]): number {
 
 function clamp(value: number, minimum: number, maximum: number): number {
   return Math.min(Math.max(value, minimum), maximum);
-}
-
-/**
- * Returns the same stable Top-K that `values.sort(compare).slice(0, limit)` would
- * produce, without sorting every one of the 40,000 search candidates.  The
- * original index is the explicit tie breaker because Array#sort is stable.
- */
-function selectBestStable<T>(
-  values: readonly T[],
-  limit: number,
-  compare: (left: T, right: T) => number,
-): T[] {
-  if (limit <= 0) return [];
-  if (values.length <= limit) return [...values].sort(compare);
-
-  interface IndexedValue {
-    value: T;
-    index: number;
-  }
-  const compareIndexed = (left: IndexedValue, right: IndexedValue) =>
-    compare(left.value, right.value) || left.index - right.index;
-  const heap: IndexedValue[] = [];
-  const isWorse = (left: IndexedValue, right: IndexedValue) =>
-    compareIndexed(left, right) > 0;
-  const swap = (left: number, right: number) => {
-    [heap[left], heap[right]] = [heap[right]!, heap[left]!];
-  };
-  const siftUp = (start: number) => {
-    let index = start;
-    while (index > 0) {
-      const parent = Math.floor((index - 1) / 2);
-      if (!isWorse(heap[index]!, heap[parent]!)) break;
-      swap(index, parent);
-      index = parent;
-    }
-  };
-  const siftDown = (start: number) => {
-    let index = start;
-    while (true) {
-      const left = index * 2 + 1;
-      const right = left + 1;
-      let worst = index;
-      if (left < heap.length && isWorse(heap[left]!, heap[worst]!)) worst = left;
-      if (right < heap.length && isWorse(heap[right]!, heap[worst]!)) worst = right;
-      if (worst === index) break;
-      swap(index, worst);
-      index = worst;
-    }
-  };
-
-  values.forEach((value, index) => {
-    const entry = { value, index };
-    if (heap.length < limit) {
-      heap.push(entry);
-      siftUp(heap.length - 1);
-      return;
-    }
-    if (compareIndexed(entry, heap[0]!) >= 0) return;
-    heap[0] = entry;
-    siftDown(0);
-  });
-
-  return heap.sort(compareIndexed).map(({ value }) => value);
 }
 
 function zeroMetrics(): ShapeMetrics {
