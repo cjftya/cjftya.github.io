@@ -33,7 +33,7 @@ export function PurchaseValidationSummary({
         <span>연구 100개 최고</span>
         <strong>{diagnostics.researchBestMatch}/6</strong>
         <small>
-          {portfolio.userAnchorUsed ? '10번 직접 선택 반영' : '10번 자동 고확신'}
+          {portfolio.userAnchorUsed ? '10번 직접 선택 반영' : '10번 자동 완결'}
         </small>
       </div>
       <div className="capture-ceiling">

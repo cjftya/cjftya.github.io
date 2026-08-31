@@ -1,20 +1,13 @@
-import { readFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
+import { readFile } from 'node:fs/promises';
 import { expect, it } from 'vitest';
-import { findShapeCandidates } from '../src/uriel/analysis/candidates';
-import { buildCombinationAnalysis } from '../src/uriel/analysis/combination';
-import {
-  buildPurchasePortfolio,
-  buildTailCoveragePortfolio,
-} from '../src/uriel/analysis/purchase';
+import { findBaselineCandidates } from '../src/uriel/analysis/candidates';
 import { createPredictionSession } from '../src/uriel/analysis/predictionSession';
-import { forecastBoardShapeTransitions } from '../src/uriel/analysis/shapeTransition';
+import { buildPurchasePortfolio } from '../src/uriel/analysis/purchase';
 import { parseDrawCsv } from '../src/uriel/data';
 
 const digest = (value: unknown) =>
   createHash('sha256')
-    // V8 versions differ by ~4e-16 in fractional power calculations. Compare
-    // every rank/number exactly and scores to 10 decimals, not runtime bits.
     .update(
       JSON.stringify(value, (_, item) =>
         typeof item === 'number' ? Number(item.toFixed(10)) : item,
@@ -22,9 +15,7 @@ const digest = (value: unknown) =>
     )
     .digest('hex');
 
-it('preserves the pre-cleanup rankings, scores and portfolios in both layouts', async () => {
-  // Recorded from master at 280f643 before optimizing. Fix the dataset boundary so
-  // weekly CSV updates cannot silently redefine the regression reference.
+it('preserves the retained baseline predictions and purchases', async () => {
   const draws = parseDrawCsv(
     await readFile(
       new URL('../public/projects/uriel/data/draws.csv', import.meta.url),
@@ -38,72 +29,37 @@ it('preserves the pre-cleanup rankings, scores and portfolios in both layouts', 
     ),
   );
   const analyze = createPredictionSession(draws);
+
   for (const index of [0, 1234, 1238]) {
     for (const layout of ['circle', 'board'] as const) {
-      for (const model of ['baseline', 'hybrid', 'shape-transition'] as const) {
-        const key = `${index}:${layout}:${model}`;
-        expect(digest(findShapeCandidates(draws, index, layout, 100, model)), key).toBe(
-          expected[key],
-        );
-      }
-    }
-    const combination = buildCombinationAnalysis(draws, index, 15, false);
-    expect(digest(combination)).toBe(expected[`${index}:combination`]);
-    expect(
-      digest(
-        buildTailCoveragePortfolio(combination.researchByStrategy.transition, 'board'),
-      ),
-    ).toBe(expected[`${index}:tail`]);
-    expect(
-      digest(
-        buildPurchasePortfolio(combination.researchByStrategy['full-hybrid'], 'board'),
-      ),
-    ).toBe(expected[`${index}:hybridPortfolio`]);
+      const result = findBaselineCandidates(draws, index, layout, 100);
+      expect(
+        digest({ candidates: result.candidates, target: result.target }),
+        `${index}:${layout}:prediction`,
+      ).toBe(expected[`${index}:${layout}:prediction`]);
+      expect(digest(buildPurchasePortfolio(result.candidates, layout))).toBe(
+        expected[`${index}:${layout}:purchase`],
+      );
 
-    // The worker computes only the selected strategy and reuses candidate work.
-    // Its compact reply must still match the original full analysis exactly.
-    for (const purchaseStrategy of [
-      'baseline',
-      'shape-transition',
-      'full-hybrid',
-    ] as const) {
-      const request = {
-        index,
-        layout: 'board' as const,
-        candidateModel: 'hybrid' as const,
-        purchaseStrategy,
-      };
-      const result = analyze(request);
-      expect(digest(result.candidateResult)).toBe(expected[`${index}:board:hybrid`]);
-      expect(digest(result.purchaseResearchCandidates)).toBe(
-        digest(
-          purchaseStrategy === 'baseline'
-            ? findShapeCandidates(draws, index, 'board', 100, 'baseline').candidates
-            : combination.researchByStrategy[
-                purchaseStrategy === 'shape-transition' ? 'transition' : 'full-hybrid'
-              ],
-        ),
+      const request = { index, layout, algorithmId: 'baseline' as const };
+      const snapshot = analyze(request);
+      expect(snapshot.candidateResult).toEqual(result);
+      expect(snapshot.purchaseResearchCandidates).toBe(
+        snapshot.candidateResult.candidates,
       );
-      expect(result.shapeForecast).toEqual(
-        purchaseStrategy === 'shape-transition'
-          ? forecastBoardShapeTransitions(draws, index)
-          : null,
-      );
-      expect(analyze(request)).toBe(result);
+      expect(analyze(request)).toBe(snapshot);
     }
   }
 
   const request = {
     index: 1234,
     layout: 'circle' as const,
-    candidateModel: 'shape-transition' as const,
-    purchaseStrategy: 'baseline' as const,
+    algorithmId: 'baseline' as const,
   };
-  const current = analyze(request);
-  expect(digest(current.candidateResult)).toBe(expected['1234:board:shape-transition']);
-  // A historical prediction must not depend on the future rows or a prior dataset's cache.
-  expect(createPredictionSession(draws.slice(0, 1235))(request)).toEqual(current);
+  expect(createPredictionSession(draws.slice(0, 1235))(request)).toEqual(
+    analyze(request),
+  );
   expect(() => analyze({ ...request, index: draws.length })).toThrow(
     '분석할 회차가 없어요.',
   );
-}, 180000);
+}, 60_000);

@@ -73,77 +73,6 @@ export function buildPurchasePortfolio(
   };
 }
 
-export function buildTailCoverageGames(
-  researchCandidates: readonly Candidate[],
-  layout: LayoutMode,
-): Candidate[] {
-  return buildTailCoveragePortfolio(researchCandidates, layout).games;
-}
-
-export function buildTailCoveragePortfolio(
-  researchCandidates: readonly Candidate[],
-  layout: LayoutMode,
-  userAnchor?: Candidate | null,
-): PurchasePortfolio {
-  const pool = uniqueCandidates(researchCandidates).map((candidate, index) => ({
-    candidate,
-    rank: index + 1,
-  }));
-  if (pool.length < PURCHASE_GAME_COUNT) {
-    throw new Error('구매 후보를 만들려면 서로 다른 연구 후보가 10개 이상 필요해요.');
-  }
-  const baseline = buildPurchasePortfolio(researchCandidates, layout, userAnchor);
-  const anchor = resolveAnchor(pool, layout, userAnchor);
-  const anchorKey = candidateKey(anchor.candidate);
-  const baselineEntries = baseline.games
-    .map((game) =>
-      pool.find(({ candidate }) => candidateKey(candidate) === candidateKey(game)),
-    )
-    .filter((entry): entry is RankedCandidate => entry !== undefined)
-    .filter(({ candidate }) => candidateKey(candidate) !== anchorKey)
-    .sort((left, right) => left.rank - right.rank);
-  const selected: RankedCandidate[] = [anchor, ...baselineEntries.slice(0, 6)];
-  const selectedKeys = new Set(
-    selected.map(({ candidate }) => candidateKey(candidate)),
-  );
-  const available = pool
-    .slice(30, 80)
-    .filter(({ candidate }) => !selectedKeys.has(candidateKey(candidate)));
-
-  while (selected.length < PURCHASE_GAME_COUNT && available.length > 0) {
-    available.sort((left, right) => {
-      const selectedCandidates = selected.map(({ candidate }) => candidate);
-      const leftOverlap = overlapProfile(left.candidate, selectedCandidates);
-      const rightOverlap = overlapProfile(right.candidate, selectedCandidates);
-      return (
-        leftOverlap.maximum - rightOverlap.maximum ||
-        leftOverlap.total - rightOverlap.total ||
-        left.rank - right.rank
-      );
-    });
-    const chosen = available.shift();
-    if (chosen === undefined) break;
-    selected.push(chosen);
-  }
-  const numberRanking = rankNumbers(pool);
-  const priorityNumbers = numberRanking.slice(0, PRIORITY_NUMBER_COUNT);
-  const coreNumbers = numberRanking.slice(0, CORE_NUMBER_COUNT);
-  const userAnchorUsed = userAnchor !== undefined && userAnchor !== null;
-  const games = assignRoles(selected, anchor, coreNumbers, userAnchorUsed);
-  const topTen = new Set(
-    pool.slice(0, PURCHASE_GAME_COUNT).map(({ candidate }) => candidateKey(candidate)),
-  );
-  return {
-    games,
-    priorityNumbers,
-    coreNumbers,
-    userAnchorUsed,
-    researchPoolSize: pool.length,
-    optimizedScenarioCount: Math.min(pool.length, 80),
-    topTenRetained: games.filter((game) => topTen.has(candidateKey(game))).length,
-  };
-}
-
 function optimizedPortfolio(
   pool: readonly RankedCandidate[],
   anchor: RankedCandidate,
@@ -334,11 +263,9 @@ function assignRoles(
 function rankNumbers(pool: readonly RankedCandidate[]): number[] {
   const support = Array(46).fill(0) as number[];
   pool.forEach(({ candidate, rank }) => {
-    const tierWeight =
-      candidate.tier === 'confidence' ? 1.25 : candidate.tier === 'focus' ? 1.12 : 1;
     const rankWeight = 1 / (1 + (rank - 1) / 22);
     candidate.numbers.forEach((number) => {
-      support[number] = support[number]! + tierWeight * rankWeight;
+      support[number] = support[number]! + rankWeight;
     });
   });
   return Array.from({ length: 45 }, (_, index) => index + 1).sort(
@@ -365,7 +292,7 @@ function resolveAnchor(
       }
     );
   }
-  return pool.find(({ candidate }) => candidate.tier === 'confidence') ?? pool[0]!;
+  return pool[0]!;
 }
 
 function toPurchaseCandidate(
@@ -396,19 +323,6 @@ function maximumMatch(
 
 function countMatches(left: readonly number[], right: readonly number[]): number {
   return left.filter((number) => right.includes(number)).length;
-}
-
-function overlapProfile(
-  candidate: Candidate,
-  selected: readonly Candidate[],
-): { maximum: number; total: number } {
-  const overlaps = selected.map((game) =>
-    countMatches(candidate.numbers, game.numbers),
-  );
-  return {
-    maximum: Math.max(...overlaps, 0),
-    total: overlaps.reduce((total, overlap) => total + overlap, 0),
-  };
 }
 
 function uniqueCandidates(candidates: readonly Candidate[]): Candidate[] {

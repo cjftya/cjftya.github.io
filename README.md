@@ -44,35 +44,36 @@ Garden은 GitHub 버튼만 표시하고, Wedding Card는 두 버튼을 모두 �
 
 ### Uriel 분석 엔진
 
-Uriel은 후보 번호 생성과 6개 조합 평가를 분리합니다. 기존 수치·하이브리드·7×7 형태
-전이 모델의 합의로 Top 10/12/15/18/20 Candidate Pool Recall을 측정하고, 기본 Top 15
-안의 5,005개 조합을 Number·Pair·Triple·원형·번호표·형태 전이 Feature로 독립 평가해
-Research Top 100을 만듭니다. 구매용 Top 10은 연구 순위만 복사하지 않고 점수,
-번호 Coverage, 조합 간 Diversity, 4-number subset Coverage를 함께 최적화합니다.
+Uriel은 하나의 기본 알고리즘으로 후보 100개와 구매용 10게임을 만듭니다. 후보는
+과거 번호의 장·중·단기 수치와 비슷한 과거 상태의 다음 회차를 함께 반영하며, 구매
+게임은 점수·번호 Coverage·조합 간 Diversity·4-number subset Coverage를 고려해
+선택합니다. 모든 계산은 선택한 회차까지 알려진 기록만 사용합니다.
 
-화면의 Walk-forward 진단은 Candidate Recall, Oracle Max, Top-100 Max, Top-10 Max,
-Oracle→Top-10 Conversion과 0~6 Hit Distribution을 전략별로 비교합니다. 기존 Uriel,
-Number, Pair, Pair+Triple, Shape, Shape Transition, Hybrid, Full Hybrid 및 Ablation을 같은
-과거 시점에서 검증하고, Random은 고정 seed로 32회 Monte Carlo 반복합니다. 계산은 Web
-Worker에서 실행되며 최근 48/96/192/384회 범위를 선택할 수 있습니다. 모든 통계와
-정규화는 예측 시점까지 알려진 기록만 사용합니다.
+화면의 알고리즘 목록은 현재 `기본 방식` 하나만 제공합니다. 새 아이디어는
+`algorithmCatalog.ts`에 항목을 등록하고 `algorithmRunner.ts`에 실행기를 연결해 같은
+화면에서 선택·비교할 수 있습니다. 실험 구현이 UI와 Worker 제어 코드에 섞이지 않도록
+목록 메타데이터와 실제 계산 경로를 분리했습니다.
+
+Walk-forward 진단은 선택한 알고리즘 하나를 대상으로 후보 6/12/24/50/100개의 최대
+적중 수와 구매 10게임의 최대 적중 수를 계산합니다. 최근 구간, 이전 192회, 사용자 지정
+구간을 별도 Web Worker에서 실행하며 진행 중 계산을 취소할 수 있습니다.
 
 #### 화면 성능과 코드 구조
 
 회차·도형·타임라인은 `App.tsx`, 후보와 구매 조합은 `PredictionPanels`, 백테스트
 실행과 보고서는 `BacktestPanel` / `BacktestReport`로 나눠요. 보고서는 결과가 있을
-때만 불러오며, 연구용 Phase 코드와 기존 평가 기준은 그대로 보존해요.
+때만 불러와요.
 
-후보 생성과 조합 분석은 `prediction.worker.ts`에서 실행해요. Worker 세션 안에서
-후보 계산을 재사용하고, 화면에는 선택한 전략의 결과만 보내요. 캐시는 후보 결과
+후보 생성과 구매 조합 분석은 `prediction.worker.ts`에서 실행해요. Worker 세션 안에서
+후보 계산을 재사용하고, 화면에는 선택한 알고리즘의 결과만 보내요. 캐시는 후보 결과
 24개·화면 결과 6개로 제한하며 CSV가 바뀌면 Worker와 함께 초기화해요. 빠른 회차
 이동은 실행 중인 계산 하나와 마지막 요청 하나만 유지하고, 이전 회차의 응답은
 표시하지 않아요. 시간 변화 재생 중에는 도형에 집중하고 멈춘 회차에서 분석을
 재개해요. 백테스트는 별도 Worker에서 실행하며 계산 취소를 지원해요.
 
 후보 간 최대 겹침은 선택된 후보 전체를 매번 다시 훑지 않고 새 후보에 대해서만
-갱신해요. 점수·동점 순서·구매 조합은 변경 전 1·1235·1239회 기준 결과와 비교하는
-회귀 테스트로 검증해요. Worker의 요청 병합·취소·오류·종료 동작도 테스트해요.
+갱신해요. 점수·동점 순서·구매 조합은 1·1235·1239회 기준 결과와 비교하는 회귀
+테스트로 검증해요. Worker의 요청 병합·취소·오류·종료 동작도 테스트해요.
 
 #### 당첨 데이터 갱신
 

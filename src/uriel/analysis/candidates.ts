@@ -1,20 +1,12 @@
-import { fourNumberSubsets, selectBestStable } from './selection';
+import { selectBestStable } from './selection';
 import type {
   Candidate,
-  CandidateHypothesis,
   CandidateMethod,
-  CandidateModel,
-  CandidateTier,
   LayoutMode,
   LottoDraw,
   ShapeMetrics,
 } from '../types';
 import { metricsForDraw, metricsForNumbers } from './geometry';
-import {
-  boardShapeDistance,
-  boardShapeFeatures,
-  forecastBoardShapeTransitions,
-} from './shapeTransition';
 
 const SEARCH_SPACE = 40000;
 const TOTAL_COMBINATIONS = 8145060;
@@ -23,14 +15,6 @@ const COMBINATION_OFFSET = 104729;
 const TRANSITION_NEIGHBORS = 16;
 const DIVERSITY_POOL_SIZE = 1600;
 const HISTORY_WINDOWS = [8, 24, 72] as const;
-const RIDGE_MINIMUM_SAMPLES = 72;
-const RIDGE_MAXIMUM_SAMPLES = 720;
-const RIDGE_LAMBDA = 24;
-const PORTFOLIO_RATIOS: Record<CandidateTier, number> = {
-  explore: 0.55,
-  focus: 0.35,
-  confidence: 0.1,
-};
 
 interface FeatureDefinition {
   scale: number;
@@ -45,27 +29,12 @@ interface CandidateBasis {
 
 interface ScoredBasis extends CandidateBasis {
   distance: number;
-  hypothesis?: CandidateHypothesis;
-}
-
-interface HypothesisScore extends CandidateBasis {
-  baselineDistance: number;
-  transitionDistance: number;
-  ridgeDistance: number;
-  consensusDistance: number;
-  disagreement: number;
 }
 
 interface TargetEstimate {
   features: number[];
   metrics: ShapeMetrics;
   transitionNeighbors: number;
-  hypotheses: {
-    baseline: number[];
-    transition: number[];
-    ridge: number[];
-  };
-  ridgeTrainingSamples: number;
 }
 
 const BASE_FEATURES: readonly FeatureDefinition[] = [
@@ -98,98 +67,6 @@ const BOARD_FEATURES: readonly FeatureDefinition[] = [
 
 const FIXED_COMBINATIONS = buildFixedCombinations();
 const cachedCandidateBasis = new Map<LayoutMode, CandidateBasis[]>();
-const cachedShapeBasis = new Map<LayoutMode, CandidateBasis[]>();
-
-export function findShapeCandidates(
-  draws: readonly LottoDraw[],
-  index: number,
-  layout: LayoutMode,
-  count = 6,
-  model: CandidateModel = 'hybrid',
-): { candidates: Candidate[]; target: ShapeMetrics; method: CandidateMethod } {
-  if (model === 'shape-transition') {
-    const forecast = forecastBoardShapeTransitions(draws, index);
-    return {
-      candidates: shapeTransitionCandidates(layout, forecast.scenarios, count),
-      target: forecast.metrics,
-      method: {
-        model,
-        searchSpace: SEARCH_SPACE,
-        featureCount: forecast.currentFeatures.length,
-        transitionNeighbors: 0,
-        diversified: true,
-        ridgeTrainingSamples: 0,
-        shapeSequenceNeighbors: forecast.neighbors,
-        shapeScenarioCount: forecast.scenarios.length,
-      },
-    };
-  }
-  const estimate = estimateTarget(draws, index, layout);
-  const definitions = featureDefinitions(layout);
-  const candidates =
-    model === 'baseline'
-      ? baselineCandidates(layout, estimate.features, definitions, count)
-      : hybridCandidates(layout, estimate, definitions, count);
-
-  return {
-    candidates,
-    target: estimate.metrics,
-    method: {
-      model,
-      searchSpace: SEARCH_SPACE,
-      featureCount: definitions.length,
-      transitionNeighbors: estimate.transitionNeighbors,
-      diversified: true,
-      ridgeTrainingSamples: model === 'hybrid' ? estimate.ridgeTrainingSamples : 0,
-      portfolio: model === 'hybrid' ? countByTier(candidates) : undefined,
-    },
-  };
-}
-
-function shapeTransitionCandidates(
-  layout: LayoutMode,
-  scenarios: readonly { features: readonly number[]; probability: number }[],
-  count: number,
-): Candidate[] {
-  const ranked = selectBestStable(
-    shapeCandidateBasis(layout).map((basis): ScoredBasis => {
-      const distance = Math.min(
-        ...scenarios.map(
-          (scenario) =>
-            boardShapeDistance(basis.features, scenario.features) /
-            Math.max(Math.sqrt(scenario.probability), 0.35),
-        ),
-      );
-      return {
-        ...basis,
-        distance,
-        hypothesis: 'transition',
-      };
-    }),
-    Math.max(DIVERSITY_POOL_SIZE, count * 16),
-    (left, right) => left.distance - right.distance,
-  );
-
-  return diversifyCandidates(ranked, count, {
-    tier: 'explore',
-    overlapPenalty: 0.24,
-    exposurePenalty: 0.12,
-    unseenBonus: 0.024,
-    fourSetBonus: 0.003,
-  });
-}
-
-function shapeCandidateBasis(layout: LayoutMode): CandidateBasis[] {
-  const cached = cachedShapeBasis.get(layout);
-  if (cached !== undefined) return cached;
-  const values = FIXED_COMBINATIONS.map((numbers) => ({
-    numbers,
-    metrics: metricsForNumbers(numbers, layout),
-    features: boardShapeFeatures(numbers),
-  }));
-  cachedShapeBasis.set(layout, values);
-  return values;
-}
 
 export function findBaselineCandidates(
   draws: readonly LottoDraw[],
@@ -197,7 +74,19 @@ export function findBaselineCandidates(
   layout: LayoutMode,
   count = 6,
 ): { candidates: Candidate[]; target: ShapeMetrics; method: CandidateMethod } {
-  return findShapeCandidates(draws, index, layout, count, 'baseline');
+  const estimate = estimateTarget(draws, index, layout);
+  const definitions = featureDefinitions(layout);
+  return {
+    candidates: baselineCandidates(layout, estimate.features, definitions, count),
+    target: estimate.metrics,
+    method: {
+      algorithmId: 'baseline',
+      searchSpace: SEARCH_SPACE,
+      featureCount: definitions.length,
+      transitionNeighbors: estimate.transitionNeighbors,
+      diversified: true,
+    },
+  };
 }
 
 export function estimateNextMetrics(
@@ -225,204 +114,6 @@ function baselineCandidates(
   return diversifyCandidates(ranked, count);
 }
 
-function hybridCandidates(
-  layout: LayoutMode,
-  estimate: TargetEstimate,
-  definitions: readonly FeatureDefinition[],
-  count: number,
-): Candidate[] {
-  const scored = candidateBasis(layout).map((basis): HypothesisScore => {
-    const baselineDistance = featureDistance(
-      basis.features,
-      estimate.hypotheses.baseline,
-      definitions,
-    );
-    const transitionDistance = featureDistance(
-      basis.features,
-      estimate.hypotheses.transition,
-      definitions,
-    );
-    const ridgeDistance = featureDistance(
-      basis.features,
-      estimate.hypotheses.ridge,
-      definitions,
-    );
-    const distances = [baselineDistance, transitionDistance, ridgeDistance];
-    const distanceMean = mean(distances);
-    return {
-      ...basis,
-      baselineDistance,
-      transitionDistance,
-      ridgeDistance,
-      consensusDistance:
-        baselineDistance * 0.34 + transitionDistance * 0.36 + ridgeDistance * 0.3,
-      disagreement: Math.sqrt(
-        mean(distances.map((distance) => (distance - distanceMean) ** 2)),
-      ),
-    };
-  });
-  const allocations = allocatePortfolio(count);
-  const used = new Set<string>();
-  const selected: Record<CandidateTier, Candidate[]> = {
-    explore: selectExplore(scored, allocations.explore, used),
-    focus: selectPortfolioTier(
-      scored,
-      allocations.focus,
-      used,
-      'focus',
-      (candidate) => candidate.consensusDistance,
-      0.2,
-    ),
-    confidence: selectPortfolioTier(
-      scored,
-      allocations.confidence,
-      used,
-      'confidence',
-      (candidate) => candidate.consensusDistance + candidate.disagreement * 0.75,
-      0.06,
-    ),
-  };
-  return interleavePortfolio(selected, count);
-}
-
-function selectExplore(
-  scored: readonly HypothesisScore[],
-  count: number,
-  used: Set<string>,
-): Candidate[] {
-  const pools = (
-    [
-      ['baselineDistance', 0],
-      ['transitionDistance', 1],
-      ['ridgeDistance', 2],
-    ] as const
-  ).map(([key, hypothesis]) =>
-    selectBestStable(
-      scored,
-      DIVERSITY_POOL_SIZE,
-      (left, right) => left[key] - right[key],
-    ).map((candidate) => ({ candidate, hypothesis })),
-  );
-  const merged = pools
-    .flat()
-    .sort(
-      (left, right) =>
-        hypothesisDistance(left.candidate, left.hypothesis) -
-        hypothesisDistance(right.candidate, right.hypothesis),
-    );
-  const ranked: ScoredBasis[] = [];
-  const seen = new Set<string>();
-  merged.forEach(({ candidate, hypothesis }) => {
-    const key = candidate.numbers.join('-');
-    if (seen.has(key)) return;
-    seen.add(key);
-    ranked.push({
-      numbers: candidate.numbers,
-      metrics: candidate.metrics,
-      features: candidate.features,
-      distance: hypothesisDistance(candidate, hypothesis),
-      hypothesis: hypothesisName(hypothesis),
-    });
-  });
-  return diversifyCandidates(ranked, count, {
-    tier: 'explore',
-    used,
-    overlapPenalty: 0.34,
-    exposurePenalty: 0.22,
-    unseenBonus: 0.05,
-    fourSetBonus: 0.006,
-  });
-}
-
-function selectPortfolioTier(
-  scored: readonly HypothesisScore[],
-  count: number,
-  used: Set<string>,
-  tier: CandidateTier,
-  score: (candidate: HypothesisScore) => number,
-  overlapPenalty: number,
-): Candidate[] {
-  const ranked = selectBestStable(
-    scored
-      .filter((candidate) => !used.has(candidate.numbers.join('-')))
-      .map((candidate): ScoredBasis => ({
-        numbers: candidate.numbers,
-        metrics: candidate.metrics,
-        features: candidate.features,
-        distance: score(candidate),
-        hypothesis: 'consensus',
-      })),
-    DIVERSITY_POOL_SIZE,
-    (left, right) => left.distance - right.distance,
-  );
-  return diversifyCandidates(ranked, count, {
-    tier,
-    used,
-    overlapPenalty,
-    exposurePenalty: tier === 'focus' ? 0.1 : 0.025,
-    unseenBonus: tier === 'focus' ? 0.018 : 0,
-    fourSetBonus: tier === 'focus' ? 0.0015 : 0,
-  });
-}
-
-function hypothesisDistance(candidate: HypothesisScore, hypothesis: number): number {
-  if (hypothesis === 0) return candidate.baselineDistance;
-  if (hypothesis === 1) return candidate.transitionDistance;
-  return candidate.ridgeDistance;
-}
-
-function hypothesisName(hypothesis: number): CandidateHypothesis {
-  if (hypothesis === 0) return 'baseline';
-  if (hypothesis === 1) return 'transition';
-  return 'ridge';
-}
-
-function allocatePortfolio(count: number): Record<CandidateTier, number> {
-  if (count <= 0) return { explore: 0, focus: 0, confidence: 0 };
-  const confidence = count >= 6 ? Math.max(1, Math.round(count * 0.1)) : 0;
-  const focus = count >= 3 ? Math.max(1, Math.round(count * 0.35)) : 0;
-  return {
-    explore: count - focus - confidence,
-    focus,
-    confidence,
-  };
-}
-
-function interleavePortfolio(
-  groups: Record<CandidateTier, Candidate[]>,
-  count: number,
-): Candidate[] {
-  const tiers = Object.keys(PORTFOLIO_RATIOS) as CandidateTier[];
-  const consumed: Record<CandidateTier, number> = {
-    explore: 0,
-    focus: 0,
-    confidence: 0,
-  };
-  const result: Candidate[] = [];
-  while (result.length < count) {
-    const available = tiers.filter((tier) => consumed[tier] < groups[tier].length);
-    if (available.length === 0) break;
-    const tier = [...available].sort(
-      (left, right) =>
-        consumed[left] / PORTFOLIO_RATIOS[left] -
-        consumed[right] / PORTFOLIO_RATIOS[right],
-    )[0]!;
-    result.push(groups[tier][consumed[tier]]!);
-    consumed[tier] += 1;
-  }
-  return result;
-}
-
-function countByTier(candidates: readonly Candidate[]): Record<CandidateTier, number> {
-  return candidates.reduce(
-    (counts, candidate) => {
-      if (candidate.tier !== undefined) counts[candidate.tier] += 1;
-      return counts;
-    },
-    { explore: 0, focus: 0, confidence: 0 },
-  );
-}
-
 function estimateTarget(
   draws: readonly LottoDraw[],
   index: number,
@@ -437,8 +128,6 @@ function estimateTarget(
       features,
       metrics: zeroMetrics(),
       transitionNeighbors: 0,
-      hypotheses: { baseline: features, transition: features, ridge: features },
-      ridgeTrainingSamples: 0,
     };
   }
 
@@ -467,26 +156,17 @@ function estimateTarget(
           (value, featureIndex) =>
             value + weightedTransitionDelta(transitions, featureIndex),
         );
-  const ridge = ridgeTransitionTarget(history, featureDefinitions(layout));
-  const ridgeTarget = ridge?.features ?? [...baseline];
   const target = baseline.map(
     (value, featureIndex) => value * 0.45 + transitionTarget[featureIndex]! * 0.55,
   );
   normalizeOrientation(target);
   normalizeOrientation(baseline);
   normalizeOrientation(transitionTarget);
-  normalizeOrientation(ridgeTarget);
 
   return {
     features: target,
     metrics: metricsFromFeatures(target),
     transitionNeighbors: transitions.length,
-    hypotheses: {
-      baseline,
-      transition: transitionTarget,
-      ridge: ridgeTarget,
-    },
-    ridgeTrainingSamples: ridge?.trainingSamples ?? 0,
   };
 }
 
@@ -537,129 +217,6 @@ function weightedMean(values: readonly (readonly number[])[]): number[] {
   );
 }
 
-function ridgeTransitionTarget(
-  history: readonly (readonly number[])[],
-  definitions: readonly FeatureDefinition[],
-): { features: number[]; trainingSamples: number } | null {
-  const trainingSamples = Math.min(
-    Math.max(history.length - 2, 0),
-    RIDGE_MAXIMUM_SAMPLES,
-  );
-  if (trainingSamples < RIDGE_MINIMUM_SAMPLES) return null;
-
-  const start = history.length - trainingSamples - 2;
-  const featureCount = definitions.length;
-  const predictorCount = featureCount * 2 + 1;
-  const xtx = Array.from(
-    { length: predictorCount },
-    () => Array(predictorCount).fill(0) as number[],
-  );
-  const xty = Array.from(
-    { length: predictorCount },
-    () => Array(featureCount).fill(0) as number[],
-  );
-
-  for (let stateIndex = start + 1; stateIndex < history.length; stateIndex += 1) {
-    const previous = history[stateIndex - 1]!;
-    const current = history[stateIndex]!;
-    const next = history[stateIndex + 1];
-    if (next === undefined) break;
-    const predictors = ridgePredictors(previous, current, definitions);
-    const response = next.map(
-      (value, featureIndex) =>
-        (value - current[featureIndex]!) / definitions[featureIndex]!.scale,
-    );
-    accumulateNormalEquation(xtx, xty, predictors, response);
-  }
-
-  for (let diagonal = 1; diagonal < predictorCount; diagonal += 1) {
-    xtx[diagonal]![diagonal] = xtx[diagonal]![diagonal]! + RIDGE_LAMBDA;
-  }
-  xtx[0]![0] = xtx[0]![0]! + 0.001;
-  const coefficients = solveLinearSystem(xtx, xty);
-  if (coefficients === null) return null;
-
-  const latest = history.at(-1)!;
-  const previous = history.at(-2) ?? latest;
-  const predictors = ridgePredictors(previous, latest, definitions);
-  const delta = Array.from({ length: featureCount }, (_, featureIndex) =>
-    predictors.reduce(
-      (sum, predictor, predictorIndex) =>
-        sum + predictor * coefficients[predictorIndex]![featureIndex]!,
-      0,
-    ),
-  );
-  const features = latest.map((value, featureIndex) => {
-    const scaledDelta = clamp(delta[featureIndex]!, -1.6, 1.6);
-    return value + scaledDelta * definitions[featureIndex]!.scale;
-  });
-  return { features, trainingSamples };
-}
-
-function ridgePredictors(
-  previous: readonly number[],
-  current: readonly number[],
-  definitions: readonly FeatureDefinition[],
-): number[] {
-  const state = current.map(
-    (value, featureIndex) => value / definitions[featureIndex]!.scale,
-  );
-  const delta = current.map(
-    (value, featureIndex) =>
-      (value - previous[featureIndex]!) / definitions[featureIndex]!.scale,
-  );
-  return [1, ...state, ...delta];
-}
-
-function accumulateNormalEquation(
-  xtx: number[][],
-  xty: number[][],
-  predictors: readonly number[],
-  response: readonly number[],
-): void {
-  predictors.forEach((left, leftIndex) => {
-    predictors.forEach((right, rightIndex) => {
-      xtx[leftIndex]![rightIndex] = xtx[leftIndex]![rightIndex]! + left * right;
-    });
-    response.forEach((value, responseIndex) => {
-      xty[leftIndex]![responseIndex] = xty[leftIndex]![responseIndex]! + left * value;
-    });
-  });
-}
-
-function solveLinearSystem(
-  matrix: readonly (readonly number[])[],
-  outputs: readonly (readonly number[])[],
-): number[][] | null {
-  const size = matrix.length;
-  const outputCount = outputs[0]?.length ?? 0;
-  const augmented = matrix.map((row, index) => [...row, ...(outputs[index] ?? [])]);
-  for (let column = 0; column < size; column += 1) {
-    let pivot = column;
-    for (let row = column + 1; row < size; row += 1) {
-      if (Math.abs(augmented[row]![column]!) > Math.abs(augmented[pivot]![column]!)) {
-        pivot = row;
-      }
-    }
-    if (Math.abs(augmented[pivot]![column]!) < 1e-10) return null;
-    [augmented[column], augmented[pivot]] = [augmented[pivot]!, augmented[column]!];
-    const divisor = augmented[column]![column]!;
-    for (let valueIndex = column; valueIndex < size + outputCount; valueIndex += 1) {
-      augmented[column]![valueIndex] = augmented[column]![valueIndex]! / divisor;
-    }
-    for (let row = 0; row < size; row += 1) {
-      if (row === column) continue;
-      const factor = augmented[row]![column]!;
-      if (Math.abs(factor) < 1e-12) continue;
-      for (let valueIndex = column; valueIndex < size + outputCount; valueIndex += 1) {
-        augmented[row]![valueIndex] =
-          augmented[row]![valueIndex]! - factor * augmented[column]![valueIndex]!;
-      }
-    }
-  }
-  return augmented.map((row) => row.slice(size));
-}
-
 function candidateBasis(layout: LayoutMode): CandidateBasis[] {
   const cached = cachedCandidateBasis.get(layout);
   if (cached !== undefined) return cached;
@@ -674,34 +231,14 @@ function candidateBasis(layout: LayoutMode): CandidateBasis[] {
 function diversifyCandidates(
   ranked: readonly ScoredBasis[],
   count: number,
-  options: {
-    tier?: CandidateTier;
-    used?: Set<string>;
-    overlapPenalty?: number;
-    exposurePenalty?: number;
-    unseenBonus?: number;
-    fourSetBonus?: number;
-  } = {},
 ): Candidate[] {
-  const fourSetBonus = options.fourSetBonus ?? 0;
-  const available = ranked
-    .filter((candidate) => !options.used?.has(candidate.numbers.join('-')))
-    .map((candidate) => ({
-      candidate,
-      maximumOverlap: 0,
-      fourSets: fourSetBonus === 0 ? [] : fourNumberSubsets(candidate.numbers),
-    }));
+  const available = ranked.map((candidate) => ({ candidate, maximumOverlap: 0 }));
   const selected: ScoredBasis[] = [];
   const numberUses = Array(46).fill(0) as number[];
-  const coveredFourSets = new Set<string>();
-  const overlapPenalty = options.overlapPenalty ?? 0.28;
-  const exposurePenalty = options.exposurePenalty ?? 0.16;
-  const unseenBonus = options.unseenBonus ?? 0.035;
-
   while (selected.length < count && available.length > 0) {
     let bestIndex = 0;
     let bestScore = Number.POSITIVE_INFINITY;
-    available.forEach(({ candidate, maximumOverlap, fourSets }, candidateIndex) => {
+    available.forEach(({ candidate, maximumOverlap }, candidateIndex) => {
       const exposure =
         selected.length === 0
           ? 0
@@ -710,13 +247,11 @@ function diversifyCandidates(
       const unseenNumbers = candidate.numbers.filter(
         (number) => numberUses[number] === 0,
       ).length;
-      const novelFourSets = fourSets.filter((key) => !coveredFourSets.has(key)).length;
       const selectionScore =
         candidate.distance +
-        (maximumOverlap / 6) ** 2 * overlapPenalty +
-        exposure * exposurePenalty -
-        unseenNumbers * unseenBonus -
-        novelFourSets * fourSetBonus;
+        (maximumOverlap / 6) ** 2 * 0.28 +
+        exposure * 0.16 -
+        unseenNumbers * 0.035;
       if (selectionScore < bestScore) {
         bestScore = selectionScore;
         bestIndex = candidateIndex;
@@ -726,13 +261,9 @@ function diversifyCandidates(
     if (entry === undefined) break;
     const chosen = entry.candidate;
     selected.push(chosen);
-    options.used?.add(chosen.numbers.join('-'));
     chosen.numbers.forEach((number) => {
-      numberUses[number] = (numberUses[number] ?? 0) + 1;
+      numberUses[number] = numberUses[number]! + 1;
     });
-    entry.fourSets.forEach((key) => coveredFourSets.add(key));
-    // Only the newly selected candidate can increase the existing maximum.
-    // This preserves scores and tie order without rescanning the selected history.
     available.forEach((remaining) => {
       remaining.maximumOverlap = Math.max(
         remaining.maximumOverlap,
@@ -740,13 +271,10 @@ function diversifyCandidates(
       );
     });
   }
-
-  return selected.map(({ numbers, metrics, distance, hypothesis }) => ({
+  return selected.map(({ numbers, metrics, distance }) => ({
     numbers,
     metrics,
     score: distance,
-    tier: options.tier,
-    hypothesis,
   }));
 }
 

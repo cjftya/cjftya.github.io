@@ -19,8 +19,7 @@ class FakeWorker implements PredictionWorkerPort {
 const request = (index: number) => ({
   index,
   layout: 'circle' as const,
-  candidateModel: 'baseline' as const,
-  purchaseStrategy: 'baseline' as const,
+  algorithmId: 'baseline' as const,
 });
 const complete = (id: number): PredictionWorkerReply => ({
   type: 'complete',
