@@ -35,7 +35,8 @@ export function ksStatistic(
       left[leftIndex] ?? Number.POSITIVE_INFINITY,
       right[rightIndex] ?? Number.POSITIVE_INFINITY,
     );
-    while (left[leftIndex] !== undefined && left[leftIndex]! <= threshold) leftIndex += 1;
+    while (left[leftIndex] !== undefined && left[leftIndex]! <= threshold)
+      leftIndex += 1;
     while (right[rightIndex] !== undefined && right[rightIndex]! <= threshold)
       rightIndex += 1;
     maximum = Math.max(
@@ -107,7 +108,7 @@ export function permutationTestPValue(
   iterations: number,
   seed: number,
 ): number {
-  if (iterations <= 0) return approximateMeanDifferencePValue(winning, random);
+  if (iterations <= 0) return meanDifferencePValue(winning, random);
   const maximumReference = Math.max(winning.length * 4, winning.length);
   const reference =
     random.length <= maximumReference
@@ -137,6 +138,19 @@ export function permutationTestPValue(
   return (extreme + 1) / (iterations + 1);
 }
 
+export function meanDifferencePValue(
+  left: readonly number[],
+  right: readonly number[],
+): number {
+  const standardError = Math.sqrt(
+    populationVariance(left) / Math.max(left.length, 1) +
+      populationVariance(right) / Math.max(right.length, 1),
+  );
+  if (standardError < 1e-12) return average(left) === average(right) ? 1 : 0;
+  const z = Math.abs(average(left) - average(right)) / standardError;
+  return Math.min(1, 2 * (1 - normalCdf(z)));
+}
+
 export function benjaminiHochberg(pValues: readonly number[]): number[] {
   const sorted = pValues
     .map((value, index) => ({ value: Math.min(Math.max(value, 0), 1), index }))
@@ -160,29 +174,14 @@ export function quantile(sortedValues: readonly number[], probability: number): 
   return sortedValues[lower]! * (1 - weight) + sortedValues[upper]! * weight;
 }
 
-function approximateMeanDifferencePValue(
-  left: readonly number[],
-  right: readonly number[],
-): number {
-  const standardError = Math.sqrt(
-    populationVariance(left) / Math.max(left.length, 1) +
-      populationVariance(right) / Math.max(right.length, 1),
-  );
-  if (standardError < 1e-12) return average(left) === average(right) ? 1 : 0;
-  const z = Math.abs(average(left) - average(right)) / standardError;
-  return Math.min(1, 2 * (1 - normalCdf(z)));
-}
-
 function normalCdf(value: number): number {
   const sign = value < 0 ? -1 : 1;
   const x = Math.abs(value) / Math.sqrt(2);
   const t = 1 / (1 + 0.3275911 * x);
   const polynomial =
-    (((((1.061405429 * t - 1.453152027) * t + 1.421413741) * t -
-      0.284496736) *
-      t +
+    ((((1.061405429 * t - 1.453152027) * t + 1.421413741) * t - 0.284496736) * t +
       0.254829592) *
-      t);
+    t;
   const erf = sign * (1 - polynomial * Math.exp(-x * x));
   return (1 + erf) / 2;
 }
@@ -213,7 +212,8 @@ function klDivergence(left: readonly number[], right: readonly number[]): number
 }
 
 function evenlySpacedSample(values: readonly number[], count: number): number[] {
-  return Array.from({ length: count }, (_, index) =>
-    values[Math.floor((index / count) * values.length)]!,
+  return Array.from(
+    { length: count },
+    (_, index) => values[Math.floor((index / count) * values.length)]!,
   );
 }

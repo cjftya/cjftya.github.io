@@ -52,7 +52,10 @@ describe('Uriel v3 candidate projection', () => {
       id: 'distance',
       diagnostics,
       scoreCombination(numbers) {
-        return Math.max(0, 1 - (numbers.reduce((sum, number) => sum + number, 0) - 21) / 150);
+        return Math.max(
+          0,
+          1 - (numbers.reduce((sum, number) => sum + number, 0) - 21) / 150,
+        );
       },
     };
     const result = projectCandidateScores(model, config, 20);

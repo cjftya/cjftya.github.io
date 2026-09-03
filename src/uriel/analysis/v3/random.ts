@@ -5,7 +5,7 @@ export interface RandomSource {
 
 /** Small deterministic generator suitable for reproducible Monte Carlo experiments. */
 export function createRandom(seed: number): RandomSource {
-  let state = (Math.trunc(seed) >>> 0) || 0x6d2b79f5;
+  let state = Math.trunc(seed) >>> 0 || 0x6d2b79f5;
   const next = () => {
     state += 0x6d2b79f5;
     let value = state;

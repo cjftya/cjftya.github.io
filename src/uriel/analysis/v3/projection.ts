@@ -26,10 +26,7 @@ export function projectCandidateScores(
     const bin = scoreBin(score);
     histogram[bin] = histogram[bin]! + 1;
   });
-  const { thresholdBin, acceptedInThreshold } = thresholdForTopCount(
-    histogram,
-    target,
-  );
+  const { thresholdBin, acceptedInThreshold } = thresholdForTopCount(histogram, target);
   const weightedInclusion = Array(46).fill(0) as number[];
   const inclusionCount = Array(46).fill(0) as number[];
   let totalWeight = 0;
@@ -56,26 +53,22 @@ export function projectCandidateScores(
   const minimum = Math.min(...rawScores);
   const maximum = Math.max(...rawScores);
   const spread = maximum - minimum;
-  const numberScores = rawScores.map(
-    (rawScore, index): NumberCandidateScore => ({
-      number: index + 1,
-      rawScore,
-      normalizedScore: spread < 1e-12 ? 50 : ((rawScore - minimum) / spread) * 100,
-      inclusionRate: inclusionCount[index + 1]! / Math.max(retained, 1),
-    }),
-  );
+  const numberScores = rawScores.map((rawScore, index): NumberCandidateScore => ({
+    number: index + 1,
+    rawScore,
+    normalizedScore: spread < 1e-12 ? 50 : ((rawScore - minimum) / spread) * 100,
+    inclusionRate: inclusionCount[index + 1]! / Math.max(retained, 1),
+  }));
   const ranking = [...numberScores].sort(
     (left, right) => right.rawScore - left.rawScore || left.number - right.number,
   );
-  const candidateSets = CANDIDATE_SIZES.map(
-    (size): CandidateSet => ({
-      size,
-      numbers: ranking
-        .slice(0, size)
-        .map(({ number }) => number)
-        .sort((left, right) => left - right),
-    }),
-  );
+  const candidateSets = CANDIDATE_SIZES.map((size): CandidateSet => ({
+    size,
+    numbers: ranking
+      .slice(0, size)
+      .map(({ number }) => number)
+      .sort((left, right) => left - right),
+  }));
   return { candidateSets, numberScores, retainedCombinations: retained };
 }
 

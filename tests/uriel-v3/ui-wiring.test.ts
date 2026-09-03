@@ -4,7 +4,10 @@ import { describe, expect, it } from 'vitest';
 describe('Uriel v3 UI wiring', () => {
   it('shows every required candidate size, score and contrastive diagnostic', async () => {
     const source = await readFile(
-      new URL('../../src/uriel/components/CandidateResearchPanels.tsx', import.meta.url),
+      new URL(
+        '../../src/uriel/components/CandidateResearchPanels.tsx',
+        import.meta.url,
+      ),
       'utf8',
     );
     expect(source).toContain('Candidate@{candidateSet.size}');
@@ -38,7 +41,7 @@ describe('Uriel v3 UI wiring', () => {
       new URL('../../src/uriel/components/V3BacktestPanel.tsx', import.meta.url),
       'utf8',
     );
-    expect(predictionHook).toContain("new Worker(");
+    expect(predictionHook).toContain('new Worker(');
     expect(predictionHook).toContain('v3-prediction.worker.ts');
     expect(backtestPanel).toContain('v3-backtest.worker.ts');
   });

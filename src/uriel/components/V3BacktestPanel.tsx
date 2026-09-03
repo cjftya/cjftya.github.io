@@ -1,13 +1,7 @@
 import { memo, useEffect, useRef, useState } from 'react';
-import type {
-  V3BacktestOptions,
-  V3BacktestResult,
-} from '../analysis/v3/backtest';
+import type { V3BacktestOptions, V3BacktestResult } from '../analysis/v3/backtest';
 import { researchAlgorithmDefinition } from '../analysis/v3/catalog';
-import type {
-  MonteCarloSampleSize,
-  ResearchAlgorithmId,
-} from '../analysis/v3/types';
+import type { MonteCarloSampleSize, ResearchAlgorithmId } from '../analysis/v3/types';
 import type { LayoutMode, LottoDraw } from '../types';
 import type { V3BacktestWorkerReply } from '../workers/v3-backtest.worker';
 import { V3BacktestReport } from './V3BacktestReport';
@@ -147,7 +141,10 @@ export const V3BacktestPanel = memo(function V3BacktestPanel({
       <div className="backtest-controls">
         <label>
           검증 회차
-          <select value={range} onChange={(event) => setRange(event.target.value as RangeOption)}>
+          <select
+            value={range}
+            onChange={(event) => setRange(event.target.value as RangeOption)}
+          >
             <option value="recent-96">최근 96회</option>
             <option value="recent-192">최근 192회</option>
             <option value="previous-192">이전 192회</option>
@@ -158,11 +155,19 @@ export const V3BacktestPanel = memo(function V3BacktestPanel({
           <div className="backtest-custom-range">
             <label>
               시작 회차
-              <input type="number" value={customStart} onChange={(event) => setCustomStart(event.target.value)} />
+              <input
+                type="number"
+                value={customStart}
+                onChange={(event) => setCustomStart(event.target.value)}
+              />
             </label>
             <label>
               종료 회차
-              <input type="number" value={customEnd} onChange={(event) => setCustomEnd(event.target.value)} />
+              <input
+                type="number"
+                value={customEnd}
+                onChange={(event) => setCustomEnd(event.target.value)}
+              />
             </label>
           </div>
         )}

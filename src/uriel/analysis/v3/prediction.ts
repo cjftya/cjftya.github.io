@@ -37,7 +37,7 @@ export function predictNextCandidates(
     sampleSize: config.sampleSize,
     retainedCombinations: projection.retainedCombinations,
     executionDate: new Date().toISOString(),
-    gitCommit: null,
+    gitCommit: __URIEL_GIT_COMMIT__ || null,
   };
   return {
     algorithmId,

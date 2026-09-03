@@ -1,12 +1,16 @@
 import type {
   CombinationFeatureVector,
+  CoreRepresentationId,
   CoordinateSystemId,
   RepresentationId,
 } from './types';
 
 export interface CombinationRepresentation {
   readonly id: RepresentationId;
-  extract(numbers: readonly number[], coordinateSystem?: CoordinateSystemId): CombinationFeatureVector;
+  extract(
+    numbers: readonly number[],
+    coordinateSystem?: CoordinateSystemId,
+  ): CombinationFeatureVector;
 }
 
 export interface CoordinatePoint {
@@ -234,11 +238,12 @@ export const geometryRepresentation: CombinationRepresentation = {
   },
 };
 
-export const representations: Record<RepresentationId, CombinationRepresentation> = {
-  distance: distanceRepresentation,
-  distribution: distributionRepresentation,
-  geometry: geometryRepresentation,
-};
+export const representations: Record<CoreRepresentationId, CombinationRepresentation> =
+  {
+    distance: distanceRepresentation,
+    distribution: distributionRepresentation,
+    geometry: geometryRepresentation,
+  };
 
 export function canonicalCombination(source: readonly number[]): number[] {
   if (
@@ -256,7 +261,10 @@ function vector(
   names: readonly string[],
   values: readonly number[],
 ): CombinationFeatureVector {
-  if (names.length !== values.length || values.some((value) => !Number.isFinite(value))) {
+  if (
+    names.length !== values.length ||
+    values.some((value) => !Number.isFinite(value))
+  ) {
     throw new Error(`${representation} feature를 계산하지 못했어요.`);
   }
   return { representation, names, values };

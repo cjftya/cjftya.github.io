@@ -7,13 +7,11 @@ export const SAMPLE_SIZES = [100_000, 500_000, 1_000_000, 2_000_000] as const;
 export type MonteCarloSampleSize = (typeof SAMPLE_SIZES)[number];
 
 export type ResearchAlgorithmId =
-  | 'random-baseline'
-  | 'distance'
-  | 'distribution'
-  | 'geometry'
-  | 'contrastive-ensemble';
+  'random-baseline' | 'distance' | 'distribution' | 'geometry' | 'contrastive-ensemble';
 
-export type RepresentationId = 'distance' | 'distribution' | 'geometry';
+export type CoreRepresentationId = 'distance' | 'distribution' | 'geometry';
+export type AdvancedRepresentationId = 'graph' | 'topology' | 'experimental';
+export type RepresentationId = CoreRepresentationId | AdvancedRepresentationId;
 export type CoordinateSystemId = LayoutMode;
 
 export interface CombinationFeatureVector {
@@ -132,10 +130,7 @@ export function partitionHistory(history: readonly LottoDraw[]): DatasetPartitio
     throw new Error('Contrastive 분석에는 최소 60회 이상의 과거 데이터가 필요해요.');
   }
   const discoveryEnd = Math.max(1, Math.floor(history.length * 0.6));
-  const validationEnd = Math.max(
-    discoveryEnd + 1,
-    Math.floor(history.length * 0.8),
-  );
+  const validationEnd = Math.max(discoveryEnd + 1, Math.floor(history.length * 0.8));
   return {
     discovery: history.slice(0, discoveryEnd),
     validation: history.slice(discoveryEnd, validationEnd),
