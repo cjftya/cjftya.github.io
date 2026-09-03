@@ -36,6 +36,38 @@ export const representationAlgorithms: Record<
   geometry: createRepresentationAlgorithm('geometry'),
 };
 
+export const contrastiveEnsembleAlgorithm: CandidateAlgorithm = {
+  id: 'contrastive-ensemble',
+  fit(history, config) {
+    const models = Object.values(representationAlgorithms).map((algorithm) =>
+      algorithm.fit(history, config),
+    );
+    return {
+      id: 'contrastive-ensemble',
+      diagnostics: {
+        features: models
+          .flatMap(({ diagnostics }) => diagnostics.features)
+          .sort((left, right) => Math.abs(right.effectSize) - Math.abs(left.effectSize)),
+        selectedFeatureCount: models.reduce(
+          (total, { diagnostics }) => total + diagnostics.selectedFeatureCount,
+          0,
+        ),
+        partitions: models[0]!.diagnostics.partitions,
+        winningSamples: history.length,
+        randomSamples: config.nullSampleSize,
+      },
+      scoreCombination(numbers) {
+        return (
+          models.reduce(
+            (total, model) => total + model.scoreCombination(numbers),
+            0,
+          ) / models.length
+        );
+      },
+    };
+  },
+};
+
 export function fitRepresentationModel(
   id: RepresentationAlgorithmId,
   history: readonly LottoDraw[],

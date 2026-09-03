@@ -1,16 +1,20 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { metricsForDraw } from './analysis/geometry';
 import { buildHistoryFrame } from './analysis/history';
-import { DEFAULT_ALGORITHM_ID } from './analysis/algorithmCatalog';
+import { DEFAULT_RESEARCH_ALGORITHM_ID } from './analysis/v3/catalog';
+import type {
+  MonteCarloSampleSize,
+  ResearchAlgorithmId,
+} from './analysis/v3/types';
 import { MetricChart, metricDefinitions } from './components/MetricChart';
 import type { MetricKey } from './components/MetricChart';
-import { BacktestPanel } from './components/BacktestPanel';
-import { PredictionPanels } from './components/PredictionPanels';
+import { CandidateResearchPanels } from './components/CandidateResearchPanels';
 import { Metric, NumberRow, ToggleButton } from './components/DisplayPrimitives';
 import { Timeline } from './components/Timeline';
 import { ShapeStage } from './components/ShapeStage';
+import { V3BacktestPanel } from './components/V3BacktestPanel';
 import { loadBundledDraws, parseDrawCsv } from './data';
-import type { AlgorithmId, HistoryMode, LayoutMode, LottoDraw } from './types';
+import type { HistoryMode, LayoutMode, LottoDraw } from './types';
 
 const PLAY_INTERVALS = [1200, 700, 350] as const;
 const historyModeCopy: Record<HistoryMode, { label: string; description: string }> = {
@@ -32,7 +36,12 @@ export function App() {
   const [draws, setDraws] = useState<LottoDraw[]>([]);
   const [index, setIndex] = useState(0);
   const [layout, setLayout] = useState<LayoutMode>('circle');
-  const [algorithmId, setAlgorithmId] = useState<AlgorithmId>(DEFAULT_ALGORITHM_ID);
+  const [algorithmId, setAlgorithmId] = useState<ResearchAlgorithmId>(
+    DEFAULT_RESEARCH_ALGORITHM_ID,
+  );
+  const [sampleSize, setSampleSize] = useState<MonteCarloSampleSize>(100_000);
+  const [topFraction, setTopFraction] = useState(0.05);
+  const [researchSeed, setResearchSeed] = useState(20_260_903);
   const [historyMode, setHistoryMode] = useState<HistoryMode>('independent');
   const [halfLife, setHalfLife] = useState(18);
   const [metric, setMetric] = useState<MetricKey>('area');
@@ -140,7 +149,7 @@ export function App() {
         <div className="title-lockup">
           <p className="eyebrow">GEOMETRIC LOTTERY LAB</p>
           <h1>Uriel</h1>
-          <p>숫자를 도형으로 바꾸고, 시간에 따라 움직이는 형태를 관찰해요.</p>
+          <p>조합 구조를 Random Baseline과 대조하고 다음 회차 후보군으로 투영해요.</p>
         </div>
         <div className="dataset-control">
           <span>{sourceLabel}</span>
@@ -316,33 +325,43 @@ export function App() {
             <MetricChart draws={draws} index={index} layout={layout} metric={metric} />
           </section>
 
-          <PredictionPanels
+          <CandidateResearchPanels
             draws={draws}
             index={index}
             layout={layout}
             algorithmId={algorithmId}
+            sampleSize={sampleSize}
+            topFraction={topFraction}
+            seed={researchSeed}
             isPlaying={isPlaying}
             onAlgorithmChange={setAlgorithmId}
-            onMove={moveTo}
+            onSampleSizeChange={setSampleSize}
+            onTopFractionChange={setTopFraction}
+            onSeedChange={setResearchSeed}
           />
         </aside>
       </div>
 
-      <BacktestPanel draws={draws} algorithmId={algorithmId} layout={layout} />
+      <V3BacktestPanel
+        draws={draws}
+        algorithmId={algorithmId}
+        layout={layout}
+        sampleSize={sampleSize}
+        topFraction={topFraction}
+        seed={researchSeed}
+      />
 
       <section className="method-note">
         <span className="card-index">METHOD</span>
         <div>
-          <h2>예측기가 아니라 가설을 시험하는 관측 장치예요.</h2>
+          <h2>패턴을 찾기 전에 먼저 반증하는 후보군 연구 장치예요.</h2>
           <p>
-            보너스 번호와 당첨금은 사용하지 않아요. 예측 Δ는 중심·면적·둘레·조밀도·
-            퍼짐·방향을 포함하고, 7×7에서는 행·열 분포, 경계, 거리, 볼록껍질, 인접성,
-            최소 신장 트리와 대칭성을 함께 비교해요. 기본 방식은 고정 40,000개를, 형태
-            전이 + Tail Coverage는 공통 후보 15개의 5,005개 조합을 탐색해요. 새
-            아이디어는 기존 코드를 섞지 않고 별도 알고리즘으로 등록한 뒤 같은 후보·구매·
-            검증 UI와 Walk-forward 진단으로 비교할 수 있어요. 실제 결과는 순위를 다시
-            정하는 데 쓰지 않으며, 독립 무작위 추첨의 당첨 확률을 높였다고 확정하는
-            기능은 아니에요.
+            보너스 번호·당첨금·번호별 과거 빈도는 사용하지 않아요. 실제 6개 조합과 같은
+            조건의 합성 무작위 조합을 Distance·Distribution·Geometry 공간에서 비교하고,
+            Discovery와 Validation을 통과한 장기 안정 feature만 구조 점수에 사용해요.
+            Holdout은 선택과 조정에서 격리하며, 상위 조합 공간을 1–45 번호로 되돌려
+            Candidate@10/15/20/25/30을 만들어요. 결과는 항상 Walk-forward와 같은 크기의
+            Random Baseline으로 평가하며 Candidate Score를 당첨확률로 해석하지 않아요.
           </p>
         </div>
       </section>

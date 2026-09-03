@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  contrastiveEnsembleAlgorithm,
   createRepresentationAlgorithm,
   representationAlgorithms,
 } from '../../src/uriel/analysis/v3/models';
@@ -62,5 +63,15 @@ describe('Uriel v3 structural combination scoring', () => {
         0,
       );
     }
+  });
+
+  it('combines the three independent representation scores without tuned weights', () => {
+    const model = contrastiveEnsembleAlgorithm.fit(history, config);
+    expect(new Set(model.diagnostics.features.map(({ representation }) => representation))).toEqual(
+      new Set(['distance', 'distribution', 'geometry']),
+    );
+    expect(model.scoreCombination([1, 2, 3, 4, 5, 6])).toBeGreaterThan(
+      model.scoreCombination([5, 13, 21, 29, 37, 45]),
+    );
   });
 });
