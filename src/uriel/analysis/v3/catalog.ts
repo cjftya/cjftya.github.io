@@ -5,7 +5,10 @@ import type {
   ResearchAlgorithmId,
 } from './types';
 import type { LottoDraw } from '../../types';
-import { representationAlgorithms } from './models';
+import {
+  contrastiveEnsembleAlgorithm,
+  representationAlgorithms,
+} from './models';
 
 export interface ResearchAlgorithmDefinition {
   id: ResearchAlgorithmId;
@@ -77,8 +80,6 @@ export function researchAlgorithmDefinition(
 
 export function candidateAlgorithm(id: ResearchAlgorithmId): CandidateAlgorithm {
   if (id === 'random-baseline') return randomBaselineAlgorithm;
-  if (id === 'contrastive-ensemble') {
-    throw new Error('Contrastive Ensemble은 Phase 8에서 활성화돼요.');
-  }
+  if (id === 'contrastive-ensemble') return contrastiveEnsembleAlgorithm;
   return representationAlgorithms[id];
 }
