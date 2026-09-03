@@ -5,10 +5,7 @@ import type {
   ResearchAlgorithmId,
 } from './types';
 import type { LottoDraw } from '../../types';
-import {
-  contrastiveEnsembleAlgorithm,
-  representationAlgorithms,
-} from './models';
+import { contrastiveEnsembleAlgorithm, representationAlgorithms } from './models';
 
 export interface ResearchAlgorithmDefinition {
   id: ResearchAlgorithmId;
@@ -44,8 +41,7 @@ export const researchAlgorithmDefinitions: readonly ResearchAlgorithmDefinition[
   },
 ];
 
-export const DEFAULT_RESEARCH_ALGORITHM_ID: ResearchAlgorithmId =
-  'random-baseline';
+export const DEFAULT_RESEARCH_ALGORITHM_ID: ResearchAlgorithmId = 'random-baseline';
 
 const EMPTY_DIAGNOSTICS: ModelDiagnostics = {
   features: [],

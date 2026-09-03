@@ -2,10 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { metricsForDraw } from './analysis/geometry';
 import { buildHistoryFrame } from './analysis/history';
 import { DEFAULT_RESEARCH_ALGORITHM_ID } from './analysis/v3/catalog';
-import type {
-  MonteCarloSampleSize,
-  ResearchAlgorithmId,
-} from './analysis/v3/types';
+import type { MonteCarloSampleSize, ResearchAlgorithmId } from './analysis/v3/types';
 import { MetricChart, metricDefinitions } from './components/MetricChart';
 import type { MetricKey } from './components/MetricChart';
 import { CandidateResearchPanels } from './components/CandidateResearchPanels';

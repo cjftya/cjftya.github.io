@@ -47,7 +47,9 @@ export const contrastiveEnsembleAlgorithm: CandidateAlgorithm = {
       diagnostics: {
         features: models
           .flatMap(({ diagnostics }) => diagnostics.features)
-          .sort((left, right) => Math.abs(right.effectSize) - Math.abs(left.effectSize)),
+          .sort(
+            (left, right) => Math.abs(right.effectSize) - Math.abs(left.effectSize),
+          ),
         selectedFeatureCount: models.reduce(
           (total, { diagnostics }) => total + diagnostics.selectedFeatureCount,
           0,
@@ -58,10 +60,8 @@ export const contrastiveEnsembleAlgorithm: CandidateAlgorithm = {
       },
       scoreCombination(numbers) {
         return (
-          models.reduce(
-            (total, model) => total + model.scoreCombination(numbers),
-            0,
-          ) / models.length
+          models.reduce((total, model) => total + model.scoreCombination(numbers), 0) /
+          models.length
         );
       },
     };

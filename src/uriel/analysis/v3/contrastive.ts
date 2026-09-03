@@ -8,6 +8,7 @@ import {
   effectSize,
   jensenShannonDivergence,
   ksStatistic,
+  meanDifferencePValue,
   permutationTestPValue,
   populationVariance,
   wassersteinDistance,
@@ -38,9 +39,13 @@ export interface ContrastiveAnalysis {
   selectedProfiles: readonly FeatureProfile[];
 }
 
-interface PendingDiagnostic extends Omit<FeatureDiagnostic, 'adjustedPValue' | 'selected'> {
+interface PendingDiagnostic extends Omit<
+  FeatureDiagnostic,
+  'adjustedPValue' | 'selected'
+> {
   discoveryValues: readonly number[];
   validationValues: readonly number[];
+  selectionPValue: number;
 }
 
 export function analyzeRepresentation(
@@ -91,16 +96,14 @@ export function analyzeRepresentation(
       holdoutEffectSize: holdoutEffect,
       ksStatistic: ksStatistic(discoveryValues, randomValues),
       wassersteinDistance: wassersteinDistance(discoveryValues, randomValues),
-      jensenShannonDivergence: jensenShannonDivergence(
-        discoveryValues,
-        randomValues,
-      ),
+      jensenShannonDivergence: jensenShannonDivergence(discoveryValues, randomValues),
       permutationPValue: permutationTestPValue(
         discoveryValues,
         randomValues,
         config.permutationIterations,
         mixSeed(randomSeed, index, 1),
       ),
+      selectionPValue: meanDifferencePValue(discoveryValues, randomValues),
       confidenceInterval: bootstrapMeanDifferenceInterval(
         discoveryValues,
         randomValues,
@@ -117,7 +120,7 @@ export function analyzeRepresentation(
     };
   });
   const adjusted = benjaminiHochberg(
-    pending.map(({ permutationPValue }) => permutationPValue),
+    pending.map(({ selectionPValue }) => selectionPValue),
   );
   const features = pending.map((item, index): FeatureDiagnostic => {
     const selected =
@@ -211,12 +214,18 @@ function temporalSegments(
 ): readonly (readonly (readonly number[])[])[] {
   const firstEnd = Math.max(1, Math.floor(matrix.length / 3));
   const secondEnd = Math.max(firstEnd + 1, Math.floor((matrix.length * 2) / 3));
-  return [matrix.slice(0, firstEnd), matrix.slice(firstEnd, secondEnd), matrix.slice(secondEnd)];
+  return [
+    matrix.slice(0, firstEnd),
+    matrix.slice(firstEnd, secondEnd),
+    matrix.slice(secondEnd),
+  ];
 }
 
 function signAgreement(values: readonly number[], reference: number): number {
   if (reference === 0) return 0;
-  return values.filter((value) => sameDirection(value, reference)).length / values.length;
+  return (
+    values.filter((value) => sameDirection(value, reference)).length / values.length
+  );
 }
 
 function sameDirection(left: number, right: number): boolean {
@@ -224,7 +233,10 @@ function sameDirection(left: number, right: number): boolean {
 }
 
 function representationSeed(id: RepresentationId): number {
-  if (id === 'distance') return 0xd157aace;
-  if (id === 'distribution') return 0xd157b000;
-  return 0x6e0ae770;
+  let hash = 0x811c9dc5;
+  for (let index = 0; index < id.length; index += 1) {
+    hash ^= id.charCodeAt(index);
+    hash = Math.imul(hash, 0x01000193);
+  }
+  return hash >>> 0;
 }

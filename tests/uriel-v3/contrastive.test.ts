@@ -75,8 +75,9 @@ describe('Uriel v3 contrastive analysis', () => {
     expect(
       analysis.diagnostics.features
         .filter(({ selected }) => selected)
-        .every(({ adjustedPValue, temporalStability }) =>
-          adjustedPValue <= 0.05 && temporalStability >= 2 / 3,
+        .every(
+          ({ adjustedPValue, temporalStability }) =>
+            adjustedPValue <= 0.05 && temporalStability >= 2 / 3,
         ),
     ).toBe(true);
   });
@@ -108,5 +109,32 @@ describe('Uriel v3 contrastive analysis', () => {
           first.diagnostics.features[index]!.holdoutEffectSize,
       ),
     ).toBe(true);
+  });
+
+  it('keeps feature selection identical in prediction and fast backtest modes', () => {
+    const full = analyzeRepresentation(
+      biasedHistory(),
+      distanceRepresentation,
+      quickConfig,
+    );
+    const fast = analyzeRepresentation(biasedHistory(), distanceRepresentation, {
+      ...quickConfig,
+      bootstrapIterations: 0,
+      permutationIterations: 0,
+    });
+    expect(fast.selectedProfiles).toEqual(full.selectedProfiles);
+    expect(
+      fast.diagnostics.features.map(({ name, selected, adjustedPValue }) => ({
+        name,
+        selected,
+        adjustedPValue,
+      })),
+    ).toEqual(
+      full.diagnostics.features.map(({ name, selected, adjustedPValue }) => ({
+        name,
+        selected,
+        adjustedPValue,
+      })),
+    );
   });
 });

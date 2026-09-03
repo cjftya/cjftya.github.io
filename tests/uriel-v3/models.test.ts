@@ -59,17 +59,15 @@ describe('Uriel v3 structural combination scoring', () => {
     if (model.diagnostics.selectedFeatureCount === 0) {
       expect(model.scoreCombination([3, 8, 17, 26, 34, 42])).toBe(0.5);
     } else {
-      expect(model.scoreCombination([3, 8, 17, 26, 34, 42])).toBeGreaterThanOrEqual(
-        0,
-      );
+      expect(model.scoreCombination([3, 8, 17, 26, 34, 42])).toBeGreaterThanOrEqual(0);
     }
   });
 
   it('combines the three independent representation scores without tuned weights', () => {
     const model = contrastiveEnsembleAlgorithm.fit(history, config);
-    expect(new Set(model.diagnostics.features.map(({ representation }) => representation))).toEqual(
-      new Set(['distance', 'distribution', 'geometry']),
-    );
+    expect(
+      new Set(model.diagnostics.features.map(({ representation }) => representation)),
+    ).toEqual(new Set(['distance', 'distribution', 'geometry']));
     expect(model.scoreCombination([1, 2, 3, 4, 5, 6])).toBeGreaterThan(
       model.scoreCombination([5, 13, 21, 29, 37, 45]),
     );

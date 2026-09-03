@@ -1,9 +1,15 @@
 import { defineConfig } from 'vite';
+import { execFileSync } from 'node:child_process';
 import { resolve } from 'node:path';
 import react from '@vitejs/plugin-react';
 
+const gitCommit = process.env.GITHUB_SHA ?? readGitCommit();
+
 export default defineConfig({
   plugins: [react()],
+  define: {
+    __URIEL_GIT_COMMIT__: JSON.stringify(gitCommit),
+  },
   base: '/',
   server: {
     host: true,
@@ -24,3 +30,11 @@ export default defineConfig({
     },
   },
 });
+
+function readGitCommit(): string {
+  try {
+    return execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
+  } catch {
+    return '';
+  }
+}

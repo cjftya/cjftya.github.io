@@ -1,7 +1,4 @@
-import type {
-  CandidateHitSummary,
-  V3BacktestResult,
-} from '../analysis/v3/backtest';
+import type { CandidateHitSummary, V3BacktestResult } from '../analysis/v3/backtest';
 import { researchAlgorithmDefinition } from '../analysis/v3/catalog';
 
 export function V3BacktestReport({ result }: { result: V3BacktestResult }) {
@@ -55,7 +52,9 @@ export function V3BacktestReport({ result }: { result: V3BacktestResult }) {
       <section className="backtest-section">
         <div>
           <h3>Recall / Precision</h3>
-          <p>Recall은 실제 6개 중 포착 비율, Precision은 후보군 중 실제 번호 비율이에요.</p>
+          <p>
+            Recall은 실제 6개 중 포착 비율, Precision은 후보군 중 실제 번호 비율이에요.
+          </p>
         </div>
         <div className="table-scroll">
           <table className="backtest-table">

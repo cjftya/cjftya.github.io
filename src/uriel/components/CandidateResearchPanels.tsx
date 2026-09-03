@@ -3,10 +3,7 @@ import {
   researchAlgorithmDefinition,
   researchAlgorithmDefinitions,
 } from '../analysis/v3/catalog';
-import type {
-  MonteCarloSampleSize,
-  ResearchAlgorithmId,
-} from '../analysis/v3/types';
+import type { MonteCarloSampleSize, ResearchAlgorithmId } from '../analysis/v3/types';
 import { SAMPLE_SIZES } from '../analysis/v3/types';
 import { useV3Prediction } from '../hooks/useV3Prediction';
 import type { LayoutMode, LottoDraw } from '../types';
@@ -148,8 +145,8 @@ export const CandidateResearchPanels = memo(function CandidateResearchPanels({
               </strong>
               <span>
                 {prediction.metadata.sampleSize.toLocaleString('ko-KR')}개 생성 ·{' '}
-                {prediction.metadata.retainedCombinations.toLocaleString('ko-KR')}개 유지 ·
-                seed {prediction.metadata.randomSeed}
+                {prediction.metadata.retainedCombinations.toLocaleString('ko-KR')}개
+                유지 · seed {prediction.metadata.randomSeed}
               </span>
             </div>
             <div className="candidate-set-list">
@@ -191,7 +188,10 @@ export const CandidateResearchPanels = memo(function CandidateResearchPanels({
               </div>
               <div className="number-score-grid">
                 {scoreRanking.map((score, rank) => (
-                  <div key={score.number} title={`포함률 ${(score.inclusionRate * 100).toFixed(2)}%`}>
+                  <div
+                    key={score.number}
+                    title={`포함률 ${(score.inclusionRate * 100).toFixed(2)}%`}
+                  >
                     <span>{rank + 1}</span>
                     <b>{score.number}</b>
                     <i style={{ width: `${score.normalizedScore}%` }} />
@@ -217,12 +217,16 @@ export const CandidateResearchPanels = memo(function CandidateResearchPanels({
           <span>Winning vs Synthetic Random</span>
         </div>
         {prediction === null ? (
-          <p className="candidate-intro">후보 계산이 끝나면 feature 반증 결과를 표시해요.</p>
+          <p className="candidate-intro">
+            후보 계산이 끝나면 feature 반증 결과를 표시해요.
+          </p>
         ) : (
           <>
             <div className="diagnostic-sample-summary">
               <span>실제 {prediction.diagnostics.winningSamples}회</span>
-              <span>랜덤 {prediction.diagnostics.randomSamples.toLocaleString('ko-KR')}개</span>
+              <span>
+                랜덤 {prediction.diagnostics.randomSamples.toLocaleString('ko-KR')}개
+              </span>
               <span>
                 D/V/H {prediction.diagnostics.partitions.discovery}/
                 {prediction.diagnostics.partitions.validation}/

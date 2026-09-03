@@ -2,11 +2,7 @@ import type { LottoDraw } from '../../types';
 import { predictNextCandidates } from './prediction';
 import { createRandom, mixSeed } from './random';
 import { average, quantile } from './statistics';
-import type {
-  CandidateSize,
-  ResearchAlgorithmId,
-  ResearchConfig,
-} from './types';
+import type { CandidateSize, ResearchAlgorithmId, ResearchConfig } from './types';
 import { CANDIDATE_SIZES, sanitizeResearchConfig } from './types';
 
 export type V3BacktestRangeMode = 'recent' | 'previous-192' | 'custom';
@@ -92,7 +88,9 @@ export function resolveV3BacktestRange(
 ): V3ResolvedBacktestRange {
   const options = resolveOptions(requested);
   if (draws.length <= MINIMUM_HISTORY) {
-    throw new Error(`v3 Walk-forward 검증에는 최소 ${MINIMUM_HISTORY + 1}회가 필요해요.`);
+    throw new Error(
+      `v3 Walk-forward 검증에는 최소 ${MINIMUM_HISTORY + 1}회가 필요해요.`,
+    );
   }
   let startActualIndex: number;
   let endActualIndex: number;
@@ -116,7 +114,9 @@ export function resolveV3BacktestRange(
     startActualIndex = endActualIndex - options.rounds + 1;
   }
   if (startActualIndex < MINIMUM_HISTORY) {
-    throw new Error(`검증 시작 전에 ${MINIMUM_HISTORY}회 이상의 학습 데이터가 필요해요.`);
+    throw new Error(
+      `검증 시작 전에 ${MINIMUM_HISTORY}회 이상의 학습 데이터가 필요해요.`,
+    );
   }
   if (endActualIndex < startActualIndex) {
     throw new Error('검증할 회차 범위가 비어 있어요.');
@@ -284,7 +284,10 @@ function simulateRandomBaseline(
   };
 }
 
-function sampleNumberSet(size: number, random: ReturnType<typeof createRandom>): number[] {
+function sampleNumberSet(
+  size: number,
+  random: ReturnType<typeof createRandom>,
+): number[] {
   const pool = Array.from({ length: 45 }, (_, index) => index + 1);
   for (let index = 0; index < size; index += 1) {
     const selected = index + random.integer(45 - index);
@@ -334,7 +337,10 @@ function resolveOptions(requested: Partial<V3BacktestOptions>): V3BacktestOption
       merged.rangeMode === 'previous-192'
         ? 192
         : Math.min(Math.max(Math.trunc(merged.rounds), 1), 384),
-    config: { ...DEFAULT_OPTIONS.config, ...requested.config },
+    config: sanitizeResearchConfig({
+      ...DEFAULT_OPTIONS.config,
+      ...requested.config,
+    }),
     randomBaselineIterations: Math.min(
       Math.max(Math.trunc(merged.randomBaselineIterations), 100),
       50_000,
