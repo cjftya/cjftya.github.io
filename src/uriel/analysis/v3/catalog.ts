@@ -5,6 +5,7 @@ import type {
   ResearchAlgorithmId,
 } from './types';
 import type { LottoDraw } from '../../types';
+import { representationAlgorithms } from './models';
 
 export interface ResearchAlgorithmDefinition {
   id: ResearchAlgorithmId;
@@ -72,4 +73,12 @@ export function researchAlgorithmDefinition(
   const definition = researchAlgorithmDefinitions.find((item) => item.id === id);
   if (definition === undefined) throw new Error(`알 수 없는 v3 알고리즘: ${id}`);
   return definition;
+}
+
+export function candidateAlgorithm(id: ResearchAlgorithmId): CandidateAlgorithm {
+  if (id === 'random-baseline') return randomBaselineAlgorithm;
+  if (id === 'contrastive-ensemble') {
+    throw new Error('Contrastive Ensemble은 Phase 8에서 활성화돼요.');
+  }
+  return representationAlgorithms[id];
 }
