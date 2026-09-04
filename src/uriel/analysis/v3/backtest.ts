@@ -1,9 +1,10 @@
 import type { LottoDraw } from '../../types';
 import { predictNextCandidates } from './prediction';
+import { sampleDiverseRandomGames } from './projection';
 import { createRandom, mixSeed } from './random';
 import { average, quantile } from './statistics';
-import type { CandidateSize, ResearchAlgorithmId, ResearchConfig } from './types';
-import { CANDIDATE_SIZES, sanitizeResearchConfig } from './types';
+import type { GameCount, ResearchAlgorithmId, ResearchConfig } from './types';
+import { GAME_COUNTS, sanitizeResearchConfig } from './types';
 
 export type V3BacktestRangeMode = 'recent' | 'previous-192' | 'custom';
 
@@ -18,8 +19,8 @@ export interface V3BacktestOptions {
   resultBootstrapIterations: number;
 }
 
-export interface CandidateHitSummary {
-  candidateSize: CandidateSize;
+export interface GameHitSummary {
+  gameCount: GameCount;
   distribution: readonly number[];
   meanHit: number;
   medianHit: number;
@@ -27,8 +28,6 @@ export interface CandidateHitSummary {
   hitAtLeast4Rate: number;
   hitAtLeast5Rate: number;
   hit6Rate: number;
-  candidateRecall: number;
-  candidatePrecision: number;
   confidenceInterval: readonly [number, number];
   randomMeanHit: number;
   randomHitDistribution: readonly number[];
@@ -40,18 +39,20 @@ export interface CandidateHitSummary {
 
 export interface V3BacktestRoundResult {
   round: number;
-  hits: Record<CandidateSize, number>;
+  bestHits: Record<GameCount, number>;
+  selectedFeatureCount: number;
 }
 
 export interface V3BacktestResult {
-  metricSchemaVersion: 3;
+  metricSchemaVersion: 4;
   generatedAt: string;
   dataAsOfRound: number;
   startRound: number;
   endRound: number;
   evaluatedRounds: number;
+  signalRounds: number;
   options: V3BacktestOptions;
-  summaries: readonly CandidateHitSummary[];
+  summaries: readonly GameHitSummary[];
   rounds: readonly V3BacktestRoundResult[];
   verdict: 'above-random' | 'indistinguishable' | 'below-random';
   verdictMessage: string;
@@ -155,49 +156,64 @@ export function runV3WalkForwardBacktest(
       options.algorithmId,
       fastConfig,
     );
-    const hits = Object.fromEntries(
-      prediction.candidateSets.map(({ size, numbers }) => [
-        size,
-        intersectionSize(numbers, actual.numbers),
+    const bestHits = Object.fromEntries(
+      prediction.gameSets.map(({ count, games }) => [
+        count,
+        Math.max(
+          0,
+          ...games.map(({ numbers }) => intersectionSize(numbers, actual.numbers)),
+        ),
       ]),
-    ) as Record<CandidateSize, number>;
-    rounds.push({ round: actual.round, hits });
+    ) as Record<GameCount, number>;
+    rounds.push({
+      round: actual.round,
+      bestHits,
+      selectedFeatureCount: prediction.diagnostics.selectedFeatureCount,
+    });
     onProgress?.(rounds.length, range.evaluatedRounds, actual.round);
   }
-  const summaries = CANDIDATE_SIZES.map((candidateSize) =>
-    summarizeCandidateSize(
-      candidateSize,
-      rounds.map(({ hits }) => hits[candidateSize]),
-      rounds.map(({ round }) => draws.find((draw) => draw.round === round)!.numbers),
+  const summaries = GAME_COUNTS.map((gameCount) =>
+    summarizeGameCount(
+      gameCount,
+      rounds.map(({ bestHits }) => bestHits[gameCount]),
       options,
     ),
   );
-  const relevant = summaries.filter(({ candidateSize }) => candidateSize >= 15);
-  const clearlyAbove = relevant.filter(
-    ({ confidenceInterval, randomMeanHit }) => confidenceInterval[0] > randomMeanHit,
+  const signalRounds = rounds.filter(
+    ({ selectedFeatureCount }) => selectedFeatureCount > 0,
   ).length;
-  const clearlyBelow = relevant.filter(
-    ({ confidenceInterval, randomMeanHit }) => confidenceInterval[1] < randomMeanHit,
+  const clearlyAbove = summaries.filter(
+    ({ confidenceInterval, randomConfidenceInterval }) =>
+      confidenceInterval[0] > randomConfidenceInterval[1],
+  ).length;
+  const clearlyBelow = summaries.filter(
+    ({ confidenceInterval, randomConfidenceInterval }) =>
+      confidenceInterval[1] < randomConfidenceInterval[0],
   ).length;
   const verdict =
-    clearlyAbove >= 3
-      ? 'above-random'
-      : clearlyBelow >= 3
-        ? 'below-random'
-        : 'indistinguishable';
+    signalRounds === 0
+      ? 'indistinguishable'
+      : clearlyAbove >= 2
+        ? 'above-random'
+        : clearlyBelow >= 2
+          ? 'below-random'
+          : 'indistinguishable';
   const verdictMessage =
-    verdict === 'above-random'
-      ? '여러 Candidate@K에서 평균 적중 신뢰구간이 무작위 평균보다 높아요.'
-      : verdict === 'below-random'
-        ? '여러 Candidate@K에서 평균 적중 신뢰구간이 무작위 평균보다 낮아요.'
-        : '현재 구간에서는 Random Baseline과 구분되는 안정적 성능을 확인하지 못했어요.';
+    signalRounds === 0
+      ? '모든 예측 회차에서 검증된 구조 신호가 없어 관측된 차이를 예측 성능으로 해석하지 않아요.'
+      : verdict === 'above-random'
+        ? '여러 게임 수에서 최고 적중 신뢰구간이 무작위 평균보다 높아요.'
+        : verdict === 'below-random'
+          ? '여러 게임 수에서 최고 적중 신뢰구간이 무작위 평균보다 낮아요.'
+          : '현재 구간에서는 Random Baseline과 구분되는 안정적 성능을 확인하지 못했어요.';
   return {
-    metricSchemaVersion: 3,
+    metricSchemaVersion: 4,
     generatedAt: new Date().toISOString(),
     dataAsOfRound: draws.at(-1)?.round ?? 0,
     startRound: range.startRound,
     endRound: range.endRound,
     evaluatedRounds: range.evaluatedRounds,
+    signalRounds,
     options,
     summaries,
     rounds,
@@ -206,31 +222,30 @@ export function runV3WalkForwardBacktest(
   };
 }
 
-function summarizeCandidateSize(
-  candidateSize: CandidateSize,
+function summarizeGameCount(
+  gameCount: GameCount,
   hits: readonly number[],
-  actuals: readonly (readonly number[])[],
   options: V3BacktestOptions,
-): CandidateHitSummary {
+): GameHitSummary {
   const distribution = hitDistribution(hits);
   const meanHit = average(hits);
   const sorted = [...hits].sort((left, right) => left - right);
   const bootstrap = bootstrapMeans(
     hits,
     options.resultBootstrapIterations,
-    mixSeed(options.config.seed ?? 0, candidateSize, 0xb00757),
+    mixSeed(options.config.seed ?? 0, gameCount, 0xb00757),
   );
   const baseline = simulateRandomBaseline(
-    candidateSize,
-    actuals,
+    gameCount,
+    hits.length,
     options.randomBaselineIterations,
-    mixSeed(options.config.seed ?? 0, candidateSize, 0xba5e11),
+    mixSeed(options.config.seed ?? 0, gameCount, 0xba5e11),
   );
   const rate = (minimum: number) =>
     distribution.slice(minimum).reduce((sum, count) => sum + count, 0) /
     Math.max(hits.length, 1);
   return {
-    candidateSize,
+    gameCount,
     distribution,
     meanHit,
     medianHit: quantile(sorted, 0.5),
@@ -238,8 +253,6 @@ function summarizeCandidateSize(
     hitAtLeast4Rate: rate(4),
     hitAtLeast5Rate: rate(5),
     hit6Rate: rate(6),
-    candidateRecall: meanHit / 6,
-    candidatePrecision: meanHit / candidateSize,
     confidenceInterval: [quantile(bootstrap, 0.025), quantile(bootstrap, 0.975)],
     randomMeanHit: baseline.meanHit,
     randomHitDistribution: baseline.hitDistribution,
@@ -253,8 +266,8 @@ function summarizeCandidateSize(
 }
 
 function simulateRandomBaseline(
-  candidateSize: CandidateSize,
-  actuals: readonly (readonly number[])[],
+  gameCount: GameCount,
+  evaluatedRounds: number,
   iterations: number,
   seed: number,
 ): {
@@ -264,36 +277,29 @@ function simulateRandomBaseline(
   means: readonly number[];
 } {
   const random = createRandom(seed);
-  const allHits: number[] = [];
+  const referenceDraw = [1, 2, 3, 4, 5, 6];
+  const singleRoundHits = Array.from({ length: iterations }, () => {
+    const games = sampleDiverseRandomGames(gameCount, random);
+    return Math.max(
+      0,
+      ...games.map(({ numbers }) => intersectionSize(numbers, referenceDraw)),
+    );
+  });
   const means = Array.from({ length: iterations }, () => {
-    const iterationHits = actuals.map((actual) => {
-      const candidate = sampleNumberSet(candidateSize, random);
-      const hit = intersectionSize(candidate, actual);
-      allHits.push(hit);
-      return hit;
-    });
-    return average(iterationHits);
+    let total = 0;
+    for (let round = 0; round < evaluatedRounds; round += 1) {
+      total += singleRoundHits[random.integer(singleRoundHits.length)]!;
+    }
+    return total / Math.max(evaluatedRounds, 1);
   }).sort((left, right) => left - right);
   return {
-    meanHit: average(means),
-    hitDistribution: hitDistribution(allHits).map(
-      (count) => count / Math.max(allHits.length, 1),
+    meanHit: average(singleRoundHits),
+    hitDistribution: hitDistribution(singleRoundHits).map(
+      (count) => count / Math.max(singleRoundHits.length, 1),
     ),
     confidenceInterval: [quantile(means, 0.025), quantile(means, 0.975)],
     means,
   };
-}
-
-function sampleNumberSet(
-  size: number,
-  random: ReturnType<typeof createRandom>,
-): number[] {
-  const pool = Array.from({ length: 45 }, (_, index) => index + 1);
-  for (let index = 0; index < size; index += 1) {
-    const selected = index + random.integer(45 - index);
-    [pool[index], pool[selected]] = [pool[selected]!, pool[index]!];
-  }
-  return pool.slice(0, size);
 }
 
 function bootstrapMeans(

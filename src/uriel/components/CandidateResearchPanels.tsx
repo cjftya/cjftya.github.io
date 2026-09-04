@@ -1,10 +1,14 @@
-import { memo, useMemo } from 'react';
+import { memo } from 'react';
 import {
   researchAlgorithmDefinition,
   researchAlgorithmDefinitions,
 } from '../analysis/v3/catalog';
-import type { MonteCarloSampleSize, ResearchAlgorithmId } from '../analysis/v3/types';
-import { SAMPLE_SIZES } from '../analysis/v3/types';
+import type {
+  GameCount,
+  MonteCarloSampleSize,
+  ResearchAlgorithmId,
+} from '../analysis/v3/types';
+import { GAME_COUNTS, SAMPLE_SIZES } from '../analysis/v3/types';
 import { useV3Prediction } from '../hooks/useV3Prediction';
 import type { LayoutMode, LottoDraw } from '../types';
 
@@ -13,11 +17,13 @@ interface CandidateResearchPanelsProps {
   index: number;
   layout: LayoutMode;
   algorithmId: ResearchAlgorithmId;
+  gameCount: GameCount;
   sampleSize: MonteCarloSampleSize;
   topFraction: number;
   seed: number;
   isPlaying: boolean;
   onAlgorithmChange: (id: ResearchAlgorithmId) => void;
+  onGameCountChange: (count: GameCount) => void;
   onSampleSizeChange: (size: MonteCarloSampleSize) => void;
   onTopFractionChange: (fraction: number) => void;
   onSeedChange: (seed: number) => void;
@@ -28,11 +34,13 @@ export const CandidateResearchPanels = memo(function CandidateResearchPanels({
   index,
   layout,
   algorithmId,
+  gameCount,
   sampleSize,
   topFraction,
   seed,
   isPlaying,
   onAlgorithmChange,
+  onGameCountChange,
   onSampleSizeChange,
   onTopFractionChange,
   onSeedChange,
@@ -54,12 +62,8 @@ export const CandidateResearchPanels = memo(function CandidateResearchPanels({
     isPlaying,
   );
   const actual = draws[index + 1];
-  const scoreRanking = useMemo(
-    () =>
-      [...(prediction?.numberScores ?? [])].sort(
-        (left, right) => right.rawScore - left.rawScore || left.number - right.number,
-      ),
-    [prediction],
+  const selectedGameSet = prediction?.gameSets.find(
+    (candidate) => candidate.count === gameCount,
   );
   const topDiagnostics = prediction?.diagnostics.features.slice(0, 12) ?? [];
 
@@ -69,11 +73,11 @@ export const CandidateResearchPanels = memo(function CandidateResearchPanels({
         <div className="card-heading">
           <div>
             <span className="card-index">03</span>
-            <h2>다음 회차 후보군</h2>
+            <h2>다음 회차 추천 게임</h2>
           </div>
-          <span>Combination → Projection</span>
+          <span>6 Numbers × Games</span>
         </div>
-        <div className="v3-controls">
+        <div className="v3-primary-controls">
           <label>
             알고리즘
             <select
@@ -90,40 +94,60 @@ export const CandidateResearchPanels = memo(function CandidateResearchPanels({
             </select>
           </label>
           <label>
-            조합 표본
+            게임 수
             <select
-              value={sampleSize}
+              value={gameCount}
               onChange={(event) =>
-                onSampleSizeChange(Number(event.target.value) as MonteCarloSampleSize)
+                onGameCountChange(Number(event.target.value) as GameCount)
               }
             >
-              {SAMPLE_SIZES.map((size) => (
-                <option key={size} value={size}>
-                  {size >= 1_000_000 ? `${size / 1_000_000}M` : `${size / 1_000}K`}
+              {GAME_COUNTS.map((count) => (
+                <option key={count} value={count}>
+                  {count}게임
                 </option>
               ))}
             </select>
           </label>
-          <label>
-            구조 필터
-            <select
-              value={topFraction}
-              onChange={(event) => onTopFractionChange(Number(event.target.value))}
-            >
-              <option value={0.1}>Top 10%</option>
-              <option value={0.05}>Top 5%</option>
-              <option value={0.01}>Top 1%</option>
-            </select>
-          </label>
-          <label>
-            Seed
-            <input
-              type="number"
-              value={seed}
-              onChange={(event) => onSeedChange(Number(event.target.value))}
-            />
-          </label>
         </div>
+        <details className="v3-advanced-controls">
+          <summary>연구 설정</summary>
+          <div className="v3-controls">
+            <label>
+              조합 표본
+              <select
+                value={sampleSize}
+                onChange={(event) =>
+                  onSampleSizeChange(Number(event.target.value) as MonteCarloSampleSize)
+                }
+              >
+                {SAMPLE_SIZES.map((size) => (
+                  <option key={size} value={size}>
+                    {size >= 1_000_000 ? `${size / 1_000_000}M` : `${size / 1_000}K`}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label>
+              구조 필터
+              <select
+                value={topFraction}
+                onChange={(event) => onTopFractionChange(Number(event.target.value))}
+              >
+                <option value={0.1}>Top 10%</option>
+                <option value={0.05}>Top 5%</option>
+                <option value={0.01}>Top 1%</option>
+              </select>
+            </label>
+            <label>
+              Seed
+              <input
+                type="number"
+                value={seed}
+                onChange={(event) => onSeedChange(Number(event.target.value))}
+              />
+            </label>
+          </div>
+        </details>
         <p className="candidate-intro">{method.description}</p>
         {prediction === null && error === null && (
           <div className="analysis-progress" role="status">
@@ -144,31 +168,28 @@ export const CandidateResearchPanels = memo(function CandidateResearchPanels({
                   : `${prediction.diagnostics.selectedFeatureCount}개 구조 신호 사용`}
               </strong>
               <span>
-                {prediction.metadata.sampleSize.toLocaleString('ko-KR')}개 생성 ·{' '}
-                {prediction.metadata.retainedCombinations.toLocaleString('ko-KR')}개
-                유지 · seed {prediction.metadata.randomSeed}
+                {prediction.diagnostics.selectedFeatureCount === 0
+                  ? `균등 무작위 ${prediction.gameSets.at(-1)?.games.length ?? 0}게임 · seed ${prediction.metadata.randomSeed}`
+                  : `${prediction.metadata.sampleSize.toLocaleString('ko-KR')}개 생성 · ${prediction.metadata.retainedCombinations.toLocaleString('ko-KR')}개 유지 · seed ${prediction.metadata.randomSeed}`}
               </span>
             </div>
-            <div className="candidate-set-list">
-              {prediction.candidateSets.map((candidateSet) => {
+            <div className="candidate-game-heading">
+              <strong>
+                {method.label} · {gameCount}게임
+              </strong>
+              <span>각 행이 로또 한 게임이에요.</span>
+            </div>
+            <div className="candidate-game-list">
+              {selectedGameSet?.games.map((game, gameIndex) => {
                 const matched =
                   actual === undefined
                     ? []
-                    : candidateSet.numbers.filter((number) =>
-                        actual.numbers.includes(number),
-                      );
+                    : game.numbers.filter((number) => actual.numbers.includes(number));
                 return (
-                  <div key={candidateSet.size} className="candidate-set-row">
-                    <div>
-                      <strong>Candidate@{candidateSet.size}</strong>
-                      <small>
-                        {actual === undefined
-                          ? '다음 회차 결과 전'
-                          : `Hit@${candidateSet.size} = ${matched.length}`}
-                      </small>
-                    </div>
+                  <div key={game.numbers.join('-')} className="candidate-game-row">
+                    <span>GAME {String(gameIndex + 1).padStart(2, '0')}</span>
                     <div className="candidate-number-grid">
-                      {candidateSet.numbers.map((number) => (
+                      {game.numbers.map((number) => (
                         <i
                           key={number}
                           className={matched.includes(number) ? 'is-hit' : undefined}
@@ -177,101 +198,91 @@ export const CandidateResearchPanels = memo(function CandidateResearchPanels({
                         </i>
                       ))}
                     </div>
+                    <small>
+                      {actual !== undefined
+                        ? `${matched.length}/6 적중`
+                        : prediction.diagnostics.selectedFeatureCount === 0
+                          ? '무신호 · Random 동률'
+                          : `구조 유사도 ${game.structuralScore.toFixed(3)}`}
+                    </small>
                   </div>
                 );
               })}
             </div>
-            <div className="number-score-panel">
-              <div>
-                <h3>번호별 Candidate Score</h3>
-                <p>상위 구조 조합에 포함된 가중 비율을 0–100으로 정규화했어요.</p>
-              </div>
-              <div className="number-score-grid">
-                {scoreRanking.map((score, rank) => (
-                  <div
-                    key={score.number}
-                    title={`포함률 ${(score.inclusionRate * 100).toFixed(2)}%`}
-                  >
-                    <span>{rank + 1}</span>
-                    <b>{score.number}</b>
-                    <i style={{ width: `${score.normalizedScore}%` }} />
-                    <small>{score.normalizedScore.toFixed(1)}</small>
-                  </div>
-                ))}
-              </div>
-            </div>
             <p className="v3-score-warning">
-              Candidate Score는 과거 당첨 확률이나 번호별 출현 빈도가 아니라, 살아남은
-              조합 공간의 투영값이에요.
+              각 행은 실제 6번호 조합이에요. 구조 유사도는 당첨확률이 아니며, 검증된
+              신호가 없으면 결과는 재현 가능한 무작위 후보와 동등해요.
             </p>
           </>
         )}
       </section>
 
-      <section className="analysis-card v3-diagnostics-card">
-        <div className="card-heading">
+      <details className="analysis-card v3-diagnostics-card">
+        <summary className="card-heading">
           <div>
             <span className="card-index">04</span>
             <h2>Contrastive 진단</h2>
           </div>
           <span>Winning vs Synthetic Random</span>
-        </div>
-        {prediction === null ? (
-          <p className="candidate-intro">
-            후보 계산이 끝나면 feature 반증 결과를 표시해요.
-          </p>
-        ) : (
-          <>
-            <div className="diagnostic-sample-summary">
-              <span>실제 {prediction.diagnostics.winningSamples}회</span>
-              <span>
-                랜덤 {prediction.diagnostics.randomSamples.toLocaleString('ko-KR')}개
-              </span>
-              <span>
-                D/V/H {prediction.diagnostics.partitions.discovery}/
-                {prediction.diagnostics.partitions.validation}/
-                {prediction.diagnostics.partitions.holdout}
-              </span>
-            </div>
-            {topDiagnostics.length === 0 ? (
-              <p className="candidate-intro">
-                Random Baseline은 feature를 선택하지 않아요. 다른 구조 모델과 같은 Hit@K
-                평가의 기준으로 유지됩니다.
-              </p>
-            ) : (
-              <div className="table-scroll">
-                <table className="backtest-table diagnostic-table">
-                  <thead>
-                    <tr>
-                      <th>Feature</th>
-                      <th>Discovery d</th>
-                      <th>Validation d</th>
-                      <th>Holdout d</th>
-                      <th>안정성</th>
-                      <th>판정</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {topDiagnostics.map((feature) => (
-                      <tr key={`${feature.representation}-${feature.name}`}>
-                        <th>
-                          <small>{feature.representation}</small>
-                          {feature.name}
-                        </th>
-                        <td>{signed(feature.effectSize)}</td>
-                        <td>{signed(feature.validationEffectSize)}</td>
-                        <td>{signed(feature.holdoutEffectSize)}</td>
-                        <td>{(feature.temporalStability * 100).toFixed(0)}%</td>
-                        <td>{feature.selected ? '채택' : '기각'}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+        </summary>
+        <div className="v3-diagnostics-body">
+          {prediction === null ? (
+            <p className="candidate-intro">
+              후보 계산이 끝나면 feature 반증 결과를 표시해요.
+            </p>
+          ) : (
+            <>
+              <div className="diagnostic-sample-summary">
+                <span>실제 {prediction.diagnostics.winningSamples}회</span>
+                <span>
+                  랜덤 {prediction.diagnostics.randomSamples.toLocaleString('ko-KR')}개
+                </span>
+                <span>
+                  D/V/H {prediction.diagnostics.partitions.discovery}/
+                  {prediction.diagnostics.partitions.validation}/
+                  {prediction.diagnostics.partitions.holdout}
+                </span>
               </div>
-            )}
-          </>
-        )}
-      </section>
+              {topDiagnostics.length === 0 ? (
+                <p className="candidate-intro">
+                  Random Baseline은 feature를 선택하지 않아요. 다른 구조 모델의 게임
+                  적중 성능을 비교하는 기준으로 유지돼요.
+                </p>
+              ) : (
+                <div className="table-scroll">
+                  <table className="backtest-table diagnostic-table">
+                    <thead>
+                      <tr>
+                        <th>Feature</th>
+                        <th>Discovery d</th>
+                        <th>Validation d</th>
+                        <th>Holdout d</th>
+                        <th>안정성</th>
+                        <th>판정</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {topDiagnostics.map((feature) => (
+                        <tr key={`${feature.representation}-${feature.name}`}>
+                          <th>
+                            <small>{feature.representation}</small>
+                            {feature.name}
+                          </th>
+                          <td>{signed(feature.effectSize)}</td>
+                          <td>{signed(feature.validationEffectSize)}</td>
+                          <td>{signed(feature.holdoutEffectSize)}</td>
+                          <td>{(feature.temporalStability * 100).toFixed(0)}%</td>
+                          <td>{feature.selected ? '채택' : '기각'}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      </details>
     </>
   );
 });

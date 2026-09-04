@@ -1,9 +1,9 @@
 # Uriel v3 research architecture
 
-Uriel v3 generates candidate number sets rather than claiming to predict one six-number
-winning combination. Its core flow is:
+Uriel v3 generates reproducible six-number candidate games. The UI exposes 5, 10 or 30
+games per selected algorithm. Its core flow is:
 
-`Combination Space → Contrastive Test → Candidate Projection`
+`Combination Space → Contrastive Test → Candidate Game Selection`
 
 ## Scientific boundary
 
@@ -13,8 +13,8 @@ winning combination. Its core flow is:
 - Every real and synthetic combination passes through the same representation.
 - A combination score means structural similarity to a validated historical feature
   distribution. It is not a winning probability.
-- Candidate scores are projections from retained combinations, not historical number
-  weights.
+- Candidate games are selected from the retained high-score combination space, not
+  assembled from historical per-number weights.
 
 ## Representations
 
@@ -43,20 +43,26 @@ Diagnostics also report an independently seeded permutation p-value, KS statisti
 Wasserstein distance, Jensen–Shannon divergence, bootstrap mean-difference interval and
 the isolated Holdout effect.
 
-## Projection and reproducibility
+## Game selection and reproducibility
 
 Monte Carlo sizes are configurable at 100K, 500K, 1M and 2M. A two-pass histogram
 filter finds the requested Top 10%, 5% or 1% without storing every generated
-combination. The retained combination space is projected to all numbers 1–45 and
-produces nested Candidate@10/15/20/25/30 sets.
+combination. A bounded deterministic reservoir is taken from that space, ranked by
+structural similarity and filtered to avoid excessive overlap. It produces nested 5,
+10 and 30-game lists, where every row is one valid six-number lottery game.
 
-Each result records the algorithm, full parameters, data range, candidate sizes, seed,
+If no feature survives validation, structural filtering is skipped and the games are
+generated directly from a seeded uniform random source. This avoids presenting Monte
+Carlo sampling noise as a meaningful rank.
+
+Each result records the algorithm, full parameters, data range, game counts, seed,
 sample size, retained count, execution date and build git commit when available.
 
 ## Walk-forward evaluation
 
-Every evaluated round uses only earlier rows. Primary metrics are Mean/Median Hit@K,
-Hit≥3/4/5/6, recall and precision. For each K, 10,000 equal-size random candidate sets
+Every evaluated round uses only earlier rows. For 5, 10 and 30 games, the primary value
+is the best hit achieved by any one game. Metrics include mean/median best hit and
+Best Hit≥3/4/5/6. Equal-count random game batches use the same diversity rule and
 provide a random mean, hit distribution, percentile, relative/absolute lift and
 confidence interval. The Uriel mean receives a separate round bootstrap interval.
 
@@ -68,7 +74,14 @@ Geometry features passed Discovery and Validation selection. Therefore all three
 structural models and the equal-weight ensemble currently return a neutral structural
 score rather than inventing a signal.
 
-A 96-round Random Baseline smoke run with 10,000 sampled combinations per round was
-classified as indistinguishable from random. Lift ranged from 0.977 to 1.034 across the
-five candidate sizes, with overlapping confidence intervals. These values are a system
-check, not evidence of predictive performance.
+The earlier Candidate@K number-pool result is not comparable with the new game-level
+metric and is retained only in git history. With no selected structural feature, the
+current UI explicitly labels generated games as random-equivalent instead of turning
+Monte Carlo noise into a per-number ranking.
+
+A new 96-round smoke check over rounds 1144–1239 used the seeded Random Baseline and
+10,000 equal-count random batches. Mean best-hit lift was 1.095 for 5 games, 1.074 for
+10 games and 1.010 for 30 games. All 96 rounds had zero structural signals and the
+Uriel/random 95% confidence intervals overlapped at every game count, so the result is
+classified as indistinguishable rather than treating a lucky seed as predictive
+evidence.

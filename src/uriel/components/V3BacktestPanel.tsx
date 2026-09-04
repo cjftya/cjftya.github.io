@@ -130,13 +130,13 @@ export const V3BacktestPanel = memo(function V3BacktestPanel({
       <div className="card-heading">
         <div>
           <span className="card-index">05</span>
-          <h2>Candidate Walk-forward</h2>
+          <h2>게임 Walk-forward</h2>
         </div>
         <span>미래 정보 차단 · {method.label}</span>
       </div>
       <p className="backtest-intro">
-        매 회차 직전 기록만 다시 학습하고 Candidate@K를 같은 크기의 Random Baseline과
-        비교해요. 큰 표본과 Ensemble은 시간이 오래 걸릴 수 있어요.
+        매 회차 직전 기록만 다시 학습하고 5·10·30게임 중 최고 적중을 같은 게임 수의
+        Random Baseline과 비교해요. 큰 표본과 Ensemble은 시간이 오래 걸릴 수 있어요.
       </p>
       <div className="backtest-controls">
         <label>

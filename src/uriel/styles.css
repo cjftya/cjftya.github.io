@@ -1833,13 +1833,14 @@ input:focus-visible {
   overflow: hidden;
 }
 
-.v3-controls {
+.v3-primary-controls {
   display: grid;
-  grid-template-columns: 1.4fr repeat(3, minmax(90px, 0.7fr));
+  grid-template-columns: minmax(180px, 1.5fr) minmax(110px, 0.7fr);
   gap: 10px;
   margin-bottom: 14px;
 }
 
+.v3-primary-controls label,
 .v3-controls label {
   display: grid;
   gap: 6px;
@@ -1848,6 +1849,7 @@ input:focus-visible {
   letter-spacing: 0.04em;
 }
 
+.v3-primary-controls select,
 .v3-controls select,
 .v3-controls input {
   min-width: 0;
@@ -1858,6 +1860,27 @@ input:focus-visible {
   outline: 0;
   background: rgba(5, 7, 13, 0.72);
   color: var(--ink);
+}
+
+.v3-advanced-controls {
+  margin-bottom: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.018);
+}
+
+.v3-advanced-controls summary {
+  padding: 10px 12px;
+  color: var(--ink-faint);
+  font-size: 0.7rem;
+  cursor: pointer;
+}
+
+.v3-controls {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(90px, 1fr));
+  gap: 10px;
+  padding: 0 12px 12px;
 }
 
 .v3-signal-summary {
@@ -1883,33 +1906,52 @@ input:focus-visible {
   text-align: right;
 }
 
-.candidate-set-list {
-  display: grid;
-  gap: 8px;
-}
-
-.candidate-set-row {
-  display: grid;
-  grid-template-columns: 105px minmax(0, 1fr);
+.candidate-game-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
   gap: 12px;
-  align-items: start;
-  padding: 10px 0;
-  border-bottom: 1px solid var(--line);
+  margin: 18px 0 8px;
 }
 
-.candidate-set-row > div:first-child {
-  display: grid;
-  gap: 4px;
-}
-
-.candidate-set-row strong {
+.candidate-game-heading strong {
   color: var(--ink);
-  font-size: 0.77rem;
+  font-size: 0.86rem;
 }
 
-.candidate-set-row small {
+.candidate-game-heading span {
   color: var(--ink-faint);
-  font-size: 0.65rem;
+  font-size: 0.67rem;
+}
+
+.candidate-game-list {
+  display: grid;
+  gap: 6px;
+}
+
+.candidate-game-row {
+  display: grid;
+  grid-template-columns: 64px minmax(210px, 1fr) minmax(96px, auto);
+  gap: 14px;
+  align-items: center;
+  min-height: 45px;
+  padding: 8px 11px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.018);
+}
+
+.candidate-game-row > span {
+  color: #858793;
+  font-family: 'SFMono-Regular', Consolas, monospace;
+  font-size: 0.63rem;
+  letter-spacing: 0.06em;
+}
+
+.candidate-game-row > small {
+  color: var(--ink-faint);
+  font-size: 0.64rem;
+  text-align: right;
 }
 
 .candidate-number-grid {
@@ -1936,70 +1978,34 @@ input:focus-visible {
   color: #f1c77f;
 }
 
-.number-score-panel {
-  margin-top: 20px;
-}
-
-.number-score-panel h3,
-.number-score-panel p {
-  margin: 0;
-}
-
-.number-score-panel h3 {
-  color: var(--ink);
-  font-size: 0.82rem;
-}
-
-.number-score-panel p {
-  margin-top: 4px;
-  color: var(--ink-faint);
-  font-size: 0.68rem;
-}
-
-.number-score-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 5px 10px;
-  margin-top: 12px;
-}
-
-.number-score-grid > div {
-  position: relative;
-  display: grid;
-  grid-template-columns: 17px 22px minmax(30px, 1fr) 31px;
-  align-items: center;
-  gap: 5px;
-  min-width: 0;
-  height: 22px;
-  color: var(--ink-faint);
-  font-size: 0.61rem;
-}
-
-.number-score-grid span {
-  opacity: 0.55;
-}
-
-.number-score-grid b {
-  color: #d6d2ca;
-  font-size: 0.68rem;
-}
-
-.number-score-grid i {
-  height: 3px;
-  max-width: 100%;
-  border-radius: 2px;
-  background: linear-gradient(90deg, rgba(103, 92, 194, 0.7), #e5b66f);
-}
-
-.number-score-grid small {
-  text-align: right;
-}
-
 .v3-score-warning {
   margin: 15px 0 0;
   color: #797982;
   font-size: 0.67rem;
   line-height: 1.55;
+}
+
+.v3-diagnostics-card > summary {
+  cursor: pointer;
+  list-style: none;
+}
+
+.v3-diagnostics-card > summary::-webkit-details-marker {
+  display: none;
+}
+
+.v3-diagnostics-card > summary::after {
+  content: '열기';
+  color: var(--ink-faint);
+  font-size: 0.65rem;
+}
+
+.v3-diagnostics-card[open] > summary::after {
+  content: '닫기';
+}
+
+.v3-diagnostics-body {
+  padding-top: 4px;
 }
 
 .diagnostic-sample-summary {
@@ -2060,17 +2066,30 @@ input:focus-visible {
   .v3-signal-summary span {
     text-align: left;
   }
-  .number-score-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .candidate-game-row {
+    grid-template-columns: 58px minmax(190px, 1fr);
+  }
+  .candidate-game-row > small {
+    grid-column: 2;
+    text-align: left;
   }
 }
 
 @media (max-width: 480px) {
-  .v3-controls,
-  .number-score-grid {
+  .v3-primary-controls,
+  .v3-controls {
     grid-template-columns: minmax(0, 1fr);
   }
-  .candidate-set-row {
+  .candidate-game-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .candidate-game-row {
     grid-template-columns: 1fr;
+    gap: 7px;
+  }
+  .candidate-game-row > small {
+    grid-column: 1;
   }
 }
