@@ -1,7 +1,7 @@
 import type { LayoutMode, LottoDraw } from '../../types';
 
-export const CANDIDATE_SIZES = [10, 15, 20, 25, 30] as const;
-export type CandidateSize = (typeof CANDIDATE_SIZES)[number];
+export const GAME_COUNTS = [5, 10, 30] as const;
+export type GameCount = (typeof GAME_COUNTS)[number];
 
 export const SAMPLE_SIZES = [100_000, 500_000, 1_000_000, 2_000_000] as const;
 export type MonteCarloSampleSize = (typeof SAMPLE_SIZES)[number];
@@ -82,16 +82,15 @@ export interface CandidateAlgorithm {
   fit(history: readonly LottoDraw[], config: ResearchConfig): FittedCombinationModel;
 }
 
-export interface NumberCandidateScore {
-  number: number;
-  rawScore: number;
-  normalizedScore: number;
-  inclusionRate: number;
+export interface CandidateGame {
+  numbers: readonly number[];
+  /** Structural similarity only. This is never a winning probability. */
+  structuralScore: number;
 }
 
-export interface CandidateSet {
-  size: CandidateSize;
-  numbers: readonly number[];
+export interface CandidateGameSet {
+  count: GameCount;
+  games: readonly CandidateGame[];
 }
 
 export interface PredictionMetadata {
@@ -99,7 +98,7 @@ export interface PredictionMetadata {
   parameters: ResearchConfig;
   dataStartRound: number;
   dataEndRound: number;
-  candidateSizes: readonly CandidateSize[];
+  gameCounts: readonly GameCount[];
   randomSeed: number;
   sampleSize: number;
   retainedCombinations: number;
@@ -109,8 +108,7 @@ export interface PredictionMetadata {
 
 export interface CandidatePrediction {
   algorithmId: ResearchAlgorithmId;
-  candidateSets: readonly CandidateSet[];
-  numberScores: readonly NumberCandidateScore[];
+  gameSets: readonly CandidateGameSet[];
   diagnostics: ModelDiagnostics;
   metadata: PredictionMetadata;
 }

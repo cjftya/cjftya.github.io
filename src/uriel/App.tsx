@@ -2,7 +2,11 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { metricsForDraw } from './analysis/geometry';
 import { buildHistoryFrame } from './analysis/history';
 import { DEFAULT_RESEARCH_ALGORITHM_ID } from './analysis/v3/catalog';
-import type { MonteCarloSampleSize, ResearchAlgorithmId } from './analysis/v3/types';
+import type {
+  GameCount,
+  MonteCarloSampleSize,
+  ResearchAlgorithmId,
+} from './analysis/v3/types';
 import { MetricChart, metricDefinitions } from './components/MetricChart';
 import type { MetricKey } from './components/MetricChart';
 import { CandidateResearchPanels } from './components/CandidateResearchPanels';
@@ -37,6 +41,7 @@ export function App() {
     DEFAULT_RESEARCH_ALGORITHM_ID,
   );
   const [sampleSize, setSampleSize] = useState<MonteCarloSampleSize>(100_000);
+  const [gameCount, setGameCount] = useState<GameCount>(5);
   const [topFraction, setTopFraction] = useState(0.05);
   const [researchSeed, setResearchSeed] = useState(20_260_903);
   const [historyMode, setHistoryMode] = useState<HistoryMode>('independent');
@@ -146,7 +151,7 @@ export function App() {
         <div className="title-lockup">
           <p className="eyebrow">GEOMETRIC LOTTERY LAB</p>
           <h1>Uriel</h1>
-          <p>조합 구조를 Random Baseline과 대조하고 다음 회차 후보군으로 투영해요.</p>
+          <p>조합 구조를 Random Baseline과 대조하고 다음 회차 추천 게임을 만들어요.</p>
         </div>
         <div className="dataset-control">
           <span>{sourceLabel}</span>
@@ -327,11 +332,13 @@ export function App() {
             index={index}
             layout={layout}
             algorithmId={algorithmId}
+            gameCount={gameCount}
             sampleSize={sampleSize}
             topFraction={topFraction}
             seed={researchSeed}
             isPlaying={isPlaying}
             onAlgorithmChange={setAlgorithmId}
+            onGameCountChange={setGameCount}
             onSampleSizeChange={setSampleSize}
             onTopFractionChange={setTopFraction}
             onSeedChange={setResearchSeed}
@@ -356,9 +363,9 @@ export function App() {
             보너스 번호·당첨금·번호별 과거 빈도는 사용하지 않아요. 실제 6개 조합과 같은
             조건의 합성 무작위 조합을 Distance·Distribution·Geometry 공간에서 비교하고,
             Discovery와 Validation을 통과한 장기 안정 feature만 구조 점수에 사용해요.
-            Holdout은 선택과 조정에서 격리하며, 상위 조합 공간을 1–45 번호로 되돌려
-            Candidate@10/15/20/25/30을 만들어요. 결과는 항상 Walk-forward와 같은 크기의
-            Random Baseline으로 평가하며 Candidate Score를 당첨확률로 해석하지 않아요.
+            Holdout은 선택과 조정에서 격리해요. 상위 조합 공간에서는 서로 과도하게
+            겹치지 않는 6번호 게임을 골라 5·10·30게임으로 출력하고, Walk-forward에서
+            같은 게임 수의 Random Baseline과 비교해요. 구조 점수는 당첨확률이 아니에요.
           </p>
         </div>
       </section>

@@ -11,7 +11,7 @@ import {
   sampleCombinations,
 } from '../../src/uriel/analysis/v3/random';
 import {
-  CANDIDATE_SIZES,
+  GAME_COUNTS,
   partitionHistory,
   sanitizeResearchConfig,
 } from '../../src/uriel/analysis/v3/types';
@@ -24,8 +24,8 @@ const draws = Array.from({ length: 100 }, (_, index): LottoDraw => ({
 }));
 
 describe('Uriel v3 foundation', () => {
-  it('publishes the required candidate sizes and initial algorithm menu', () => {
-    expect(CANDIDATE_SIZES).toEqual([10, 15, 20, 25, 30]);
+  it('publishes the required game counts and initial algorithm menu', () => {
+    expect(GAME_COUNTS).toEqual([5, 10, 30]);
     expect(researchAlgorithmDefinitions.map(({ id }) => id)).toEqual([
       'random-baseline',
       'distance',

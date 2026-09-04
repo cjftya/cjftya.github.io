@@ -1,14 +1,14 @@
 import type { LottoDraw } from '../../types';
 import { candidateAlgorithm } from './catalog';
 import { mixSeed } from './random';
-import { projectCandidateScores } from './projection';
+import { selectCandidateGames } from './projection';
 import type {
   CandidatePrediction,
   PredictionMetadata,
   ResearchAlgorithmId,
   ResearchConfig,
 } from './types';
-import { CANDIDATE_SIZES, sanitizeResearchConfig } from './types';
+import { GAME_COUNTS, sanitizeResearchConfig } from './types';
 
 export function predictNextCandidates(
   draws: readonly LottoDraw[],
@@ -22,7 +22,7 @@ export function predictNextCandidates(
   const history = draws.slice(0, historyIndex + 1);
   const config = sanitizeResearchConfig(requestedConfig);
   const model = candidateAlgorithm(algorithmId).fit(history, config);
-  const projection = projectCandidateScores(
+  const projection = selectCandidateGames(
     model,
     config,
     mixSeed(config.seed, history.at(-1)!.round, algorithmSeed(algorithmId)),
@@ -32,7 +32,7 @@ export function predictNextCandidates(
     parameters: config,
     dataStartRound: history[0]!.round,
     dataEndRound: history.at(-1)!.round,
-    candidateSizes: CANDIDATE_SIZES,
+    gameCounts: GAME_COUNTS,
     randomSeed: config.seed,
     sampleSize: config.sampleSize,
     retainedCombinations: projection.retainedCombinations,
@@ -41,8 +41,7 @@ export function predictNextCandidates(
   };
   return {
     algorithmId,
-    candidateSets: projection.candidateSets,
-    numberScores: projection.numberScores,
+    gameSets: projection.gameSets,
     diagnostics: model.diagnostics,
     metadata,
   };

@@ -1,35 +1,50 @@
-import { createRandom, sampleCombination } from './random';
+import { createRandom, mixSeed, sampleCombination } from './random';
 import type {
-  CandidateSet,
+  CandidateGame,
+  CandidateGameSet,
   FittedCombinationModel,
-  NumberCandidateScore,
   ResearchConfig,
 } from './types';
-import { CANDIDATE_SIZES } from './types';
+import { GAME_COUNTS } from './types';
 
 const SCORE_BINS = 2_048;
+const MAX_GAME_COUNT = GAME_COUNTS.at(-1)!;
+const SELECTION_POOL_SIZE = MAX_GAME_COUNT * 100;
+
+interface ScoredCombination extends CandidateGame {
+  tieBreaker: number;
+}
 
 export interface ProjectionResult {
-  candidateSets: readonly CandidateSet[];
-  numberScores: readonly NumberCandidateScore[];
+  gameSets: readonly CandidateGameSet[];
   retainedCombinations: number;
 }
 
-export function projectCandidateScores(
+export function selectCandidateGames(
   model: FittedCombinationModel,
   config: ResearchConfig,
   projectionSeed: number,
 ): ProjectionResult {
-  const target = Math.max(1, Math.floor(config.sampleSize * config.topFraction));
+  if (model.diagnostics.selectedFeatureCount === 0) {
+    return {
+      gameSets: buildGameSets(
+        sampleDiverseRandomGames(MAX_GAME_COUNT, createRandom(projectionSeed)),
+      ),
+      retainedCombinations: 0,
+    };
+  }
+  const target = Math.min(
+    config.sampleSize,
+    Math.max(MAX_GAME_COUNT, Math.floor(config.sampleSize * config.topFraction)),
+  );
   const histogram = Array(SCORE_BINS).fill(0) as number[];
   visitSamples(config.sampleSize, projectionSeed, model, (_numbers, score) => {
     const bin = scoreBin(score);
     histogram[bin] = histogram[bin]! + 1;
   });
   const { thresholdBin, acceptedInThreshold } = thresholdForTopCount(histogram, target);
-  const weightedInclusion = Array(46).fill(0) as number[];
-  const inclusionCount = Array(46).fill(0) as number[];
-  let totalWeight = 0;
+  const pool: ScoredCombination[] = [];
+  const reservoirRandom = createRandom(mixSeed(projectionSeed, 0x6a09e667));
   let retained = 0;
   let acceptedAtThreshold = 0;
   visitSamples(config.sampleSize, projectionSeed, model, (numbers, score) => {
@@ -39,37 +54,95 @@ export function projectCandidateScores(
       (bin === thresholdBin && acceptedAtThreshold < acceptedInThreshold);
     if (!include) return;
     if (bin === thresholdBin) acceptedAtThreshold += 1;
-    const weight = Math.max(score, 0) + 1e-6;
     retained += 1;
-    totalWeight += weight;
-    numbers.forEach((number) => {
-      weightedInclusion[number] = weightedInclusion[number]! + weight;
-      inclusionCount[number] = inclusionCount[number]! + 1;
-    });
+    const candidate: ScoredCombination = {
+      numbers: [...numbers],
+      structuralScore: score,
+      tieBreaker: reservoirRandom.next(),
+    };
+    if (pool.length < Math.min(target, SELECTION_POOL_SIZE)) {
+      pool.push(candidate);
+      return;
+    }
+    const replacement = reservoirRandom.integer(retained);
+    if (replacement < pool.length) pool[replacement] = candidate;
   });
-  const rawScores = Array.from({ length: 45 }, (_, index) =>
-    totalWeight === 0 ? 0 : weightedInclusion[index + 1]! / totalWeight,
+  const ranked = pool.sort(
+    (left, right) =>
+      right.structuralScore - left.structuralScore ||
+      left.tieBreaker - right.tieBreaker,
   );
-  const minimum = Math.min(...rawScores);
-  const maximum = Math.max(...rawScores);
-  const spread = maximum - minimum;
-  const numberScores = rawScores.map((rawScore, index): NumberCandidateScore => ({
-    number: index + 1,
-    rawScore,
-    normalizedScore: spread < 1e-12 ? 50 : ((rawScore - minimum) / spread) * 100,
-    inclusionRate: inclusionCount[index + 1]! / Math.max(retained, 1),
+  const selected = selectDiverseGames(ranked, MAX_GAME_COUNT);
+  const gameSets = buildGameSets(selected);
+  return { gameSets, retainedCombinations: retained };
+}
+
+function buildGameSets(games: readonly CandidateGame[]): CandidateGameSet[] {
+  return GAME_COUNTS.map((count): CandidateGameSet => ({
+    count,
+    games: games.slice(0, count).map(({ numbers, structuralScore }) => ({
+      numbers,
+      structuralScore,
+    })),
   }));
-  const ranking = [...numberScores].sort(
-    (left, right) => right.rawScore - left.rawScore || left.number - right.number,
-  );
-  const candidateSets = CANDIDATE_SIZES.map((size): CandidateSet => ({
-    size,
-    numbers: ranking
-      .slice(0, size)
-      .map(({ number }) => number)
-      .sort((left, right) => left - right),
-  }));
-  return { candidateSets, numberScores, retainedCombinations: retained };
+}
+
+export function sampleDiverseRandomGames(
+  count: number,
+  random: ReturnType<typeof createRandom>,
+): CandidateGame[] {
+  const requested = Math.max(0, Math.trunc(count));
+  const games: CandidateGame[] = [];
+  const keys = new Set<string>();
+  for (const overlapLimit of [2, 3, 4, 5, 6]) {
+    let attempts = 0;
+    const attemptLimit = Math.max(requested * 80, 100);
+    while (games.length < requested && attempts < attemptLimit) {
+      attempts += 1;
+      const numbers = sampleCombination(random);
+      const key = numbers.join('-');
+      if (keys.has(key)) continue;
+      if (
+        games.some((game) => intersectionSize(game.numbers, numbers) > overlapLimit)
+      ) {
+        continue;
+      }
+      keys.add(key);
+      games.push({ numbers, structuralScore: 0.5 });
+    }
+    if (games.length >= requested) break;
+  }
+  return games;
+}
+
+function selectDiverseGames(
+  ranked: readonly ScoredCombination[],
+  count: number,
+): ScoredCombination[] {
+  const selected: ScoredCombination[] = [];
+  const selectedKeys = new Set<string>();
+  for (const overlapLimit of [2, 3, 4, 5, 6]) {
+    for (const candidate of ranked) {
+      if (selected.length >= count) return selected;
+      const key = candidate.numbers.join('-');
+      if (selectedKeys.has(key)) continue;
+      if (
+        selected.some(
+          (game) => intersectionSize(game.numbers, candidate.numbers) > overlapLimit,
+        )
+      ) {
+        continue;
+      }
+      selectedKeys.add(key);
+      selected.push(candidate);
+    }
+  }
+  return selected;
+}
+
+function intersectionSize(left: readonly number[], right: readonly number[]): number {
+  const rightSet = new Set(right);
+  return left.filter((number) => rightSet.has(number)).length;
 }
 
 function visitSamples(

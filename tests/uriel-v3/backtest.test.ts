@@ -33,7 +33,7 @@ const options: Partial<V3BacktestOptions> = {
   resultBootstrapIterations: 200,
 };
 
-describe('Uriel v3 walk-forward candidate evaluation', () => {
+describe('Uriel v3 walk-forward game evaluation', () => {
   it('resolves a range with at least 60 earlier training rounds', () => {
     expect(resolveV3BacktestRange(draws, options)).toEqual({
       startHistoryIndex: 89,
@@ -51,34 +51,36 @@ describe('Uriel v3 walk-forward candidate evaluation', () => {
     ).toThrow('60회 이상의 학습 데이터');
   });
 
-  it('evaluates Hit@K against a repeated equal-size random baseline', () => {
+  it('evaluates the best ticket hit against equal-count random game baselines', () => {
     const result = runV3WalkForwardBacktest(draws, options);
     expect(result).toMatchObject({
-      metricSchemaVersion: 3,
+      metricSchemaVersion: 4,
       startRound: 91,
       endRound: 94,
       evaluatedRounds: 4,
+      signalRounds: 0,
     });
-    expect(result.summaries.map(({ candidateSize }) => candidateSize)).toEqual([
-      10, 15, 20, 25, 30,
-    ]);
+    expect(result.summaries.map(({ gameCount }) => gameCount)).toEqual([5, 10, 30]);
     result.summaries.forEach((summary) => {
       expect(summary.distribution).toHaveLength(7);
       expect(summary.randomHitDistribution).toHaveLength(7);
-      expect(summary.randomMeanHit).toBeCloseTo((6 * summary.candidateSize) / 45, 1);
-      expect(summary.candidateRecall).toBeCloseTo(summary.meanHit / 6);
-      expect(summary.candidatePrecision).toBeCloseTo(
-        summary.meanHit / summary.candidateSize,
-      );
+      expect(summary.randomMeanHit).toBeGreaterThan(0);
+      expect(summary.randomMeanHit).toBeLessThanOrEqual(6);
+      expect(
+        summary.randomHitDistribution.reduce((sum, rate) => sum + rate, 0),
+      ).toBeCloseTo(1);
       expect(summary.randomPercentile).toBeGreaterThanOrEqual(0);
       expect(summary.randomPercentile).toBeLessThanOrEqual(1);
     });
     expect(result.rounds).toHaveLength(4);
     expect(
-      result.rounds.every(({ hits }) =>
-        Object.values(hits).every((hit) => hit >= 0 && hit <= 6),
+      result.rounds.every(({ bestHits }) =>
+        Object.values(bestHits).every((hit) => hit >= 0 && hit <= 6),
       ),
     ).toBe(true);
+    expect(result.summaries[2]!.randomMeanHit).toBeGreaterThan(
+      result.summaries[0]!.randomMeanHit,
+    );
   });
 
   it('does not use rows after the selected validation range', () => {
