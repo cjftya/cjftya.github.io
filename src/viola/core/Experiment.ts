@@ -23,7 +23,7 @@ export interface ExperimentContext {
 
 export interface Experiment {
   readonly context: ExperimentContext;
-  update(stepScale: number): void;
+  update(elapsedSeconds: number): void;
   render(): void;
   resize(viewport: Viewport): void;
   pointerDown?(): void;

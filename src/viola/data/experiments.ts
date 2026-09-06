@@ -35,8 +35,8 @@ const entries: Array<Omit<ExperimentDefinition, 'seed'>> = [
     title: 'Cell-space Partitioning',
     category: 'performance',
     recordedAt: '2015-11-28',
-    summary: '7,000개의 원을 셀로 나누어 이웃 충돌만 계산합니다.',
-    hint: '포인터를 누르면 주변 입자가 밀려납니다.',
+    summary: '7,000개의 원을 35px 셀로 나누어 가까운 원의 충돌만 해결합니다.',
+    hint: '작은 원 하나를 눌러 드래그하며 주변 충돌을 확인하세요.',
   },
   {
     id: 'product-calcu-radians',
@@ -62,8 +62,8 @@ const entries: Array<Omit<ExperimentDefinition, 'seed'>> = [
     title: 'Ball Rolling',
     category: 'physics',
     recordedAt: '2014-05-24',
-    summary: '선분 위를 구르는 공의 접촉과 회전을 계산합니다.',
-    hint: '포인터로 경사면 끝점을 움직이세요.',
+    summary: '공이 벽에 충돌할 때 접선 속도를 각속도로 바꾸어 회전합니다.',
+    hint: 'WASD로 공에 속도를 더해 벽 충돌과 회전을 확인하세요.',
   },
   {
     id: 'kinetic',
@@ -162,7 +162,7 @@ const entries: Array<Omit<ExperimentDefinition, 'seed'>> = [
     category: 'particles',
     recordedAt: '2014-09-22',
     summary: '밀도·압력·점성을 이용한 300개 입자의 유사 유체입니다.',
-    hint: '포인터로 유체를 저어보세요.',
+    hint: '포인터를 누른 채 움직여 유체 입자를 끌어당겨보세요.',
   },
   {
     id: 'particle-tail',
@@ -278,8 +278,8 @@ const entries: Array<Omit<ExperimentDefinition, 'seed'>> = [
     title: 'Circle ↔ Circle',
     category: 'collisions',
     recordedAt: '2014-12-20',
-    summary: '두 원의 겹침 깊이와 충돌 법선을 확인합니다.',
-    hint: '한 원을 포인터로 움직이세요.',
+    summary: '500개의 원에 중력과 반복 위치 보정을 적용해 충돌을 해결합니다.',
+    hint: '원을 드래그하거나 WASD로 첫 원을 움직여 충돌을 확인하세요.',
   },
   {
     id: 'collision-line-circle',
@@ -368,8 +368,8 @@ const entries: Array<Omit<ExperimentDefinition, 'seed'>> = [
     title: 'Softbody',
     category: 'springs',
     recordedAt: '2014-08-05',
-    summary: '연결된 두 개의 8노드 연체가 충돌하며 변형됩니다.',
-    hint: '포인터로 연체를 밀어보세요.',
+    summary: '16개 Verlet 노드와 32개 거리 제약으로 두 구조의 변형을 계산합니다.',
+    hint: '빨간 노드를 눌러 구조를 당겨보세요.',
   },
   {
     id: 'figure',

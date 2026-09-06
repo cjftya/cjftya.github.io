@@ -67,8 +67,8 @@ export class PixiExperimentHost {
   }
 
   private readonly tick = (ticker: Ticker): void => {
-    this.clock.consume(ticker.deltaMS / 1000, (stepScale) =>
-      this.experiment?.update(stepScale),
+    this.clock.consume(ticker.deltaMS / 1000, (elapsedSeconds) =>
+      this.experiment?.update(elapsedSeconds),
     );
     this.experiment?.render();
   };

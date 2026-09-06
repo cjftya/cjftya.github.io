@@ -47,7 +47,8 @@ export class CollisionExperiment implements Experiment {
     );
   }
 
-  public update(stepScale: number): void {
+  public update(elapsedSeconds: number): void {
+    const stepScale = elapsedSeconds * 60;
     const id = this.context.definition.id;
     this.rotation += 0.008 * stepScale;
     if (id === 'line-resolve-drawing' || id === 'line-resolve-2')
