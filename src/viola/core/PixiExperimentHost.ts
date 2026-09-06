@@ -25,6 +25,10 @@ export class PixiExperimentHost {
     if (event.code.startsWith('Arrow')) event.preventDefault();
     this.experiment?.keyDown?.(event.code);
   };
+  private readonly onKeyUp = (event: KeyboardEvent) => {
+    if (event.code.startsWith('Arrow')) event.preventDefault();
+    this.experiment?.keyUp?.(event.code);
+  };
 
   public constructor(
     private readonly mount: HTMLElement,
@@ -58,6 +62,7 @@ export class PixiExperimentHost {
     this.bindEvents();
     this.app.ticker.add(this.tick);
     window.addEventListener('keydown', this.onKeyDown, { passive: false });
+    window.addEventListener('keyup', this.onKeyUp, { passive: false });
     this.resizeObserver = new ResizeObserver(() => {
       const next = this.readViewport();
       this.experiment?.resize(next);
@@ -123,6 +128,7 @@ export class PixiExperimentHost {
   public destroy(): void {
     this.resizeObserver?.disconnect();
     window.removeEventListener('keydown', this.onKeyDown);
+    window.removeEventListener('keyup', this.onKeyUp);
     this.app.ticker.remove(this.tick);
     const canvas = this.app.canvas;
     canvas.removeEventListener('pointerdown', this.onPointerDown);

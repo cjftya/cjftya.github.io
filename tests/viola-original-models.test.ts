@@ -2,10 +2,16 @@ import { describe, expect, it } from 'vitest';
 import { FixedRateStepper } from '../src/viola/core/FixedRateStepper';
 import { Random } from '../src/viola/core/Random';
 import { Vector2 } from '../src/viola/core/Vector2';
+import { experiments } from '../src/viola/data/experiments';
 import { BallRollingModel } from '../src/viola/experiments/ball-rolling/BallRollingModel';
 import { CellSpaceModel } from '../src/viola/experiments/cell-space/CellSpaceModel';
 import { CircleCollisionModel } from '../src/viola/experiments/circle-collision/CircleCollisionModel';
+import { ClothDestroyModel } from '../src/viola/experiments/cloth-destroy/ClothDestroyModel';
 import { FlowSimulationModel } from '../src/viola/experiments/flow-simulation/FlowSimulationModel';
+import { ImageFunModel } from '../src/viola/experiments/image-fun/ImageFunModel';
+import { MouseMovingEnergyModel } from '../src/viola/experiments/mouse-moving-energy/MouseMovingEnergyModel';
+import { OptimizeModel } from '../src/viola/experiments/optimize/OptimizeModel';
+import { ParticleEffectModel } from '../src/viola/experiments/particle-effect/ParticleEffectModel';
 import { registeredExperimentIds } from '../src/viola/experiments/registry';
 import { SoftbodyModel } from '../src/viola/experiments/softbody/SoftbodyModel';
 import { resolveCircleOverlap } from '../src/viola/physics/collision/CircleOverlap';
@@ -14,13 +20,7 @@ import { UniformGrid } from '../src/viola/physics/spatial/UniformGrid';
 describe('Viola original experiment architecture', () => {
   it('routes each restored experiment through the dedicated registry', () => {
     expect(registeredExperimentIds()).toEqual(
-      new Set([
-        'ball-rolling',
-        'cell-space-partitioning',
-        'collision-circle-circle',
-        'flow-simulation',
-        'softbody',
-      ]),
+      new Set(experiments.map((experiment) => experiment.id)),
     );
   });
 
@@ -71,6 +71,10 @@ describe('C#-faithful Viola models', () => {
     expect(new CircleCollisionModel(new Random(1)).circles).toHaveLength(500);
     expect(new FlowSimulationModel(new Random(1)).particles).toHaveLength(300);
     expect(new CellSpaceModel(new Random(1)).bodies).toHaveLength(7_000);
+    expect(new OptimizeModel(new Random(1)).particles).toHaveLength(1_500);
+    expect(new ParticleEffectModel(new Random(1)).particles).toHaveLength(8_000);
+    expect(new MouseMovingEnergyModel(new Random(1)).particles).toHaveLength(10_000);
+    expect(new ImageFunModel().pixels).toHaveLength(7_100);
   });
 
   it('keeps the circle collision model finite after an update', () => {
@@ -118,5 +122,12 @@ describe('C#-faithful Viola models', () => {
     model.step();
     expect(model.nodes[14]?.position).toMatchObject(fixedBefore[0] ?? {});
     expect(model.nodes[15]?.position).toMatchObject(fixedBefore[1] ?? {});
+  });
+
+  it('recreates the destroyable 5 by 5 cloth topology', () => {
+    const model = new ClothDestroyModel();
+    expect(model.nodes).toHaveLength(25);
+    expect(model.links).toHaveLength(72);
+    expect(model.nodes.filter((node) => node.fixed)).toHaveLength(2);
   });
 });

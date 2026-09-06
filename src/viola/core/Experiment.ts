@@ -30,5 +30,6 @@ export interface Experiment {
   pointerMove?(): void;
   pointerUp?(): void;
   keyDown?(code: string): void;
+  keyUp?(code: string): void;
   destroy(): void;
 }

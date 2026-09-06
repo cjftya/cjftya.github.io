@@ -26,8 +26,8 @@ const entries: Array<Omit<ExperimentDefinition, 'seed'>> = [
     title: 'Optimize Playground',
     category: 'performance',
     recordedAt: '2016-06-01',
-    summary: '유체, 원 충돌, 균일 격자, 쿼드트리를 한 화면에서 비교합니다.',
-    hint: '마우스를 움직여 입자 흐름을 밀어보세요.',
+    summary: '균일 격자로 이웃을 찾는 3색·1,500개 입자의 유사 유체 실험입니다.',
+    hint: '포인터를 누르면 가까운 유체 입자가 끌려옵니다.',
   },
   {
     id: 'cell-space-partitioning',
@@ -44,8 +44,8 @@ const entries: Array<Omit<ExperimentDefinition, 'seed'>> = [
     title: 'Vectors & Radians',
     category: 'physics',
     recordedAt: '2014-09-21',
-    summary: '벡터의 내적·외적과 라디안 방향을 눈으로 확인합니다.',
-    hint: '포인터가 가리키는 각도를 확인하세요.',
+    summary: '회전 도형의 방향 벡터와 클릭한 목표 방향의 내적을 계산합니다.',
+    hint: '클릭해 목표를 정하고 A/D로 도형을 1도씩 회전하세요.',
   },
   {
     id: 'time-scaling',
@@ -53,8 +53,8 @@ const entries: Array<Omit<ExperimentDefinition, 'seed'>> = [
     title: 'Time Scaling',
     category: 'physics',
     recordedAt: '2014-05-15',
-    summary: '속도에 시간 스케일을 적용한 이동을 비교합니다.',
-    hint: '클릭하면 공의 위치를 초기화합니다.',
+    summary: '속도에 직접 곱하는 시간 배율을 키 입력으로 바꾸는 실험입니다.',
+    hint: '클릭하면 속도를 더하고 A/S로 시간 배율을 조절하세요.',
   },
   {
     id: 'ball-rolling',
@@ -80,8 +80,8 @@ const entries: Array<Omit<ExperimentDefinition, 'seed'>> = [
     title: 'Sierpiński Gasket',
     category: 'physics',
     recordedAt: '2014-05-30',
-    summary: '중점 반복으로 시어핀스키 삼각형을 생성합니다.',
-    hint: '클릭하면 점 생성 순서를 다시 시작합니다.',
+    summary: '삼각형을 깊이 5까지 재귀적으로 삼분할해 시어핀스키 형태를 그립니다.',
+    hint: '입력 없이 재귀 분할 결과를 표시합니다.',
   },
   {
     id: 'car',
@@ -90,7 +90,7 @@ const entries: Array<Omit<ExperimentDefinition, 'seed'>> = [
     category: 'physics',
     recordedAt: '2014-06-10',
     summary: 'Verlet 노드 자동차가 선형 지형을 달립니다.',
-    hint: '← →로 주행하고 ↑로 점프하세요.',
+    hint: 'A/D로 주행하고 W로 오른쪽 바퀴를 들어 올리세요.',
   },
   {
     id: 'box-throwing',
@@ -107,17 +107,17 @@ const entries: Array<Omit<ExperimentDefinition, 'seed'>> = [
     title: 'Torque',
     category: 'physics',
     recordedAt: '2015-01-13',
-    summary: '힘의 작용점과 r×F로 토크를 시각화합니다.',
-    hint: '포인터를 움직여 힘의 방향과 토크를 바꾸세요.',
+    summary: '사각형 꼭짓점에 가한 키보드 힘과 r×F 토크를 계산합니다.',
+    hint: 'WASD를 누르는 동안 왼쪽 아래 꼭짓점에 힘을 가합니다.',
   },
   {
     id: 'gear',
     originalName: 'gear',
-    title: 'Gear Contact',
+    title: 'Rotating Corner Contact',
     category: 'physics',
     recordedAt: '2013-01-22',
-    summary: '맞물린 회전체의 접촉과 회전 임펄스를 살펴봅니다.',
-    hint: '포인터를 좌우로 움직여 구동 기어를 돌리세요.',
+    summary: '두 회전 사각형의 꼭짓점 원이 겹칠 때 선형·회전 힘을 전달합니다.',
+    hint: '포인터로 두 번째 사각형을 옮겨 꼭짓점 충돌을 시험하세요.',
   },
   {
     id: 'particle-mouse',
@@ -135,7 +135,7 @@ const entries: Array<Omit<ExperimentDefinition, 'seed'>> = [
     category: 'particles',
     recordedAt: '2014-11-03',
     summary: '4×4 방향장 속에서 원들이 각 셀의 힘을 받습니다.',
-    hint: '클릭하면 방향장이 새로 생성됩니다.',
+    hint: '방향장을 드래그하거나 중앙 핸들로 회전하세요.',
   },
   {
     id: 'particle-circle',
@@ -171,7 +171,7 @@ const entries: Array<Omit<ExperimentDefinition, 'seed'>> = [
     category: 'particles',
     recordedAt: '2014-09-11',
     summary: '키보드로 움직이는 공이 잔상을 남깁니다.',
-    hint: '방향키로 공을 움직이세요.',
+    hint: 'WASD로 공을 움직이세요.',
   },
   {
     id: 'reality-snow',
@@ -180,7 +180,7 @@ const entries: Array<Omit<ExperimentDefinition, 'seed'>> = [
     category: 'particles',
     recordedAt: '2014-09-10',
     summary: '중력과 바람을 받는 눈송이가 화면을 순환합니다.',
-    hint: '포인터를 좌우로 움직여 바람을 바꾸세요.',
+    hint: 'A/D로 눈송이에 부는 바람을 바꾸세요.',
   },
   {
     id: 'light-ver-1',
@@ -189,7 +189,7 @@ const entries: Array<Omit<ExperimentDefinition, 'seed'>> = [
     category: 'particles',
     recordedAt: '2015-09-08',
     summary: '두 점 사이를 무작위로 흔드는 번개 선을 그립니다.',
-    hint: '누른 지점에서 포인터까지 번개가 이어집니다.',
+    hint: '클릭한 지점으로 번개의 끝점을 옮기세요.',
   },
   {
     id: 'light-ver-2',
@@ -234,7 +234,7 @@ const entries: Array<Omit<ExperimentDefinition, 'seed'>> = [
     category: 'particles',
     recordedAt: '2014-03-06',
     summary: '8,000개 입자에 방사형 힘·중력·색 회전을 적용합니다.',
-    hint: '누르면 끌어당기고, 놓으면 밀어냅니다.',
+    hint: '누르면 방사형 힘을 가하고 W로 밀기/당기기를 전환하세요.',
   },
   {
     id: 'particle',
@@ -260,8 +260,8 @@ const entries: Array<Omit<ExperimentDefinition, 'seed'>> = [
     title: 'Polygon ↔ Circle',
     category: 'collisions',
     recordedAt: '2014-12-22',
-    summary: '볼록 다각형과 원 사이의 최근접 접촉을 검사합니다.',
-    hint: '원을 포인터로 움직여 모서리를 시험하세요.',
+    summary: '회전 사각형의 면·꼭짓점 영역과 원의 접촉을 분리해 해결합니다.',
+    hint: '원을 드래그해 사각형의 면과 꼭짓점 접촉을 시험하세요.',
   },
   {
     id: 'collision-capsule-circle',
@@ -270,7 +270,7 @@ const entries: Array<Omit<ExperimentDefinition, 'seed'>> = [
     category: 'collisions',
     recordedAt: '2014-12-22',
     summary: '캡슐 선분의 최근접점과 원 충돌을 검사합니다.',
-    hint: '원을 포인터로 움직여 캡슐에 접촉하세요.',
+    hint: '원을 드래그해 기울어진 캡슐의 몸통과 양 끝에 접촉하세요.',
   },
   {
     id: 'collision-circle-circle',
@@ -288,7 +288,7 @@ const entries: Array<Omit<ExperimentDefinition, 'seed'>> = [
     category: 'collisions',
     recordedAt: '2014-05-29',
     summary: '선분의 최근접점으로 원 접촉을 해결합니다.',
-    hint: '원을 포인터로 움직여 선분 끝도 시험하세요.',
+    hint: '클릭해 공을 옮기고 WASD로 가속하며 Q/E로 dt를 바꾸세요.',
   },
   {
     id: 'line-resolve-drawing',
@@ -297,7 +297,7 @@ const entries: Array<Omit<ExperimentDefinition, 'seed'>> = [
     category: 'collisions',
     recordedAt: '2015-01-23',
     summary: '직접 그린 선분 집합과 이동 원의 충돌을 해결합니다.',
-    hint: '드래그해 선을 그리고, 원은 자동으로 움직입니다.',
+    hint: '선을 그리고 WASD로 공을 움직이며 Q로 선을 지우세요.',
   },
   {
     id: 'closest-point',
@@ -315,7 +315,7 @@ const entries: Array<Omit<ExperimentDefinition, 'seed'>> = [
     category: 'collisions',
     recordedAt: '2014-05-22',
     summary: '연속 선분 지형에서 공의 침투와 속도를 해결합니다.',
-    hint: '클릭하면 공을 다시 떨어뜨립니다.',
+    hint: '클릭해 공을 옮긴 뒤 WASD로 선분을 통과시켜 보세요.',
   },
   {
     id: 'sat',
@@ -324,7 +324,7 @@ const entries: Array<Omit<ExperimentDefinition, 'seed'>> = [
     category: 'collisions',
     recordedAt: '2014-10-04',
     summary: '분리축 정리로 회전 다각형 두 개의 충돌을 판정합니다.',
-    hint: '포인터로 한 다각형을 이동하세요.',
+    hint: '포인터로 한 다각형을 옮기고 클릭해 회전 속도를 더하세요.',
   },
   {
     id: 'cutting-rope',
@@ -333,7 +333,7 @@ const entries: Array<Omit<ExperimentDefinition, 'seed'>> = [
     category: 'springs',
     recordedAt: '2014-08-07',
     summary: '40개 노드의 Verlet 로프를 당기고 잘라냅니다.',
-    hint: '드래그 선으로 로프를 자르세요.',
+    hint: '노드를 잡아 연결 한계보다 멀리 당겨 로프를 자르세요.',
   },
   {
     id: 'cloth-destroy',
@@ -387,7 +387,7 @@ const entries: Array<Omit<ExperimentDefinition, 'seed'>> = [
     category: 'springs',
     recordedAt: '2014-02-10',
     summary: '각도 차이를 스프링 보간해 회전을 따라갑니다.',
-    hint: '포인터가 회전 목표가 됩니다.',
+    hint: '사각형을 잡아 움직이며 0.75rad 목표 회전을 확인하세요.',
   },
   {
     id: 'interpolation-trace',
@@ -414,7 +414,7 @@ const entries: Array<Omit<ExperimentDefinition, 'seed'>> = [
     category: 'springs',
     recordedAt: '2020-10-03',
     summary: '여러 벌레형 추종 체인의 이징 움직임을 비교합니다.',
-    hint: '포인터를 움직여 추종 오차를 관찰하세요.',
+    hint: '무작위로 움직이는 추종 체인의 누적 오차를 관찰하세요.',
   },
   {
     id: 'circle-jelly',
@@ -423,7 +423,7 @@ const entries: Array<Omit<ExperimentDefinition, 'seed'>> = [
     category: 'springs',
     recordedAt: '2013-01-19',
     summary: '20개 링 노드와 앵커 스프링이 젤리 같은 원을 만듭니다.',
-    hint: '클릭하면 충돌 공을 떨어뜨립니다.',
+    hint: '링 노드를 드래그하거나 방향키로 전체 구조를 움직이세요.',
   },
   {
     id: 'curve-move',
@@ -431,8 +431,8 @@ const entries: Array<Omit<ExperimentDefinition, 'seed'>> = [
     title: 'Curve Move',
     category: 'springs',
     recordedAt: '2013-01-21',
-    summary: '공이 3차 곡선 식을 따라 왕복합니다.',
-    hint: '클릭하면 진행 방향을 반대로 바꿉니다.',
+    summary: '중력을 받는 상자가 3차 곡선 지형과 충돌하며 움직입니다.',
+    hint: 'A/D로 이동하고 W로 점프하세요.',
   },
 ];
 
