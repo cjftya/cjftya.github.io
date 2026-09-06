@@ -1,4 +1,5 @@
 import type { Experiment, ExperimentContext } from '../core/Experiment';
+import { createRegisteredExperiment } from '../experiments/registry';
 import { CollisionExperiment } from './CollisionExperiment';
 import { ConstraintExperiment } from './ConstraintExperiment';
 import { MotionExperiment } from './MotionExperiment';
@@ -18,6 +19,8 @@ const motionIds = new Set([
 ]);
 
 export function createExperiment(context: ExperimentContext): Experiment {
+  const registered = createRegisteredExperiment(context);
+  if (registered) return registered;
   if (context.definition.category === 'collisions')
     return new CollisionExperiment(context);
   if (

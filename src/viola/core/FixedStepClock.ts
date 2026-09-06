@@ -6,10 +6,10 @@ export class FixedStepClock {
     private readonly maximumFrameSeconds = 0.1,
   ) {}
 
-  public consume(elapsedSeconds: number, update: (stepScale: number) => void): void {
+  public consume(elapsedSeconds: number, update: (stepSeconds: number) => void): void {
     this.accumulator += Math.min(Math.max(elapsedSeconds, 0), this.maximumFrameSeconds);
     while (this.accumulator >= this.fixedSeconds) {
-      update(this.fixedSeconds * 60);
+      update(this.fixedSeconds);
       this.accumulator -= this.fixedSeconds;
     }
   }

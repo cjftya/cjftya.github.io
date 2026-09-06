@@ -133,7 +133,8 @@ export class ParticleExperiment implements Experiment {
       );
   }
 
-  public update(stepScale: number): void {
+  public update(elapsedSeconds: number): void {
+    const stepScale = elapsedSeconds * 60;
     this.time += stepScale;
     const id = this.context.definition.id;
     if (id === 'light-ver-1') {

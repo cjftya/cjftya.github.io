@@ -68,7 +68,8 @@ export class MotionExperiment implements Experiment {
     this.previousPointer.copy(this.context.pointer.position);
   }
 
-  public update(stepScale: number): void {
+  public update(elapsedSeconds: number): void {
+    const stepScale = elapsedSeconds * 60;
     this.time += stepScale;
     switch (this.context.definition.id) {
       case 'time-scaling':
