@@ -5,6 +5,8 @@ import { createRandom, mixSeed } from './random';
 import { average, quantile } from './statistics';
 import type { GameCount, ResearchAlgorithmId, ResearchConfig } from './types';
 import { GAME_COUNTS, sanitizeResearchConfig } from './types';
+import type { ShapeBacktestDiagnostics } from './shape7x7/backtest';
+import { candidateAlgorithm } from './catalog';
 
 export type V3BacktestRangeMode = 'recent' | 'previous-192' | 'custom';
 
@@ -44,6 +46,7 @@ export interface V3BacktestRoundResult {
 }
 
 export interface V3BacktestResult {
+  shape?: ShapeBacktestDiagnostics;
   metricSchemaVersion: 4;
   generatedAt: string;
   dataAsOfRound: number;
@@ -138,6 +141,8 @@ export function runV3WalkForwardBacktest(
 ): V3BacktestResult {
   const options = resolveOptions(requested);
   const range = resolveV3BacktestRange(draws, options);
+  const customBacktest = candidateAlgorithm(options.algorithmId).backtest;
+  if (customBacktest) return customBacktest(draws, options, range, onProgress);
   const fastConfig = sanitizeResearchConfig({
     ...options.config,
     bootstrapIterations: 0,

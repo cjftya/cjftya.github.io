@@ -1,5 +1,10 @@
 # Uriel v3 research architecture
 
+The experimental 7×7 Shape Core v1 extension is documented in
+[uriel-shape7x7.md](uriel-shape7x7.md). It preserves the game UI and adds an
+algorithm-owned generator/backtester without treating experimental scores as
+validated structural signals. Its first 1,000-history null study found no signal.
+
 Uriel v3 generates reproducible six-number candidate games. The UI exposes 5, 10 or 30
 games per selected algorithm. Its core flow is:
 
