@@ -96,7 +96,7 @@ export const V3BacktestPanel = memo(function V3BacktestPanel({
           topFraction,
           coordinateSystem: layout,
         },
-        randomBaselineIterations: 10_000,
+        randomBaselineIterations: algorithmId === 'shape-7x7' ? 1_000 : 10_000,
         resultBootstrapIterations: 1_000,
       };
       worker.onmessage = (event: MessageEvent<V3BacktestWorkerReply>) => {
@@ -137,6 +137,8 @@ export const V3BacktestPanel = memo(function V3BacktestPanel({
       <p className="backtest-intro">
         매 회차 직전 기록만 다시 학습하고 5·10·30게임 중 최고 적중을 같은 게임 수의
         Random Baseline과 비교해요. 큰 표본과 Ensemble은 시간이 오래 걸릴 수 있어요.
+        {algorithmId === 'shape-7x7' &&
+          ' Shape는 합집합 Recall·합집합 크기 보정도 기록하며, 회차당 동일 중복 상한의 랜덤 1,000묶음을 비교해요. 전체 랜덤 이력 재학습은 별도 연구 명령이에요.'}
       </p>
       <div className="backtest-controls">
         <label>

@@ -6,6 +6,7 @@ import type {
 } from './types';
 import type { LottoDraw } from '../../types';
 import { contrastiveEnsembleAlgorithm, representationAlgorithms } from './models';
+import { shape7x7Algorithm } from './shape7x7/algorithm';
 
 export interface ResearchAlgorithmDefinition {
   id: ResearchAlgorithmId;
@@ -38,6 +39,12 @@ export const researchAlgorithmDefinitions: readonly ResearchAlgorithmDefinition[
     id: 'contrastive-ensemble',
     label: 'Contrastive Ensemble',
     description: 'Distance·Distribution·Geometry의 독립 구조 점수를 합쳐요.',
+  },
+  {
+    id: 'shape-7x7',
+    label: '7×7 Topological Shape · 실험',
+    description:
+      '거리·연결·군집으로 비슷한 과거 상태의 다음 Shape를 찾아 6번호 게임을 생성해요. 예측력은 검증 전이에요.',
   },
 ];
 
@@ -74,8 +81,15 @@ export function researchAlgorithmDefinition(
   return definition;
 }
 
+const algorithmRegistry: Record<ResearchAlgorithmId, CandidateAlgorithm> = {
+  'random-baseline': randomBaselineAlgorithm,
+  ...representationAlgorithms,
+  'contrastive-ensemble': contrastiveEnsembleAlgorithm,
+  'shape-7x7': shape7x7Algorithm,
+};
+
 export function candidateAlgorithm(id: ResearchAlgorithmId): CandidateAlgorithm {
-  if (id === 'random-baseline') return randomBaselineAlgorithm;
-  if (id === 'contrastive-ensemble') return contrastiveEnsembleAlgorithm;
-  return representationAlgorithms[id];
+  const algorithm = algorithmRegistry[id];
+  if (!algorithm) throw new Error(`알 수 없는 v3 알고리즘: ${id}`);
+  return algorithm;
 }

@@ -25,6 +25,7 @@ export function selectCandidateGames(
   config: ResearchConfig,
   projectionSeed: number,
 ): ProjectionResult {
+  if (model.generateGames) return model.generateGames(config, projectionSeed);
   if (model.diagnostics.selectedFeatureCount === 0) {
     return {
       gameSets: buildGameSets(

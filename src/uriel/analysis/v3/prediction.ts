@@ -9,6 +9,7 @@ import type {
   ResearchConfig,
 } from './types';
 import { GAME_COUNTS, sanitizeResearchConfig } from './types';
+import { resolveShapeConfig } from './shape7x7/config';
 
 export function predictNextCandidates(
   draws: readonly LottoDraw[],
@@ -21,6 +22,10 @@ export function predictNextCandidates(
   }
   const history = draws.slice(0, historyIndex + 1);
   const config = sanitizeResearchConfig(requestedConfig);
+  if (algorithmId === 'shape-7x7') {
+    config.shape = resolveShapeConfig(config.shape);
+    config.coordinateSystem = 'board';
+  }
   const model = candidateAlgorithm(algorithmId).fit(history, config);
   const projection = selectCandidateGames(
     model,
@@ -48,6 +53,7 @@ export function predictNextCandidates(
 }
 
 function algorithmSeed(id: ResearchAlgorithmId): number {
+  if (id === 'shape-7x7') return 6;
   if (id === 'random-baseline') return 1;
   if (id === 'distance') return 2;
   if (id === 'distribution') return 3;

@@ -12,7 +12,7 @@ import type {
 
 type RepresentationAlgorithmId = Exclude<
   ResearchAlgorithmId,
-  'random-baseline' | 'contrastive-ensemble'
+  'random-baseline' | 'contrastive-ensemble' | 'shape-7x7'
 >;
 
 export function createRepresentationAlgorithm(

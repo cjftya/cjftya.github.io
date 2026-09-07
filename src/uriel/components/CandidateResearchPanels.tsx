@@ -66,6 +66,7 @@ export const CandidateResearchPanels = memo(function CandidateResearchPanels({
     (candidate) => candidate.count === gameCount,
   );
   const topDiagnostics = prediction?.diagnostics.features.slice(0, 12) ?? [];
+  const experiment = prediction?.diagnostics.experimental;
 
   return (
     <>
@@ -163,14 +164,18 @@ export const CandidateResearchPanels = memo(function CandidateResearchPanels({
           <>
             <div className="v3-signal-summary">
               <strong>
-                {prediction.diagnostics.selectedFeatureCount === 0
-                  ? '검증을 통과한 구조 신호 없음'
-                  : `${prediction.diagnostics.selectedFeatureCount}개 구조 신호 사용`}
+                {experiment
+                  ? 'NO SIGNAL · 예측력 미검증 실험'
+                  : prediction.diagnostics.selectedFeatureCount === 0
+                    ? '검증을 통과한 구조 신호 없음'
+                    : `${prediction.diagnostics.selectedFeatureCount}개 구조 신호 사용`}
               </strong>
               <span>
-                {prediction.diagnostics.selectedFeatureCount === 0
-                  ? `균등 무작위 ${prediction.gameSets.at(-1)?.games.length ?? 0}게임 · seed ${prediction.metadata.randomSeed}`
-                  : `${prediction.metadata.sampleSize.toLocaleString('ko-KR')}개 생성 · ${prediction.metadata.retainedCombinations.toLocaleString('ko-KR')}개 유지 · seed ${prediction.metadata.randomSeed}`}
+                {experiment
+                  ? `Shape Core v1 · 7×7 고정 · ${prediction.metadata.sampleSize.toLocaleString('ko-KR')}개 탐색 · seed ${prediction.metadata.randomSeed}`
+                  : prediction.diagnostics.selectedFeatureCount === 0
+                    ? `균등 무작위 ${prediction.gameSets.at(-1)?.games.length ?? 0}게임 · seed ${prediction.metadata.randomSeed}`
+                    : `${prediction.metadata.sampleSize.toLocaleString('ko-KR')}개 생성 · ${prediction.metadata.retainedCombinations.toLocaleString('ko-KR')}개 유지 · seed ${prediction.metadata.randomSeed}`}
               </span>
             </div>
             <div className="candidate-game-heading">
@@ -201,17 +206,20 @@ export const CandidateResearchPanels = memo(function CandidateResearchPanels({
                     <small>
                       {actual !== undefined
                         ? `${matched.length}/6 적중`
-                        : prediction.diagnostics.selectedFeatureCount === 0
-                          ? '무신호 · Random 동률'
-                          : `구조 유사도 ${game.structuralScore.toFixed(3)}`}
+                        : experiment
+                          ? '실험 후보 · 확률 아님'
+                          : prediction.diagnostics.selectedFeatureCount === 0
+                            ? '무신호 · Random 동률'
+                            : `구조 유사도 ${game.structuralScore.toFixed(3)}`}
                     </small>
                   </div>
                 );
               })}
             </div>
             <p className="v3-score-warning">
-              각 행은 실제 6번호 조합이에요. 구조 유사도는 당첨확률이 아니며, 검증된
-              신호가 없으면 결과는 재현 가능한 무작위 후보와 동등해요.
+              {experiment
+                ? '각 행은 실제 6번호 조합이에요. Shape 실험 후보는 랜덤보다 낫다고 검증되지 않았어요. 화면의 원형/보드 선택과 무관하게 이 알고리즘은 7×7 좌표를 사용해요.'
+                : '각 행은 실제 6번호 조합이에요. 구조 유사도는 당첨확률이 아니며, 검증된 신호가 없으면 결과는 재현 가능한 무작위 후보와 동등해요.'}
             </p>
           </>
         )}
@@ -243,7 +251,27 @@ export const CandidateResearchPanels = memo(function CandidateResearchPanels({
                   {prediction.diagnostics.partitions.holdout}
                 </span>
               </div>
-              {topDiagnostics.length === 0 ? (
+              {experiment ? (
+                <div className="candidate-intro">
+                  <p>
+                    {experiment.version} · {experiment.featureCount}차원 · 최근{' '}
+                    {experiment.forecast.config.stateWindow}회 상태 · 이웃{' '}
+                    {experiment.forecast.neighborSuccessorRounds.length}개
+                  </p>
+                  <p>
+                    선택된 과거 상태의 다음 회차:{' '}
+                    {experiment.forecast.neighborSuccessorRounds.join(', ')}
+                  </p>
+                  <p>
+                    학습 종료 {experiment.forecast.trainedThrough}회 · 번호 출현 빈도
+                    미사용 · 중복 상한 {experiment.forecast.config.maxOverlap}개
+                  </p>
+                  <p>
+                    현재 계산은 조합 탐색이며 랜덤 이력 검정이 아니에요. 신호 판정은
+                    별도 walk-forward/null 연구 결과로만 해요.
+                  </p>
+                </div>
+              ) : topDiagnostics.length === 0 ? (
                 <p className="candidate-intro">
                   Random Baseline은 feature를 선택하지 않아요. 다른 구조 모델의 게임
                   적중 성능을 비교하는 기준으로 유지돼요.

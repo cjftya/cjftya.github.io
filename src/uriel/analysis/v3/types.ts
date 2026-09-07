@@ -1,4 +1,11 @@
 import type { LayoutMode, LottoDraw } from '../../types';
+import type { ShapeConfig } from './shape7x7/config';
+import type { ShapeForecast } from './shape7x7/predictor';
+import type {
+  V3BacktestOptions,
+  V3BacktestResult,
+  V3ResolvedBacktestRange,
+} from './backtest';
 
 export const GAME_COUNTS = [5, 10, 30] as const;
 export type GameCount = (typeof GAME_COUNTS)[number];
@@ -7,7 +14,12 @@ export const SAMPLE_SIZES = [100_000, 500_000, 1_000_000, 2_000_000] as const;
 export type MonteCarloSampleSize = (typeof SAMPLE_SIZES)[number];
 
 export type ResearchAlgorithmId =
-  'random-baseline' | 'distance' | 'distribution' | 'geometry' | 'contrastive-ensemble';
+  | 'random-baseline'
+  | 'distance'
+  | 'distribution'
+  | 'geometry'
+  | 'contrastive-ensemble'
+  | 'shape-7x7';
 
 export type CoreRepresentationId = 'distance' | 'distribution' | 'geometry';
 export type AdvancedRepresentationId = 'graph' | 'topology' | 'experimental';
@@ -21,6 +33,7 @@ export interface CombinationFeatureVector {
 }
 
 export interface ResearchConfig {
+  shape?: Partial<ShapeConfig>;
   seed: number;
   sampleSize: number;
   nullSampleSize: number;
@@ -63,6 +76,12 @@ export interface FeatureDiagnostic {
 }
 
 export interface ModelDiagnostics {
+  experimental?: {
+    version: string;
+    status: 'unvalidated';
+    featureCount: number;
+    forecast: ShapeForecast;
+  };
   features: readonly FeatureDiagnostic[];
   selectedFeatureCount: number;
   partitions: PartitionMetadata;
@@ -75,11 +94,25 @@ export interface FittedCombinationModel {
   readonly diagnostics: ModelDiagnostics;
   /** Structural similarity only. This is never a winning probability. */
   scoreCombination(numbers: readonly number[]): number;
+  /** Optional algorithm-owned combination generator, independent of feature significance. */
+  generateGames?(
+    config: ResearchConfig,
+    seed: number,
+  ): {
+    gameSets: readonly CandidateGameSet[];
+    retainedCombinations: number;
+  };
 }
 
 export interface CandidateAlgorithm {
   readonly id: ResearchAlgorithmId;
   fit(history: readonly LottoDraw[], config: ResearchConfig): FittedCombinationModel;
+  backtest?(
+    draws: readonly LottoDraw[],
+    options: V3BacktestOptions,
+    range: V3ResolvedBacktestRange,
+    onProgress?: (completed: number, total: number, round: number) => void,
+  ): V3BacktestResult;
 }
 
 export interface CandidateGame {
@@ -141,6 +174,7 @@ export function sanitizeResearchConfig(
 ): ResearchConfig {
   const merged = { ...DEFAULT_RESEARCH_CONFIG, ...requested };
   return {
+    ...(merged.shape === undefined ? {} : { shape: { ...merged.shape } }),
     seed: Math.trunc(merged.seed) >>> 0,
     sampleSize: clampInteger(merged.sampleSize, 1_000, 2_000_000),
     nullSampleSize: clampInteger(merged.nullSampleSize, 1_000, 250_000),

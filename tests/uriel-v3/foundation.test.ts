@@ -32,6 +32,7 @@ describe('Uriel v3 foundation', () => {
       'distribution',
       'geometry',
       'contrastive-ensemble',
+      'shape-7x7',
     ]);
     expect(DEFAULT_RESEARCH_ALGORITHM_ID).toBe('random-baseline');
   });
