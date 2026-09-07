@@ -22,8 +22,9 @@ describe('public/data/projects.json', () => {
       'viola',
       'wedding-card',
       'uriel',
+      'virus-sim',
     ]);
-    expect(collection.projects).toHaveLength(8);
+    expect(collection.projects).toHaveLength(9);
     expect(
       collection.galaxies.every(
         (galaxy) =>
@@ -46,7 +47,7 @@ describe('public/data/projects.json', () => {
     ).toHaveLength(5);
     expect(
       collection.projects.filter((project) => project.galaxyId === 'pages-archive'),
-    ).toHaveLength(3);
+    ).toHaveLength(4);
     expect(
       collection.projects
         .filter((project) => project.galaxyId === 'jelly-garden')
@@ -59,6 +60,7 @@ describe('public/data/projects.json', () => {
     expect(
       collection.projects
         .filter((project) => project.galaxyId === 'pages-archive')
+        .filter((project) => project.id !== 'virus-sim')
         .every((project) => project.links.github === null),
     ).toBe(true);
     expect(
@@ -78,6 +80,12 @@ describe('public/data/projects.json', () => {
     ).toEqual({
       github: null,
       page: '/projects/uriel/',
+    });
+    expect(
+      collection.projects.find((project) => project.id === 'virus-sim')?.links,
+    ).toEqual({
+      github: 'https://github.com/cjftya/cjftya.github.io/tree/master/src/virus-sim',
+      page: '/projects/virus-sim/',
     });
     expect(
       collection.projects.every(

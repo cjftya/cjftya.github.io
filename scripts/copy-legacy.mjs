@@ -5,7 +5,9 @@ const repositoryRoot = resolve(import.meta.dirname, '..');
 const outputRoot = resolve(repositoryRoot, 'dist');
 const legacyDirectories = ['projects', 'shared'];
 const builtProjectDirectories = new Set(
-  ['viola', 'uriel'].map((project) => resolve(repositoryRoot, 'projects', project)),
+  ['viola', 'uriel', 'virus-sim'].map((project) =>
+    resolve(repositoryRoot, 'projects', project),
+  ),
 );
 
 await mkdir(outputRoot, { recursive: true });

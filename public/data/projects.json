@@ -514,6 +514,61 @@
           "tilt": 16
         }
       }
+    },
+    {
+      "id": "virus-sim",
+      "galaxyId": "pages-archive",
+      "name": "Virus Sim",
+      "summary": "바이러스의 구조와 파지의 세균 감염 과정을 3D로 관찰하는 브라우저 실험장이에요.",
+      "status": "active",
+      "featured": true,
+      "order": 40,
+      "tags": [
+        "바이러스 구조",
+        "파지 감염",
+        "3D 시뮬레이션"
+      ],
+      "links": {
+        "github": "https://github.com/cjftya/cjftya.github.io/tree/master/src/virus-sim",
+        "page": "/projects/virus-sim/"
+      },
+      "details": {
+        "category": "브라우저 생물학 실험",
+        "description": "세 가지 바이러스 형태를 분해·단면으로 살펴보고, 재현 가능한 모형에서 꼬리 달린 DNA 파지의 부착·유전체 전달·내부 생산·조립·용균 과정을 따라가요.",
+        "techStack": [
+          "TypeScript",
+          "Three.js",
+          "Vite"
+        ]
+      },
+      "planet": {
+        "seed": 3411,
+        "orbit": {
+          "radius": 13.6,
+          "speed": 0.034,
+          "startAngle": 128,
+          "inclination": -5
+        },
+        "rotation": {
+          "speed": 0.13,
+          "direction": "counterclockwise",
+          "axisTilt": 17
+        },
+        "shape": {
+          "radius": 0.71,
+          "roughness": 0.082,
+          "frequency": 4.1
+        },
+        "surface": {
+          "baseColor": "#4fd5cb"
+        },
+        "ring": {
+          "enabled": false,
+          "color": "#a8fff7",
+          "width": 0.15,
+          "tilt": -9
+        }
+      }
     }
   ]
 }
