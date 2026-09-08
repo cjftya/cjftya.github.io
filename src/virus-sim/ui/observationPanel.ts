@@ -82,6 +82,31 @@ export function observationInfoMarkup(): string {
         <button id="save-image" type="button">이미지 저장</button>
       </div>
 
+      <section class="experience-console" aria-label="Scale Dive">
+        <div class="experience-heading"><div><p class="eyebrow">SCALE DIVE</p><h2>하나의 세계로 들어가기</h2></div><span id="hero-badge" hidden>HERO</span></div>
+        <p id="experience-copy">개체를 선택하고 움직임을 따라가며 표면까지 연속해서 접근해요.</p>
+        <div class="experience-actions">
+          <button class="primary-action" id="experience-follow" type="button">개체 따라가기</button>
+          <button class="primary-action" id="experience-approach" type="button" hidden>표면에 접근</button>
+          <button class="primary-action" id="experience-surface" type="button" hidden>초근접 관찰</button>
+          <button class="primary-action" id="experience-interior" type="button" hidden>내부로 진입</button>
+          <button id="guided-journey" type="button" hidden>내부 가이드 여정</button>
+          <button id="experience-back-surface" type="button" hidden>표면으로 나오기</button>
+          <button id="experience-exit" type="button" hidden>관찰실로 복귀</button>
+        </div>
+        <div class="structural-actions" id="structural-actions" hidden>
+          <button data-structural-reveal="peel" type="button">외피 벗기기</button>
+          <button data-structural-reveal="cutaway" type="button">점진 단면</button>
+          <button data-structural-reveal="exploded" type="button">공간 분해</button>
+          <button id="structure-reassemble" type="button">재조립</button>
+        </div>
+        <div class="experience-tools">
+          <label><input id="motion-trace" type="checkbox" /><span>이동 궤적</span></label>
+          <label><input id="temporal-echo" type="checkbox" /><span>시간 잔상</span></label>
+          <label><input id="auto-documentary" type="checkbox" checked /><span>자동 다큐</span></label>
+        </div>
+      </section>
+
       <details class="observatory-details" open>
         <summary><span><small>PART EXPLORER</small>부위별로 살펴보기</span></summary>
         <div class="part-list" id="observation-part-list">${partButtons}</div>
@@ -140,7 +165,7 @@ export function observationFooterMarkup(): string {
     <footer class="observation-bar">
       <div class="run-controls"><button class="primary-action" id="observation-play-pause" type="button">Ⅱ 정지</button><button id="observation-restart" type="button">처음 자세</button><button id="observation-return" type="button">대상으로 돌아가기</button></div>
       <label class="motion-select">움직임<select id="observation-motion-mode"><option value="active" selected>활동적 관찰</option><option value="calm">차분한 관찰</option><option value="brownian">확산 모형(고급)</option><option value="static">정지</option></select></label>
-      <div class="speed-controls observation-speed" role="group" aria-label="관찰 배속"><span>배속</span><button data-observation-speed="0.5" type="button">0.5×</button><button class="is-active" data-observation-speed="1" type="button">1×</button><button data-observation-speed="2" type="button">2×</button></div>
+      <div class="speed-controls observation-speed" role="group" aria-label="Time Lens 배속"><span>Time Lens</span><button data-observation-speed="0.1" type="button">0.1×</button><button data-observation-speed="0.25" type="button">0.25×</button><button data-observation-speed="0.5" type="button">0.5×</button><button class="is-active" data-observation-speed="1" type="button">1×</button><button data-observation-speed="2" type="button">2×</button><button data-observation-speed="4" type="button">4×</button><button data-observation-speed="8" type="button">8×</button></div>
       <div class="view-toggles motion-toggles"><label><input id="observation-translation" type="checkbox" checked />이동</label><label><input id="observation-rotation" type="checkbox" checked />회전</label></div>
       <div class="run-meta"><span id="observation-tick">tick 0</span><span id="observation-status">활동적 관찰</span></div>
     </footer>`;

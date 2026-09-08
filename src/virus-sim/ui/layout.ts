@@ -10,12 +10,12 @@ export function renderAppLayout(root: HTMLElement): void {
       <header class="app-header">
         <div class="brand-block">
           <a class="home-link" href="/" aria-label="Jelly Garden 홈으로">← Garden</a>
-          <div><p class="eyebrow">INTERACTIVE BIOLOGY MODEL · v2.5</p><h1>Virus Sim</h1></div>
+          <div><p class="eyebrow">MICROWORLD EXPERIENCE · v3</p><h1>Virus Sim</h1></div>
         </div>
         <div class="observatory-title"><span class="live-dot"></span><strong>구조 관찰실</strong><small>검증된 실제 바이러스 56종</small></div>
         <div class="header-actions">
           <label>글자 크기<select id="font-scale"><option value="100">100%</option><option value="115">115%</option><option value="130">130%</option></select></label>
-          <label>품질<select id="quality-select"><option value="high">선명하게</option><option value="low">가볍게</option></select></label>
+          <label>품질<select id="quality-select"><option value="standard" selected>Standard</option><option value="enhanced">Enhanced</option><option value="performance">Performance</option></select></label>
           <button id="open-guide" type="button">모델 안내</button>
         </div>
       </header>
@@ -24,8 +24,11 @@ export function renderAppLayout(root: HTMLElement): void {
         <aside class="control-panel panel-scroll" aria-label="바이러스 도감">${observationControlsMarkup()}</aside>
         <section class="stage" aria-label="3D 바이러스 구조 관찰 화면">
           <div id="viewport" class="viewport"></div>
+          <div class="microscope-depth" aria-hidden="true"></div>
           <div class="stage-overlay top-left"><span class="live-dot"></span><span id="stage-label">OBSERVATORY · T4</span></div>
           <div class="stage-overlay top-right viewport-actions"><button id="reset-camera" type="button">전체 보기</button><button id="focus-selection" type="button">선택 대상 보기</button></div>
+          <div class="experience-hud" aria-live="polite"><strong id="experience-stage">OBSERVE</strong><span id="experience-path">관찰실</span><b id="time-lens-hud">1×</b></div>
+          <button class="moment-cue" id="moment-cue" type="button" hidden>관찰 순간 감지</button>
           <div class="scale-legend"><span></span>종별 정규화 표시</div>
           <div class="context-message" id="context-message" hidden>3D 컨텍스트가 중단됐어요. 브라우저가 복구하는 동안 잠시 기다려주세요.</div>
         </section>

@@ -8,19 +8,34 @@ interface CameraTransition {
   readonly fromTarget: THREE.Vector3;
   readonly toPosition: THREE.Vector3;
   readonly toTarget: THREE.Vector3;
+  readonly token: string;
+}
+
+export interface CameraWaypoint {
+  readonly position: THREE.Vector3;
+  readonly target: THREE.Vector3;
+  readonly duration: number;
 }
 
 export class CameraRig {
   private transition: CameraTransition | null = null;
+  private waypointQueue: CameraWaypoint[] = [];
+  private queueToken = '';
 
   constructor(
     private readonly camera: THREE.PerspectiveCamera,
     private readonly controls: OrbitControls,
+    private readonly onTransitionComplete?: (token: string) => void,
   ) {
     this.controls.addEventListener('start', this.cancelTransition);
   }
 
-  frameObject(object: THREE.Object3D, immediate = false): void {
+  frameObject(
+    object: THREE.Object3D,
+    immediate = false,
+    duration = 900,
+    token = 'observe',
+  ): void {
     object.updateWorldMatrix(true, true);
     const box = visibleBounds(object);
     if (box.isEmpty()) return;
@@ -36,7 +51,13 @@ export class CameraRig {
     const direction = this.camera.position.clone().sub(this.controls.target);
     if (direction.lengthSq() < 1e-6) direction.set(0.8, 0.42, 1);
     direction.normalize();
-    this.moveTo(center, center.clone().addScaledVector(direction, distance), immediate);
+    this.moveTo(
+      center,
+      center.clone().addScaledVector(direction, distance),
+      immediate,
+      duration,
+      token,
+    );
   }
 
   focusObject(object: THREE.Object3D): void {
@@ -52,6 +73,9 @@ export class CameraRig {
     this.moveTo(
       center,
       center.clone().addScaledVector(direction, Math.max(2.1, radius * 3.15)),
+      false,
+      760,
+      'focus',
     );
   }
 
@@ -63,7 +87,34 @@ export class CameraRig {
     this.moveTo(
       point,
       point.clone().addScaledVector(direction, Math.max(2.1, radius * 3.15)),
+      false,
+      760,
+      'focus',
     );
+  }
+
+  transitionTo(
+    target: THREE.Vector3,
+    position: THREE.Vector3,
+    duration: number,
+    token: string,
+    immediate = false,
+  ): void {
+    this.waypointQueue = [];
+    this.queueToken = '';
+    this.moveTo(target, position, immediate, duration, token);
+  }
+
+  playPath(waypoints: readonly CameraWaypoint[], token: string): void {
+    if (waypoints.length === 0) return;
+    this.cancelAutomation();
+    this.queueToken = token;
+    this.waypointQueue = waypoints.map((waypoint) => ({
+      ...waypoint,
+      position: waypoint.position.clone(),
+      target: waypoint.target.clone(),
+    }));
+    this.startNextWaypoint();
   }
 
   follow(delta: THREE.Vector3): void {
@@ -96,38 +147,75 @@ export class CameraRig {
       this.transition.toTarget,
       eased,
     );
-    if (progress >= 1) this.transition = null;
+    if (progress >= 1) {
+      const token = this.transition.token;
+      this.transition = null;
+      if (this.waypointQueue.length > 0) this.startNextWaypoint(time);
+      else {
+        const completeToken = this.queueToken || token;
+        this.queueToken = '';
+        this.onTransitionComplete?.(completeToken);
+      }
+    }
+  }
+
+  cancelAutomation(): void {
+    this.transition = null;
+    this.waypointQueue = [];
+    this.queueToken = '';
+  }
+
+  setMinimumDistance(distance: number): void {
+    this.controls.minDistance = Math.max(0.04, distance);
   }
 
   dispose(): void {
     this.controls.removeEventListener('start', this.cancelTransition);
-    this.transition = null;
+    this.cancelAutomation();
   }
 
   private moveTo(
     target: THREE.Vector3,
     position: THREE.Vector3,
     immediate = false,
+    duration = 760,
+    token = 'camera',
   ): void {
     if (immediate) {
-      this.transition = null;
+      this.cancelAutomation();
       this.controls.target.copy(target);
       this.camera.position.copy(position);
       this.controls.update();
+      this.onTransitionComplete?.(token);
       return;
     }
     this.transition = {
       startedAt: performance.now(),
-      duration: 580,
+      duration: Math.max(120, duration),
       fromPosition: this.camera.position.clone(),
       fromTarget: this.controls.target.clone(),
       toPosition: position,
       toTarget: target,
+      token,
+    };
+  }
+
+  private startNextWaypoint(time = performance.now()): void {
+    const waypoint = this.waypointQueue.shift();
+    if (!waypoint) return;
+    this.transition = {
+      startedAt: time,
+      duration: Math.max(120, waypoint.duration),
+      fromPosition: this.camera.position.clone(),
+      fromTarget: this.controls.target.clone(),
+      toPosition: waypoint.position,
+      toTarget: waypoint.target,
+      token: this.queueToken,
     };
   }
 
   private readonly cancelTransition = (): void => {
-    this.transition = null;
+    this.cancelAutomation();
   };
 }
 

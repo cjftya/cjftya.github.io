@@ -2,7 +2,10 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import type { ObservationPartId, ObservationSnapshot } from '../observation/types';
 import { CameraRig } from './CameraRig';
+import { FluidAmbience } from './environment/FluidAmbience';
 import { ObservationView } from './ObservationView';
+import { FocusController } from './postfx/FocusController';
+import { QUALITY_SETTINGS, type ExperienceQuality } from './quality/quality';
 
 export interface SelectionDetails {
   readonly title: string;
@@ -19,6 +22,8 @@ export class VirusScene {
   private readonly renderer: THREE.WebGLRenderer;
   private readonly controls: OrbitControls;
   private readonly cameraRig: CameraRig;
+  private readonly ambience: FluidAmbience;
+  private readonly focusController: FocusController;
   private readonly root = new THREE.Group();
   private readonly raycaster = new THREE.Raycaster();
   private readonly pointer = new THREE.Vector2();
@@ -28,7 +33,8 @@ export class VirusScene {
   private snapshot: ObservationSnapshot | null = null;
   private pointerStart: { x: number; y: number; time: number; id: number } | null =
     null;
-  private quality: 'high' | 'low' = 'high';
+  private quality: ExperienceQuality = 'standard';
+  private startedAt = performance.now();
 
   constructor(
     private readonly container: HTMLElement,
@@ -49,21 +55,27 @@ export class VirusScene {
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
     this.renderer.toneMappingExposure = 1.12;
     this.renderer.localClippingEnabled = true;
-    this.setRendererPixelRatio('high');
+    this.setRendererPixelRatio('standard');
 
-    this.scene.background = new THREE.Color(0x050b17);
+    this.scene.background = new THREE.Color(0x06101c);
     this.scene.add(this.root);
     this.addLights();
-    this.addStars();
+    this.ambience = new FluidAmbience(this.scene);
     this.camera.position.set(7.4, 4.8, 8.8);
     this.controls = new OrbitControls(this.camera, this.canvas);
     this.controls.enableDamping = true;
     this.controls.dampingFactor = 0.075;
-    this.controls.minDistance = 2.2;
+    this.controls.minDistance = 0.06;
     this.controls.maxDistance = 24;
     this.controls.target.set(0, 0, 0);
     this.controls.update();
-    this.cameraRig = new CameraRig(this.camera, this.controls);
+    this.cameraRig = new CameraRig(this.camera, this.controls, (token) => {
+      this.container.dispatchEvent(
+        new CustomEvent('virus-camera-settled', { bubbles: true, detail: token }),
+      );
+    });
+    this.focusController = new FocusController(this.renderer, this.scene, this.camera);
+    this.focusController.setQuality(this.quality);
 
     this.controls.addEventListener('start', this.handleControlsStart);
     this.canvas.addEventListener('pointerdown', this.handlePointerDown);
@@ -78,6 +90,7 @@ export class VirusScene {
 
   show(snapshot: ObservationSnapshot): void {
     const rebuild = this.observationView?.presetId !== snapshot.presetId;
+    const hadView = this.observationView !== null;
     this.snapshot = snapshot;
     if (rebuild || !this.observationView) {
       const cameraPosition = this.camera.position.clone();
@@ -90,28 +103,33 @@ export class VirusScene {
         snapshot.presetId,
         this.quality,
       );
-      if (!rebuild) {
+      if (!rebuild || hadView) {
         this.camera.position.copy(cameraPosition);
         this.controls.target.copy(cameraTarget);
+        this.controls.update();
       }
     }
+    this.updateExperienceAppearance(snapshot);
     this.observationView.update(snapshot, 1);
-    this.renderer.render(this.scene, this.camera);
+    this.renderFrame();
   }
 
   update(snapshot: ObservationSnapshot, interpolation: number): void {
     if (this.observationView?.presetId !== snapshot.presetId) this.show(snapshot);
     this.snapshot = snapshot;
+    this.updateExperienceAppearance(snapshot);
     this.observationView?.update(snapshot, interpolation);
-    this.renderer.render(this.scene, this.camera);
+    this.ambience.update((performance.now() - this.startedAt) / 1000);
+    this.renderFrame();
   }
 
-  setQuality(quality: 'high' | 'low'): void {
+  setQuality(quality: ExperienceQuality): void {
     if (this.quality === quality) return;
     this.quality = quality;
     this.setRendererPixelRatio(quality);
-    const stars = this.scene.getObjectByName('decorative-stars');
-    if (stars) stars.visible = quality === 'high';
+    this.ambience.setQuality(quality);
+    this.focusController.setQuality(quality);
+    this.renderer.shadowMap.enabled = QUALITY_SETTINGS[quality].shadows;
     if (this.snapshot) {
       const snapshot = this.snapshot;
       const cameraPosition = this.camera.position.clone();
@@ -124,16 +142,20 @@ export class VirusScene {
         snapshot.presetId,
         quality,
       );
-      this.observationView.update(snapshot, 1);
       this.camera.position.copy(cameraPosition);
       this.controls.target.copy(cameraTarget);
       this.controls.update();
+      this.observationView.update(snapshot, 1);
     }
     this.resize();
   }
 
   resetCamera(): void {
-    this.observationView?.frameAll();
+    this.observationView?.frameAll(false);
+  }
+
+  cancelCameraAutomation(): void {
+    this.cameraRig.cancelAutomation();
   }
 
   focusSelection(): void {
@@ -157,7 +179,7 @@ export class VirusScene {
   }
 
   savePng(filename: string): Promise<boolean> {
-    this.renderer.render(this.scene, this.camera);
+    this.renderFrame();
     return new Promise((resolve) => {
       this.canvas.toBlob((blob) => {
         if (!blob) {
@@ -186,11 +208,8 @@ export class VirusScene {
     this.cameraRig.dispose();
     this.controls.dispose();
     this.clearModel();
-    const stars = this.scene.getObjectByName('decorative-stars');
-    if (stars instanceof THREE.Points) {
-      stars.geometry.dispose();
-      if (stars.material instanceof THREE.Material) stars.material.dispose();
-    }
+    this.ambience.dispose();
+    this.focusController.dispose();
     this.renderer.dispose();
     this.canvas.remove();
   }
@@ -201,6 +220,7 @@ export class VirusScene {
     this.camera.aspect = width / height;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(width, height, false);
+    this.focusController.resize(width, height, this.renderer.getPixelRatio());
   };
 
   private readonly handleControlsStart = (): void => {
@@ -261,56 +281,44 @@ export class VirusScene {
     this.root.clear();
   }
 
-  private setRendererPixelRatio(quality: 'high' | 'low'): void {
-    const maximum =
-      quality === 'low'
-        ? 1
-        : window.matchMedia('(pointer: coarse)').matches
-          ? 1.5
-          : 1.8;
+  private setRendererPixelRatio(quality: ExperienceQuality): void {
+    const configured = QUALITY_SETTINGS[quality].pixelRatio;
+    const maximum = window.matchMedia('(pointer: coarse)').matches
+      ? Math.min(configured, 1.45)
+      : configured;
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, maximum));
   }
 
   private addLights(): void {
-    this.scene.add(new THREE.HemisphereLight(0x9fc9ff, 0x07101d, 1.25));
-    const key = new THREE.DirectionalLight(0xbff9ff, 4.2);
-    key.position.set(6, 8, 7);
+    this.scene.add(new THREE.HemisphereLight(0xb9d8e8, 0x07101a, 1.55));
+    const key = new THREE.DirectionalLight(0xd7ffff, 3.7);
+    key.position.set(7, 9, 8);
     this.scene.add(key);
-    const rim = new THREE.PointLight(0x806dff, 25, 20, 2);
-    rim.position.set(-6, -2, -5);
+    const fill = new THREE.DirectionalLight(0x7099c7, 1.35);
+    fill.position.set(-5, 2, 6);
+    this.scene.add(fill);
+    const rim = new THREE.PointLight(0x8978ff, 28, 24, 2);
+    rim.position.set(-7, 1, -6);
     this.scene.add(rim);
-    const warm = new THREE.PointLight(0xffbc74, 16, 14, 2);
+    const warm = new THREE.PointLight(0xffc580, 13, 16, 2);
     warm.position.set(4, -3, 3);
     this.scene.add(warm);
   }
 
-  private addStars(): void {
-    const positions = new Float32Array(420 * 3);
-    let state = 971;
-    const next = (): number => {
-      state = (state * 16807) % 2147483647;
-      return state / 2147483647;
-    };
-    for (let index = 0; index < positions.length; index += 3) {
-      const radius = 18 + next() * 14;
-      const theta = next() * Math.PI * 2;
-      const phi = Math.acos(2 * next() - 1);
-      positions[index] = radius * Math.sin(phi) * Math.cos(theta);
-      positions[index + 1] = radius * Math.cos(phi);
-      positions[index + 2] = radius * Math.sin(phi) * Math.sin(theta);
-    }
-    const geometry = new THREE.BufferGeometry();
-    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    const stars = new THREE.Points(
-      geometry,
-      new THREE.PointsMaterial({
-        color: 0x89a9d4,
-        size: 0.035,
-        transparent: true,
-        opacity: 0.55,
-      }),
+  private updateExperienceAppearance(snapshot: ObservationSnapshot): void {
+    this.container.dataset.experienceStage = snapshot.experience.stage;
+    this.focusController.setStage(snapshot.experience.stage);
+    (this.container.parentElement ?? this.container).style.setProperty(
+      '--focus-depth',
+      snapshot.experience.stage === 'interior'
+        ? '0.72'
+        : snapshot.experience.stage === 'surface'
+          ? '0.48'
+          : '0.18',
     );
-    stars.name = 'decorative-stars';
-    this.scene.add(stars);
+  }
+
+  private renderFrame(): void {
+    this.focusController.render(this.controls.target);
   }
 }
