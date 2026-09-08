@@ -1,3 +1,6 @@
+import type { ExperienceState } from '../experience/ExperienceState';
+import type { SpecimenPersonality } from './specimen/SpecimenPersonality';
+
 export type VirusId = string;
 export type ObservationPresetId = VirusId;
 
@@ -211,6 +214,8 @@ export interface ObservationState {
   readonly layerVisibility: LayerVisibility;
   readonly demo: ObservationDemoState;
   readonly motion: ObservationMotionState;
+  readonly experience: ExperienceState;
+  readonly personality: SpecimenPersonality;
 }
 
 export interface ObservationSnapshot extends ObservationState {

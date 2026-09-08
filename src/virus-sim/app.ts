@@ -4,7 +4,10 @@ import {
   isVirusId,
   nextDiscovery,
 } from './catalog/registry';
+import { getExperienceProfile } from './catalog/experienceProfiles';
 import { getStructureSource } from './catalog/sources';
+import { ExperienceDirector } from './experience/ExperienceDirector';
+import type { ExperienceStage } from './experience/ExperienceState';
 import { OBSERVATION_PARTS } from './model/observationPresets';
 import { ObservationController } from './observation/ObservationController';
 import { OBSERVATION_FIXED_DT } from './observation/motion';
@@ -18,6 +21,7 @@ import type {
   ObservationSnapshot,
 } from './observation/types';
 import { VirusScene, type SelectionDetails } from './rendering/VirusScene';
+import type { ExperienceQuality } from './rendering/quality/quality';
 import { renderAppLayout, requiredElement } from './ui/layout';
 import {
   type CatalogCollection,
@@ -39,6 +43,7 @@ export class VirusSimApp {
     window.matchMedia('(prefers-reduced-motion: reduce)').matches,
   );
   private readonly storage = window.localStorage;
+  private readonly experienceDirector = new ExperienceDirector();
   private favorites = loadFavorites(this.storage);
   private recent = loadRecent(this.storage);
   private catalogFilter: CatalogTag | 'all' = 'all';
@@ -48,6 +53,8 @@ export class VirusSimApp {
   private lastUiTime = 0;
   private animationFrame = 0;
   private disposed = false;
+  private lastInteractionTime = performance.now();
+  private momentVisibleUntil = 0;
 
   constructor(private readonly root: HTMLElement) {
     renderAppLayout(root);
@@ -72,6 +79,8 @@ export class VirusSimApp {
     this.disposed = true;
     cancelAnimationFrame(this.animationFrame);
     document.removeEventListener('visibilitychange', this.handleVisibility);
+    this.root.removeEventListener('pointerdown', this.handleAnyInteraction, true);
+    this.root.removeEventListener('keydown', this.handleAnyInteraction, true);
     this.scene.dispose();
     this.root.replaceChildren();
   }
@@ -102,6 +111,69 @@ export class VirusSimApp {
           this.updateCatalogFilter();
         });
       });
+
+    this.button('#experience-follow').addEventListener('click', () =>
+      this.activateExperience('follow'),
+    );
+    this.button('#experience-approach').addEventListener('click', () =>
+      this.activateExperience('approach'),
+    );
+    this.button('#experience-surface').addEventListener('click', () =>
+      this.activateExperience('surface'),
+    );
+    this.button('#experience-interior').addEventListener('click', () => {
+      const snapshot = this.observation.getSnapshot();
+      if (!getExperienceProfile(snapshot.presetId).supportedExperience.interiorDive)
+        return;
+      this.observation.enterInterior();
+      this.syncUi(this.observation.getSnapshot());
+    });
+    this.button('#guided-journey').addEventListener('click', () => {
+      const snapshot = this.observation.getSnapshot();
+      if (!getExperienceProfile(snapshot.presetId).interiorPath) return;
+      this.observation.startGuidedJourney();
+      this.syncUi(this.observation.getSnapshot());
+    });
+    this.button('#experience-back-surface').addEventListener('click', () =>
+      this.activateExperience('surface'),
+    );
+    this.button('#experience-exit').addEventListener('click', () =>
+      this.activateExperience('return'),
+    );
+    this.root
+      .querySelectorAll<HTMLButtonElement>('[data-structural-reveal]')
+      .forEach((button) => {
+        button.addEventListener('click', () => {
+          const mode = button.dataset.structuralReveal;
+          if (mode === 'peel' || mode === 'cutaway' || mode === 'exploded') {
+            this.observation.startStructuralReveal(mode);
+            this.syncUi(this.observation.getSnapshot());
+          }
+        });
+      });
+    this.button('#structure-reassemble').addEventListener('click', () => {
+      this.observation.reassemble();
+      this.syncUi(this.observation.getSnapshot());
+    });
+    this.checkbox('#motion-trace').addEventListener('change', (event) => {
+      this.observation.setMotionTraceVisible(
+        (event.target as HTMLInputElement).checked,
+      );
+    });
+    this.checkbox('#temporal-echo').addEventListener('change', (event) => {
+      this.observation.setTemporalEchoVisible(
+        (event.target as HTMLInputElement).checked,
+      );
+    });
+    this.checkbox('#auto-documentary').addEventListener('change', (event) => {
+      this.observation.setAutoDocumentary((event.target as HTMLInputElement).checked);
+      this.syncUi(this.observation.getSnapshot());
+    });
+    this.button('#moment-cue').addEventListener('click', () => {
+      this.activateExperience('documentary');
+      this.experienceDirector.markDocumentaryShot(performance.now());
+      this.element<HTMLElement>('#moment-cue').hidden = true;
+    });
     this.root
       .querySelectorAll<HTMLButtonElement>('[data-catalog-collection]')
       .forEach((button) => {
@@ -234,7 +306,7 @@ export class VirusSimApp {
       this.syncUi(this.observation.getSnapshot());
     });
     this.button('#observation-return').addEventListener('click', () =>
-      this.scene.resetCamera(),
+      this.activateExperience('return'),
     );
     this.root
       .querySelectorAll<HTMLButtonElement>('[data-observation-speed]')
@@ -256,9 +328,8 @@ export class VirusSimApp {
     });
 
     this.select('#quality-select').addEventListener('change', (event) => {
-      this.scene.setQuality(
-        (event.target as HTMLSelectElement).value === 'low' ? 'low' : 'high',
-      );
+      const quality = (event.target as HTMLSelectElement).value as ExperienceQuality;
+      this.scene.setQuality(quality);
     });
     this.select('#font-scale').addEventListener('change', (event) => {
       const value = (event.target as HTMLSelectElement).value as FontScale;
@@ -266,7 +337,7 @@ export class VirusSimApp {
       saveFontScale(this.storage, value);
     });
     this.button('#reset-camera').addEventListener('click', () =>
-      this.scene.resetCamera(),
+      this.activateExperience('return'),
     );
     this.button('#focus-selection').addEventListener('click', () => {
       this.observation.freeze(1);
@@ -277,8 +348,16 @@ export class VirusSimApp {
     this.button('#open-guide').addEventListener('click', () => guide.showModal());
 
     this.root.addEventListener('virus-observation-interaction', () => {
-      if (this.observation.getSnapshot().demo.kind === 'none') return;
-      this.observation.stopDemo();
+      this.lastInteractionTime = performance.now();
+      this.scene.cancelCameraAutomation();
+      const snapshot = this.observation.getSnapshot();
+      if (snapshot.demo.kind !== 'none') this.observation.stopDemo();
+      this.observation.takeManualControl();
+      this.syncUi(this.observation.getSnapshot());
+    });
+    this.root.addEventListener('virus-camera-settled', (event) => {
+      if ((event as CustomEvent<string>).detail !== 'return') return;
+      this.observation.completeReturn();
       this.syncUi(this.observation.getSnapshot());
     });
     this.root.addEventListener('virus-context-status', (event) => {
@@ -286,10 +365,18 @@ export class VirusSimApp {
       this.element<HTMLElement>('#context-message').hidden = !lost;
       if (lost) this.observation.setRunning(false);
     });
+    this.root.addEventListener('pointerdown', this.handleAnyInteraction, true);
+    this.root.addEventListener('keydown', this.handleAnyInteraction, true);
     document.addEventListener('visibilitychange', this.handleVisibility);
   }
 
+  private activateExperience(stage: ExperienceStage): void {
+    this.observation.setExperienceStage(stage);
+    this.syncUi(this.observation.getSnapshot());
+  }
+
   private activateVirus(id: string): void {
+    this.lastInteractionTime = performance.now();
     this.observation.setPreset(id);
     this.accumulator = 0;
     this.recordRecent(id);
@@ -355,6 +442,8 @@ export class VirusSimApp {
       <p>${definition.description}</p>
       <dl><div><dt>입자 상태</dt><dd>${definition.particleState}</dd></div><div><dt>핵심 형태</dt><dd>${definition.feature}</dd></div><div><dt>유전체</dt><dd>${definition.genomeLabel}</dd></div></dl>`;
     this.text('#stage-label', `OBSERVATORY · ${definition.shortName.toUpperCase()}`);
+    const profile = getExperienceProfile(definition.id);
+    this.element<HTMLElement>('#hero-badge').hidden = !profile.hero;
     this.root
       .querySelectorAll<HTMLButtonElement>('[data-observation-part]')
       .forEach((button) => {
@@ -437,6 +526,9 @@ export class VirusSimApp {
     this.checkbox('#observation-follow').checked = snapshot.followTarget;
     this.checkbox('#observation-translation').checked = snapshot.translationEnabled;
     this.checkbox('#observation-rotation').checked = snapshot.rotationEnabled;
+    this.checkbox('#motion-trace').checked = snapshot.experience.motionTraceVisible;
+    this.checkbox('#temporal-echo').checked = snapshot.experience.temporalEchoVisible;
+    this.checkbox('#auto-documentary').checked = snapshot.experience.autoDocumentary;
     this.select('#observation-motion-mode').value = snapshot.motion.mode;
     this.root
       .querySelectorAll<HTMLInputElement>('[data-observation-layer]')
@@ -450,6 +542,7 @@ export class VirusSimApp {
       ? 'Ⅱ 정지'
       : '▶ 계속';
     this.text('#observation-tick', `tick ${snapshot.tick}`);
+    this.syncExperienceUi(snapshot);
     const motionLabel: Record<MotionMode, string> = {
       active: '활동적 관찰',
       calm: '차분한 관찰',
@@ -478,6 +571,86 @@ export class VirusSimApp {
       );
       this.text('#demo-status-copy', pose.label);
     }
+  }
+
+  private syncExperienceUi(snapshot: ObservationSnapshot): void {
+    const stage = snapshot.experience.stage;
+    const profile = getExperienceProfile(snapshot.presetId);
+    const labels: Record<
+      ExperienceStage,
+      { title: string; path: string; copy: string }
+    > = {
+      observe: {
+        title: 'OBSERVE',
+        path: '관찰실',
+        copy: '개체를 선택하고 움직임을 따라가며 표면까지 연속해서 접근해요.',
+      },
+      follow: {
+        title: 'FOLLOW',
+        path: '관찰실 → 추적',
+        copy: '카메라가 개체와 같은 흐름으로 움직여요. 표면으로 더 가까이 갈 수 있어요.',
+      },
+      approach: {
+        title: 'APPROACH',
+        path: '관찰실 → 추적 → 접근',
+        copy: '실제 공간을 이동하며 표면 구조에 접근하고 있어요.',
+      },
+      surface: {
+        title: 'SURFACE',
+        path: '관찰실 → 표면',
+        copy: profile.hero
+          ? '표면 구조 사이를 둘러보거나 근거가 있는 내부 경로로 들어갈 수 있어요.'
+          : '표면과 구조 분해를 관찰할 수 있어요. 내부 경로는 Hero Virus에만 제공해요.',
+      },
+      interior: {
+        title: 'INTERIOR',
+        path: '관찰실 → 표면 → 내부',
+        copy: '바깥층을 통과해 내부 구조와 유전체 사이를 살펴보고 있어요.',
+      },
+      structure: {
+        title: 'STRUCTURE',
+        path: '관찰실 → 구조 탐색',
+        copy: '외피와 내부 층이 공간적으로 분리되는 과정을 관찰해요.',
+      },
+      documentary: {
+        title: 'DOCUMENTARY',
+        path: '자동 관찰 중 · 입력하면 즉시 종료',
+        copy: '관찰하기 좋은 각도를 따라가고 있어요. 언제든 직접 조작할 수 있어요.',
+      },
+      return: {
+        title: 'RETURN',
+        path: '내부 세계 → 관찰실',
+        copy: '구조 밖으로 빠져나와 전체 관찰실로 돌아가고 있어요.',
+      },
+    };
+    const label = labels[stage];
+    this.text('#experience-stage', label.title);
+    this.text('#experience-path', label.path);
+    this.text('#experience-copy', label.copy);
+    this.text('#time-lens-hud', snapshot.running ? `${snapshot.speed}×` : 'FREEZE');
+    this.button('#experience-follow').hidden = stage !== 'observe';
+    this.button('#experience-approach').hidden = stage !== 'follow';
+    this.button('#experience-surface').hidden = stage !== 'approach';
+    this.button('#experience-interior').hidden =
+      stage !== 'surface' || !profile.supportedExperience.interiorDive;
+    this.button('#guided-journey').hidden =
+      stage !== 'interior' || !profile.interiorPath;
+    this.button('#experience-back-surface').hidden = stage !== 'interior';
+    this.button('#experience-exit').hidden =
+      stage === 'observe' || stage === 'return' || stage === 'documentary';
+    this.element<HTMLElement>('#structural-actions').hidden = ![
+      'surface',
+      'interior',
+      'structure',
+    ].includes(stage);
+    this.root
+      .querySelectorAll<HTMLElement>('[data-observation-speed]')
+      .forEach((button) => {
+        button.classList.toggle(
+          'is-active',
+          Number(button.dataset.observationSpeed) === snapshot.speed,
+        );
+      });
   }
 
   private updateSelection(selection: SelectionDetails | null): void {
@@ -512,10 +685,19 @@ export class VirusSimApp {
     this.lastFrameTime = performance.now();
   };
 
+  private readonly handleAnyInteraction = (): void => {
+    this.lastInteractionTime = performance.now();
+    if (this.observation.getSnapshot().experience.stage !== 'documentary') return;
+    this.scene.cancelCameraAutomation();
+    this.observation.takeManualControl();
+    this.syncUi(this.observation.getSnapshot());
+  };
+
   private readonly frame = (time: number): void => {
     if (this.disposed) return;
     const delta = Math.min(0.1, Math.max(0, (time - this.lastFrameTime) / 1000));
     this.lastFrameTime = time;
+    this.observation.stepExperience(delta);
     const snapshotBefore = this.observation.getSnapshot();
     if (snapshotBefore.running) {
       this.accumulator += delta * snapshotBefore.speed;
@@ -529,12 +711,39 @@ export class VirusSimApp {
     }
     const snapshot = this.observation.getSnapshot();
     this.scene.update(snapshot, this.accumulator / OBSERVATION_FIXED_DT);
+    this.updateExperienceDirector(snapshot, time);
     if (time - this.lastUiTime >= UI_UPDATE_INTERVAL * 1000) {
       this.lastUiTime = time;
       this.syncUi(snapshot);
     }
     this.animationFrame = requestAnimationFrame(this.frame);
   };
+
+  private updateExperienceDirector(snapshot: ObservationSnapshot, time: number): void {
+    const moment = this.experienceDirector.evaluateMoment(snapshot, time);
+    if (moment) {
+      const cue = this.button('#moment-cue');
+      cue.textContent = moment.label;
+      cue.hidden = false;
+      this.momentVisibleUntil = time + moment.duration * 1000;
+    } else if (time >= this.momentVisibleUntil) {
+      this.element<HTMLElement>('#moment-cue').hidden = true;
+    }
+    if (
+      this.experienceDirector.shouldStartDocumentary(
+        snapshot,
+        time,
+        this.lastInteractionTime,
+      )
+    ) {
+      this.observation.setExperienceStage('documentary');
+      this.experienceDirector.markDocumentaryShot(time);
+      this.syncUi(this.observation.getSnapshot());
+    } else if (this.experienceDirector.shouldAdvanceDocumentary(snapshot, time)) {
+      this.observation.setExperienceStage('documentary');
+      this.syncUi(this.observation.getSnapshot());
+    }
+  }
 
   private setActiveGroup(selector: string, active: HTMLElement): void {
     this.root

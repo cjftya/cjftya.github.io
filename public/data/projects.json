@@ -462,18 +462,18 @@
       "id": "virus-sim",
       "galaxyId": "pages-archive",
       "name": "Virus Sim",
-      "summary": "검증된 실제 바이러스 56종을 한 개씩 확대해 표면·단면·분해 구조와 내부 층을 살펴보는 3D 관찰실이에요.",
+      "summary": "검증된 실제 바이러스 56종을 따라 표면과 내부로 연속 진입하고 구조와 시간을 탐색하는 3D 관찰실이에요.",
       "status": "active",
       "featured": true,
       "order": 40,
-      "tags": ["바이러스 구조", "실제 바이러스 도감", "3D 관찰"],
+      "tags": ["바이러스 구조", "미시세계 경험", "Scale Dive"],
       "links": {
         "github": "https://github.com/cjftya/cjftya.github.io/tree/master/src/virus-sim",
         "page": "/projects/virus-sim/"
       },
       "details": {
         "category": "브라우저 생물학 실험",
-        "description": "실제 바이러스 56종의 표면·반투명·단면·분해 구조를 확대해 살펴보고, 종별 부위 투어와 출처·표현 한계를 함께 확인해요.",
+        "description": "실제 바이러스 56종의 표면까지 연속 접근하고, Hero Virus 내부 경로·공간 분해·Time Lens·자동 관찰을 한 장면에서 경험해요.",
         "techStack": ["TypeScript", "Three.js", "Vite"]
       },
       "planet": {

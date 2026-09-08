@@ -1,9 +1,9 @@
-# Virus Sim v2.5
+# Virus Sim v3 — Microworld Experience
 
 Virus Sim은 공개 구조 자료를 바탕으로 실제 바이러스 도감 항목 56개를 한 종씩 크게
-살펴보는 Three.js 관찰실이다. 표면·반투명·단면·분해 보기, 종별 레이어와 부위 집중,
-안내 투어를 한 화면에서 제공한다. 전체 원자 좌표를 복제하거나 유전체 서열에서 입자
-구조를 예측하는 도구는 아니다.
+살펴보는 Three.js 관찰실이다. v3는 모델을 확대하는 화면에서 더 나아가 개체 추적,
+표면 접근, 내부 진입, 공간 분해와 관찰실 복귀를 하나의 연속된 카메라 경험으로 묶는다.
+전체 원자 좌표를 복제하거나 유전체 서열에서 입자 구조를 예측하는 도구는 아니다.
 
 ## 실행
 
@@ -14,7 +14,27 @@ npm run dev
 
 개발 서버 또는 빌드 결과에서 `/projects/virus-sim/`을 연다.
 
-## v2.5 범위
+## v3 경험
+
+- `OBSERVE → FOLLOW → APPROACH → SURFACE → INTERIOR → RETURN`은 하나의
+  `ExperienceState`를 사용한다. 메뉴나 별도 장면으로 이동하지 않는다.
+- 카메라는 현재 위치와 target에서 smoothstep 보간하고, 마우스·터치 입력이 시작되면
+  자동 전환과 Guided Journey를 즉시 취소한다.
+- 56종 모두 Follow·Approach·Surface, 공통 재질·조명·매질, 기본 Cutaway·Exploded,
+  Time Lens와 seed 기반 개체 차이를 지원한다.
+- T4, Influenza A, HSV-1, Adenovirus 5, Rotavirus RRV, Vaccinia MV, TMV, M13,
+  STIV, SSV1의 10종은 Hero Virus다. 이 항목에는 내부 경로와 전용 다큐 구도를 둔다.
+- Peel·Cutaway·Exploded·Reassemble은 visibility를 즉시 바꾸지 않고 시간에 따라
+  opacity, clipping plane, 구조 위치를 보간한다. 표본 시간이 정지해도 구조 연출과
+  카메라는 계속 조작할 수 있다.
+- Time Lens는 0.1×, 0.25×, 0.5×, 1×, 2×, 4×, 8×와 Freeze를 지원한다. 최근 이동은
+  사용자가 켠 경우에만 Motion Trace와 약한 Temporal Echo로 표시한다.
+- Observation Director는 현재 pose에서 관찰 가치가 있는 순간을 계산한다. 자동 다큐가
+  켜져 있고 14초 동안 입력이 없을 때만 차분한 카메라 구도를 순환한다.
+- Performance, Standard, Enhanced 품질 단계는 기하 밀도·pixel ratio·입자 밀도를
+  조정하지만 Scale Dive 자체는 제거하지 않는다.
+
+## 보존한 v2.5 기준
 
 - 제품 진입점은 **구조 관찰실 한 가지**다. v2의 일반화 구조 탭과 감염 실험은 제거했다.
 - 기존 12개와 신규 44개, 총 56개 실제 바이러스 도감 항목을 제공한다.
@@ -83,7 +103,9 @@ VLP·빈 capsid·부분 구조가 근거인 경우 해당 상태와 유전체 �
 ### 움직임 모드
 
 관찰 이동은 시드 기반 상태와 `1/60` 고정 tick을 사용한다. 프레임률은 렌더 보간만
-바꾸며 같은 시드·tick은 같은 위치와 quaternion을 만든다.
+바꾸며 같은 specimen seed·tick은 같은 위치와 quaternion을 만든다. 종과 인스턴스
+번호에서 만든 `SpecimenPersonality`는 경로 크기, 위상과 회전 성향만 바꾸며 구조 자체는
+변형하지 않는다.
 
 | 모드            | 이동                                  | 회전 제어값 | 방어 상한 |
 | --------------- | ------------------------------------- | ----------: | --------: |
@@ -119,6 +141,14 @@ PVX·PapMV·PVY의 유연한 filament 모델만 여러 segment의 낮은 진폭 
 - `catalog/geometryProfiles.ts`: 56개 항목의 기하 매개변수 계약
 - `catalog/sources.ts`: 출처 URL과 적용 범위
 - `observation/motion/`: 고정 tick 움직임과 확산 고급 옵션
+- `observation/specimen/`: 구조를 바꾸지 않는 seed 기반 개체 성향
+- `experience/`: 경험 상태, 관찰 순간과 자동 다큐 조건
+- `catalog/experienceProfiles.ts`: 56종 공통 경험과 Hero Virus 내부 경로
+- `rendering/CameraRig.ts`: 취소 가능한 연속 카메라 전환과 waypoint 경로
+- `rendering/materials/`: 구조 레이어별 scientific-cinematic 재질
+- `rendering/environment/`: 현미경 매질 haze와 깊이 입자
+- `rendering/quality/`: Performance / Standard / Enhanced 예산
+- `time/`: Time Lens 배율, Motion Trace와 Temporal Echo
 - `observation/tours/`: 종별 투어 순수 평가
 - `rendering/models/`: 전용·공통 Three.js builder
 - `ui/preferences.ts`: 즐겨찾기·최근·글자 배율 저장 정제
@@ -139,6 +169,15 @@ PVX·PapMV·PVY의 유연한 filament 모델만 여러 segment의 낮은 진폭 
 7. 56개 종별 투어가 같은 progress에서 같은 pose를 만들고 24초에 완료된다.
 8. 앱 마크업에 단일 관찰실과 56개 카드만 있으며 과거 모드 패널은 없다.
 9. 즐겨찾기·최근·글자 설정에서 손상되거나 존재하지 않는 ID를 제거한다.
+
+`tests/virus-sim/v3-experience.test.ts`는 다음을 추가로 확인한다.
+
+1. 56종 모두 v3 Experience Profile을 가지며 10종 Hero에 내부 경로가 있다.
+2. 개체 성향이 시드에 대해 결정적이고 인스턴스마다 달라진다.
+3. Scale Dive와 Return이 하나의 상태 원천에서 전이된다.
+4. Freeze 상태에서도 구조 분해·재조립이 연속적으로 완료된다.
+5. Time Lens 전체 배율, trace·echo, 자동 다큐 idle 조건이 유지된다.
+6. 56종 모델 모두 구조 역할에 맞는 v3 재질 규칙을 적용받는다.
 
 전체 저장소는 `npm run lint`, `npm run test`, `npm run build`를 통과해야 한다. 빌드 뒤
 `dist/projects/virus-sim/index.html`은 해시된 번들 asset을 참조해야 하며 `/`, Uriel,
