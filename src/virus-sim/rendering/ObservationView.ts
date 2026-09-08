@@ -25,6 +25,8 @@ export interface ObservationPick {
 export class ObservationView {
   private readonly model: ObservationModel;
   private readonly clipPlane = new THREE.Plane(new THREE.Vector3(0, 0, -1), 0);
+  private readonly activeClipPlanes = [this.clipPlane];
+  private readonly inactiveClipPlanes: THREE.Plane[] = [];
   private readonly marker = new THREE.Mesh(
     new THREE.SphereGeometry(0.15, 12, 8),
     new THREE.MeshBasicMaterial({
@@ -37,6 +39,7 @@ export class ObservationView {
   );
   private currentView: InspectionView = 'surface';
   private currentExplosion = -1;
+  private sectionEnabled = false;
   private selectedObject: THREE.Object3D | null = null;
   private lastRootPosition = new THREE.Vector3();
   private lastTourFocus: ObservationPartId | null = null;
@@ -62,43 +65,42 @@ export class ObservationView {
   }
 
   update(snapshot: ObservationSnapshot, interpolation: number): void {
+    const previousSnapshot = this.lastSnapshot;
     this.lastSnapshot = snapshot;
     const demoActive = snapshot.demo.kind !== 'none';
-    if (demoActive) {
-      this.model.root.position.set(0, 0, 0);
-      this.model.root.quaternion.identity();
-    } else {
-      this.model.root.position.set(
-        THREE.MathUtils.lerp(
-          snapshot.motion.previousPosition.x,
-          snapshot.motion.position.x,
-          interpolation,
-        ),
-        THREE.MathUtils.lerp(
-          snapshot.motion.previousPosition.y,
-          snapshot.motion.position.y,
-          interpolation,
-        ),
-        THREE.MathUtils.lerp(
-          snapshot.motion.previousPosition.z,
-          snapshot.motion.position.z,
-          interpolation,
-        ),
-      );
-      const previous = snapshot.motion.previousQuaternion;
-      const current = snapshot.motion.quaternion;
-      this.model.root.quaternion
-        .set(previous.x, previous.y, previous.z, previous.w)
-        .slerp(
-          new THREE.Quaternion(current.x, current.y, current.z, current.w),
-          interpolation,
-        );
-    }
+    this.model.root.position.set(
+      THREE.MathUtils.lerp(
+        snapshot.motion.previousPosition.x,
+        snapshot.motion.position.x,
+        interpolation,
+      ),
+      THREE.MathUtils.lerp(
+        snapshot.motion.previousPosition.y,
+        snapshot.motion.position.y,
+        interpolation,
+      ),
+      THREE.MathUtils.lerp(
+        snapshot.motion.previousPosition.z,
+        snapshot.motion.position.z,
+        interpolation,
+      ),
+    );
+    const previous = snapshot.motion.previousQuaternion;
+    const current = snapshot.motion.quaternion;
+    this.model.root.quaternion
+      .set(previous.x, previous.y, previous.z, previous.w)
+      .slerp(
+        new THREE.Quaternion(current.x, current.y, current.z, current.w),
+        interpolation,
+      )
+      .normalize();
 
     this.model.root.updateMatrixWorld(true);
     const worldPosition = this.model.root.getWorldPosition(new THREE.Vector3());
     const delta = worldPosition.clone().sub(this.lastRootPosition);
-    if (snapshot.followTarget && !demoActive) this.cameraRig.follow(delta);
+    if (snapshot.followTarget && previousSnapshot?.followTarget && !demoActive) {
+      this.cameraRig.follow(delta);
+    }
     this.lastRootPosition.copy(worldPosition);
 
     let view = snapshot.view;
@@ -211,13 +213,18 @@ export class ObservationView {
     for (const entry of this.model.surfaceMaterials) {
       const material = entry.material;
       if (!('opacity' in material)) continue;
-      material.transparent = transparent || entry.opacity < 1;
+      const nextTransparent = transparent || entry.opacity < 1;
+      const nextDepthWrite = transparent ? false : entry.depthWrite;
+      const programChanged =
+        material.transparent !== nextTransparent ||
+        material.depthWrite !== nextDepthWrite;
+      material.transparent = nextTransparent;
       material.opacity = transparent ? Math.min(entry.opacity, 0.24) : entry.opacity;
-      material.depthWrite = transparent ? false : entry.depthWrite;
-      material.needsUpdate = true;
+      material.depthWrite = nextDepthWrite;
+      if (programChanged) material.needsUpdate = true;
     }
     for (const [layer, objects] of this.model.layers) {
-      const layerVisible = layerVisibility[layer];
+      const layerVisible = layerVisibility[layer] === true;
       for (const object of objects) object.visible = layerVisible;
     }
     for (const genome of this.model.genomeObjects) {
@@ -267,11 +274,16 @@ export class ObservationView {
     this.model.root.updateMatrixWorld(true);
     const localPlane = new THREE.Plane(new THREE.Vector3(0, 0, -1), offset);
     this.clipPlane.copy(localPlane).applyMatrix4(this.model.root.matrixWorld);
-    const unique = new Set(this.model.clippingMaterials);
-    for (const material of unique) {
-      material.clippingPlanes = enabled ? [this.clipPlane] : [];
-      material.clipIntersection = false;
-      material.needsUpdate = true;
+    if (this.sectionEnabled !== enabled) {
+      this.sectionEnabled = enabled;
+      const unique = new Set(this.model.clippingMaterials);
+      for (const material of unique) {
+        material.clippingPlanes = enabled
+          ? this.activeClipPlanes
+          : this.inactiveClipPlanes;
+        material.clipIntersection = false;
+        material.needsUpdate = true;
+      }
     }
   }
 

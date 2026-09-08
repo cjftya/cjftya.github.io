@@ -1,0 +1,395 @@
+import type {
+  CatalogTag,
+  LayerDefinition,
+  ObservationDefinition,
+  VirusId,
+} from '../observation/types';
+
+const layer = (
+  id: LayerDefinition['id'],
+  name: string,
+  note?: string,
+): LayerDefinition => ({ id, name, note });
+
+export const VIRUS_CATALOG: readonly ObservationDefinition[] = [
+  {
+    id: 't4',
+    name: 'T4 파지',
+    shortName: 'T4',
+    nameEn: 'T4 bacteriophage',
+    category: '수축형 꼬리 파지',
+    genomeLabel: 'dsDNA',
+    description:
+      '길쭉한 다면체 머리와 수축형 꼬리집, 내부 관, 기저판과 긴 섬유를 구분해 관찰해요.',
+    feature: '수축형 꼬리집과 내부 관',
+    morphologyTags: ['phage', 'icosahedral'],
+    silhouette: 'phage',
+    parts: [
+      'capsid',
+      'capsomer',
+      'genome',
+      'neck',
+      'sheath',
+      'inner-tube',
+      'baseplate',
+      'tail-fiber',
+    ],
+    layers: [
+      layer('capsid', '머리 캡시드'),
+      layer('tail', '꼬리 장치'),
+      layer('genome', 'dsDNA'),
+    ],
+    sourceIds: ['pdb-7vs5', 'pdb-2bsg'],
+    modelBuilder: 't4',
+    representation: 'source-informed-procedural',
+    simplifications: [
+      '반복 단백질 수와 대칭은 줄였어요.',
+      '꼬리 전체를 원자 좌표로 재현하지 않았어요.',
+    ],
+    displayLength: 6.8,
+    sectionRadius: 1.7,
+    supportsDeliveryDemo: true,
+  },
+  {
+    id: 'lambda',
+    name: '람다 파지',
+    shortName: '람다',
+    nameEn: 'Lambda phage',
+    category: '비수축형 긴 꼬리 파지',
+    genomeLabel: 'dsDNA',
+    description:
+      '다면체 머리 아래로 가늘고 유연한 비수축형 꼬리가 이어져 T4의 꼬리집과 분명히 구별돼요.',
+    feature: '길고 유연한 비수축형 꼬리',
+    morphologyTags: ['phage', 'icosahedral'],
+    silhouette: 'phage',
+    parts: ['capsid', 'capsomer', 'genome', 'neck', 'flexible-tail', 'tail-fiber'],
+    layers: [
+      layer('capsid', '머리 캡시드'),
+      layer('tail', '비수축형 꼬리'),
+      layer('genome', 'dsDNA'),
+    ],
+    sourceIds: ['pdb-8iyd', 'pdb-8xqb'],
+    modelBuilder: 'lambda',
+    representation: 'source-informed-procedural',
+    simplifications: [
+      '꼬리의 단백질 반복을 연속 곡선과 링으로 줄였어요.',
+      '숙주 결합 분자 세부는 표현하지 않았어요.',
+    ],
+    displayLength: 7.4,
+    sectionRadius: 1.5,
+    supportsDeliveryDemo: false,
+  },
+  {
+    id: 't7',
+    name: 'T7 파지',
+    shortName: 'T7',
+    nameEn: 'T7 bacteriophage',
+    category: '짧은 꼬리 파지',
+    genomeLabel: 'dsDNA',
+    description:
+      '다면체 머리 바로 아래에 짧은 꼬리 장치와 섬유가 모여 있어 긴 꼬리 파지와 다른 비율을 보여줘요.',
+    feature: '짧은 꼬리 복합체',
+    morphologyTags: ['phage', 'icosahedral'],
+    silhouette: 'phage',
+    parts: ['capsid', 'capsomer', 'genome', 'portal', 'inner-tube', 'tail-fiber'],
+    layers: [
+      layer('capsid', '머리 캡시드'),
+      layer('tail', '짧은 꼬리 복합체'),
+      layer('genome', 'dsDNA'),
+    ],
+    sourceIds: ['pdb-3j7v', 'pdb-7ey7'],
+    modelBuilder: 't7',
+    representation: 'source-informed-procedural',
+    simplifications: [
+      '꼬리 복합체의 단백질 종류를 기하 그룹으로 줄였어요.',
+      '머리 표면 반복 수는 실제 화학량론이 아니에요.',
+    ],
+    displayLength: 4.7,
+    sectionRadius: 1.6,
+    supportsDeliveryDemo: false,
+  },
+  {
+    id: 'ms2',
+    name: 'MS2 파지',
+    shortName: 'MS2',
+    nameEn: 'MS2 bacteriophage',
+    category: '꼬리 없는 작은 RNA 파지',
+    genomeLabel: 'ssRNA(+)',
+    description:
+      '작은 정이십면체 껍질 안의 RNA와 한쪽의 비대칭 성숙 단백질 부위를 함께 표시해요.',
+    feature: '꼬리 없음 · 비대칭 성숙 단백질',
+    morphologyTags: ['phage', 'icosahedral'],
+    silhouette: 'polyhedron',
+    parts: ['capsid', 'capsomer', 'genome', 'maturation-protein'],
+    layers: [layer('capsid', '단백질 캡시드'), layer('genome', 'ssRNA(+)')],
+    sourceIds: ['pdb-5tc1'],
+    modelBuilder: 'ms2',
+    representation: 'source-informed-procedural',
+    simplifications: [
+      'RNA 접힘은 개념 곡선으로 줄였어요.',
+      '성숙 단백질은 비대칭 위치만 강조했어요.',
+    ],
+    displayLength: 3.8,
+    sectionRadius: 2,
+    supportsDeliveryDemo: false,
+  },
+  {
+    id: 'tmv',
+    name: '담배모자이크바이러스',
+    shortName: 'TMV',
+    nameEn: 'Tobacco mosaic virus',
+    category: '단단한 나선형 막대',
+    genomeLabel: 'ssRNA(+)',
+    description:
+      '단백질 피복이 단단한 막대를 만들고 가운데 빈 채널과 피복 안쪽의 RNA 결합 위치가 이어져요.',
+    feature: '중심 채널이 있는 단단한 막대',
+    morphologyTags: ['helical'],
+    silhouette: 'filament',
+    parts: ['capsid', 'coat-protein', 'channel', 'genome'],
+    layers: [
+      layer('capsid', '나선형 단백질 피복'),
+      layer('genome', '피복 안쪽 ssRNA(+)'),
+    ],
+    sourceIds: ['pdb-2tmv'],
+    modelBuilder: 'tmv',
+    representation: 'source-informed-procedural',
+    simplifications: [
+      '나선 조립 단위를 화면 길이까지 반복했어요.',
+      '원자 표면 대신 반복 캡슐 기하를 사용했어요.',
+    ],
+    displayLength: 7,
+    sectionRadius: 0.9,
+    supportsDeliveryDemo: false,
+  },
+  {
+    id: 'm13',
+    name: 'M13 파지',
+    shortName: 'M13',
+    nameEn: 'M13 bacteriophage',
+    category: '긴 필라멘트 파지',
+    genomeLabel: 'ssDNA',
+    description:
+      'TMV보다 훨씬 가늘고 긴 반유연 필라멘트이며 피복 배열과 두 말단 단백질을 구분해요.',
+    feature: '매우 가늘고 긴 ssDNA 필라멘트',
+    morphologyTags: ['phage', 'helical'],
+    silhouette: 'filament',
+    parts: ['capsid', 'coat-protein', 'terminal-protein', 'genome'],
+    layers: [layer('capsid', '필라멘트 피복'), layer('genome', '축 방향 ssDNA')],
+    sourceIds: ['pdb-2mjz'],
+    modelBuilder: 'm13',
+    representation: 'source-informed-procedural',
+    simplifications: [
+      '실제 길이를 화면에 맞게 크게 줄였어요.',
+      '완전한 말단 원자 좌표라고 해석하지 않았어요.',
+    ],
+    displayLength: 8,
+    sectionRadius: 0.5,
+    supportsDeliveryDemo: false,
+  },
+  {
+    id: 'adenovirus-5',
+    name: '인간 아데노바이러스 5형',
+    shortName: '아데노 5',
+    nameEn: 'Human adenovirus 5',
+    category: '꼭짓점 섬유를 가진 다면체',
+    genomeLabel: 'dsDNA',
+    description:
+      '다면체 면의 반복 배열과 꼭짓점 penton, 그 밖으로 길게 뻗는 fiber를 구분해요.',
+    feature: '꼭짓점 penton과 긴 fiber',
+    morphologyTags: ['icosahedral'],
+    silhouette: 'polyhedron',
+    parts: ['capsid', 'capsomer', 'penton', 'fiber', 'genome'],
+    layers: [layer('capsid', 'hexon·penton 캡시드'), layer('genome', 'dsDNA')],
+    sourceIds: ['pdb-4v4u'],
+    modelBuilder: 'adenovirus',
+    representation: 'source-informed-procedural',
+    simplifications: [
+      'hexon 수와 fiber 굽힘을 줄였어요.',
+      '준원자 모델을 브라우저용 표면 기하로 재구성했어요.',
+    ],
+    displayLength: 5.1,
+    sectionRadius: 2.05,
+    supportsDeliveryDemo: false,
+  },
+  {
+    id: 'rotavirus-rrv',
+    name: '로타바이러스 RRV',
+    shortName: '로타 RRV',
+    nameEn: 'Rotavirus RRV',
+    category: '삼중 캡시드 입자',
+    genomeLabel: '분절 dsRNA',
+    description:
+      '바깥층·중간층·코어층이 동심으로 겹치며 바깥 돌기와 내부 분절 유전체를 층별로 살펴봐요.',
+    feature: '서로 분리되는 세 캡시드 층',
+    morphologyTags: ['icosahedral'],
+    silhouette: 'polyhedron',
+    parts: ['outer-capsid', 'middle-capsid', 'core-capsid', 'spike', 'genome'],
+    layers: [
+      layer('outer-capsid', '바깥 캡시드'),
+      layer('middle-capsid', '중간 캡시드'),
+      layer('core-capsid', '코어 캡시드'),
+      layer('genome', '분절 dsRNA'),
+    ],
+    sourceIds: ['pdb-4v7q'],
+    modelBuilder: 'rotavirus',
+    representation: 'source-informed-procedural',
+    simplifications: [
+      '각 층의 실제 단백질 격자를 저해상도 표면으로 줄였어요.',
+      '내부 효소 복합체는 생략했어요.',
+    ],
+    displayLength: 4.4,
+    sectionRadius: 2.25,
+    supportsDeliveryDemo: false,
+  },
+  {
+    id: 'hsv1',
+    name: '단순포진바이러스 1형',
+    shortName: 'HSV-1',
+    nameEn: 'Herpes simplex virus 1',
+    category: '외피·tegument·캡시드 복합형',
+    genomeLabel: 'dsDNA',
+    description:
+      '바깥 외피와 불균일한 tegument, 안쪽 다면체 캡시드, 유전체의 네 층을 구분해요.',
+    feature: '외피와 캡시드 사이의 tegument',
+    morphologyTags: ['enveloped', 'icosahedral'],
+    silhouette: 'envelope',
+    parts: ['envelope', 'spike', 'tegument', 'capsid', 'capsomer', 'genome'],
+    layers: [
+      layer('envelope', '지질 외피'),
+      layer('surface-protein', '표면 당단백질'),
+      layer('tegument', 'Tegument'),
+      layer('capsid', '다면체 캡시드'),
+      layer('genome', 'dsDNA'),
+    ],
+    sourceIds: ['pdb-6odm', 'ictv-herpes'],
+    modelBuilder: 'hsv',
+    representation: 'source-informed-procedural',
+    simplifications: [
+      'tegument를 불균일한 입자층으로 표현했어요.',
+      '6ODM은 전체 입자 좌표가 아니라 캡시드 국소 구조예요.',
+    ],
+    displayLength: 5,
+    sectionRadius: 2.5,
+    supportsDeliveryDemo: false,
+  },
+  {
+    id: 'influenza-a',
+    name: '인플루엔자 A 바이러스',
+    shortName: '인플루엔자 A',
+    nameEn: 'Influenza A virus',
+    category: '외피 보유 분절 RNA 바이러스',
+    genomeLabel: '분절 ssRNA(-)',
+    description:
+      '구형 예시의 외피에 서로 다른 두 표면 단백질이 섞이고 안쪽에는 matrix와 여덟 RNP가 있어요.',
+    feature: '서로 다른 표면 단백질과 8개 RNP',
+    morphologyTags: ['enveloped'],
+    silhouette: 'envelope',
+    parts: ['envelope', 'spike', 'matrix', 'rnp', 'genome'],
+    layers: [
+      layer('envelope', '지질 외피'),
+      layer('surface-protein', '표면 당단백질'),
+      layer('matrix', 'Matrix'),
+      layer('nucleocapsid', '분절 RNP', '유전체와 단백질이 결합한 설명용 그룹'),
+    ],
+    sourceIds: ['ictv-influenza', 'influenza-quant'],
+    modelBuilder: 'influenza',
+    representation: 'source-informed-procedural',
+    simplifications: [
+      '다형성 가운데 구형 입자만 기본으로 선택했어요.',
+      'HA·NA 비율과 RNP 접힘을 정량 재현하지 않았어요.',
+    ],
+    displayLength: 4.7,
+    sectionRadius: 2.35,
+    supportsDeliveryDemo: false,
+  },
+  {
+    id: 'vsv-indiana',
+    name: '수포성구내염바이러스 VSV',
+    shortName: 'VSV',
+    nameEn: 'VSV Indiana',
+    category: '총알형 외피 바이러스',
+    genomeLabel: 'ssRNA(-)',
+    description:
+      '한쪽 끝은 둥글고 반대쪽은 평평한 총알형 외피 안에 matrix와 나선 뉴클레오캡시드가 들어가요.',
+    feature: '총알형 윤곽과 나선 뉴클레오캡시드',
+    morphologyTags: ['enveloped', 'helical'],
+    silhouette: 'bullet',
+    parts: ['envelope', 'spike', 'matrix', 'nucleocapsid', 'genome'],
+    layers: [
+      layer('envelope', '총알형 외피'),
+      layer('surface-protein', '표면 당단백질'),
+      layer('matrix', 'Matrix'),
+      layer('nucleocapsid', '나선 뉴클레오캡시드'),
+      layer('genome', 'ssRNA(-)'),
+    ],
+    sourceIds: ['emd-26603'],
+    modelBuilder: 'vsv',
+    representation: 'source-informed-procedural',
+    simplifications: [
+      '국소 재구성을 전체 원자 모형으로 확대 해석하지 않았어요.',
+      '표면 단백질 수를 렌더 예산에 맞게 줄였어요.',
+    ],
+    displayLength: 5.8,
+    sectionRadius: 1.75,
+    supportsDeliveryDemo: false,
+  },
+  {
+    id: 'vaccinia-mv',
+    name: '백시니아바이러스',
+    shortName: '백시니아 MV',
+    nameEn: 'Vaccinia mature virion',
+    category: '벽돌형 복합 바이러스',
+    genomeLabel: 'dsDNA',
+    description:
+      '성숙 입자 MV의 벽돌형 막 안에서 아령 모양 코어 벽과 양옆 측면체를 구분해요.',
+    feature: '벽돌형 막·코어·측면체',
+    morphologyTags: ['enveloped'],
+    silhouette: 'brick',
+    parts: ['envelope', 'core-wall', 'lateral-body', 'genome'],
+    layers: [
+      layer('membrane', '성숙 입자 막'),
+      layer('core-wall', '코어 벽'),
+      layer('lateral-body', '측면체'),
+      layer('genome', '코어 내부 dsDNA'),
+    ],
+    sourceIds: ['ictv-pox', 'pnas-vaccinia'],
+    modelBuilder: 'vaccinia',
+    representation: 'source-informed-procedural',
+    simplifications: [
+      '성숙 입자 MV 상태로 고정했어요.',
+      '막과 코어 표면의 미세 능선을 저해상도 기하로 줄였어요.',
+    ],
+    displayLength: 5.4,
+    sectionRadius: 2.5,
+    supportsDeliveryDemo: false,
+  },
+] as const;
+
+const VIRUS_BY_ID = new Map(VIRUS_CATALOG.map((virus) => [virus.id, virus]));
+
+export function getVirusDefinition(id: VirusId): ObservationDefinition {
+  const virus = VIRUS_BY_ID.get(id);
+  if (!virus) throw new Error(`Unknown Virus Sim catalog id: ${id}`);
+  return virus;
+}
+
+export function isVirusId(id: string): id is VirusId {
+  return VIRUS_BY_ID.has(id as VirusId);
+}
+
+export function filterVirusCatalog(
+  query: string,
+  tag: CatalogTag | 'all',
+): readonly ObservationDefinition[] {
+  const normalized = query.trim().toLocaleLowerCase('ko-KR');
+  return VIRUS_CATALOG.filter((virus) => {
+    const tagMatches = tag === 'all' || virus.morphologyTags.includes(tag);
+    const queryMatches =
+      normalized.length === 0 ||
+      [virus.name, virus.shortName, virus.nameEn, virus.genomeLabel, virus.feature]
+        .join(' ')
+        .toLocaleLowerCase('ko-KR')
+        .includes(normalized);
+    return tagMatches && queryMatches;
+  });
+}

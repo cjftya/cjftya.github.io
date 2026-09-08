@@ -1,21 +1,58 @@
-import { OBSERVATION_PARTS, OBSERVATION_PRESETS } from '../model/observationPresets';
+import { OBSERVATION_PARTS } from '../model/observationPresets';
+import { VIRUS_CATALOG } from '../model/virusCatalog';
+import type { ObservationLayerId } from '../observation/types';
+
+const LAYER_LABELS: Readonly<Record<ObservationLayerId, string>> = {
+  envelope: '지질 외피',
+  'surface-protein': '표면 단백질',
+  tegument: 'Tegument',
+  capsid: '캡시드',
+  tail: '꼬리 장치',
+  'outer-capsid': '바깥 캡시드',
+  'middle-capsid': '중간 캡시드',
+  'core-capsid': '코어 캡시드',
+  matrix: 'Matrix',
+  nucleocapsid: '뉴클레오캡시드',
+  membrane: '성숙 입자 막',
+  'core-wall': '코어 벽',
+  'lateral-body': '측면체',
+  genome: '유전체',
+};
 
 export function observationControlsMarkup(): string {
-  const presets = OBSERVATION_PRESETS.map(
-    (preset, index) => `
-      <button class="observation-preset-card${index === 0 ? ' is-active' : ''}" data-observation-preset="${preset.id}" type="button">
-        <span class="preset-silhouette" data-silhouette="${preset.silhouette}" aria-hidden="true"></span>
-        <span><strong>${preset.shortName}</strong><small>${preset.genomeLabel}</small></span>
+  const viruses = VIRUS_CATALOG.map(
+    (virus, index) => `
+      <button class="observation-preset-card${index === 0 ? ' is-active' : ''}" data-observation-preset="${virus.id}" data-catalog-tags="${virus.morphologyTags.join(' ')}" data-catalog-search="${[virus.name, virus.shortName, virus.nameEn, virus.genomeLabel].join(' ').toLocaleLowerCase('ko-KR')}" type="button">
+        <span class="preset-silhouette" data-silhouette="${virus.silhouette}" aria-hidden="true"></span>
+        <span><strong>${virus.shortName}</strong><small>${virus.genomeLabel}</small></span>
       </button>`,
   ).join('');
+  const layerControls = Object.entries(LAYER_LABELS)
+    .map(
+      ([id, label]) =>
+        `<label data-observation-layer-row="${id}" hidden><input data-observation-layer="${id}" type="checkbox" checked /><span>${label}</span></label>`,
+    )
+    .join('');
 
   return `
     <section class="mode-panel observatory-controls" data-mode-panel="observatory">
-      <div class="panel-heading">
-        <p class="eyebrow">SINGLE PARTICLE OBSERVATORY</p>
-        <h2>관찰할 바이러스</h2>
+      <div class="panel-heading catalog-heading">
+        <div><p class="eyebrow">REAL VIRUS CATALOG</p><h2>실제 바이러스 도감</h2></div>
+        <span><b id="catalog-filter-count">12</b> / 전체 12종</span>
       </div>
-      <div class="observation-preset-list" role="radiogroup" aria-label="관찰 바이러스 형태">${presets}</div>
+      <details class="virus-catalog-details" open>
+        <summary>도감 목록 열기</summary>
+        <label class="catalog-search"><span class="sr-only">이름 검색</span><input id="catalog-search" type="search" placeholder="한글·영문 이름 검색" autocomplete="off" /></label>
+        <div class="catalog-filters" role="group" aria-label="구조 분류">
+          <button class="is-active" data-catalog-filter="all" type="button">전체</button>
+          <button data-catalog-filter="phage" type="button">파지</button>
+          <button data-catalog-filter="helical" type="button">막대·필라멘트</button>
+          <button data-catalog-filter="icosahedral" type="button">다면체</button>
+          <button data-catalog-filter="enveloped" type="button">외피·복합형</button>
+        </div>
+        <div class="observation-preset-list" role="radiogroup" aria-label="실제 바이러스 12종">${viruses}</div>
+        <p class="catalog-empty" id="catalog-empty" hidden>조건에 맞는 항목이 없어요.</p>
+      </details>
       <article class="model-card observatory-preset-description" id="observation-preset-description"></article>
 
       <div class="control-group view-control-group">
@@ -37,17 +74,23 @@ export function observationControlsMarkup(): string {
         <input id="observation-section-offset" type="range" min="-100" max="100" value="0" />
       </div>
 
+      <label class="field-row motion-mode-row">움직임
+        <select id="observation-motion-mode">
+          <option value="smooth" selected>부드러운 관찰</option>
+          <option value="brownian">확산 모형</option>
+          <option value="static">정지</option>
+        </select>
+      </label>
+      <p class="field-note motion-note">기본 움직임은 관찰하기 편하도록 수초 단위로 부드럽게 이어져요.</p>
       <div class="switch-row observation-switches">
         <label><input id="observation-genome" type="checkbox" /><span>유전체 표시</span></label>
         <label><input id="observation-follow" type="checkbox" checked /><span>개체 중심 추적</span></label>
       </div>
-      <div class="layer-controls" data-envelope-layers hidden>
-        <span>외피형 레이어</span>
-        <label><input data-observation-layer="envelope" type="checkbox" checked />외피·돌기</label>
-        <label><input data-observation-layer="capsid" type="checkbox" checked />내부 캡시드</label>
-        <label><input data-observation-layer="genome" type="checkbox" checked />유전체 층</label>
+      <div class="layer-controls" data-observation-layers>
+        <span>이 항목의 구조 레이어</span>
+        ${layerControls}
       </div>
-      <p class="field-note observatory-hint">드래그로 회전하고 휠이나 핀치로 확대해요. 짧게 누르면 부위를 선택해요.</p>
+      <p class="field-note observatory-hint">드래그로 회전하고 휠이나 핀치로 확대해요. 부위를 집중하면 움직임이 멈춰요.</p>
     </section>`;
 }
 
@@ -56,7 +99,7 @@ export function observationInfoMarkup(): string {
     .map(
       (part) => `
         <button class="part-list-button" data-observation-part="${part.id}" type="button">
-          <span><strong>${part.name}</strong><small>${part.summary}</small></span><b>보기</b>
+          <span><strong>${part.name}</strong><small>${part.summary}</small></span><b>집중</b>
         </button>`,
     )
     .join('');
@@ -77,7 +120,7 @@ export function observationInfoMarkup(): string {
           <span>약 20초</span><strong>구조 둘러보기</strong><small>표면 → 단면 → 분해 → 전체</small>
         </button>
         <button class="demo-card phage-demo" id="start-phage-demo" data-phage-demo-only type="button">
-          <span>동작 설명</span><strong>파지 유전체 전달</strong><small>부착 · 꼬리집 수축 · 전달 경로</small>
+          <span>T4 전용</span><strong>파지 유전체 전달</strong><small>부착 · 꼬리집 수축 · 전달 경로</small>
         </button>
         <div class="demo-timeline" id="demo-timeline" hidden>
           <div class="control-label"><span id="demo-kind-label">구조 둘러보기</span><output id="demo-progress-value">0%</output></div>
@@ -91,9 +134,14 @@ export function observationInfoMarkup(): string {
         </div>
       </div>
 
+      <div class="fact-box source-fact">
+        <span>구조 근거와 표현 한계</span>
+        <p id="observation-simplification">문헌 구조를 브라우저용 절차 기하로 단순화했어요.</p>
+        <div class="source-links compact" id="observation-source-links"></div>
+      </div>
       <div class="fact-box observatory-fact">
-        <span>단순화 모델</span>
-        <p>움직임과 전달 시간은 자세히 보기 위한 가상 계수예요. 실제 온도·점성·감염 속도를 뜻하지 않아요.</p>
+        <span>화면용 확대</span>
+        <p>12종은 각 구조를 보기 좋게 따로 확대해요. 화면 크기는 실제 종 사이의 상대 크기가 아니에요.</p>
         <small id="render-budget">렌더 예산 측정 대기</small>
       </div>
     </section>`;
@@ -104,7 +152,7 @@ export function observationFooterMarkup(): string {
     <footer class="observation-bar" data-observatory-only>
       <div class="run-controls">
         <button class="primary-action" id="observation-play-pause" type="button">Ⅱ 정지</button>
-        <button id="observation-restart" type="button">다시 시작</button>
+        <button id="observation-restart" type="button">처음 자세</button>
         <button id="observation-return" type="button">대상으로 돌아가기</button>
       </div>
       <div class="speed-controls observation-speed" role="group" aria-label="관찰 배속">
@@ -118,6 +166,6 @@ export function observationFooterMarkup(): string {
         <label><input id="observation-translation" type="checkbox" checked />이동</label>
         <label><input id="observation-rotation" type="checkbox" checked />회전</label>
       </div>
-      <div class="run-meta"><span id="observation-tick">tick 0</span><span id="observation-status">추적 중</span></div>
+      <div class="run-meta"><span id="observation-tick">tick 0</span><span id="observation-status">부드러운 관찰</span></div>
     </footer>`;
 }

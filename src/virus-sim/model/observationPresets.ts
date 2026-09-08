@@ -1,102 +1,196 @@
-import type { ObservationPartId, ObservationPresetId } from '../observation/types';
+import type {
+  ObservationDefinition,
+  ObservationPartDefinition,
+  ObservationPartId,
+  ObservationPresetId,
+} from '../observation/types';
+import { VIRUS_CATALOG } from './virusCatalog';
 
-export interface ObservationPartDefinition {
-  readonly id: ObservationPartId;
-  readonly name: string;
-  readonly summary: string;
-  readonly detail: string;
-}
-
-export interface ObservationPreset {
-  readonly id: ObservationPresetId;
-  readonly name: string;
-  readonly shortName: string;
-  readonly category: string;
-  readonly genomeLabel: string;
-  readonly description: string;
-  readonly silhouette: 'polyhedron' | 'phage' | 'filament' | 'envelope';
-  readonly parts: readonly ObservationPartId[];
-  readonly supportsDeliveryDemo: boolean;
-}
+const part = (
+  id: ObservationPartId,
+  name: string,
+  summary: string,
+  detail: string,
+): ObservationPartDefinition => ({ id, name, summary, detail });
 
 export const OBSERVATION_PARTS: Readonly<
   Record<ObservationPartId, ObservationPartDefinition>
 > = {
-  capsid: {
-    id: 'capsid',
-    name: '캡시드',
-    summary: '유전체를 감싸는 단백질 껍질',
-    detail:
-      '반복되는 단백질 단위가 모여 내부 유전체를 보호해요. 화면의 패널 수는 실제 분자 수나 T-number를 뜻하지 않아요.',
-  },
-  capsomer: {
-    id: 'capsomer',
-    name: '표면 단위 배열',
-    summary: '껍질 표면의 반복 조형',
-    detail:
-      '단백질 단위가 반복돼 껍질의 방향성과 틈을 만든다는 점을 보여주는 설명용 배열이에요.',
-  },
-  genome: {
-    id: 'genome',
-    name: '유전체',
-    summary: '내부에 포장된 유전정보',
-    detail:
-      '종류와 내부 배치를 구분하기 위한 개념 곡선이에요. 실제 서열이나 원자 수준 패킹 좌표는 아니에요.',
-  },
-  neck: {
-    id: 'neck',
-    name: '목 연결부',
-    summary: '머리와 꼬리를 잇는 접속 구조',
-    detail: '캡시드와 꼬리 장치를 기계적으로 연결하고 전달 통로가 이어지는 부위예요.',
-  },
-  sheath: {
-    id: 'sheath',
-    name: '수축형 꼬리집',
-    summary: '반복 링으로 둘러싼 가동 구조',
-    detail:
-      '일부 꼬리형 파지에서 수축하며 내부 관의 이동을 돕는 구조예요. 모든 파지가 이 장치를 갖는 것은 아니에요.',
-  },
-  'inner-tube': {
-    id: 'inner-tube',
-    name: '내부 관',
-    summary: '유전체 전달 경로',
-    detail: '꼬리집 안쪽에서 숙주 표면 방향으로 이어지는 관을 구분해 표현했어요.',
-  },
-  baseplate: {
-    id: 'baseplate',
-    name: '기저판',
-    summary: '꼬리 끝의 부착 플랫폼',
-    detail: '꼬리섬유와 내부 관을 연결하며 숙주 표면에 자세를 잡는 부위예요.',
-  },
-  'tail-fiber': {
-    id: 'tail-fiber',
-    name: '꼬리섬유',
-    summary: '분절된 표면 인식 부품',
-    detail: '숙주 표면 조건과 접촉하는 부품을 꺾인 여러 분절로 표현했어요.',
-  },
-  envelope: {
-    id: 'envelope',
-    name: '지질 외피',
-    summary: '캡시드 바깥의 별도 층',
-    detail: '일부 바이러스가 갖는 바깥 막이에요. 단백질 캡시드와는 서로 다른 층이에요.',
-  },
-  spike: {
-    id: 'spike',
-    name: '표면 돌기',
-    summary: '외피 표면의 반복 돌기',
-    detail: '세포 표면과 상호작용하는 돌기가 외피 바깥에 배열된 모습을 일반화했어요.',
-  },
+  capsid: part(
+    'capsid',
+    '캡시드',
+    '유전체를 감싸는 단백질 껍질',
+    '반복 단백질이 만드는 보호 껍질이에요. 화면 geometry 수는 실제 단백질 수나 T-number가 아니에요.',
+  ),
+  capsomer: part(
+    'capsomer',
+    '표면 단위 배열',
+    '껍질 표면의 반복 조형',
+    '표면 단백질 배열의 방향성을 보여주는 경량 반복 기하예요.',
+  ),
+  genome: part(
+    'genome',
+    '유전체',
+    '입자 안의 유전정보',
+    '종별 유전체 종류와 배치 관계를 보여주는 개념 곡선이에요. 실제 서열이나 원자 수준 패킹 좌표는 아니에요.',
+  ),
+  neck: part(
+    'neck',
+    '목 연결부',
+    '머리와 꼬리의 접속 구조',
+    '캡시드의 포털과 꼬리 장치가 이어지는 부위를 구분해요.',
+  ),
+  sheath: part(
+    'sheath',
+    '수축형 꼬리집',
+    '반복 링으로 둘러싼 가동 구조',
+    'T4 같은 일부 파지의 수축형 꼬리집이에요. 다른 파지에 자동으로 적용하지 않아요.',
+  ),
+  'inner-tube': part(
+    'inner-tube',
+    '내부 관',
+    '꼬리 안쪽 전달 통로',
+    '꼬리 장치 안에서 숙주 표면 방향으로 이어지는 통로를 단순화했어요.',
+  ),
+  baseplate: part(
+    'baseplate',
+    '기저판',
+    '꼬리 끝의 부착 플랫폼',
+    '꼬리섬유와 내부 관을 연결하는 말단 플랫폼이에요.',
+  ),
+  'tail-fiber': part(
+    'tail-fiber',
+    '꼬리섬유',
+    '표면을 인식하는 가는 부품',
+    '파지마다 길이와 배치가 다른 표면 접촉 부품을 구분해 표현했어요.',
+  ),
+  'flexible-tail': part(
+    'flexible-tail',
+    '유연한 꼬리',
+    '길고 가는 비수축형 관',
+    '람다 파지의 꼬리는 T4 꼬리집처럼 수축하지 않는 유연한 관으로 표현했어요.',
+  ),
+  portal: part(
+    'portal',
+    '포털·연결부',
+    '머리 아래의 전달 출구',
+    '캡시드와 꼬리 복합체가 만나는 비대칭 연결 위치예요.',
+  ),
+  'maturation-protein': part(
+    'maturation-protein',
+    '성숙 단백질 부위',
+    'MS2 껍질의 비대칭 부위',
+    '대칭 캡시드 한쪽에 있는 비대칭 전달 장치의 위치를 강조했어요.',
+  ),
+  channel: part(
+    'channel',
+    '중심 채널',
+    'TMV 막대 가운데의 빈 통로',
+    '나선 피복 중심을 길이 방향으로 관통하는 빈 공간이에요.',
+  ),
+  'coat-protein': part(
+    'coat-protein',
+    '피복 단백질 배열',
+    '나선으로 반복되는 표면 단위',
+    '나선 대칭의 방향과 밀도를 읽을 수 있도록 단순화한 반복 배열이에요.',
+  ),
+  'terminal-protein': part(
+    'terminal-protein',
+    '말단 단백질',
+    '필라멘트 양끝의 다른 부품',
+    'M13의 긴 주 피복과 구별되는 양끝 단백질 그룹을 표시해요.',
+  ),
+  penton: part(
+    'penton',
+    'Penton',
+    '다면체 꼭짓점의 단백질 복합체',
+    '아데노바이러스 꼭짓점에서 fiber가 나오는 기반을 구분해요.',
+  ),
+  fiber: part(
+    'fiber',
+    '꼭짓점 fiber',
+    '아데노 캡시드 밖으로 뻗는 섬유',
+    '꼭짓점 penton에서 길게 돌출하는 구조를 화면 가독성에 맞게 표현했어요.',
+  ),
+  'outer-capsid': part(
+    'outer-capsid',
+    '바깥 캡시드',
+    '로타바이러스의 최외곽 단백질층',
+    '여러 캡시드 가운데 가장 바깥층과 돌기를 묶어 살펴봐요.',
+  ),
+  'middle-capsid': part(
+    'middle-capsid',
+    '중간 캡시드',
+    '로타바이러스의 두 번째 껍질',
+    '바깥층을 숨기면 드러나는 중간 단백질층이에요.',
+  ),
+  'core-capsid': part(
+    'core-capsid',
+    '코어 캡시드',
+    '유전체를 둘러싼 안쪽 껍질',
+    '분절 유전체와 내부 복합체를 감싸는 가장 안쪽 캡시드예요.',
+  ),
+  envelope: part(
+    'envelope',
+    '지질 외피·막',
+    '입자 바깥의 막층',
+    '단백질 캡시드와 구별되는 막층이에요. 백시니아는 선택한 성숙 입자 상태의 막으로 표현해요.',
+  ),
+  spike: part(
+    'spike',
+    '표면 단백질',
+    '외피나 캡시드 밖의 돌기',
+    '표면 단백질의 종류와 배열 차이를 읽기 위한 설명용 기하예요.',
+  ),
+  tegument: part(
+    'tegument',
+    'Tegument',
+    'HSV 외피와 캡시드 사이의 층',
+    '규칙적인 캡시드가 아닌 불균일한 단백질성 중간층으로 표현했어요.',
+  ),
+  matrix: part(
+    'matrix',
+    'Matrix',
+    '외피 안쪽을 받치는 단백질층',
+    '외피와 뉴클레오캡시드 사이의 구조적 층을 구분해요.',
+  ),
+  rnp: part(
+    'rnp',
+    '분절 RNP',
+    'RNA와 단백질이 결합한 내부 단위',
+    '인플루엔자 A의 여덟 유전체 분절과 결합 단백질을 각각의 굽은 막대로 단순화했어요.',
+  ),
+  nucleocapsid: part(
+    'nucleocapsid',
+    '뉴클레오캡시드',
+    '유전체와 단백질의 결합 구조',
+    'VSV에서는 총알형 입자 안의 나선 구조로 표현해요.',
+  ),
+  'core-wall': part(
+    'core-wall',
+    '코어 벽',
+    '백시니아의 아령 모양 중심 구조',
+    '성숙 입자 내부의 오목한 중앙부와 넓어진 양끝을 가진 코어를 단순화했어요.',
+  ),
+  'lateral-body': part(
+    'lateral-body',
+    '측면체',
+    '코어 양옆의 내부 구조',
+    '백시니아 코어 양쪽에 놓이는 두 측면체의 위치 관계를 보여줘요.',
+  ),
 };
 
-export const OBSERVATION_PRESETS: readonly ObservationPreset[] = [
+export const CONCEPT_OBSERVATION_PRESETS: readonly ObservationDefinition[] = [
   {
     id: 'tailed-phage',
     name: '수축형 꼬리 DNA 파지',
     shortName: '꼬리형 파지',
-    category: '수축형 꼬리 구조 예시',
+    nameEn: 'Concept tailed phage',
+    category: '개념 프리셋',
     genomeLabel: 'dsDNA 개념 곡선',
-    description:
-      '길쭉한 머리, 목, 반복 꼬리집, 내부 관과 분절된 꼬리섬유를 하나씩 살펴봐요.',
+    description: '기존 v1.5의 일반화한 수축형 꼬리 파지예요.',
+    feature: '일반화한 수축형 꼬리',
+    morphologyTags: ['phage', 'icosahedral'],
     silhouette: 'phage',
     parts: [
       'capsid',
@@ -108,48 +202,100 @@ export const OBSERVATION_PRESETS: readonly ObservationPreset[] = [
       'baseplate',
       'tail-fiber',
     ],
+    layers: [
+      { id: 'capsid', name: '머리 캡시드' },
+      { id: 'tail', name: '꼬리 장치' },
+      { id: 'genome', name: '유전체' },
+    ],
+    sourceIds: [],
+    modelBuilder: 't4',
+    representation: 'concept',
+    simplifications: ['특정 종의 정밀 복원이 아닌 교육용 개념 프리셋이에요.'],
+    displayLength: 6.8,
+    sectionRadius: 1.7,
     supportsDeliveryDemo: true,
   },
   {
     id: 'icosahedral',
     name: '정이십면체형 입자',
     shortName: '정이십면체형',
-    category: '다면체 캡시드 예시',
+    nameEn: 'Concept icosahedral particle',
+    category: '개념 프리셋',
     genomeLabel: 'DNA 개념 곡선',
-    description:
-      '각진 전체 윤곽과 표면 단위의 반복 배열, 닫힌 내부 공간을 함께 관찰해요.',
+    description: '기존 v1.5의 일반화한 다면체 캡시드예요.',
+    feature: '일반화한 다면체 껍질',
+    morphologyTags: ['icosahedral'],
     silhouette: 'polyhedron',
     parts: ['capsid', 'capsomer', 'genome'],
+    layers: [
+      { id: 'capsid', name: '캡시드' },
+      { id: 'genome', name: '유전체' },
+    ],
+    sourceIds: [],
+    modelBuilder: 'concept-icosahedral',
+    representation: 'concept',
+    simplifications: ['특정 종으로 해석하지 않는 형태 프리셋이에요.'],
+    displayLength: 4,
+    sectionRadius: 2.3,
     supportsDeliveryDemo: false,
   },
   {
     id: 'filamentous',
     name: '필라멘트형 입자',
     shortName: '필라멘트형',
-    category: '나선형 피복 예시',
+    nameEn: 'Concept filamentous particle',
+    category: '개념 프리셋',
     genomeLabel: 'RNA 개념 곡선',
-    description:
-      '길고 가는 중심을 여러 나선 줄의 단백질 단위가 연속적으로 감싸는 형태예요.',
+    description: '기존 v1.5의 일반화한 나선형 피복 입자예요.',
+    feature: '일반화한 나선 피복',
+    morphologyTags: ['helical'],
     silhouette: 'filament',
-    parts: ['capsid', 'capsomer', 'genome'],
+    parts: ['capsid', 'coat-protein', 'genome'],
+    layers: [
+      { id: 'capsid', name: '피복' },
+      { id: 'genome', name: '유전체' },
+    ],
+    sourceIds: [],
+    modelBuilder: 'concept-filamentous',
+    representation: 'concept',
+    simplifications: ['TMV나 M13 가운데 한 종을 뜻하지 않아요.'],
+    displayLength: 6.6,
+    sectionRadius: 0.85,
     supportsDeliveryDemo: false,
   },
   {
     id: 'enveloped',
     name: '외피 보유형 입자',
     shortName: '외피 보유형',
-    category: '외피와 내부 캡시드 예시',
+    nameEn: 'Concept enveloped particle',
+    category: '개념 프리셋',
     genomeLabel: 'DNA 개념 곡선',
-    description:
-      '바깥 지질 외피와 돌기, 그 안쪽의 다면체 캡시드와 유전체를 층별로 분리해 봐요.',
+    description: '기존 v1.5의 외피·캡시드·유전체 3층 개념 프리셋이에요.',
+    feature: '일반화한 외피와 캡시드',
+    morphologyTags: ['enveloped', 'icosahedral'],
     silhouette: 'envelope',
     parts: ['envelope', 'spike', 'capsid', 'capsomer', 'genome'],
+    layers: [
+      { id: 'envelope', name: '외피' },
+      { id: 'surface-protein', name: '표면 돌기' },
+      { id: 'capsid', name: '내부 캡시드' },
+      { id: 'genome', name: '유전체' },
+    ],
+    sourceIds: [],
+    modelBuilder: 'concept-enveloped',
+    representation: 'concept',
+    simplifications: ['특정 외피 바이러스의 층 구성을 대표하지 않아요.'],
+    displayLength: 4.5,
+    sectionRadius: 2.3,
     supportsDeliveryDemo: false,
   },
-];
+] as const;
 
-export function getObservationPreset(id: ObservationPresetId): ObservationPreset {
-  return (
-    OBSERVATION_PRESETS.find((preset) => preset.id === id) ?? OBSERVATION_PRESETS[0]!
-  );
+// v1.5 tests and the structure mode still use these four concept definitions.
+export const OBSERVATION_PRESETS = CONCEPT_OBSERVATION_PRESETS;
+
+const ALL_DEFINITIONS = [...VIRUS_CATALOG, ...CONCEPT_OBSERVATION_PRESETS];
+
+export function getObservationPreset(id: ObservationPresetId): ObservationDefinition {
+  return ALL_DEFINITIONS.find((preset) => preset.id === id) ?? VIRUS_CATALOG[0]!;
 }

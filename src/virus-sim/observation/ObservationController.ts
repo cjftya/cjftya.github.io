@@ -1,12 +1,17 @@
+import { getObservationPreset } from '../model/observationPresets';
 import { PHAGE_DELIVERY_DURATION, STRUCTURE_TOUR_DURATION } from './demoTimeline';
 import {
   DEFAULT_MOTION_OPTIONS,
   createObservationMotion,
+  freezeObservationMotion,
   stepObservationMotion,
-} from './motion';
+  switchObservationMotion,
+} from './motion/index';
 import type {
   DemoKind,
   InspectionView,
+  LayerVisibility,
+  MotionMode,
   ObservationLayerId,
   ObservationPartId,
   ObservationPresetId,
@@ -15,6 +20,23 @@ import type {
 } from './types';
 
 const DEFAULT_SEED = 730_421;
+
+const ALL_LAYER_IDS: readonly ObservationLayerId[] = [
+  'envelope',
+  'surface-protein',
+  'tegument',
+  'capsid',
+  'tail',
+  'outer-capsid',
+  'middle-capsid',
+  'core-capsid',
+  'matrix',
+  'nucleocapsid',
+  'membrane',
+  'core-wall',
+  'lateral-body',
+  'genome',
+] as const;
 
 export class ObservationController {
   private state: ObservationState;
@@ -34,6 +56,8 @@ export class ObservationController {
         previousPosition: { ...this.state.motion.previousPosition },
         quaternion: { ...this.state.motion.quaternion },
         previousQuaternion: { ...this.state.motion.previousQuaternion },
+        anchorPosition: { ...this.state.motion.anchorPosition },
+        anchorQuaternion: { ...this.state.motion.anchorQuaternion },
       },
       tick: this.state.motion.tick,
       seed: this.state.motion.seed,
@@ -53,11 +77,7 @@ export class ObservationController {
       this.state = {
         ...this.state,
         running: progress < 1,
-        demo: {
-          ...this.state.demo,
-          progress,
-          playing: progress < 1,
-        },
+        demo: { ...this.state.demo, progress, playing: progress < 1 },
       };
       return;
     }
@@ -73,6 +93,11 @@ export class ObservationController {
   }
 
   setPreset(presetId: ObservationPresetId): void {
+    const definition = getObservationPreset(presetId);
+    const motion = createObservationMotion(
+      this.state.motion.seed,
+      this.state.motion.mode,
+    );
     this.state = {
       ...this.state,
       presetId,
@@ -81,8 +106,9 @@ export class ObservationController {
       explosion: 0,
       sectionOffset: 0,
       genomeVisible: false,
-      layerVisibility: { envelope: true, capsid: true, genome: true },
+      layerVisibility: createLayerVisibility(definition.layers.map((item) => item.id)),
       demo: { kind: 'none', progress: 0, playing: false },
+      motion: { ...motion, tick: this.state.motion.tick },
     };
   }
 
@@ -130,14 +156,24 @@ export class ObservationController {
     this.state = { ...this.state, selectedPartId };
   }
 
-  setRunning(running: boolean): void {
+  setRunning(running: boolean, interpolation = 1): void {
+    const motion = running
+      ? this.state.motion.mode === 'static'
+        ? switchObservationMotion(this.state.motion, 'smooth')
+        : this.state.motion
+      : freezeObservationMotion(this.state.motion, interpolation);
     this.state = {
       ...this.state,
       running,
+      motion,
       demo: this.state.demo.playing
         ? { ...this.state.demo, playing: running }
         : this.state.demo,
     };
+  }
+
+  freeze(interpolation: number): void {
+    this.setRunning(false, interpolation);
   }
 
   setSpeed(speed: number): void {
@@ -146,12 +182,29 @@ export class ObservationController {
 
   setTranslationEnabled(translationEnabled: boolean): void {
     this.stopDemo();
-    this.state = { ...this.state, translationEnabled };
+    this.state = {
+      ...this.state,
+      translationEnabled,
+      motion: freezeObservationMotion(this.state.motion, 1),
+    };
   }
 
   setRotationEnabled(rotationEnabled: boolean): void {
     this.stopDemo();
-    this.state = { ...this.state, rotationEnabled };
+    this.state = {
+      ...this.state,
+      rotationEnabled,
+      motion: freezeObservationMotion(this.state.motion, 1),
+    };
+  }
+
+  setMotionMode(mode: MotionMode): void {
+    this.stopDemo();
+    this.state = {
+      ...this.state,
+      running: mode !== 'static',
+      motion: switchObservationMotion(this.state.motion, mode),
+    };
   }
 
   setFollowTarget(followTarget: boolean): void {
@@ -159,7 +212,12 @@ export class ObservationController {
   }
 
   startDemo(kind: Exclude<DemoKind, 'none'>): void {
-    if (kind === 'phage-delivery' && this.state.presetId !== 'tailed-phage') return;
+    if (
+      kind === 'phage-delivery' &&
+      !getObservationPreset(this.state.presetId).supportsDeliveryDemo
+    ) {
+      return;
+    }
     this.state = {
       ...this.state,
       running: true,
@@ -204,23 +262,26 @@ export class ObservationController {
     if (this.state.demo.kind === 'none') return;
     this.state = {
       ...this.state,
+      running: false,
       demo: { kind: 'none', progress: 0, playing: false },
     };
   }
 
   resetMotion(seed = this.state.motion.seed): void {
     this.stopDemo();
+    const mode =
+      this.state.motion.mode === 'static' ? 'smooth' : this.state.motion.mode;
     this.state = {
       ...this.state,
       running: true,
-      motion: createObservationMotion(seed),
+      motion: createObservationMotion(seed, mode),
     };
   }
 }
 
 function createInitialState(reducedMotion: boolean, seed: number): ObservationState {
   return {
-    presetId: 'tailed-phage',
+    presetId: 't4',
     view: 'surface',
     selectedPartId: null,
     running: !reducedMotion,
@@ -231,10 +292,21 @@ function createInitialState(reducedMotion: boolean, seed: number): ObservationSt
     explosion: 0,
     sectionOffset: 0,
     genomeVisible: false,
-    layerVisibility: { envelope: true, capsid: true, genome: true },
+    layerVisibility: createLayerVisibility(
+      getObservationPreset('t4').layers.map((item) => item.id),
+    ),
     demo: { kind: 'none', progress: 0, playing: false },
-    motion: createObservationMotion(seed),
+    motion: createObservationMotion(seed, reducedMotion ? 'static' : 'smooth'),
   };
+}
+
+function createLayerVisibility(
+  visibleLayers: readonly ObservationLayerId[],
+): LayerVisibility {
+  const visible = new Set(visibleLayers);
+  return Object.fromEntries(
+    ALL_LAYER_IDS.map((layerId) => [layerId, visible.has(layerId)]),
+  ) as unknown as LayerVisibility;
 }
 
 function clamp(value: number, minimum: number, maximum: number): number {

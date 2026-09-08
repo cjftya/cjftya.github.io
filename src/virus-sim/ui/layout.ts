@@ -93,8 +93,8 @@ export function renderAppLayout(root: HTMLElement): void {
 
           <section class="selection-card" aria-live="polite">
             <p class="eyebrow">SELECTED</p>
-            <h2 id="selection-title">캡시드 (capsid)</h2>
-            <p id="selection-description">유전체를 감싸는 단백질 껍질이에요. 지질 외피와는 구별해요.</p>
+            <h2 id="selection-title">대상을 선택해보세요</h2>
+            <p id="selection-description">3D 장면의 구조나 부위 목록을 누르면 역할과 표현 한계를 볼 수 있어요.</p>
             <p class="selection-state" id="selection-state"></p>
           </section>
         </aside>
@@ -102,7 +102,7 @@ export function renderAppLayout(root: HTMLElement): void {
         <section class="stage" aria-label="3D 시뮬레이션">
           <div id="viewport" class="viewport"></div>
           <div class="stage-overlay top-left">
-            <span class="live-dot"></span><span id="stage-label">OBSERVATORY · TAILED PHAGE</span>
+            <span class="live-dot"></span><span id="stage-label">OBSERVATORY · T4</span>
           </div>
           <div class="stage-overlay top-right viewport-actions">
             <button id="reset-camera" type="button">전체 보기</button>
@@ -172,7 +172,8 @@ export function renderAppLayout(root: HTMLElement): void {
         <article><span class="grade assumed">가상 조건</span><h3>모형 시간과 계수</h3><p>시간·확률·입자 수는 시연값이며 실제 감염률, 치료 효과, 농도를 예측하지 않아요.</p></article>
       </div>
       <div class="guide-copy">
-        <p>v1.5 관찰실의 이동·분해·전달 재생은 구조 설명용 연출이에요. 실제 온도, 점성, 분자 운동 시간이나 원자 좌표를 재현하지 않아요.</p>
+        <p>v2 관찰실의 기본 이동은 구조를 편하게 보기 위한 저주파 경로예요. 확산 모형도 실제 온도·점성으로 보정된 분자 운동은 아니에요.</p>
+        <p>도감 모델은 공개 구조 자료로 실루엣과 층 관계를 확인한 경량 절차 재구성이며, 전체 원자 좌표나 자연 상태의 색을 재현하지 않아요.</p>
         <p>감염 실험은 일반화한 꼬리 달린 DNA 파지의 용균 과정만 다뤄요. 몸체가 아니라 유전체가 전달되며, 모든 바이러스가 같은 방식으로 감염하지 않아요.</p>
       </div>
       <div class="source-links"><a href="https://ictv.global/report/information/virus-properties" target="_blank" rel="noreferrer">ICTV Virus Properties ↗</a><a href="https://www.nature.com/articles/s41467-024-52752-1" target="_blank" rel="noreferrer">파지 구조 연구 ↗</a><a href="https://github.com/cjftya/cjftya.github.io/blob/master/docs/virus-sim.md" target="_blank" rel="noreferrer">전체 모델 문서 ↗</a></div>

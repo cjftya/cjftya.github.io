@@ -233,6 +233,8 @@ export class VirusScene {
     if (stars) stars.visible = quality === 'high';
     if (this.mode === 'observatory' && this.observationSnapshot) {
       const snapshot = this.observationSnapshot;
+      const cameraPosition = this.camera.position.clone();
+      const cameraTarget = this.controls.target.clone();
       this.clearRoot();
       this.observationView = new ObservationView(
         this.root,
@@ -242,6 +244,23 @@ export class VirusScene {
         quality,
       );
       this.observationView.update(snapshot, 1);
+      this.camera.position.copy(cameraPosition);
+      this.controls.target.copy(cameraTarget);
+      this.controls.update();
+      if (snapshot.selectedPartId) {
+        const selection = this.observationView.selectPart(
+          snapshot.selectedPartId,
+          false,
+        );
+        if (selection) {
+          this.onSelect({
+            title: selection.title,
+            description: selection.description,
+            kind: 'part',
+            partId: selection.partId,
+          });
+        }
+      }
     } else if (this.mode === 'structure' && this.structureSnapshot) {
       const snapshot = this.structureSnapshot;
       this.clearRoot();
@@ -862,15 +881,36 @@ function createStaticObservationSnapshot(
     explosion: 0,
     sectionOffset: 0,
     genomeVisible,
-    layerVisibility: { envelope: true, capsid: true, genome: true },
+    layerVisibility: {
+      envelope: true,
+      'surface-protein': true,
+      tegument: true,
+      capsid: true,
+      tail: true,
+      'outer-capsid': true,
+      'middle-capsid': true,
+      'core-capsid': true,
+      matrix: true,
+      nucleocapsid: true,
+      membrane: true,
+      'core-wall': true,
+      'lateral-body': true,
+      genome: true,
+    },
     demo: { kind: 'none', progress: 0, playing: false },
     motion: {
+      version: 'observation-motion-v2',
+      mode: 'static',
       position,
       previousPosition: position,
       quaternion,
       previousQuaternion: quaternion,
+      anchorPosition: position,
+      anchorQuaternion: quaternion,
       seed: 1,
       tick: 0,
+      translationTick: 0,
+      rotationTick: 0,
     },
     tick: 0,
     seed: 1,
