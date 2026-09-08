@@ -714,7 +714,7 @@ export class VirusSimApp {
     this.updateExperienceDirector(snapshot, time);
     if (time - this.lastUiTime >= UI_UPDATE_INTERVAL * 1000) {
       this.lastUiTime = time;
-      this.syncUi(snapshot);
+      this.syncUi(this.observation.getSnapshot());
     }
     this.animationFrame = requestAnimationFrame(this.frame);
   };

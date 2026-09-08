@@ -835,6 +835,34 @@ input[type='checkbox'] {
   color: var(--vs-teal);
 }
 
+.webgl-fallback {
+  position: absolute;
+  inset: 50% auto auto 50%;
+  z-index: 3;
+  width: min(520px, calc(100% - 2rem));
+  transform: translate(-50%, -50%);
+  padding: 1.2rem;
+  text-align: center;
+  border: 1px solid rgb(99 238 224 / 32%);
+  border-radius: 16px;
+  background: rgb(7 18 31 / 90%);
+  box-shadow: var(--vs-shadow);
+  backdrop-filter: blur(14px);
+}
+
+.webgl-fallback h2,
+.webgl-fallback p {
+  margin: 0.45rem 0;
+}
+
+.webgl-fallback p:not(.eyebrow) {
+  color: var(--vs-muted);
+}
+
+.webgl-fallback button {
+  margin-top: 0.65rem;
+}
+
 @media (max-width: 1180px) {
   .workspace {
     grid-template-columns: minmax(250px, 300px) minmax(390px, 1fr);
