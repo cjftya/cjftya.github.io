@@ -77,24 +77,14 @@
       "status": "legacy",
       "featured": false,
       "order": 20,
-      "tags": [
-        "암호화폐",
-        "시장 분석",
-        "자동화"
-      ],
+      "tags": ["암호화폐", "시장 분석", "자동화"],
       "links": {
         "github": "https://github.com/cjftya/rainbow"
       },
       "details": {
         "category": "시장 분석 자동화",
         "description": "Binance의 현물·선물 OHLCV 데이터를 병렬로 수집하고, 주기별 롱·숏 조건 분석과 Telegram 알림 흐름을 실험한 Python 서비스예요.",
-        "techStack": [
-          "Python",
-          "Flask",
-          "CCXT",
-          "APScheduler",
-          "Telegram Bot API"
-        ]
+        "techStack": ["Python", "Flask", "CCXT", "APScheduler", "Telegram Bot API"]
       },
       "planet": {
         "seed": 2202,
@@ -133,11 +123,7 @@
       "status": "active",
       "featured": false,
       "order": 30,
-      "tags": [
-        "Android",
-        "메모리 누수",
-        "로컬 LLM"
-      ],
+      "tags": ["Android", "메모리 누수", "로컬 LLM"],
       "links": {
         "github": "https://github.com/cjftya/llm-android-leakchecker"
       },
@@ -189,23 +175,14 @@
       "status": "active",
       "featured": true,
       "order": 40,
-      "tags": [
-        "Android",
-        "성능 분석",
-        "포렌식"
-      ],
+      "tags": ["Android", "성능 분석", "포렌식"],
       "links": {
         "github": "https://github.com/cjftya/jelly_tracer"
       },
       "details": {
         "category": "Android 성능 포렌식",
         "description": "실행·블로킹·스케줄링 시간을 분리하고 Point Scan, Insight Scan, Context Scan을 통해 앱 실행 지연의 원인과 주변 시스템 부하를 단계적으로 좁혀요.",
-        "techStack": [
-          "Python",
-          "Perfetto Trace Processor",
-          "Pandas",
-          "Gemma"
-        ]
+        "techStack": ["Python", "Perfetto Trace Processor", "Pandas", "Gemma"]
       },
       "planet": {
         "seed": 2404,
@@ -244,11 +221,7 @@
       "status": "active",
       "featured": false,
       "order": 50,
-      "tags": [
-        "AI 에이전트",
-        "시뮬레이션",
-        "기억 시스템"
-      ],
+      "tags": ["AI 에이전트", "시뮬레이션", "기억 시스템"],
       "links": {
         "github": "https://github.com/cjftya/jelly_sim_v1"
       },
@@ -300,11 +273,7 @@
       "status": "active",
       "featured": true,
       "order": 60,
-      "tags": [
-        "Android",
-        "Markdown",
-        "문서 도구"
-      ],
+      "tags": ["Android", "Markdown", "문서 도구"],
       "links": {
         "github": "https://github.com/cjftya/jelly_markdown"
       },
@@ -356,11 +325,7 @@
       "status": "active",
       "featured": false,
       "order": 10,
-      "tags": [
-        "웹 실험",
-        "2D 물리",
-        "PixiJS"
-      ],
+      "tags": ["웹 실험", "2D 물리", "PixiJS"],
       "links": {
         "github": null,
         "page": "/projects/viola/"
@@ -368,12 +333,7 @@
       "details": {
         "category": "브라우저 물리 실험",
         "description": "도형 충돌과 반응, 스프링과 제약 조건, 고밀도 파티클 등 오래된 토이 프로젝트 46개를 원본 로직 중심으로 보존하고 공통 물리 코어 위에서 실행해요.",
-        "techStack": [
-          "TypeScript",
-          "PixiJS",
-          "WebGL",
-          "Vite"
-        ]
+        "techStack": ["TypeScript", "PixiJS", "WebGL", "Vite"]
       },
       "planet": {
         "seed": 3107,
@@ -412,11 +372,7 @@
       "status": "archived",
       "featured": false,
       "order": 20,
-      "tags": [
-        "모바일 웹",
-        "청첩장",
-        "캔버스"
-      ],
+      "tags": ["모바일 웹", "청첩장", "캔버스"],
       "links": {
         "github": null,
         "page": "/projects/weddingcard/"
@@ -424,12 +380,7 @@
       "details": {
         "category": "모바일 웹 아카이브",
         "description": "초대 문구, 일정, 지도, 갤러리와 입자 효과를 하나의 세로형 화면에 구성하고 터치 탐색에 맞춰 제작한 개인용 웹 프로젝트예요.",
-        "techStack": [
-          "JavaScript",
-          "p5.js",
-          "Viewer.js",
-          "Canvas 2D"
-        ]
+        "techStack": ["JavaScript", "p5.js", "Viewer.js", "Canvas 2D"]
       },
       "planet": {
         "seed": 3208,
@@ -468,11 +419,7 @@
       "status": "active",
       "featured": true,
       "order": 30,
-      "tags": [
-        "로또",
-        "패턴 시각화",
-        "데이터 탐색"
-      ],
+      "tags": ["로또", "패턴 시각화", "데이터 탐색"],
       "links": {
         "github": null,
         "page": "/projects/uriel/"
@@ -480,11 +427,7 @@
       "details": {
         "category": "로또 패턴 시각화",
         "description": "1~45 번호를 원 둘레와 실제 선택표 배치에 대응시켜, 여섯 번호가 만드는 다각형의 형태와 회차별 변화를 비교하고 탐색해요.",
-        "techStack": [
-          "React",
-          "TypeScript",
-          "SVG"
-        ]
+        "techStack": ["React", "TypeScript", "SVG"]
       },
       "planet": {
         "seed": 3309,
@@ -519,27 +462,19 @@
       "id": "virus-sim",
       "galaxyId": "pages-archive",
       "name": "Virus Sim",
-      "summary": "바이러스의 구조와 파지의 세균 감염 과정을 3D로 관찰하는 브라우저 실험장이에요.",
+      "summary": "바이러스 한 개를 확대해 다양한 껍질과 내부를 보고, 파지 감염 과정까지 관찰하는 3D 실험장이에요.",
       "status": "active",
       "featured": true,
       "order": 40,
-      "tags": [
-        "바이러스 구조",
-        "파지 감염",
-        "3D 시뮬레이션"
-      ],
+      "tags": ["바이러스 구조", "파지 감염", "3D 시뮬레이션"],
       "links": {
         "github": "https://github.com/cjftya/cjftya.github.io/tree/master/src/virus-sim",
         "page": "/projects/virus-sim/"
       },
       "details": {
         "category": "브라우저 생물학 실험",
-        "description": "세 가지 바이러스 형태를 분해·단면으로 살펴보고, 재현 가능한 모형에서 꼬리 달린 DNA 파지의 부착·유전체 전달·내부 생산·조립·용균 과정을 따라가요.",
-        "techStack": [
-          "TypeScript",
-          "Three.js",
-          "Vite"
-        ]
+        "description": "네 가지 바이러스 형태의 표면·단면·분해 구조와 부위별 동작을 확대해 살펴보고, 재현 가능한 모형에서 꼬리 달린 DNA 파지의 부착·유전체 전달·내부 생산·조립·용균 과정을 따라가요.",
+        "techStack": ["TypeScript", "Three.js", "Vite"]
       },
       "planet": {
         "seed": 3411,

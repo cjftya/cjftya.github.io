@@ -1,6 +1,12 @@
+import {
+  observationControlsMarkup,
+  observationFooterMarkup,
+  observationInfoMarkup,
+} from './observationPanel';
+
 export function renderAppLayout(root: HTMLElement): void {
   root.innerHTML = `
-    <div class="virus-app" data-mode="structure">
+    <div class="virus-app" data-mode="observatory">
       <header class="app-header">
         <div class="brand-block">
           <a class="home-link" href="/" aria-label="Jelly Garden 홈으로">← Garden</a>
@@ -10,7 +16,8 @@ export function renderAppLayout(root: HTMLElement): void {
           </div>
         </div>
         <nav class="mode-tabs" aria-label="관찰 모드">
-          <button class="mode-tab is-active" type="button" data-mode-button="structure">구조 관찰</button>
+          <button class="mode-tab is-active" type="button" data-mode-button="observatory">관찰실</button>
+          <button class="mode-tab" type="button" data-mode-button="structure">구조 관찰</button>
           <button class="mode-tab" type="button" data-mode-button="infection">감염 실험</button>
         </nav>
         <div class="header-actions">
@@ -32,7 +39,8 @@ export function renderAppLayout(root: HTMLElement): void {
             </label>
             <button data-open-guide type="button">모델 안내</button>
           </div>
-          <section class="mode-panel" data-mode-panel="structure">
+          ${observationControlsMarkup()}
+          <section class="mode-panel" data-mode-panel="structure" hidden>
             <div class="panel-heading">
               <p class="eyebrow">STRUCTURE</p>
               <h2>형태 프리셋</h2>
@@ -94,7 +102,7 @@ export function renderAppLayout(root: HTMLElement): void {
         <section class="stage" aria-label="3D 시뮬레이션">
           <div id="viewport" class="viewport"></div>
           <div class="stage-overlay top-left">
-            <span class="live-dot"></span><span id="stage-label">STRUCTURE · ICOSAHEDRAL</span>
+            <span class="live-dot"></span><span id="stage-label">OBSERVATORY · TAILED PHAGE</span>
           </div>
           <div class="stage-overlay top-right viewport-actions">
             <button id="reset-camera" type="button">전체 보기</button>
@@ -105,7 +113,8 @@ export function renderAppLayout(root: HTMLElement): void {
         </section>
 
         <aside class="observation-panel panel-scroll" aria-label="관찰 결과">
-          <section class="mode-panel" data-mode-panel="structure">
+          ${observationInfoMarkup()}
+          <section class="mode-panel" data-mode-panel="structure" hidden>
             <div class="panel-heading"><p class="eyebrow">HOW TO OBSERVE</p><h2>관찰 방법</h2></div>
             <ol class="observation-steps">
               <li><span>1</span><p><strong>회전과 확대</strong>드래그하고 휠이나 두 손가락으로 확대해요.</p></li>
@@ -130,6 +139,8 @@ export function renderAppLayout(root: HTMLElement): void {
           </section>
         </aside>
       </main>
+
+      ${observationFooterMarkup()}
 
       <footer class="experiment-bar" data-infection-only hidden>
         <div class="run-controls">
@@ -161,8 +172,8 @@ export function renderAppLayout(root: HTMLElement): void {
         <article><span class="grade assumed">가상 조건</span><h3>모형 시간과 계수</h3><p>시간·확률·입자 수는 시연값이며 실제 감염률, 치료 효과, 농도를 예측하지 않아요.</p></article>
       </div>
       <div class="guide-copy">
-        <p>v1은 일반화한 꼬리 달린 DNA 파지의 용균 과정을 다뤄요. 파지 몸체 전체가 세균 안으로 들어가는 것이 아니라 유전체가 전달되고, 외부에는 빈 입자가 남도록 표현해요.</p>
-        <p>모든 바이러스나 파지가 같은 방식으로 용균하지 않아요. 용원성·만성 방출과 실제 치료 효과 예측은 현재 계산 범위 밖이에요.</p>
+        <p>v1.5 관찰실의 이동·분해·전달 재생은 구조 설명용 연출이에요. 실제 온도, 점성, 분자 운동 시간이나 원자 좌표를 재현하지 않아요.</p>
+        <p>감염 실험은 일반화한 꼬리 달린 DNA 파지의 용균 과정만 다뤄요. 몸체가 아니라 유전체가 전달되며, 모든 바이러스가 같은 방식으로 감염하지 않아요.</p>
       </div>
       <div class="source-links"><a href="https://ictv.global/report/information/virus-properties" target="_blank" rel="noreferrer">ICTV Virus Properties ↗</a><a href="https://www.nature.com/articles/s41467-024-52752-1" target="_blank" rel="noreferrer">파지 구조 연구 ↗</a><a href="https://github.com/cjftya/cjftya.github.io/blob/master/docs/virus-sim.md" target="_blank" rel="noreferrer">전체 모델 문서 ↗</a></div>
     </dialog>
