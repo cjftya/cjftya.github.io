@@ -2,10 +2,10 @@ import { RunRecorder, downloadRun } from './experiments/runHistory';
 import {
   DEFAULT_CONFIG,
   FIXED_DT,
-  PART_DESCRIPTIONS,
   STRUCTURE_PRESETS,
   type StructurePresetId,
 } from './model/presets';
+import { OBSERVATION_PARTS, getObservationPreset } from './model/observationPresets';
 import type {
   BacteriumPhase,
   ReceptorDensity,
@@ -17,11 +17,23 @@ import type {
   StartPlacement,
 } from './model/types';
 import { VirusScene, type SelectionDetails } from './rendering/VirusScene';
+import { evaluatePhageDelivery } from './observation/demoTimeline';
+import { ObservationController } from './observation/ObservationController';
+import { OBSERVATION_FIXED_DT } from './observation/motion';
+import type {
+  DemoKind,
+  InspectionView,
+  ObservationLayerId,
+  ObservationPartId,
+  ObservationPresetId,
+  ObservationSnapshot,
+} from './observation/types';
 import { createSimulation } from './simulation';
 import { renderAppLayout, requiredElement } from './ui/layout';
 
 const MAX_TICKS_PER_FRAME = 12;
 const UI_UPDATE_INTERVAL = 0.12;
+type AppMode = 'observatory' | 'structure' | 'infection';
 
 interface ChartSample {
   time: number;
@@ -33,12 +45,16 @@ interface ChartSample {
 export class VirusSimApp {
   private readonly shell: HTMLElement;
   private readonly scene: VirusScene;
+  private readonly observation = new ObservationController(
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+  );
   private readonly recorder = new RunRecorder();
   private simulation = createSimulation(DEFAULT_CONFIG, 41327);
-  private mode: 'structure' | 'infection' = 'structure';
+  private mode: AppMode = 'observatory';
   private running = false;
   private speed = 1;
   private accumulator = 0;
+  private observationAccumulator = 0;
   private lastFrameTime = performance.now();
   private lastUiTime = 0;
   private animationFrame = 0;
@@ -60,12 +76,15 @@ export class VirusSimApp {
       this.updateSelection(selection),
     );
     this.bindControls();
-    this.scene.showStructure(this.activePreset);
-    this.updatePresetDescription();
+    const observationSnapshot = this.observation.getSnapshot();
+    this.scene.showObservatory(observationSnapshot);
+    this.updateObservationPresetUi();
+    this.syncObservationUi(observationSnapshot);
     this.updateSelection({
-      title: PART_DESCRIPTIONS.capsid.name,
-      description: PART_DESCRIPTIONS.capsid.role,
+      title: OBSERVATION_PARTS.capsid.name,
+      description: OBSERVATION_PARTS.capsid.detail,
       kind: 'part',
+      partId: 'capsid',
     });
     this.animationFrame = requestAnimationFrame(this.frame);
   }
@@ -83,12 +102,19 @@ export class VirusSimApp {
     this.root
       .querySelectorAll<HTMLButtonElement>('[data-mode-button]')
       .forEach((button) => {
-        button.addEventListener('click', () =>
-          this.switchMode(
-            button.dataset.modeButton === 'infection' ? 'infection' : 'structure',
-          ),
-        );
+        button.addEventListener('click', () => {
+          const requested = button.dataset.modeButton;
+          const mode: AppMode =
+            requested === 'infection'
+              ? 'infection'
+              : requested === 'structure'
+                ? 'structure'
+                : 'observatory';
+          this.switchMode(mode);
+        });
       });
+
+    this.bindObservationControls();
 
     this.root.querySelectorAll<HTMLButtonElement>('[data-preset]').forEach((button) => {
       button.addEventListener('click', () => {
@@ -189,13 +215,166 @@ export class VirusSimApp {
       const status = (event as CustomEvent<string>).detail;
       const message = requiredElement<HTMLElement>(this.root, '#context-message');
       message.hidden = status !== 'lost';
+      if (status === 'lost') {
+        this.observation.setRunning(false);
+        if (this.mode === 'infection') this.pause();
+      }
+    });
+    this.root.addEventListener('virus-observation-interaction', () => {
+      if (this.observation.getSnapshot().demo.kind === 'none') return;
+      this.observation.stopDemo();
+      this.syncObservationUi(this.observation.getSnapshot());
     });
     document.addEventListener('visibilitychange', this.handleVisibility);
   }
 
-  private switchMode(mode: 'structure' | 'infection'): void {
+  private bindObservationControls(): void {
+    this.root
+      .querySelectorAll<HTMLButtonElement>('[data-observation-preset]')
+      .forEach((button) => {
+        button.addEventListener('click', () => {
+          const presetId = button.dataset.observationPreset as ObservationPresetId;
+          this.observation.setPreset(presetId);
+          this.root
+            .querySelectorAll('[data-observation-preset]')
+            .forEach((item) => item.classList.toggle('is-active', item === button));
+          const snapshot = this.observation.getSnapshot();
+          this.scene.showObservatory(snapshot);
+          this.updateObservationPresetUi();
+          this.syncObservationUi(snapshot);
+          this.updateSelection(null);
+          this.text('#stage-label', `OBSERVATORY · ${stagePresetName(presetId)}`);
+        });
+      });
+
+    this.root
+      .querySelectorAll<HTMLButtonElement>('[data-observation-view]')
+      .forEach((button) => {
+        button.addEventListener('click', () => {
+          this.observation.setView(button.dataset.observationView as InspectionView);
+          this.syncObservationUi(this.observation.getSnapshot());
+        });
+      });
+
+    this.input('#observation-explosion').addEventListener('input', (event) => {
+      this.observation.setExplosion(Number((event.target as HTMLInputElement).value));
+      this.syncObservationUi(this.observation.getSnapshot());
+    });
+    this.input('#observation-section-offset').addEventListener('input', (event) => {
+      this.observation.setSectionOffset(
+        Number((event.target as HTMLInputElement).value) / 100,
+      );
+      this.syncObservationUi(this.observation.getSnapshot());
+    });
+    this.checkbox('#observation-genome').addEventListener('change', (event) => {
+      this.observation.setGenomeVisible((event.target as HTMLInputElement).checked);
+      this.syncObservationUi(this.observation.getSnapshot());
+    });
+    this.checkbox('#observation-follow').addEventListener('change', (event) => {
+      this.observation.setFollowTarget((event.target as HTMLInputElement).checked);
+      this.syncObservationUi(this.observation.getSnapshot());
+    });
+    this.root
+      .querySelectorAll<HTMLInputElement>('[data-observation-layer]')
+      .forEach((input) => {
+        input.addEventListener('change', () => {
+          this.observation.setLayerVisible(
+            input.dataset.observationLayer as ObservationLayerId,
+            input.checked,
+          );
+          this.syncObservationUi(this.observation.getSnapshot());
+        });
+      });
+
+    this.button('#observation-play-pause').addEventListener('click', () => {
+      const snapshot = this.observation.getSnapshot();
+      if (snapshot.demo.kind !== 'none') this.observation.toggleDemoPlayback();
+      else this.observation.setRunning(!snapshot.running);
+      this.observationAccumulator = 0;
+      this.syncObservationUi(this.observation.getSnapshot());
+    });
+    this.button('#observation-restart').addEventListener('click', () => {
+      this.observation.resetMotion();
+      this.observationAccumulator = 0;
+      const snapshot = this.observation.getSnapshot();
+      this.scene.showObservatory(snapshot);
+      this.syncObservationUi(snapshot);
+    });
+    this.button('#observation-return').addEventListener('click', () =>
+      this.scene.resetCamera(),
+    );
+    this.checkbox('#observation-translation').addEventListener('change', (event) => {
+      this.observation.setTranslationEnabled(
+        (event.target as HTMLInputElement).checked,
+      );
+      this.syncObservationUi(this.observation.getSnapshot());
+    });
+    this.checkbox('#observation-rotation').addEventListener('change', (event) => {
+      this.observation.setRotationEnabled((event.target as HTMLInputElement).checked);
+      this.syncObservationUi(this.observation.getSnapshot());
+    });
+    this.root
+      .querySelectorAll<HTMLButtonElement>('[data-observation-speed]')
+      .forEach((button) => {
+        button.addEventListener('click', () => {
+          this.observation.setSpeed(Number(button.dataset.observationSpeed ?? 1));
+          this.syncObservationUi(this.observation.getSnapshot());
+        });
+      });
+    this.root
+      .querySelectorAll<HTMLButtonElement>('[data-observation-part]')
+      .forEach((button) => {
+        button.addEventListener('click', () => {
+          const partId = button.dataset.observationPart as ObservationPartId;
+          this.observation.stopDemo();
+          this.observation.selectPart(partId);
+          this.scene.selectObservationPart(partId);
+          this.syncObservationUi(this.observation.getSnapshot());
+        });
+      });
+
+    this.button('#start-structure-tour').addEventListener('click', () =>
+      this.startObservationDemo('structure-tour'),
+    );
+    this.button('#start-phage-demo').addEventListener('click', () =>
+      this.startObservationDemo('phage-delivery'),
+    );
+    this.button('#demo-toggle').addEventListener('click', () => {
+      this.observation.toggleDemoPlayback();
+      this.syncObservationUi(this.observation.getSnapshot());
+    });
+    this.button('#demo-rewind').addEventListener('click', () => {
+      this.observation.rewindDemo();
+      this.syncObservationUi(this.observation.getSnapshot());
+    });
+    this.button('#demo-exit').addEventListener('click', () => {
+      this.observation.stopDemo();
+      this.observation.setRunning(false);
+      this.syncObservationUi(this.observation.getSnapshot());
+    });
+    this.input('#demo-progress').addEventListener('input', (event) => {
+      this.observation.setDemoProgress(
+        Number((event.target as HTMLInputElement).value) / 1000,
+      );
+      this.syncObservationUi(this.observation.getSnapshot());
+    });
+  }
+
+  private startObservationDemo(kind: Exclude<DemoKind, 'none'>): void {
+    this.observation.startDemo(kind);
+    this.observationAccumulator = 0;
+    this.scene.resetCamera();
+    this.syncObservationUi(this.observation.getSnapshot());
+  }
+
+  private switchMode(mode: AppMode): void {
     if (this.mode === mode) return;
-    this.pause();
+    if (this.mode === 'infection') this.pause();
+    if (this.mode === 'observatory') {
+      this.observation.setRunning(false);
+      this.observation.stopDemo();
+      this.observationAccumulator = 0;
+    }
     this.mode = mode;
     this.shell.dataset.mode = mode;
     this.root.querySelectorAll<HTMLElement>('[data-mode-panel]').forEach((panel) => {
@@ -206,6 +385,8 @@ export class VirusSimApp {
     });
     requiredElement<HTMLElement>(this.root, '[data-infection-only]').hidden =
       mode !== 'infection';
+    requiredElement<HTMLElement>(this.root, '[data-observatory-only]').hidden =
+      mode !== 'observatory';
     if (mode === 'infection') {
       const snapshot = this.simulation.getSnapshot();
       this.scene.showInfection(snapshot);
@@ -213,7 +394,7 @@ export class VirusSimApp {
       this.scene.setGenomeVisible(this.checkbox('#infection-genome').checked);
       this.text('#stage-label', 'INFECTION · PAUSED');
       this.updateUi(snapshot);
-    } else {
+    } else if (mode === 'structure') {
       this.scene.showStructure(this.activePreset);
       this.scene.setExplosion(Number(this.input('#explode-range').value));
       this.scene.setSection(this.checkbox('#structure-section').checked);
@@ -222,6 +403,12 @@ export class VirusSimApp {
         '#stage-label',
         `STRUCTURE · ${this.activePreset.replace('-', ' ').toUpperCase()}`,
       );
+      this.updatePresetDescription();
+    } else {
+      const snapshot = this.observation.getSnapshot();
+      this.scene.showObservatory(snapshot);
+      this.syncObservationUi(snapshot);
+      this.text('#stage-label', `OBSERVATORY · ${stagePresetName(snapshot.presetId)}`);
     }
   }
 
@@ -295,7 +482,41 @@ export class VirusSimApp {
     this.lastFrameTime = time;
     let delayed = false;
 
-    if (this.mode === 'infection' && this.running) {
+    if (this.mode === 'observatory') {
+      let snapshot = this.observation.getSnapshot();
+      if (snapshot.running) {
+        this.observationAccumulator += frameDelta * snapshot.speed;
+        let ticks = 0;
+        while (
+          this.observationAccumulator >= OBSERVATION_FIXED_DT &&
+          ticks < MAX_TICKS_PER_FRAME
+        ) {
+          this.observation.step(OBSERVATION_FIXED_DT);
+          this.observationAccumulator -= OBSERVATION_FIXED_DT;
+          ticks += 1;
+        }
+        if (this.observationAccumulator >= OBSERVATION_FIXED_DT) {
+          this.observationAccumulator = Math.min(
+            this.observationAccumulator,
+            OBSERVATION_FIXED_DT * MAX_TICKS_PER_FRAME,
+          );
+          delayed = true;
+        }
+        snapshot = this.observation.getSnapshot();
+      }
+      if (this.shouldRender(time)) {
+        this.scene.updateObservatory(
+          snapshot,
+          snapshot.running
+            ? Math.min(1, this.observationAccumulator / OBSERVATION_FIXED_DT)
+            : 1,
+        );
+      }
+      if (time - this.lastUiTime >= UI_UPDATE_INTERVAL * 1000) {
+        this.syncObservationUi(snapshot);
+        this.lastUiTime = time;
+      }
+    } else if (this.mode === 'infection' && this.running) {
       this.accumulator += frameDelta * this.speed;
       let ticks = 0;
       while (this.accumulator >= FIXED_DT && ticks < MAX_TICKS_PER_FRAME) {
@@ -472,6 +693,123 @@ export class VirusSimApp {
     `;
   }
 
+  private updateObservationPresetUi(): void {
+    const snapshot = this.observation.getSnapshot();
+    const preset = getObservationPreset(snapshot.presetId);
+    const card = requiredElement<HTMLElement>(
+      this.root,
+      '#observation-preset-description',
+    );
+    card.innerHTML = `<span>${preset.category}</span><h3>${preset.name}</h3><p>${preset.description}</p><small>${preset.genomeLabel} · 교육용 일반화 프리셋</small>`;
+    this.root
+      .querySelectorAll<HTMLButtonElement>('[data-observation-part]')
+      .forEach((button) => {
+        button.hidden = !preset.parts.includes(
+          button.dataset.observationPart as ObservationPartId,
+        );
+      });
+    requiredElement<HTMLElement>(this.root, '[data-phage-demo-only]').hidden =
+      !preset.supportsDeliveryDemo;
+    requiredElement<HTMLElement>(this.root, '[data-envelope-layers]').hidden =
+      preset.id !== 'enveloped';
+  }
+
+  private syncObservationUi(snapshot: ObservationSnapshot): void {
+    const viewLabels: Record<InspectionView, string> = {
+      surface: '외관',
+      transparent: '반투명',
+      section: '단면',
+      exploded: '분해',
+    };
+    this.root
+      .querySelectorAll<HTMLElement>('[data-observation-preset]')
+      .forEach((button) =>
+        button.classList.toggle(
+          'is-active',
+          button.dataset.observationPreset === snapshot.presetId,
+        ),
+      );
+    this.root
+      .querySelectorAll<HTMLElement>('[data-observation-view]')
+      .forEach((button) =>
+        button.classList.toggle(
+          'is-active',
+          button.dataset.observationView === snapshot.view,
+        ),
+      );
+    this.text('#observation-view-label', viewLabels[snapshot.view]);
+    requiredElement<HTMLElement>(this.root, '[data-explosion-control]').hidden =
+      snapshot.view !== 'exploded' || snapshot.demo.kind !== 'none';
+    requiredElement<HTMLElement>(this.root, '[data-section-control]').hidden =
+      snapshot.view !== 'section' || snapshot.demo.kind !== 'none';
+    this.input('#observation-explosion').value = String(snapshot.explosion);
+    this.text('#observation-explosion-value', `${Math.round(snapshot.explosion)}%`);
+    this.input('#observation-section-offset').value = String(
+      Math.round(snapshot.sectionOffset * 100),
+    );
+    this.text('#observation-section-value', snapshot.sectionOffset.toFixed(2));
+    this.checkbox('#observation-genome').checked = snapshot.genomeVisible;
+    this.checkbox('#observation-follow').checked = snapshot.followTarget;
+    this.checkbox('#observation-translation').checked = snapshot.translationEnabled;
+    this.checkbox('#observation-rotation').checked = snapshot.rotationEnabled;
+    this.root
+      .querySelectorAll<HTMLInputElement>('[data-observation-layer]')
+      .forEach((input) => {
+        input.checked =
+          snapshot.layerVisibility[
+            input.dataset.observationLayer as ObservationLayerId
+          ];
+      });
+    this.root
+      .querySelectorAll<HTMLElement>('[data-observation-speed]')
+      .forEach((button) =>
+        button.classList.toggle(
+          'is-active',
+          Number(button.dataset.observationSpeed) === snapshot.speed,
+        ),
+      );
+    this.root
+      .querySelectorAll<HTMLElement>('[data-observation-part]')
+      .forEach((button) =>
+        button.classList.toggle(
+          'is-active',
+          button.dataset.observationPart === snapshot.selectedPartId,
+        ),
+      );
+
+    this.text('#observation-play-pause', snapshot.running ? 'Ⅱ 정지' : '▶ 재생');
+    this.text('#observation-tick', `tick ${snapshot.tick.toLocaleString('ko-KR')}`);
+    this.text(
+      '#observation-status',
+      snapshot.demo.kind !== 'none'
+        ? '안내 재생'
+        : snapshot.followTarget
+          ? '개체 추적 중'
+          : '고정 카메라',
+    );
+
+    const timeline = requiredElement<HTMLElement>(this.root, '#demo-timeline');
+    timeline.hidden = snapshot.demo.kind === 'none';
+    if (snapshot.demo.kind !== 'none') {
+      this.input('#demo-progress').value = String(
+        Math.round(snapshot.demo.progress * 1000),
+      );
+      this.text('#demo-progress-value', `${Math.round(snapshot.demo.progress * 100)}%`);
+      this.text(
+        '#demo-kind-label',
+        snapshot.demo.kind === 'structure-tour' ? '구조 둘러보기' : '파지 유전체 전달',
+      );
+      this.text('#demo-toggle', snapshot.demo.playing ? 'Ⅱ 일시정지' : '▶ 계속');
+      this.text('#demo-status-copy', observationDemoCopy(snapshot));
+    }
+
+    const metrics = this.scene.getRenderMetrics();
+    this.text(
+      '#render-budget',
+      `draw ${metrics.calls} · triangle ${metrics.triangles.toLocaleString('ko-KR')} · geometry ${metrics.geometries}`,
+    );
+  }
+
   private updatePresetDescription(): void {
     const preset =
       STRUCTURE_PRESETS.find((item) => item.id === this.activePreset) ??
@@ -483,6 +821,7 @@ export class VirusSimApp {
   private updateSelection(selection: SelectionDetails | null): void {
     this.selected = selection;
     if (!selection) {
+      if (this.mode === 'observatory') this.observation.selectPart(null);
       this.text('#selection-title', '대상을 선택해보세요');
       this.text(
         '#selection-description',
@@ -491,6 +830,9 @@ export class VirusSimApp {
       this.text('#selection-state', '');
       return;
     }
+    if (this.mode === 'observatory' && selection.partId) {
+      this.observation.selectPart(selection.partId);
+    }
     this.text('#selection-title', selection.title);
     this.text('#selection-description', selection.description);
     this.text('#selection-state', '');
@@ -498,8 +840,12 @@ export class VirusSimApp {
   }
 
   private readonly handleVisibility = (): void => {
-    if (document.hidden) this.pause();
+    if (document.hidden) {
+      if (this.mode === 'infection') this.pause();
+      if (this.mode === 'observatory') this.observation.setRunning(false);
+    }
     this.accumulator = 0;
+    this.observationAccumulator = 0;
     this.lastFrameTime = performance.now();
   };
 
@@ -605,4 +951,28 @@ function runStateLabel(state: RunSummary['state']): string {
   if (state === 'completed') return '완료';
   if (state === 'interrupted') return '중단';
   return '진행 중';
+}
+
+function stagePresetName(presetId: ObservationPresetId): string {
+  return presetId.replace('-', ' ').toUpperCase();
+}
+
+function observationDemoCopy(snapshot: ObservationSnapshot): string {
+  if (snapshot.demo.kind === 'phage-delivery') {
+    const pose = evaluatePhageDelivery(snapshot.demo.progress);
+    const copy: Record<typeof pose.label, string> = {
+      '표면 접근': '자유 이동을 멈추고 숙주 표면 패치에 접근해요.',
+      부착: '꼬리섬유와 기저판이 표면에 자세를 잡아요.',
+      '꼬리집 수축': '반복 꼬리집이 짧아지며 내부 관이 구분돼요.',
+      '유전체 전달': '유전체 경로만 꼬리 통로를 따라 표면 안쪽으로 이동해요.',
+      '빈 입자': '전달 뒤 외부에는 빈 파지 입자가 남아요.',
+    };
+    return `${pose.label} · ${copy[pose.label]}`;
+  }
+  if (snapshot.demo.progress < 0.2) return '전체 외관과 반복 표면 단위를 살펴봐요.';
+  if (snapshot.demo.progress < 0.48)
+    return '단면을 움직여 내부 유전체의 위치를 확인해요.';
+  if (snapshot.demo.progress < 0.78)
+    return '부품을 원래 좌표에서 벌려 층과 연결 관계를 봐요.';
+  return '분해된 부품이 누적 오차 없이 원래 배치로 돌아와요.';
 }

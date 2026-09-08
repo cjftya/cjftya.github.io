@@ -1,33 +1,25 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import {
-  PART_DESCRIPTIONS,
-  type PartId,
-  type StructurePresetId,
-} from '../model/presets';
+import type { StructurePresetId } from '../model/presets';
 import type { PhageSnapshot, SimulationSnapshot } from '../model/types';
+import type { ObservationPartId, ObservationSnapshot } from '../observation/types';
+import { CameraRig } from './CameraRig';
+import { ObservationView } from './ObservationView';
 
 export interface SelectionDetails {
   readonly title: string;
   readonly description: string;
   readonly kind: 'part' | 'phage' | 'bacterium';
   readonly phageId?: number;
+  readonly partId?: ObservationPartId;
 }
 
 type SelectionHandler = (selection: SelectionDetails | null) => void;
 
-interface Explodable {
-  readonly object: THREE.Object3D;
-  readonly origin: THREE.Vector3;
-  readonly direction: THREE.Vector3;
-}
-
 const COLORS = {
   capsid: 0x51e1d3,
-  capsidDark: 0x176c78,
   genome: 0xb788ff,
   tail: 0x82b6dc,
-  receptor: 0xf8bd68,
   bacterium: 0x83c9ef,
   selected: 0xffc66d,
 } as const;
@@ -37,6 +29,7 @@ export class VirusScene {
   private readonly camera = new THREE.PerspectiveCamera(42, 1, 0.05, 100);
   private readonly renderer: THREE.WebGLRenderer;
   private readonly controls: OrbitControls;
+  private readonly cameraRig: CameraRig;
   private readonly root = new THREE.Group();
   private readonly raycaster = new THREE.Raycaster();
   private readonly pointer = new THREE.Vector2();
@@ -44,8 +37,6 @@ export class VirusScene {
   private readonly onSelect: SelectionHandler;
   private readonly canvas: HTMLCanvasElement;
   private selectables: THREE.Object3D[] = [];
-  private explodables: Explodable[] = [];
-  private structureGenome: THREE.Object3D | null = null;
   private sectionMaterials: THREE.Material[] = [];
   private infectionObjects = new Map<number, THREE.Group>();
   private bacterium: THREE.Mesh | null = null;
@@ -57,7 +48,13 @@ export class VirusScene {
     material: THREE.MeshStandardMaterial;
     emissive: THREE.Color;
   } | null = null;
-  private mode: 'structure' | 'infection' = 'structure';
+  private observationView: ObservationView | null = null;
+  private observationSnapshot: ObservationSnapshot | null = null;
+  private structureSnapshot: ObservationSnapshot | null = null;
+  private pointerStart: { x: number; y: number; time: number; id: number } | null =
+    null;
+  private quality: 'high' | 'low' = 'high';
+  private mode: 'observatory' | 'structure' | 'infection' = 'structure';
   private sectionEnabled = true;
   private genomeEnabled = true;
 
@@ -98,8 +95,12 @@ export class VirusScene {
     this.controls.maxDistance = 24;
     this.controls.target.set(0, 0, 0);
     this.controls.update();
+    this.cameraRig = new CameraRig(this.camera, this.controls);
+    this.controls.addEventListener('start', this.handleControlsStart);
 
     this.canvas.addEventListener('pointerdown', this.handlePointerDown);
+    this.canvas.addEventListener('pointerup', this.handlePointerUp);
+    this.canvas.addEventListener('pointercancel', this.handlePointerCancel);
     this.canvas.addEventListener('webglcontextlost', this.handleContextLost);
     this.canvas.addEventListener('webglcontextrestored', this.handleContextRestored);
     this.resizeObserver = new ResizeObserver(this.resize);
@@ -107,14 +108,53 @@ export class VirusScene {
     this.resize();
   }
 
+  showObservatory(snapshot: ObservationSnapshot): void {
+    const needsRebuild =
+      this.mode !== 'observatory' ||
+      this.observationView?.presetId !== snapshot.presetId;
+    this.mode = 'observatory';
+    this.observationSnapshot = snapshot;
+    if (needsRebuild) {
+      this.clearRoot();
+      this.observationView = new ObservationView(
+        this.root,
+        this.controls,
+        this.cameraRig,
+        snapshot.presetId,
+        this.quality,
+      );
+    }
+    this.observationView?.update(snapshot, 1);
+  }
+
+  updateObservatory(snapshot: ObservationSnapshot, interpolation: number): void {
+    if (
+      this.mode !== 'observatory' ||
+      this.observationView?.presetId !== snapshot.presetId
+    ) {
+      this.showObservatory(snapshot);
+    }
+    this.observationSnapshot = snapshot;
+    this.observationView?.update(snapshot, interpolation);
+    this.renderer.render(this.scene, this.camera);
+  }
+
   showStructure(preset: StructurePresetId): void {
     this.mode = 'structure';
     this.clearRoot();
-    const group = this.buildStructure(preset);
-    this.root.add(group);
-    this.resetCamera();
-    this.applySection();
-    this.setGenomeVisible(this.genomeEnabled);
+    this.structureSnapshot = createStaticObservationSnapshot(
+      preset,
+      this.sectionEnabled,
+      this.genomeEnabled,
+    );
+    this.observationView = new ObservationView(
+      this.root,
+      this.controls,
+      this.cameraRig,
+      preset,
+      this.quality,
+    );
+    this.observationView.update(this.structureSnapshot, 1);
   }
 
   showInfection(snapshot: SimulationSnapshot): void {
@@ -133,32 +173,55 @@ export class VirusScene {
   update(snapshot: SimulationSnapshot | null, interpolation: number): void {
     if (this.mode === 'infection' && snapshot)
       this.updateInfection(snapshot, interpolation);
+    if (this.mode === 'structure' && this.structureSnapshot)
+      this.observationView?.update(this.structureSnapshot, 1);
     this.controls.update();
     this.renderer.render(this.scene, this.camera);
   }
 
   setExplosion(amount: number): void {
-    const normalized = THREE.MathUtils.clamp(amount / 100, 0, 1);
-    for (const item of this.explodables) {
-      item.object.position
-        .copy(item.origin)
-        .addScaledVector(item.direction, normalized * 2.15);
+    if (this.mode === 'structure' && this.structureSnapshot) {
+      this.structureSnapshot = {
+        ...this.structureSnapshot,
+        view: amount > 0 ? 'exploded' : this.sectionEnabled ? 'section' : 'surface',
+        explosion: amount,
+      };
+      this.observationView?.update(this.structureSnapshot, 1);
+      return;
     }
   }
 
   setSection(enabled: boolean): void {
     this.sectionEnabled = enabled;
+    if (this.mode === 'structure' && this.structureSnapshot) {
+      this.structureSnapshot = {
+        ...this.structureSnapshot,
+        view:
+          this.structureSnapshot.explosion > 0
+            ? 'exploded'
+            : enabled
+              ? 'section'
+              : 'surface',
+      };
+      this.observationView?.update(this.structureSnapshot, 1);
+      return;
+    }
     this.applySection();
   }
 
   setGenomeVisible(enabled: boolean): void {
     this.genomeEnabled = enabled;
-    if (this.structureGenome) this.structureGenome.visible = enabled;
+    if (this.mode === 'structure' && this.structureSnapshot) {
+      this.structureSnapshot = { ...this.structureSnapshot, genomeVisible: enabled };
+      this.observationView?.update(this.structureSnapshot, 1);
+      return;
+    }
     if (this.deliveryLine)
       this.deliveryLine.visible = enabled && this.deliveryLine.visible;
   }
 
   setQuality(quality: 'high' | 'low'): void {
+    this.quality = quality;
     const maximum =
       quality === 'low'
         ? 1
@@ -168,10 +231,37 @@ export class VirusScene {
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, maximum));
     const stars = this.scene.getObjectByName('decorative-stars');
     if (stars) stars.visible = quality === 'high';
+    if (this.mode === 'observatory' && this.observationSnapshot) {
+      const snapshot = this.observationSnapshot;
+      this.clearRoot();
+      this.observationView = new ObservationView(
+        this.root,
+        this.controls,
+        this.cameraRig,
+        snapshot.presetId,
+        quality,
+      );
+      this.observationView.update(snapshot, 1);
+    } else if (this.mode === 'structure' && this.structureSnapshot) {
+      const snapshot = this.structureSnapshot;
+      this.clearRoot();
+      this.observationView = new ObservationView(
+        this.root,
+        this.controls,
+        this.cameraRig,
+        snapshot.presetId,
+        quality,
+      );
+      this.observationView.update(snapshot, 1);
+    }
     this.resize();
   }
 
   resetCamera(): void {
+    if (this.observationView) {
+      this.observationView.frameAll();
+      return;
+    }
     if (this.mode === 'infection') this.camera.position.set(8.8, 6.2, 10.4);
     else this.camera.position.set(7.2, 4.4, 8.4);
     this.controls.target.set(0, 0, 0);
@@ -179,6 +269,10 @@ export class VirusScene {
   }
 
   focusSelection(): void {
+    if (this.observationView) {
+      this.observationView.focusSelection();
+      return;
+    }
     if (!this.selectedObject) return;
     const position = new THREE.Vector3();
     this.selectedObject.getWorldPosition(position);
@@ -193,9 +287,13 @@ export class VirusScene {
 
   dispose(): void {
     this.canvas.removeEventListener('pointerdown', this.handlePointerDown);
+    this.canvas.removeEventListener('pointerup', this.handlePointerUp);
+    this.canvas.removeEventListener('pointercancel', this.handlePointerCancel);
     this.canvas.removeEventListener('webglcontextlost', this.handleContextLost);
     this.canvas.removeEventListener('webglcontextrestored', this.handleContextRestored);
     this.resizeObserver.disconnect();
+    this.controls.removeEventListener('start', this.handleControlsStart);
+    this.cameraRig.dispose();
     this.controls.dispose();
     this.clearRoot();
     const stars = this.scene.getObjectByName('decorative-stars');
@@ -205,6 +303,27 @@ export class VirusScene {
     }
     this.renderer.dispose();
     this.canvas.remove();
+  }
+
+  selectObservationPart(partId: ObservationPartId): void {
+    const selection = this.observationView?.selectPart(partId);
+    if (!selection) return;
+    this.onSelect({
+      title: selection.title,
+      description: selection.description,
+      kind: 'part',
+      partId: selection.partId,
+    });
+  }
+
+  getRenderMetrics(): { calls: number; triangles: number; geometries: number } {
+    return (
+      this.observationView?.getRenderMetrics(this.renderer) ?? {
+        calls: this.renderer.info.render.calls,
+        triangles: this.renderer.info.render.triangles,
+        geometries: this.renderer.info.memory.geometries,
+      }
+    );
   }
 
   private readonly resize = (): void => {
@@ -256,189 +375,6 @@ export class VirusScene {
     const stars = new THREE.Points(geometry, material);
     stars.name = 'decorative-stars';
     this.scene.add(stars);
-  }
-
-  private buildStructure(preset: StructurePresetId): THREE.Group {
-    this.selectables = [];
-    this.explodables = [];
-    this.sectionMaterials = [];
-    this.structureGenome = null;
-    if (preset === 'tailed-phage') return this.buildTailedPhage();
-    if (preset === 'filamentous') return this.buildFilamentous();
-    return this.buildIcosahedral();
-  }
-
-  private buildIcosahedral(): THREE.Group {
-    const group = new THREE.Group();
-    const capsid = new THREE.Mesh(
-      new THREE.IcosahedronGeometry(1.75, 2),
-      this.capsidMaterial(0.82),
-    );
-    capsid.scale.y = 0.96;
-    group.add(capsid);
-    this.registerPart(capsid, 'capsid', new THREE.Vector3(0.1, 0.2, 0.05));
-    this.sectionMaterials.push(capsid.material);
-
-    const cage = new THREE.LineSegments(
-      new THREE.WireframeGeometry(new THREE.IcosahedronGeometry(1.77, 2)),
-      new THREE.LineBasicMaterial({
-        color: 0xa5fff3,
-        transparent: true,
-        opacity: 0.42,
-      }),
-    );
-    cage.scale.y = 0.96;
-    group.add(cage);
-    this.registerPart(cage, 'capsid', new THREE.Vector3(-0.08, 0.06, 0.08));
-
-    const genome = this.createGenomeCoil(1.15, 28, 0.045);
-    group.add(genome);
-    this.registerPart(genome, 'genome', new THREE.Vector3(0, -0.15, 0.12));
-    this.structureGenome = genome;
-
-    for (let index = 0; index < 12; index += 1) {
-      const direction = fibonacciDirection(index, 12);
-      const unit = new THREE.Mesh(
-        new THREE.SphereGeometry(0.13, 10, 8),
-        new THREE.MeshStandardMaterial({ color: COLORS.capsid, roughness: 0.38 }),
-      );
-      unit.position.copy(direction).multiplyScalar(1.82);
-      group.add(unit);
-      this.registerPart(unit, 'capsid', direction);
-    }
-    return group;
-  }
-
-  private buildTailedPhage(): THREE.Group {
-    const group = new THREE.Group();
-    const headMaterial = this.capsidMaterial(0.86);
-    const head = new THREE.Mesh(new THREE.IcosahedronGeometry(1.32, 2), headMaterial);
-    head.scale.set(1, 1.24, 1);
-    head.position.y = 1.55;
-    group.add(head);
-    this.registerPart(head, 'capsid', new THREE.Vector3(0, 0.8, 0));
-    this.sectionMaterials.push(headMaterial);
-
-    const genome = this.createGenomeCoil(0.82, 24, 0.038);
-    genome.position.y = 1.55;
-    genome.scale.y = 1.25;
-    group.add(genome);
-    this.registerPart(genome, 'genome', new THREE.Vector3(0.15, 0.55, 0));
-    this.structureGenome = genome;
-
-    const collar = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.42, 0.5, 0.24, 12),
-      new THREE.MeshStandardMaterial({
-        color: 0x9fc4d8,
-        metalness: 0.22,
-        roughness: 0.36,
-      }),
-    );
-    collar.position.y = 0.08;
-    group.add(collar);
-    this.registerPart(collar, 'tail', new THREE.Vector3(0.15, -0.35, 0));
-
-    const tail = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.24, 0.34, 2.18, 12, 8, true),
-      new THREE.MeshStandardMaterial({
-        color: COLORS.tail,
-        roughness: 0.3,
-        metalness: 0.12,
-      }),
-    );
-    tail.position.y = -1.08;
-    group.add(tail);
-    this.registerPart(tail, 'tail', new THREE.Vector3(-0.1, -0.75, 0));
-
-    const core = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.085, 0.085, 2.55, 10),
-      new THREE.MeshStandardMaterial({
-        color: 0xe0f7ff,
-        emissive: 0x19485d,
-        roughness: 0.25,
-      }),
-    );
-    core.position.y = -1.22;
-    group.add(core);
-    this.registerPart(core, 'tail', new THREE.Vector3(0.12, -0.65, 0.08));
-
-    const base = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.58, 0.42, 0.18, 6),
-      new THREE.MeshStandardMaterial({ color: COLORS.receptor, roughness: 0.44 }),
-    );
-    base.position.y = -2.25;
-    group.add(base);
-    this.registerPart(base, 'receptor', new THREE.Vector3(0, -0.8, 0));
-
-    for (let index = 0; index < 6; index += 1) {
-      const angle = (index / 6) * Math.PI * 2;
-      const fiber = createCylinderBetween(
-        new THREE.Vector3(Math.cos(angle) * 0.42, -2.28, Math.sin(angle) * 0.42),
-        new THREE.Vector3(Math.cos(angle) * 1.12, -2.9, Math.sin(angle) * 1.12),
-        0.035,
-        new THREE.MeshStandardMaterial({ color: COLORS.receptor, roughness: 0.5 }),
-      );
-      group.add(fiber);
-      this.registerPart(
-        fiber,
-        'receptor',
-        new THREE.Vector3(Math.cos(angle), -0.35, Math.sin(angle)),
-      );
-    }
-    return group;
-  }
-
-  private buildFilamentous(): THREE.Group {
-    const group = new THREE.Group();
-    const capsidMaterial = new THREE.MeshStandardMaterial({
-      color: COLORS.capsid,
-      roughness: 0.36,
-      metalness: 0.06,
-    });
-    for (let index = 0; index < 44; index += 1) {
-      const t = index / 43;
-      const angle = index * 0.78;
-      const unit = new THREE.Mesh(
-        new THREE.IcosahedronGeometry(0.23, 1),
-        capsidMaterial,
-      );
-      unit.position.set(
-        Math.cos(angle) * 0.62,
-        (t - 0.5) * 5.8,
-        Math.sin(angle) * 0.62,
-      );
-      unit.rotation.set(angle * 0.2, angle, angle * 0.12);
-      group.add(unit);
-      this.registerPart(
-        unit,
-        'capsid',
-        new THREE.Vector3(Math.cos(angle), (t - 0.5) * 0.5, Math.sin(angle)),
-      );
-    }
-
-    const points: THREE.Vector3[] = [];
-    for (let index = 0; index <= 80; index += 1) {
-      const t = index / 80;
-      points.push(
-        new THREE.Vector3(
-          Math.cos(t * Math.PI * 9) * 0.23,
-          (t - 0.5) * 5.55,
-          Math.sin(t * Math.PI * 9) * 0.23,
-        ),
-      );
-    }
-    const genome = new THREE.Mesh(
-      new THREE.TubeGeometry(new THREE.CatmullRomCurve3(points), 120, 0.035, 7, false),
-      new THREE.MeshStandardMaterial({
-        color: COLORS.genome,
-        emissive: 0x351a66,
-        roughness: 0.34,
-      }),
-    );
-    group.add(genome);
-    this.registerPart(genome, 'genome', new THREE.Vector3(0, 0, 0.35));
-    this.structureGenome = genome;
-    return group;
   }
 
   private buildInfectionWorld(snapshot: SimulationSnapshot): void {
@@ -679,40 +615,6 @@ export class VirusScene {
     positions.needsUpdate = true;
   }
 
-  private createGenomeCoil(
-    radius: number,
-    turns: number,
-    tubeRadius: number,
-  ): THREE.Mesh {
-    const points: THREE.Vector3[] = [];
-    for (let index = 0; index <= 120; index += 1) {
-      const t = index / 120;
-      const wobble = 0.32 + 0.58 * Math.sin(t * Math.PI);
-      const angle = t * turns;
-      points.push(
-        new THREE.Vector3(
-          Math.cos(angle) * radius * wobble,
-          (t - 0.5) * radius * 1.35,
-          Math.sin(angle) * radius * wobble,
-        ),
-      );
-    }
-    return new THREE.Mesh(
-      new THREE.TubeGeometry(
-        new THREE.CatmullRomCurve3(points),
-        140,
-        tubeRadius,
-        7,
-        false,
-      ),
-      new THREE.MeshStandardMaterial({
-        color: COLORS.genome,
-        emissive: 0x3a1b68,
-        roughness: 0.32,
-      }),
-    );
-  }
-
   private createBacterialGenome(): THREE.Group {
     const group = new THREE.Group();
     const material = new THREE.LineBasicMaterial({
@@ -738,35 +640,6 @@ export class VirusScene {
     return group;
   }
 
-  private capsidMaterial(opacity: number): THREE.MeshPhysicalMaterial {
-    return new THREE.MeshPhysicalMaterial({
-      color: COLORS.capsid,
-      emissive: 0x0d4148,
-      roughness: 0.28,
-      metalness: 0.06,
-      transparent: true,
-      opacity,
-      side: THREE.DoubleSide,
-      depthWrite: opacity > 0.7,
-      flatShading: true,
-      clippingPlanes: [new THREE.Plane(new THREE.Vector3(0, -1, 0), 0)],
-    });
-  }
-
-  private registerPart(
-    object: THREE.Object3D,
-    partId: PartId,
-    direction: THREE.Vector3,
-  ): void {
-    object.userData.partId = partId;
-    this.selectables.push(object);
-    this.explodables.push({
-      object,
-      origin: object.position.clone(),
-      direction: direction.clone().normalize(),
-    });
-  }
-
   private applySection(): void {
     for (const material of this.sectionMaterials) {
       if ('clippingPlanes' in material) {
@@ -782,12 +655,58 @@ export class VirusScene {
   }
 
   private readonly handlePointerDown = (event: PointerEvent): void => {
+    if (this.mode === 'observatory' && this.observationSnapshot?.demo.kind !== 'none') {
+      this.canvas.dispatchEvent(
+        new CustomEvent('virus-observation-interaction', { bubbles: true }),
+      );
+    }
+    this.pointerStart = {
+      x: event.clientX,
+      y: event.clientY,
+      time: performance.now(),
+      id: event.pointerId,
+    };
+  };
+
+  private readonly handleControlsStart = (): void => {
+    if (this.mode !== 'observatory' || this.observationSnapshot?.demo.kind === 'none')
+      return;
+    this.canvas.dispatchEvent(
+      new CustomEvent('virus-observation-interaction', { bubbles: true }),
+    );
+  };
+
+  private readonly handlePointerCancel = (): void => {
+    this.pointerStart = null;
+  };
+
+  private readonly handlePointerUp = (event: PointerEvent): void => {
+    const start = this.pointerStart;
+    this.pointerStart = null;
+    if (!start || start.id !== event.pointerId) return;
+    const moved = Math.hypot(event.clientX - start.x, event.clientY - start.y);
+    if (moved > 7 || performance.now() - start.time > 650) return;
+
     const bounds = this.canvas.getBoundingClientRect();
     this.pointer.set(
       ((event.clientX - bounds.left) / bounds.width) * 2 - 1,
       -((event.clientY - bounds.top) / bounds.height) * 2 + 1,
     );
     this.raycaster.setFromCamera(this.pointer, this.camera);
+    if (this.observationView) {
+      const selection = this.observationView.pick(this.raycaster);
+      this.onSelect(
+        selection
+          ? {
+              title: selection.title,
+              description: selection.description,
+              kind: 'part',
+              partId: selection.partId,
+            }
+          : null,
+      );
+      return;
+    }
     const hit = this.raycaster.intersectObjects(this.selectables, true)[0];
     this.clearSelectionHighlight();
     if (!hit) {
@@ -799,12 +718,6 @@ export class VirusScene {
     const target = findSelectionTarget(hit.object);
     this.selectedObject = target;
     this.highlight(target);
-    const partId = target.userData.partId as PartId | undefined;
-    if (partId) {
-      const part = PART_DESCRIPTIONS[partId];
-      this.onSelect({ title: part.name, description: part.role, kind: 'part' });
-      return;
-    }
     const phageId = target.userData.phageId as number | undefined;
     if (phageId !== undefined) {
       this.onSelect({
@@ -866,6 +779,8 @@ export class VirusScene {
   };
 
   private clearRoot(): void {
+    this.observationView?.dispose();
+    this.observationView = null;
     this.clearSelectionHighlight();
     this.selectedObject = null;
     this.onSelect(null);
@@ -896,8 +811,6 @@ export class VirusScene {
       this.root.remove(child);
     }
     this.selectables = [];
-    this.explodables = [];
-    this.structureGenome = null;
     this.sectionMaterials = [];
     this.infectionObjects.clear();
     this.bacterium = null;
@@ -930,18 +843,36 @@ function fibonacciDirection(index: number, total: number): THREE.Vector3 {
   return new THREE.Vector3(Math.cos(theta) * radius, y, Math.sin(theta) * radius);
 }
 
-function createCylinderBetween(
-  start: THREE.Vector3,
-  end: THREE.Vector3,
-  radius: number,
-  material: THREE.Material,
-): THREE.Mesh {
-  const direction = end.clone().sub(start);
-  const mesh = new THREE.Mesh(
-    new THREE.CylinderGeometry(radius, radius, direction.length(), 7),
-    material,
-  );
-  mesh.position.copy(start).add(end).multiplyScalar(0.5);
-  mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), direction.normalize());
-  return mesh;
+function createStaticObservationSnapshot(
+  presetId: StructurePresetId,
+  sectionEnabled: boolean,
+  genomeVisible: boolean,
+): ObservationSnapshot {
+  const position = { x: 0, y: 0, z: 0 } as const;
+  const quaternion = { x: 0, y: 0, z: 0, w: 1 } as const;
+  return {
+    presetId,
+    view: sectionEnabled ? 'section' : 'surface',
+    selectedPartId: null,
+    running: false,
+    speed: 1,
+    translationEnabled: false,
+    rotationEnabled: false,
+    followTarget: true,
+    explosion: 0,
+    sectionOffset: 0,
+    genomeVisible,
+    layerVisibility: { envelope: true, capsid: true, genome: true },
+    demo: { kind: 'none', progress: 0, playing: false },
+    motion: {
+      position,
+      previousPosition: position,
+      quaternion,
+      previousQuaternion: quaternion,
+      seed: 1,
+      tick: 0,
+    },
+    tick: 0,
+    seed: 1,
+  };
 }
