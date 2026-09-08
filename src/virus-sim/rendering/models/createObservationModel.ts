@@ -1,14 +1,19 @@
 import { getObservationPreset } from '../../model/observationPresets';
 import type { ObservationPresetId } from '../../observation/types';
 import { buildVaccinia } from './complex';
-import { buildConceptEnveloped, buildHSV, buildInfluenza, buildVSV } from './enveloped';
-import { buildConceptFilamentous, buildM13, buildTMV } from './helical';
+import { buildHSV, buildInfluenza, buildVSV } from './enveloped';
+import { buildM13, buildTMV } from './helical';
+import { buildAdenovirus, buildMS2, buildRotavirus } from './icosahedral';
 import {
-  buildAdenovirus,
-  buildConceptIcosahedral,
-  buildMS2,
-  buildRotavirus,
-} from './icosahedral';
+  buildGenericEnveloped,
+  buildGenericFilament,
+  buildGenericGeminate,
+  buildGenericIcosahedral,
+  buildGenericLayered,
+  buildGenericPhage,
+  buildGenericRod,
+  buildGenericSpindle,
+} from './generic';
 import { buildLambdaPhage, buildT4Phage, buildT7Phage } from './phages';
 import { createCollector, finishCollector } from './shared';
 import type { ObservationModel } from './types';
@@ -56,14 +61,29 @@ export function createObservationModel(
     case 'vaccinia':
       buildVaccinia(collector, quality);
       break;
-    case 'concept-filamentous':
-      buildConceptFilamentous(collector, quality);
+    case 'generic-icosahedral':
+      buildGenericIcosahedral(collector, quality);
       break;
-    case 'concept-enveloped':
-      buildConceptEnveloped(collector, quality);
+    case 'generic-phage':
+      buildGenericPhage(collector, quality);
       break;
-    case 'concept-icosahedral':
-      buildConceptIcosahedral(collector, quality);
+    case 'generic-filament':
+      buildGenericFilament(collector, quality);
+      break;
+    case 'generic-enveloped':
+      buildGenericEnveloped(collector, quality);
+      break;
+    case 'generic-layered':
+      buildGenericLayered(collector, quality);
+      break;
+    case 'generic-geminate':
+      buildGenericGeminate(collector, quality);
+      break;
+    case 'generic-spindle':
+      buildGenericSpindle(collector, quality);
+      break;
+    case 'generic-rod':
+      buildGenericRod(collector, quality);
       break;
   }
   return finishCollector(collector);

@@ -462,18 +462,18 @@
       "id": "virus-sim",
       "galaxyId": "pages-archive",
       "name": "Virus Sim",
-      "summary": "바이러스 한 개를 확대해 다양한 껍질과 내부를 보고, 파지 감염 과정까지 관찰하는 3D 실험장이에요.",
+      "summary": "검증된 실제 바이러스 56종을 한 개씩 확대해 표면·단면·분해 구조와 내부 층을 살펴보는 3D 관찰실이에요.",
       "status": "active",
       "featured": true,
       "order": 40,
-      "tags": ["바이러스 구조", "파지 감염", "3D 시뮬레이션"],
+      "tags": ["바이러스 구조", "실제 바이러스 도감", "3D 관찰"],
       "links": {
         "github": "https://github.com/cjftya/cjftya.github.io/tree/master/src/virus-sim",
         "page": "/projects/virus-sim/"
       },
       "details": {
         "category": "브라우저 생물학 실험",
-        "description": "네 가지 바이러스 형태의 표면·단면·분해 구조와 부위별 동작을 확대해 살펴보고, 재현 가능한 모형에서 꼬리 달린 DNA 파지의 부착·유전체 전달·내부 생산·조립·용균 과정을 따라가요.",
+        "description": "실제 바이러스 56종의 표면·반투명·단면·분해 구조를 확대해 살펴보고, 종별 부위 투어와 출처·표현 한계를 함께 확인해요.",
         "techStack": ["TypeScript", "Three.js", "Vite"]
       },
       "planet": {

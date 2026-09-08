@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import type { ObservationDefinition } from '../../observation/types';
 import type { ModelCollector } from './shared';
 import {
   COLORS,
@@ -73,27 +72,6 @@ export function buildT4Phage(collector: ModelCollector, quality: 'high' | 'low')
   body.add(fibers);
   register(collector, fibers, 'tail-fiber', 'tail', true);
   addObjectExplosion(collector, fibers, new THREE.Vector3(-0.15, -0.75, -0.45), 0.86);
-
-  const deliveryPath = createDeliveryPath();
-  deliveryPath.visible = false;
-  body.add(deliveryPath);
-  register(collector, deliveryPath, 'genome', 'genome');
-
-  const surfacePatch = createSurfacePatch(quality);
-  surfacePatch.visible = false;
-  collector.root.add(surfacePatch);
-  collector.delivery = {
-    body,
-    bodyOrigin: body.position.clone(),
-    sheath,
-    sheathOrigin: sheath.position.clone(),
-    innerTube: tube,
-    innerTubeOrigin: tube.position.clone(),
-    headGenome: head.genome,
-    deliveryPath,
-    deliveryPointCount: deliveryPath.geometry.getAttribute('position').count,
-    surfacePatch,
-  };
 }
 
 export function buildLambdaPhage(
@@ -291,57 +269,4 @@ function createTailFibers(
     );
   }
   return group;
-}
-
-function createDeliveryPath(): THREE.Line {
-  const points: THREE.Vector3[] = [];
-  const count = 84;
-  for (let index = 0; index < count; index += 1) {
-    const t = index / (count - 1);
-    const headPhase = Math.min(1, t / 0.35);
-    const radius = t < 0.35 ? (1 - headPhase) * 0.58 : 0.025;
-    points.push(
-      new THREE.Vector3(
-        Math.cos(t * Math.PI * 9) * radius,
-        2.3 - t * 5.85,
-        Math.sin(t * Math.PI * 9) * radius,
-      ),
-    );
-  }
-  const geometry = new THREE.BufferGeometry().setFromPoints(points);
-  geometry.setDrawRange(0, 2);
-  return new THREE.Line(
-    geometry,
-    new THREE.LineBasicMaterial({
-      color: COLORS.genome,
-      transparent: true,
-      opacity: 0.96,
-    }),
-  );
-}
-
-function createSurfacePatch(quality: 'high' | 'low'): THREE.Group {
-  const group = new THREE.Group();
-  group.position.y = -3.78;
-  group.userData.ignoreCameraBounds = true;
-  group.add(
-    new THREE.Mesh(
-      new THREE.CylinderGeometry(2.8, 2.8, 0.18, quality === 'high' ? 48 : 24),
-      new THREE.MeshPhysicalMaterial({
-        color: 0x6cb5d2,
-        emissive: 0x102f46,
-        transparent: true,
-        opacity: 0.46,
-        roughness: 0.52,
-        depthWrite: false,
-      }),
-    ),
-  );
-  return group;
-}
-
-export function phageDefinitionSupportsDelivery(
-  definition: ObservationDefinition,
-): boolean {
-  return definition.supportsDeliveryDemo;
 }

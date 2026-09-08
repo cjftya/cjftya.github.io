@@ -6,7 +6,7 @@ export interface StructureSource {
   readonly checkedOn: string;
 }
 
-export const STRUCTURE_SOURCES: readonly StructureSource[] = [
+export const V2_STRUCTURE_SOURCES: readonly StructureSource[] = [
   {
     id: 'pdb-7vs5',
     label: 'PDB 7VS5',
@@ -134,11 +134,3 @@ export const STRUCTURE_SOURCES: readonly StructureSource[] = [
     checkedOn: '2026-09-08',
   },
 ] as const;
-
-const SOURCE_BY_ID = new Map(STRUCTURE_SOURCES.map((source) => [source.id, source]));
-
-export function getStructureSource(id: string): StructureSource {
-  const source = SOURCE_BY_ID.get(id);
-  if (!source) throw new Error(`Unknown Virus Sim source: ${id}`);
-  return source;
-}

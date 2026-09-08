@@ -1,21 +1,5 @@
-export type ConceptPresetId =
-  'icosahedral' | 'tailed-phage' | 'filamentous' | 'enveloped';
-
-export type VirusId =
-  | 't4'
-  | 'lambda'
-  | 't7'
-  | 'ms2'
-  | 'tmv'
-  | 'm13'
-  | 'adenovirus-5'
-  | 'rotavirus-rrv'
-  | 'hsv1'
-  | 'influenza-a'
-  | 'vsv-indiana'
-  | 'vaccinia-mv';
-
-export type ObservationPresetId = ConceptPresetId | VirusId;
+export type VirusId = string;
+export type ObservationPresetId = VirusId;
 
 export type ModelBuilderId =
   | 't4'
@@ -30,15 +14,29 @@ export type ModelBuilderId =
   | 'influenza'
   | 'vsv'
   | 'vaccinia'
-  | 'concept-icosahedral'
-  | 'concept-filamentous'
-  | 'concept-enveloped';
+  | 'generic-icosahedral'
+  | 'generic-phage'
+  | 'generic-filament'
+  | 'generic-enveloped'
+  | 'generic-layered'
+  | 'generic-geminate'
+  | 'generic-spindle'
+  | 'generic-rod';
+
+export type GeometryFamily =
+  | 'icosahedral'
+  | 'phage'
+  | 'filament'
+  | 'enveloped'
+  | 'layered'
+  | 'geminate'
+  | 'spindle'
+  | 'rod';
 
 export type InspectionView = 'surface' | 'transparent' | 'section' | 'exploded';
-
-export type DemoKind = 'none' | 'structure-tour' | 'phage-delivery';
-
-export type MotionMode = 'smooth' | 'brownian' | 'static';
+export type DemoKind = 'none' | 'structure-tour';
+export type MotionMode = 'active' | 'calm' | 'brownian' | 'static';
+export type LocalMotion = 'none' | 'flexible-filament' | 'articulated-fiber';
 
 export type ObservationPartId =
   | 'capsid'
@@ -49,6 +47,7 @@ export type ObservationPartId =
   | 'inner-tube'
   | 'baseplate'
   | 'tail-fiber'
+  | 'tailspike'
   | 'flexible-tail'
   | 'portal'
   | 'maturation-protein'
@@ -60,14 +59,19 @@ export type ObservationPartId =
   | 'outer-capsid'
   | 'middle-capsid'
   | 'core-capsid'
+  | 'inner-membrane'
   | 'envelope'
   | 'spike'
+  | 'turret'
+  | 'surface-domain'
+  | 'geminate-bridge'
   | 'tegument'
   | 'matrix'
   | 'rnp'
   | 'nucleocapsid'
   | 'core-wall'
-  | 'lateral-body';
+  | 'lateral-body'
+  | 'terminal-tail';
 
 export type ObservationLayerId =
   | 'envelope'
@@ -78,6 +82,7 @@ export type ObservationLayerId =
   | 'outer-capsid'
   | 'middle-capsid'
   | 'core-capsid'
+  | 'inner-membrane'
   | 'matrix'
   | 'nucleocapsid'
   | 'membrane'
@@ -98,29 +103,59 @@ export interface LayerDefinition {
   readonly note?: string;
 }
 
-export type CatalogTag = 'phage' | 'helical' | 'icosahedral' | 'enveloped';
+export type CatalogTag =
+  | 'phage'
+  | 'helical'
+  | 'icosahedral'
+  | 'enveloped'
+  | 'complex'
+  | 'plant'
+  | 'animal'
+  | 'archaea';
+
+export interface TourStop {
+  readonly partId: ObservationPartId;
+  readonly label: string;
+  readonly view: InspectionView;
+  readonly genomeVisible?: boolean;
+}
 
 export interface ObservationDefinition {
   readonly id: ObservationPresetId;
+  readonly identityKey: string;
   readonly name: string;
   readonly shortName: string;
   readonly nameEn: string;
+  readonly aliases: readonly string[];
+  readonly particleState: string;
   readonly category: string;
   readonly genomeLabel: string;
   readonly description: string;
   readonly feature: string;
   readonly morphologyTags: readonly CatalogTag[];
   readonly silhouette:
-    'polyhedron' | 'phage' | 'filament' | 'envelope' | 'bullet' | 'brick';
+    | 'polyhedron'
+    | 'phage'
+    | 'filament'
+    | 'envelope'
+    | 'bullet'
+    | 'brick'
+    | 'geminate'
+    | 'spindle'
+    | 'rod';
   readonly parts: readonly ObservationPartId[];
   readonly layers: readonly LayerDefinition[];
   readonly sourceIds: readonly string[];
   readonly modelBuilder: ModelBuilderId;
-  readonly representation: 'source-informed-procedural' | 'concept';
+  readonly geometryProfileId: string;
+  readonly motionProfileId: 'active' | 'calm';
+  readonly evidenceStatus: 'verified';
+  readonly representation: 'source-informed-procedural';
+  readonly localMotion: LocalMotion;
+  readonly tourStops: readonly TourStop[];
   readonly simplifications: readonly string[];
   readonly displayLength: number;
   readonly sectionRadius: number;
-  readonly supportsDeliveryDemo: boolean;
 }
 
 export interface ObservationVec3 {
@@ -137,7 +172,7 @@ export interface ObservationQuaternion {
 }
 
 export interface ObservationMotionState {
-  readonly version: 'observation-motion-v2';
+  readonly version: 'observation-motion-v2.5';
   readonly mode: MotionMode;
   readonly position: ObservationVec3;
   readonly previousPosition: ObservationVec3;
@@ -149,6 +184,8 @@ export interface ObservationMotionState {
   readonly tick: number;
   readonly translationTick: number;
   readonly rotationTick: number;
+  readonly translationPhase: number;
+  readonly rotationPhase: number;
 }
 
 export interface ObservationDemoState {
@@ -187,13 +224,5 @@ export interface StructureTourPose {
   readonly sectionOffset: number;
   readonly genomeVisible: boolean;
   readonly focusPartId: ObservationPartId | null;
-}
-
-export interface PhageDeliveryPose {
-  readonly approach: number;
-  readonly sheathContraction: number;
-  readonly tubeExtension: number;
-  readonly genomeTransfer: number;
-  readonly surfaceVisible: boolean;
-  readonly label: '표면 접근' | '부착' | '꼬리집 수축' | '유전체 전달' | '빈 입자';
+  readonly label: string;
 }

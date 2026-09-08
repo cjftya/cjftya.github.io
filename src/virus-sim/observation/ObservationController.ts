@@ -1,5 +1,5 @@
 import { getObservationPreset } from '../model/observationPresets';
-import { PHAGE_DELIVERY_DURATION, STRUCTURE_TOUR_DURATION } from './demoTimeline';
+import { SPECIES_TOUR_DURATION } from './tours';
 import {
   DEFAULT_MOTION_OPTIONS,
   createObservationMotion,
@@ -30,6 +30,7 @@ const ALL_LAYER_IDS: readonly ObservationLayerId[] = [
   'outer-capsid',
   'middle-capsid',
   'core-capsid',
+  'inner-membrane',
   'matrix',
   'nucleocapsid',
   'membrane',
@@ -68,11 +69,7 @@ export class ObservationController {
     if (!this.state.running) return;
     if (this.state.demo.kind !== 'none') {
       if (!this.state.demo.playing) return;
-      const duration =
-        this.state.demo.kind === 'structure-tour'
-          ? STRUCTURE_TOUR_DURATION
-          : PHAGE_DELIVERY_DURATION;
-      const nextProgress = this.state.demo.progress + dt / duration;
+      const nextProgress = this.state.demo.progress + dt / SPECIES_TOUR_DURATION;
       const progress = nextProgress >= 1 - 1e-12 ? 1 : nextProgress;
       this.state = {
         ...this.state,
@@ -159,7 +156,7 @@ export class ObservationController {
   setRunning(running: boolean, interpolation = 1): void {
     const motion = running
       ? this.state.motion.mode === 'static'
-        ? switchObservationMotion(this.state.motion, 'smooth')
+        ? switchObservationMotion(this.state.motion, 'active')
         : this.state.motion
       : freezeObservationMotion(this.state.motion, interpolation);
     this.state = {
@@ -212,12 +209,6 @@ export class ObservationController {
   }
 
   startDemo(kind: Exclude<DemoKind, 'none'>): void {
-    if (
-      kind === 'phage-delivery' &&
-      !getObservationPreset(this.state.presetId).supportsDeliveryDemo
-    ) {
-      return;
-    }
     this.state = {
       ...this.state,
       running: true,
@@ -270,7 +261,7 @@ export class ObservationController {
   resetMotion(seed = this.state.motion.seed): void {
     this.stopDemo();
     const mode =
-      this.state.motion.mode === 'static' ? 'smooth' : this.state.motion.mode;
+      this.state.motion.mode === 'static' ? 'active' : this.state.motion.mode;
     this.state = {
       ...this.state,
       running: true,
@@ -296,7 +287,7 @@ function createInitialState(reducedMotion: boolean, seed: number): ObservationSt
       getObservationPreset('t4').layers.map((item) => item.id),
     ),
     demo: { kind: 'none', progress: 0, playing: false },
-    motion: createObservationMotion(seed, reducedMotion ? 'static' : 'smooth'),
+    motion: createObservationMotion(seed, reducedMotion ? 'static' : 'active'),
   };
 }
 

@@ -118,34 +118,6 @@ export function buildM13(collector: ModelCollector, quality: 'high' | 'low'): vo
   addObjectExplosion(collector, terminals, new THREE.Vector3(-0.7, 0.1, 0.3), 0.55);
 }
 
-export function buildConceptFilamentous(
-  collector: ModelCollector,
-  quality: 'high' | 'low',
-): void {
-  const coat = createHelicalCoat({
-    length: 6.4,
-    radius: 0.57,
-    strands: quality === 'high' ? 4 : 3,
-    units: quality === 'high' ? 56 : 34,
-    unitRadius: 0.1,
-    color: COLORS.capsomer,
-  });
-  collector.root.add(coat.mesh);
-  register(collector, coat.mesh, 'coat-protein', 'capsid', true);
-  registerPartAlias(collector, coat.mesh, 'capsid');
-  collector.instanceExplosions.push({ ...coat, distance: 0.82 });
-
-  const genomePoints: THREE.Vector3[] = [];
-  for (let index = 0; index <= 84; index += 1) {
-    const t = index / 84;
-    const angle = t * Math.PI * 10;
-    genomePoints.push(
-      new THREE.Vector3(Math.cos(angle) * 0.2, (t - 0.5) * 5.9, Math.sin(angle) * 0.2),
-    );
-  }
-  addGenome(collector, createTube(genomePoints, 0.043, quality, false));
-}
-
 function createHelicalCoat(options: {
   length: number;
   radius: number;

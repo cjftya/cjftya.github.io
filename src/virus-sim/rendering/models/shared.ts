@@ -9,7 +9,7 @@ import type {
   ObjectExplosion,
   ObservationModel,
   ObservationSurfaceMaterial,
-  PhageDeliveryRig,
+  FlexibleSegment,
 } from './types';
 
 export const COLORS = {
@@ -29,6 +29,7 @@ export const COLORS = {
 } as const;
 
 export interface ModelCollector {
+  definition: ObservationDefinition;
   root: THREE.Group;
   selectables: THREE.Object3D[];
   parts: Map<ObservationPartId, THREE.Object3D[]>;
@@ -39,13 +40,14 @@ export interface ModelCollector {
   instanceExplosions: InstanceExplosion[];
   genomeObjects: THREE.Object3D[];
   sectionGuide: THREE.Object3D;
-  delivery?: PhageDeliveryRig;
+  flexibleSegments: FlexibleSegment[];
 }
 
 export function createCollector(definition: ObservationDefinition): ModelCollector {
   const root = new THREE.Group();
   root.name = `observation-${definition.id}`;
   const collector: ModelCollector = {
+    definition,
     root,
     selectables: [],
     parts: new Map(),
@@ -55,10 +57,21 @@ export function createCollector(definition: ObservationDefinition): ModelCollect
     objectExplosions: [],
     instanceExplosions: [],
     genomeObjects: [],
+    flexibleSegments: [],
     sectionGuide: createSectionGuide(definition.sectionRadius),
   };
   root.add(collector.sectionGuide);
   return collector;
+}
+
+export function registerFlexibleSegment(
+  collector: ModelCollector,
+  object: THREE.Object3D,
+): void {
+  collector.flexibleSegments.push({
+    object,
+    baseRotation: object.rotation.clone(),
+  });
 }
 
 export function finishCollector(collector: ModelCollector): ObservationModel {

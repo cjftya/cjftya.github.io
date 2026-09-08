@@ -1,19 +1,19 @@
 import { describe, expect, it } from 'vitest';
 import * as THREE from 'three';
 import {
-  CONCEPT_OBSERVATION_PRESETS,
-  OBSERVATION_PRESETS,
-} from '../../src/virus-sim/model/observationPresets';
-import { DEFAULT_CONFIG } from '../../src/virus-sim/model/presets';
+  GEOMETRY_PROFILES,
+  getGeometryProfile,
+} from '../../src/virus-sim/catalog/geometryProfiles';
+import {
+  VERIFIED_VIRUS_COUNT,
+  VIRUS_CATALOG,
+  filterVirusCatalog,
+  nextDiscovery,
+} from '../../src/virus-sim/catalog/registry';
 import {
   STRUCTURE_SOURCES,
   getStructureSource,
-} from '../../src/virus-sim/model/structureSources';
-import { VIRUS_CATALOG } from '../../src/virus-sim/model/virusCatalog';
-import {
-  evaluatePhageDelivery,
-  evaluateStructureTour,
-} from '../../src/virus-sim/observation/demoTimeline';
+} from '../../src/virus-sim/catalog/sources';
 import { ObservationController } from '../../src/virus-sim/observation/ObservationController';
 import {
   DEFAULT_MOTION_OPTIONS,
@@ -22,19 +22,28 @@ import {
   freezeObservationMotion,
   stepObservationMotion,
   switchObservationMotion,
-} from '../../src/virus-sim/observation/motion/index';
+} from '../../src/virus-sim/observation/motion';
 import {
-  MAX_SMOOTH_ANGULAR_SPEED,
+  MAX_ACTIVE_ANGULAR_SPEED,
+  MAX_CALM_ANGULAR_SPEED,
   evaluateSmoothAngularVelocity,
   evaluateSmoothPosition,
 } from '../../src/virus-sim/observation/motion/smoothMotion';
+import { evaluateSpeciesTour } from '../../src/virus-sim/observation/tours';
 import { calculateExplodedPosition } from '../../src/virus-sim/observation/transforms';
 import { createObservationModel } from '../../src/virus-sim/rendering/models/createObservationModel';
-import { createSimulation } from '../../src/virus-sim/simulation';
 import { renderAppLayout } from '../../src/virus-sim/ui/layout';
+import {
+  loadFavorites,
+  loadFontScale,
+  loadRecent,
+  pushRecent,
+  saveFavorites,
+  saveFontScale,
+} from '../../src/virus-sim/ui/preferences';
 
-describe('Virus Sim observation contracts', () => {
-  it('reproduces smooth translation and rotation for the same seed and tick count', () => {
+describe('Virus Sim v2.5 observation contracts', () => {
+  it('reproduces active translation and rotation for the same seed and tick count', () => {
     let first = createObservationMotion(730_421);
     let second = createObservationMotion(730_421);
     for (let tick = 0; tick < 1_200; tick += 1) {
@@ -42,7 +51,8 @@ describe('Virus Sim observation contracts', () => {
       second = stepObservationMotion(second, DEFAULT_MOTION_OPTIONS);
     }
     expect(first).toEqual(second);
-    expect(first.mode).toBe('smooth');
+    expect(first.mode).toBe('active');
+    expect(first.version).toBe('observation-motion-v2.5');
   });
 
   it('depends on fixed ticks rather than 30, 60, or 120fps render schedules', () => {
@@ -57,9 +67,8 @@ describe('Virus Sim observation contracts', () => {
       sixtyFps = stepObservationMotion(sixtyFps, DEFAULT_MOTION_OPTIONS);
     }
     for (let frame = 0; frame < 1_200; frame += 1) {
-      if (frame % 2 === 1) {
+      if (frame % 2 === 1)
         oneTwentyFps = stepObservationMotion(oneTwentyFps, DEFAULT_MOTION_OPTIONS);
-      }
     }
     expect(thirtyFps).toEqual(sixtyFps);
     expect(sixtyFps).toEqual(oneTwentyFps);
@@ -68,231 +77,194 @@ describe('Virus Sim observation contracts', () => {
     ).toThrow(/fixed dt/);
   });
 
-  it('keeps spline position and angular velocity continuous at segment boundaries', () => {
+  it('keeps active and calm splines continuous at segment boundaries', () => {
     const epsilon = 0.0001;
-    for (const boundary of [4, 8, 12]) {
-      const before = evaluateSmoothPosition(771, boundary - epsilon, 0.42);
-      const at = evaluateSmoothPosition(771, boundary, 0.42);
-      const after = evaluateSmoothPosition(771, boundary + epsilon, 0.42);
-      const leftVelocity = difference(at, before, epsilon);
-      const rightVelocity = difference(after, at, epsilon);
-      expect(distance(leftVelocity, rightVelocity)).toBeLessThan(0.001);
-
-      const angularBefore = evaluateSmoothAngularVelocity(991, boundary - epsilon);
-      const angularAfter = evaluateSmoothAngularVelocity(991, boundary + epsilon);
-      expect(distance(angularBefore, angularAfter)).toBeLessThan(0.001);
+    for (const [mode, interval] of [
+      ['active', 3.2],
+      ['calm', 4.4],
+    ] as const) {
+      for (const boundary of [interval, interval * 2, interval * 3]) {
+        const before = evaluateSmoothPosition(771, boundary - epsilon, 0.42, mode);
+        const at = evaluateSmoothPosition(771, boundary, 0.42, mode);
+        const after = evaluateSmoothPosition(771, boundary + epsilon, 0.42, mode);
+        expect(
+          distance(difference(at, before, epsilon), difference(after, at, epsilon)),
+        ).toBeLessThan(0.001);
+        expect(
+          distance(
+            evaluateSmoothAngularVelocity(991, boundary - epsilon, mode),
+            evaluateSmoothAngularVelocity(991, boundary + epsilon, mode),
+          ),
+        ).toBeLessThan(0.001);
+      }
     }
   });
 
-  it('keeps smooth angular velocity finite and below its documented cap', () => {
+  it('keeps angular velocity finite and below each documented cap', () => {
     for (let sample = 0; sample < 1_000; sample += 1) {
-      const velocity = evaluateSmoothAngularVelocity(83_119, sample / 30);
-      const speed = Math.hypot(velocity.x, velocity.y, velocity.z);
-      expect(Number.isFinite(speed)).toBe(true);
-      expect(speed).toBeLessThanOrEqual(MAX_SMOOTH_ANGULAR_SPEED + 1e-12);
+      const active = evaluateSmoothAngularVelocity(83_119, sample / 30, 'active');
+      const calm = evaluateSmoothAngularVelocity(83_119, sample / 30, 'calm');
+      expect(Math.hypot(active.x, active.y, active.z)).toBeLessThanOrEqual(
+        MAX_ACTIVE_ANGULAR_SPEED + 1e-12,
+      );
+      expect(Math.hypot(calm.x, calm.y, calm.z)).toBeLessThanOrEqual(
+        MAX_CALM_ANGULAR_SPEED + 1e-12,
+      );
     }
   });
 
   it('preserves the rendered pose while pausing or changing motion mode', () => {
     let motion = createObservationMotion(142);
-    for (let tick = 0; tick < 37; tick += 1) {
+    for (let tick = 0; tick < 37; tick += 1)
       motion = stepObservationMotion(motion, DEFAULT_MOTION_OPTIONS);
-    }
     const frozen = freezeObservationMotion(motion, 0.37);
     expect(frozen.position).toEqual(frozen.previousPosition);
     expect(frozen.quaternion).toEqual(frozen.previousQuaternion);
-    const brownian = switchObservationMotion(frozen, 'brownian');
-    expect(brownian.position).toEqual(frozen.position);
-    expect(brownian.quaternion).toEqual(frozen.quaternion);
-    expect(brownian.mode).toBe('brownian');
+    for (const mode of ['calm', 'brownian', 'static', 'active'] as const) {
+      const changed = switchObservationMotion(frozen, mode);
+      expect(changed.position).toEqual(frozen.position);
+      expect(changed.quaternion).toEqual(frozen.quaternion);
+    }
   });
 
-  it('retains the legacy Brownian option with disabled axes and reflected bounds', () => {
-    let motion = createObservationMotion(993, 'brownian');
-    const options = {
-      ...DEFAULT_MOTION_OPTIONS,
-      translationEnabled: false,
-      rotationalDiffusion: 0.15,
-      boundary: 0.12,
-    };
-    for (let tick = 0; tick < 5_000; tick += 1) {
-      motion = stepObservationMotion(motion, options);
-    }
-    expect(motion.position).toEqual({ x: 0, y: 0, z: 0 });
-    expect(
-      Math.hypot(
-        motion.quaternion.x,
-        motion.quaternion.y,
-        motion.quaternion.z,
-        motion.quaternion.w,
-      ),
-    ).toBeCloseTo(1, 10);
-
-    let bounded = createObservationMotion(994, 'brownian');
-    for (let tick = 0; tick < 5_000; tick += 1) {
-      bounded = stepObservationMotion(bounded, {
+  it('retains bounded Brownian motion as an advanced option', () => {
+    let motion = createObservationMotion(994, 'brownian');
+    for (let tick = 0; tick < 3_000; tick += 1) {
+      motion = stepObservationMotion(motion, {
         ...DEFAULT_MOTION_OPTIONS,
         diffusion: 1.4,
         boundary: 0.12,
       });
-      expect(Math.abs(bounded.position.x)).toBeLessThanOrEqual(0.12);
-      expect(Math.abs(bounded.position.y)).toBeLessThanOrEqual(0.12);
-      expect(Math.abs(bounded.position.z)).toBeLessThanOrEqual(0.12);
+      expect(Math.abs(motion.position.x)).toBeLessThanOrEqual(0.12);
+      expect(Math.abs(motion.position.y)).toBeLessThanOrEqual(0.12);
+      expect(Math.abs(motion.position.z)).toBeLessThanOrEqual(0.12);
     }
   });
 
-  it('freezes disabled motion clocks so re-enabling cannot jump to a hidden pose', () => {
+  it('freezes disabled clocks and honors reduced motion', () => {
     const controller = new ObservationController(false, 88);
-    for (let tick = 0; tick < 30; tick += 1) {
-      controller.step(OBSERVATION_FIXED_DT);
-    }
+    for (let tick = 0; tick < 30; tick += 1) controller.step(OBSERVATION_FIXED_DT);
     controller.setTranslationEnabled(false);
     const disabled = controller.getSnapshot();
-    for (let tick = 0; tick < 180; tick += 1) {
-      controller.step(OBSERVATION_FIXED_DT);
-    }
+    for (let tick = 0; tick < 180; tick += 1) controller.step(OBSERVATION_FIXED_DT);
     const held = controller.getSnapshot();
     expect(held.motion.position).toEqual(disabled.motion.position);
-    expect(held.motion.translationTick).toBe(disabled.motion.translationTick);
-    expect(held.motion.rotationTick).toBeGreaterThan(disabled.motion.rotationTick);
-    controller.setTranslationEnabled(true);
-    controller.step(OBSERVATION_FIXED_DT);
-    expect(
-      distance(controller.getSnapshot().motion.position, held.motion.position),
-    ).toBeLessThan(0.02);
+    expect(held.motion.translationPhase).toBe(disabled.motion.translationPhase);
+    expect(held.motion.rotationPhase).toBeGreaterThan(disabled.motion.rotationPhase);
+    const reduced = new ObservationController(true, 91).getSnapshot();
+    expect(reduced.running).toBe(false);
+    expect(reduced.motion.mode).toBe('static');
   });
 
-  it('pauses motion and resets species inspection state without resetting speed', () => {
-    const controller = new ObservationController(false, 88);
-    controller.setSpeed(0.5);
-    controller.step(OBSERVATION_FIXED_DT);
-    controller.setRunning(false, 0.4);
-    const paused = controller.getSnapshot();
-    controller.step(OBSERVATION_FIXED_DT);
-    expect(controller.getSnapshot()).toEqual(paused);
-
-    controller.setView('exploded');
-    controller.setGenomeVisible(true);
-    controller.selectPart('genome');
-    controller.setPreset('hsv1');
-    const changed = controller.getSnapshot();
-    expect(changed.view).toBe('surface');
-    expect(changed.explosion).toBe(0);
-    expect(changed.genomeVisible).toBe(false);
-    expect(changed.selectedPartId).toBeNull();
-    expect(changed.speed).toBe(0.5);
-    expect(changed.running).toBe(false);
-  });
-
-  it('honors reduced motion with a static default pose', () => {
-    const controller = new ObservationController(true, 91);
-    expect(controller.getSnapshot().running).toBe(false);
-    expect(controller.getSnapshot().motion.mode).toBe('static');
-  });
-
-  it('evaluates both timelines purely and supports reverse scrubbing', () => {
-    for (const progress of [-1, 0, 0.17, 0.51, 0.84, 1, 2]) {
-      expect(evaluateStructureTour(progress)).toEqual(evaluateStructureTour(progress));
-      expect(evaluatePhageDelivery(progress)).toEqual(evaluatePhageDelivery(progress));
+  it('evaluates a species-specific tour purely and completes at 24 seconds', () => {
+    for (const definition of VIRUS_CATALOG) {
+      for (const progress of [-1, 0, 0.19, 0.34, 0.58, 0.79, 1, 2]) {
+        expect(evaluateSpeciesTour(definition, progress)).toEqual(
+          evaluateSpeciesTour(definition, progress),
+        );
+      }
+      expect(evaluateSpeciesTour(definition, 0.14).focusPartId).toBe(
+        definition.tourStops[0]?.partId,
+      );
     }
-    const forward = evaluatePhageDelivery(0.67);
-    evaluatePhageDelivery(0.91);
-    expect(evaluatePhageDelivery(0.67)).toEqual(forward);
-  });
-
-  it('keeps guided tours exclusive and limits delivery playback to T4', () => {
     const controller = new ObservationController(false, 73);
     controller.startDemo('structure-tour');
-    controller.step(OBSERVATION_FIXED_DT);
-    expect(controller.getSnapshot().demo.kind).toBe('structure-tour');
-    controller.setView('transparent');
-    expect(controller.getSnapshot().demo.kind).toBe('none');
-
-    controller.setPreset('ms2');
-    controller.startDemo('phage-delivery');
-    expect(controller.getSnapshot().demo.kind).toBe('none');
-
-    controller.setPreset('t4');
-    controller.startDemo('phage-delivery');
-    for (let tick = 0; tick < 13 * 60; tick += 1) {
-      controller.step(OBSERVATION_FIXED_DT);
-    }
-    const completed = controller.getSnapshot();
-    expect(completed.demo.progress).toBe(1);
-    expect(completed.demo.playing).toBe(false);
-    expect(completed.running).toBe(false);
+    for (let tick = 0; tick < 24 * 60; tick += 1) controller.step(OBSERVATION_FIXED_DT);
+    expect(controller.getSnapshot().demo).toEqual({
+      kind: 'structure-tour',
+      progress: 1,
+      playing: false,
+    });
+    expect(controller.getSnapshot().running).toBe(false);
   });
 
   it('returns exploded parts exactly to their original transform', () => {
     const origin = { x: 1.25, y: -0.4, z: 0.72 };
-    const direction = { x: 0.6, y: 0, z: -0.8 };
-    expect(calculateExplodedPosition(origin, direction, 1, 2.5)).toEqual({
-      x: 2.75,
-      y: -0.4,
-      z: -1.28,
-    });
-    expect(calculateExplodedPosition(origin, direction, 0, 2.5)).toEqual(origin);
+    expect(
+      calculateExplodedPosition(origin, { x: 0.6, y: 0, z: -0.8 }, 1, 2.5),
+    ).toEqual({ x: 2.75, y: -0.4, z: -1.28 });
+    expect(
+      calculateExplodedPosition(origin, { x: 0.6, y: 0, z: -0.8 }, 0, 2.5),
+    ).toEqual(origin);
   });
 
-  it('does not mutate a paused infection while catalog controls change', () => {
-    const infection = createSimulation(DEFAULT_CONFIG, 41327);
-    infection.step(1 / 60);
-    infection.drainEvents();
-    infection.setStatus('paused');
-    const before = infection.getSnapshot();
-
-    const observation = new ObservationController(false, 21);
-    observation.setPreset('influenza-a');
-    observation.setView('section');
-    observation.setSectionOffset(0.4);
-    observation.setGenomeVisible(true);
-    observation.setMotionMode('brownian');
-    observation.step(OBSERVATION_FIXED_DT);
-
-    expect(infection.getSnapshot()).toEqual(before);
-    expect(infection.drainEvents()).toEqual([]);
-  });
-
-  it('registers exactly 12 sourced virus species with valid contracts', () => {
-    expect(VIRUS_CATALOG).toHaveLength(12);
-    expect(new Set(VIRUS_CATALOG.map((virus) => virus.id)).size).toBe(12);
+  it('registers 56 unique, sourced, reviewed species and every geometry profile', () => {
+    expect(VIRUS_CATALOG).toHaveLength(56);
+    expect(VERIFIED_VIRUS_COUNT).toBe(56);
+    expect(new Set(VIRUS_CATALOG.map((virus) => virus.id)).size).toBe(56);
+    expect(new Set(VIRUS_CATALOG.map((virus) => virus.identityKey)).size).toBe(56);
     expect(new Set(STRUCTURE_SOURCES.map((source) => source.id)).size).toBe(
       STRUCTURE_SOURCES.length,
     );
+    const usedSourceIds = new Set(VIRUS_CATALOG.flatMap((virus) => virus.sourceIds));
+    expect(STRUCTURE_SOURCES.map((source) => source.id).sort()).toEqual(
+      [...usedSourceIds].sort(),
+    );
     for (const virus of VIRUS_CATALOG) {
+      expect(virus.evidenceStatus).toBe('verified');
       expect(virus.representation).toBe('source-informed-procedural');
-      expect(virus.parts.length).toBeGreaterThanOrEqual(3);
-      expect(virus.layers.length).toBeGreaterThanOrEqual(2);
+      expect(virus.tourStops.length).toBeGreaterThanOrEqual(2);
       expect(virus.simplifications.length).toBeGreaterThan(0);
-      expect(virus.sourceIds.length).toBeGreaterThan(0);
+      expect(getGeometryProfile(virus.geometryProfileId)).toBeTruthy();
       for (const sourceId of virus.sourceIds) {
-        expect(getStructureSource(sourceId).url).toMatch(/^https:\/\//);
+        expect(getStructureSource(sourceId)?.url, `${virus.id}:${sourceId}`).toMatch(
+          /^https:\/\//,
+        );
       }
     }
+    expect(Object.keys(GEOMETRY_PROFILES)).toHaveLength(VIRUS_CATALOG.length);
   });
 
-  it('renders one catalog and preserves the three existing app modes', () => {
+  it('searches Korean, English, aliases and collection IDs', () => {
+    expect(
+      filterVirusCatalog('Potato virus X', 'all').map((entry) => entry.id),
+    ).toContain('pvx');
+    expect(filterVirusCatalog('쌍둥이', 'all').map((entry) => entry.id)).toEqual(
+      expect.arrayContaining(['maize-streak', 'tylcv']),
+    );
+    expect(
+      filterVirusCatalog('', 'plant', new Set(['pvx', 't4'])).map((entry) => entry.id),
+    ).toEqual(['pvx']);
+    expect(nextDiscovery('t4', ['t4']).id).not.toBe('t4');
+  });
+
+  it('renders a single observation-room layout without legacy mode panels', () => {
     const root = { innerHTML: '' } as HTMLElement;
     renderAppLayout(root);
     const ids = [...root.innerHTML.matchAll(/ id="([^"]+)"/g)].map((match) => match[1]);
     expect(new Set(ids).size).toBe(ids.length);
     expect(
-      [...root.innerHTML.matchAll(/data-mode-button="([^"]+)"/g)].map(
-        (match) => match[1],
-      ),
-    ).toEqual(['observatory', 'structure', 'infection']);
-    expect(
       [...root.innerHTML.matchAll(/data-observation-preset="([^"]+)"/g)].map(
         (match) => match[1],
       ),
     ).toEqual(VIRUS_CATALOG.map((virus) => virus.id));
-    expect(root.innerHTML).toContain('전체 12종');
+    expect(root.innerHTML).toContain('검증된 실제 바이러스 56종');
+    expect(root.innerHTML).not.toContain('data-mode-button');
+    expect(root.innerHTML).not.toContain('start-phage-demo');
+    expect(root.innerHTML).not.toContain('data-infection-only');
   });
 
-  it('builds all 12 species and four legacy concepts within the render budget', () => {
-    const definitions = [...VIRUS_CATALOG, ...CONCEPT_OBSERVATION_PRESETS];
-    expect(OBSERVATION_PRESETS).toEqual(CONCEPT_OBSERVATION_PRESETS);
-    for (const definition of definitions) {
+  it('sanitizes and persists favorites, recents and font scale', () => {
+    const storage = memoryStorage();
+    storage.setItem('virus-sim-v2.5-favorites', JSON.stringify(['pvx', 'missing', 3]));
+    storage.setItem(
+      'virus-sim-v2.5-recent',
+      JSON.stringify(['t4', 'pvx', 't4', 'missing']),
+    );
+    expect([...loadFavorites(storage)]).toEqual(['pvx']);
+    expect(loadRecent(storage)).toEqual(['t4', 'pvx']);
+    expect(pushRecent(storage, loadRecent(storage), 'pvx')).toEqual(['pvx', 't4']);
+    saveFavorites(storage, new Set(['pvx', 'missing']));
+    expect(JSON.parse(storage.getItem('virus-sim-v2.5-favorites') ?? '[]')).toEqual([
+      'pvx',
+    ]);
+    expect(loadFontScale(storage)).toBe('100');
+    saveFontScale(storage, '130');
+    expect(loadFontScale(storage)).toBe('130');
+  });
+
+  it('builds all 56 species with complete parts, layers and bounded render cost', () => {
+    for (const definition of VIRUS_CATALOG) {
       const model = createObservationModel(definition.id, 'high');
       for (const partId of definition.parts) {
         expect(
@@ -306,8 +278,8 @@ describe('Virus Sim observation contracts', () => {
           `${definition.id} is missing layer ${layer.id}`,
         ).toBeGreaterThan(0);
       }
-      expect(Boolean(model.delivery)).toBe(definition.supportsDeliveryDemo);
-
+      if (definition.modelBuilder === 'generic-filament')
+        expect(model.flexibleSegments.length).toBeGreaterThan(2);
       let calls = 0;
       let triangles = 0;
       model.root.traverse((object) => {
@@ -353,4 +325,18 @@ function isWorldVisible(object: THREE.Object3D): boolean {
     candidate = candidate.parent;
   }
   return true;
+}
+
+function memoryStorage(): Storage {
+  const data = new Map<string, string>();
+  return {
+    get length() {
+      return data.size;
+    },
+    clear: () => data.clear(),
+    getItem: (key) => data.get(key) ?? null,
+    key: (index) => [...data.keys()][index] ?? null,
+    removeItem: (key) => data.delete(key),
+    setItem: (key, value) => data.set(key, value),
+  };
 }

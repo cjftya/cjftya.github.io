@@ -23,17 +23,9 @@ export interface InstanceExplosion {
   readonly distance: number;
 }
 
-export interface PhageDeliveryRig {
-  readonly body: THREE.Group;
-  readonly bodyOrigin: THREE.Vector3;
-  readonly sheath: THREE.Group;
-  readonly sheathOrigin: THREE.Vector3;
-  readonly innerTube: THREE.Object3D;
-  readonly innerTubeOrigin: THREE.Vector3;
-  readonly headGenome: THREE.Object3D;
-  readonly deliveryPath: THREE.Line;
-  readonly deliveryPointCount: number;
-  readonly surfacePatch: THREE.Group;
+export interface FlexibleSegment {
+  readonly object: THREE.Object3D;
+  readonly baseRotation: THREE.Euler;
 }
 
 export interface ObservationModel {
@@ -47,5 +39,5 @@ export interface ObservationModel {
   readonly instanceExplosions: readonly InstanceExplosion[];
   readonly genomeObjects: readonly THREE.Object3D[];
   readonly sectionGuide: THREE.Object3D;
-  readonly delivery?: PhageDeliveryRig;
+  readonly flexibleSegments: readonly FlexibleSegment[];
 }
