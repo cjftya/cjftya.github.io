@@ -1,0 +1,25 @@
+:root {
+  --virus-text-scale: 1;
+  --vs-bg: #050914;
+  --vs-panel: #0b1424;
+  --vs-panel-strong: #101d31;
+  --vs-line: #30445f;
+  --vs-line-soft: #1e3048;
+  --vs-text: #f2f7ff;
+  --vs-muted: #b8c7da;
+  --vs-teal: #63eee0;
+  --vs-teal-dark: #102f37;
+  --vs-violet: #bda8ff;
+  --vs-warm: #ffc77e;
+  --vs-danger: #ff9ca9;
+  --vs-radius: 14px;
+  --vs-shadow: 0 18px 48px rgb(0 0 0 / 28%);
+}
+
+html[data-virus-text-scale='115'] {
+  --virus-text-scale: 1.15;
+}
+
+html[data-virus-text-scale='130'] {
+  --virus-text-scale: 1.3;
+}

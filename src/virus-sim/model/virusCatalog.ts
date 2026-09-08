@@ -1,8 +1,7 @@
 import type {
-  CatalogTag,
   LayerDefinition,
   ObservationDefinition,
-  VirusId,
+  ObservationPartId,
 } from '../observation/types';
 
 const layer = (
@@ -11,7 +10,19 @@ const layer = (
   note?: string,
 ): LayerDefinition => ({ id, name, note });
 
-export const VIRUS_CATALOG: readonly ObservationDefinition[] = [
+type LegacyV2Definition = Omit<
+  ObservationDefinition,
+  | 'identityKey'
+  | 'aliases'
+  | 'particleState'
+  | 'geometryProfileId'
+  | 'motionProfileId'
+  | 'evidenceStatus'
+  | 'localMotion'
+  | 'tourStops'
+>;
+
+const V2_VIRUS_CATALOG_BASE: readonly LegacyV2Definition[] = [
   {
     id: 't4',
     name: 'T4 파지',
@@ -48,7 +59,6 @@ export const VIRUS_CATALOG: readonly ObservationDefinition[] = [
     ],
     displayLength: 6.8,
     sectionRadius: 1.7,
-    supportsDeliveryDemo: true,
   },
   {
     id: 'lambda',
@@ -77,7 +87,6 @@ export const VIRUS_CATALOG: readonly ObservationDefinition[] = [
     ],
     displayLength: 7.4,
     sectionRadius: 1.5,
-    supportsDeliveryDemo: false,
   },
   {
     id: 't7',
@@ -106,7 +115,6 @@ export const VIRUS_CATALOG: readonly ObservationDefinition[] = [
     ],
     displayLength: 4.7,
     sectionRadius: 1.6,
-    supportsDeliveryDemo: false,
   },
   {
     id: 'ms2',
@@ -131,7 +139,6 @@ export const VIRUS_CATALOG: readonly ObservationDefinition[] = [
     ],
     displayLength: 3.8,
     sectionRadius: 2,
-    supportsDeliveryDemo: false,
   },
   {
     id: 'tmv',
@@ -159,7 +166,6 @@ export const VIRUS_CATALOG: readonly ObservationDefinition[] = [
     ],
     displayLength: 7,
     sectionRadius: 0.9,
-    supportsDeliveryDemo: false,
   },
   {
     id: 'm13',
@@ -184,7 +190,6 @@ export const VIRUS_CATALOG: readonly ObservationDefinition[] = [
     ],
     displayLength: 8,
     sectionRadius: 0.5,
-    supportsDeliveryDemo: false,
   },
   {
     id: 'adenovirus-5',
@@ -209,7 +214,6 @@ export const VIRUS_CATALOG: readonly ObservationDefinition[] = [
     ],
     displayLength: 5.1,
     sectionRadius: 2.05,
-    supportsDeliveryDemo: false,
   },
   {
     id: 'rotavirus-rrv',
@@ -239,7 +243,6 @@ export const VIRUS_CATALOG: readonly ObservationDefinition[] = [
     ],
     displayLength: 4.4,
     sectionRadius: 2.25,
-    supportsDeliveryDemo: false,
   },
   {
     id: 'hsv1',
@@ -270,7 +273,6 @@ export const VIRUS_CATALOG: readonly ObservationDefinition[] = [
     ],
     displayLength: 5,
     sectionRadius: 2.5,
-    supportsDeliveryDemo: false,
   },
   {
     id: 'influenza-a',
@@ -300,7 +302,6 @@ export const VIRUS_CATALOG: readonly ObservationDefinition[] = [
     ],
     displayLength: 4.7,
     sectionRadius: 2.35,
-    supportsDeliveryDemo: false,
   },
   {
     id: 'vsv-indiana',
@@ -331,7 +332,6 @@ export const VIRUS_CATALOG: readonly ObservationDefinition[] = [
     ],
     displayLength: 5.8,
     sectionRadius: 1.75,
-    supportsDeliveryDemo: false,
   },
   {
     id: 'vaccinia-mv',
@@ -361,35 +361,47 @@ export const VIRUS_CATALOG: readonly ObservationDefinition[] = [
     ],
     displayLength: 5.4,
     sectionRadius: 2.5,
-    supportsDeliveryDemo: false,
   },
 ] as const;
 
-const VIRUS_BY_ID = new Map(VIRUS_CATALOG.map((virus) => [virus.id, virus]));
-
-export function getVirusDefinition(id: VirusId): ObservationDefinition {
-  const virus = VIRUS_BY_ID.get(id);
-  if (!virus) throw new Error(`Unknown Virus Sim catalog id: ${id}`);
-  return virus;
-}
-
-export function isVirusId(id: string): id is VirusId {
-  return VIRUS_BY_ID.has(id as VirusId);
-}
-
-export function filterVirusCatalog(
-  query: string,
-  tag: CatalogTag | 'all',
-): readonly ObservationDefinition[] {
-  const normalized = query.trim().toLocaleLowerCase('ko-KR');
-  return VIRUS_CATALOG.filter((virus) => {
-    const tagMatches = tag === 'all' || virus.morphologyTags.includes(tag);
-    const queryMatches =
-      normalized.length === 0 ||
-      [virus.name, virus.shortName, virus.nameEn, virus.genomeLabel, virus.feature]
-        .join(' ')
-        .toLocaleLowerCase('ko-KR')
-        .includes(normalized);
-    return tagMatches && queryMatches;
+export const V2_VIRUS_CATALOG: readonly ObservationDefinition[] =
+  V2_VIRUS_CATALOG_BASE.map((entry) => {
+    const focusParts = entry.parts.filter(
+      (partId): partId is ObservationPartId => partId !== 'genome',
+    );
+    const first = focusParts[0] ?? 'capsid';
+    const second = focusParts.at(-1) ?? first;
+    return {
+      ...entry,
+      identityKey: entry.id,
+      aliases: [entry.shortName, entry.nameEn],
+      particleState:
+        entry.id === 'vaccinia-mv'
+          ? '성숙 입자(MV)'
+          : entry.id === 'rotavirus-rrv'
+            ? '삼중 캡시드 입자'
+            : '성숙 입자',
+      geometryProfileId: entry.id,
+      motionProfileId: entry.id === 'tmv' ? 'calm' : 'active',
+      evidenceStatus: 'verified',
+      localMotion:
+        entry.id === 'm13'
+          ? 'flexible-filament'
+          : entry.id === 'lambda'
+            ? 'articulated-fiber'
+            : 'none',
+      tourStops: [
+        {
+          partId: first,
+          label: `${entry.shortName}의 ${entry.feature}`,
+          view: 'surface',
+        },
+        {
+          partId: second,
+          label: `${entry.category}의 층과 내부`,
+          view: 'section',
+          genomeVisible: true,
+        },
+      ],
+    } satisfies ObservationDefinition;
   });
-}

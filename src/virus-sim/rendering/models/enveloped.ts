@@ -178,32 +178,6 @@ export function buildVSV(collector: ModelCollector, quality: 'high' | 'low'): vo
   addObjectExplosion(collector, nucleocapsid, new THREE.Vector3(0.6, -0.2, 0.3), 0.68);
 }
 
-export function buildConceptEnveloped(
-  collector: ModelCollector,
-  quality: 'high' | 'low',
-): void {
-  addSphericalEnvelope(collector, quality, 2.22, COLORS.envelope, 0.82);
-  addSphericalSpikes(collector, quality, 2.43, 54, 28, COLORS.spike);
-  const capsid = new THREE.Mesh(
-    new THREE.IcosahedronGeometry(1.34, 1),
-    physicalMaterial(COLORS.capsid, 0.88, true),
-  );
-  collector.root.add(capsid);
-  register(collector, capsid, 'capsid', 'capsid', true);
-  addObjectExplosion(collector, capsid, new THREE.Vector3(-0.55, 0.15, 0.45), 0.92);
-  const unitDirections = fibonacciDirections(quality === 'high' ? 32 : 18);
-  const units = createRadialInstances(
-    new THREE.CylinderGeometry(0.12, 0.17, 0.12, 6),
-    standardMaterial(COLORS.capsomer),
-    unitDirections.map((direction) => direction.clone().multiplyScalar(1.38)),
-    unitDirections,
-  );
-  collector.root.add(units.mesh);
-  register(collector, units.mesh, 'capsomer', 'capsid', true);
-  collector.instanceExplosions.push({ ...units, distance: 0.7 });
-  addGenome(collector, createGenomeCoil(0.72, 13, 0.042, quality));
-}
-
 function addSphericalEnvelope(
   collector: ModelCollector,
   quality: 'high' | 'low',

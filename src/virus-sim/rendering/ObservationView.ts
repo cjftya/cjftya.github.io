@@ -1,12 +1,10 @@
 import * as THREE from 'three';
 import type { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { OBSERVATION_PARTS } from '../model/observationPresets';
-import {
-  evaluatePhageDelivery,
-  evaluateStructureTour,
-} from '../observation/demoTimeline';
+import { OBSERVATION_PARTS, getObservationPreset } from '../model/observationPresets';
+import { evaluateSpeciesTour } from '../observation/tours';
 import type {
   InspectionView,
+  ObservationDefinition,
   ObservationPartId,
   ObservationPresetId,
   ObservationSnapshot,
@@ -24,6 +22,7 @@ export interface ObservationPick {
 
 export class ObservationView {
   private readonly model: ObservationModel;
+  private readonly definition: ObservationDefinition;
   private readonly clipPlane = new THREE.Plane(new THREE.Vector3(0, 0, -1), 0);
   private readonly activeClipPlanes = [this.clipPlane];
   private readonly inactiveClipPlanes: THREE.Plane[] = [];
@@ -44,7 +43,6 @@ export class ObservationView {
   private lastRootPosition = new THREE.Vector3();
   private lastTourFocus: ObservationPartId | null = null;
   private lastSnapshot: ObservationSnapshot | null = null;
-  private deliveryWasActive = false;
 
   constructor(
     private readonly host: THREE.Group,
@@ -53,6 +51,7 @@ export class ObservationView {
     readonly presetId: ObservationPresetId,
     quality: 'high' | 'low',
   ) {
+    this.definition = getObservationPreset(presetId);
     this.model = createObservationModel(presetId, quality);
     this.marker.visible = false;
     this.marker.renderOrder = 20;
@@ -108,7 +107,7 @@ export class ObservationView {
     let sectionOffset = snapshot.sectionOffset;
     let genomeVisible = snapshot.genomeVisible;
     if (snapshot.demo.kind === 'structure-tour') {
-      const pose = evaluateStructureTour(snapshot.demo.progress);
+      const pose = evaluateSpeciesTour(this.definition, snapshot.demo.progress);
       view = pose.view;
       explosion = pose.explosion;
       sectionOffset = pose.sectionOffset;
@@ -121,23 +120,10 @@ export class ObservationView {
     } else {
       this.lastTourFocus = null;
     }
-    if (snapshot.demo.kind === 'phage-delivery') {
-      view = 'surface';
-      explosion = 0;
-      genomeVisible = true;
-    }
-
     this.applyView(view, genomeVisible, snapshot.layerVisibility);
     this.applyExplosion(view === 'exploded' ? explosion : 0);
     this.applySection(view === 'section', sectionOffset);
-    const deliveryEnded = this.applyDelivery(
-      snapshot,
-      genomeVisible && snapshot.layerVisibility.genome,
-    );
-    if (deliveryEnded) {
-      this.currentExplosion = -1;
-      this.applyExplosion(view === 'exploded' ? explosion : 0);
-    }
+    this.applyLocalMotion(snapshot, view);
     if (this.marker.visible && this.selectedObject) {
       this.selectedObject.updateWorldMatrix(true, true);
       const center = new THREE.Box3()
@@ -287,43 +273,22 @@ export class ObservationView {
     }
   }
 
-  private applyDelivery(
-    snapshot: ObservationSnapshot,
-    genomeVisible: boolean,
-  ): boolean {
-    const rig = this.model.delivery;
-    if (!rig) return false;
-    const active = snapshot.demo.kind === 'phage-delivery';
-    const deliveryEnded = this.deliveryWasActive && !active;
-    this.deliveryWasActive = active;
-    rig.surfacePatch.visible = active;
-    rig.deliveryPath.visible = active;
-    if (!active) {
-      rig.body.position.copy(rig.bodyOrigin);
-      rig.sheath.position.copy(rig.sheathOrigin);
-      rig.sheath.scale.set(1, 1, 1);
-      rig.innerTube.position.copy(rig.innerTubeOrigin);
-      rig.headGenome.visible = genomeVisible;
-      rig.deliveryPath.geometry.setDrawRange(0, 2);
-      return deliveryEnded;
-    }
-    const pose = evaluatePhageDelivery(snapshot.demo.progress);
-    rig.body.position
-      .copy(rig.bodyOrigin)
-      .add(new THREE.Vector3(0, pose.approach * 1.05, 0));
-    rig.sheath.scale.set(1, THREE.MathUtils.lerp(1, 0.48, pose.sheathContraction), 1);
-    rig.sheath.position
-      .copy(rig.sheathOrigin)
-      .add(new THREE.Vector3(0, -0.5 * pose.sheathContraction, 0));
-    rig.innerTube.position
-      .copy(rig.innerTubeOrigin)
-      .add(new THREE.Vector3(0, -0.7 * pose.tubeExtension, 0));
-    rig.headGenome.visible = pose.genomeTransfer < 0.97;
-    rig.deliveryPath.geometry.setDrawRange(
-      0,
-      Math.max(2, Math.round(rig.deliveryPointCount * pose.genomeTransfer)),
-    );
-    return false;
+  private applyLocalMotion(snapshot: ObservationSnapshot, view: InspectionView): void {
+    const enabled =
+      this.definition.localMotion === 'flexible-filament' &&
+      (view === 'surface' || view === 'transparent') &&
+      snapshot.demo.kind === 'none' &&
+      this.selectedObject === null;
+    const time = snapshot.motion.translationPhase;
+    this.model.flexibleSegments.forEach((segment, index) => {
+      segment.object.rotation.copy(segment.baseRotation);
+      if (!enabled) return;
+      const centered = index - (this.model.flexibleSegments.length - 1) * 0.5;
+      segment.object.rotation.z +=
+        Math.sin(time * 0.9 + index * 0.62) * 0.018 * centered;
+      segment.object.rotation.x +=
+        Math.cos(time * 0.72 + index * 0.44) * 0.012 * centered;
+    });
   }
 
   private select(object: THREE.Object3D, worldPoint: THREE.Vector3): void {

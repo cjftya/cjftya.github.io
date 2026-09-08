@@ -13,21 +13,6 @@ import {
   standardMaterial,
 } from './shared';
 
-export function buildConceptIcosahedral(
-  collector: ModelCollector,
-  quality: 'high' | 'low',
-): void {
-  const shell = new THREE.Mesh(
-    new THREE.IcosahedronGeometry(2, 1),
-    physicalMaterial(COLORS.capsid, 0.8, true),
-  );
-  shell.scale.y = 0.96;
-  collector.root.add(shell);
-  register(collector, shell, 'capsid', 'capsid', true);
-  addCapsomers(collector, quality === 'high' ? 62 : 32, 2.03, 'capsomer');
-  addGenome(collector, createGenomeCoil(1.18, 14, 0.055, quality));
-}
-
 export function buildMS2(collector: ModelCollector, quality: 'high' | 'low'): void {
   const shell = new THREE.Mesh(
     new THREE.IcosahedronGeometry(1.95, 2),

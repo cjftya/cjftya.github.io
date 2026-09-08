@@ -1,4 +1,4 @@
-import { normalizeSeed } from '../../simulation/random';
+import { normalizeSeed } from '../../common/random';
 import type {
   MotionMode,
   ObservationMotionState,
@@ -34,7 +34,7 @@ const IDENTITY = { x: 0, y: 0, z: 0, w: 1 } as const;
 
 export function createObservationMotion(
   seed: number,
-  mode: MotionMode = 'smooth',
+  mode: MotionMode = 'active',
   pose: { position: ObservationVec3; quaternion: ObservationQuaternion } = {
     position: ORIGIN,
     quaternion: IDENTITY,
@@ -42,11 +42,18 @@ export function createObservationMotion(
 ): ObservationMotionState {
   const normalized = normalizeSeed(seed);
   const pathOrigin =
-    mode === 'smooth'
-      ? evaluateSmoothPosition(normalized, 0, DEFAULT_MOTION_OPTIONS.smoothRadius)
+    mode === 'active' || mode === 'calm'
+      ? evaluateSmoothPosition(
+          normalized,
+          0,
+          mode === 'active'
+            ? DEFAULT_MOTION_OPTIONS.smoothRadius
+            : DEFAULT_MOTION_OPTIONS.smoothRadius * 0.55,
+          mode,
+        )
       : ORIGIN;
   return {
-    version: 'observation-motion-v2',
+    version: 'observation-motion-v2.5',
     mode,
     position: { ...pose.position },
     previousPosition: { ...pose.position },
@@ -62,6 +69,8 @@ export function createObservationMotion(
     tick: 0,
     translationTick: 0,
     rotationTick: 0,
+    translationPhase: 0,
+    rotationPhase: 0,
   };
 }
 
@@ -86,7 +95,9 @@ export function stepObservationMotion(
     {
       translationEnabled: options.translationEnabled,
       rotationEnabled: options.rotationEnabled,
-      radius: options.smoothRadius,
+      mode: state.mode,
+      radius:
+        state.mode === 'active' ? options.smoothRadius : options.smoothRadius * 0.55,
     },
     dt,
   );
