@@ -23,7 +23,10 @@ const LAYER_LABELS: Readonly<Record<ObservationLayerId, string>> = {
 export function observationControlsMarkup(): string {
   const options = [...VIRUS_CATALOG]
     .sort((left, right) => left.name.localeCompare(right.name, 'ko'))
-    .map((virus) => `<option value="${virus.id}">${virus.name}</option>`)
+    .map(
+      (virus) =>
+        `<option value="${virus.id}"${virus.id === 't4' ? ' selected' : ''}>${virus.name}</option>`,
+    )
     .join('');
   return `
     <section class="specimen-overview" aria-labelledby="virus-picker-title">

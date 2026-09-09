@@ -195,11 +195,12 @@ describe('Virus Sim v3.5 catalog contracts', () => {
     const selectMarkup = root.innerHTML.match(
       /<select id="virus-select">([\s\S]*?)<\/select>/,
     )?.[1];
-    const options = [...(selectMarkup ?? '').matchAll(/<option value="([^"]+)">/g)].map(
-      (match) => match[1],
-    );
+    const options = [
+      ...(selectMarkup ?? '').matchAll(/<option value="([^"]+)"(?: selected)?>/g),
+    ].map((match) => match[1]);
     expect(options).toHaveLength(71);
     expect(new Set(options)).toEqual(new Set(VIRUS_CATALOG.map((entry) => entry.id)));
+    expect(selectMarkup).toContain('<option value="t4" selected>');
     expect(root.innerHTML).toContain('<select id="virus-select">');
     for (const removedCopy of [
       '자동 다큐',
