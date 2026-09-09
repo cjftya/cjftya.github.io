@@ -81,13 +81,13 @@ export function observationInfoMarkup(): string {
 
   return `
     <section class="observatory-info">
-      <div class="current-actions">
+      <div class="current-actions" data-observation-section="structure">
         <button id="toggle-favorite" type="button" aria-pressed="false">☆ 즐겨찾기</button>
         <button id="next-discovery" type="button">다음 발견</button>
         <button id="save-image" type="button">이미지 저장</button>
       </div>
 
-      <section class="manual-observation-card" aria-label="수동 구조 관찰">
+      <section class="manual-observation-card" aria-label="수동 구조 관찰" data-observation-section="structure">
         <div class="panel-heading"><div><p class="eyebrow">MANUAL INSPECTION</p><h2>직접 구조 관찰</h2></div><span id="active-slot-badge">A</span></div>
         <p>카메라와 표본은 스스로 움직이지 않아요. 선택·종 변경 뒤에도 현재 구도를 유지해요.</p>
         <div class="structural-actions">
@@ -98,7 +98,7 @@ export function observationInfoMarkup(): string {
         </div>
       </section>
 
-      <div class="control-group view-control-group">
+      <div class="control-group view-control-group" data-observation-section="structure">
         <div class="control-label"><span>구조 보기</span><output id="observation-view-label">외관</output></div>
         <div class="segmented-view" role="group" aria-label="구조 표현">
           <button class="is-active" data-observation-view="surface" type="button">외관</button>
@@ -107,27 +107,27 @@ export function observationInfoMarkup(): string {
           <button data-observation-view="exploded" type="button">분해</button>
         </div>
       </div>
-      <div class="control-group" data-explosion-control hidden>
+      <div class="control-group" data-explosion-control data-observation-section="structure" hidden>
         <div class="control-label"><label for="observation-explosion">분해 거리</label><output id="observation-explosion-value">62%</output></div>
         <input id="observation-explosion" type="range" min="0" max="100" value="62" />
       </div>
-      <div class="control-group" data-section-control hidden>
+      <div class="control-group" data-section-control data-observation-section="structure" hidden>
         <div class="control-label"><label for="observation-section-offset">절단 위치</label><output id="observation-section-value">0.00</output></div>
         <input id="observation-section-offset" type="range" min="-100" max="100" value="0" />
       </div>
-      <div class="switch-row observation-switches">
+      <div class="switch-row observation-switches" data-observation-section="structure">
         <label><input id="observation-genome" type="checkbox" /><span>유전체 표시</span></label>
       </div>
-      <div class="layer-controls" data-observation-layers>
+      <div class="layer-controls" data-observation-layers data-observation-section="structure">
         <span>현재 항목의 구조 레이어</span>${layerControls}
       </div>
 
-      <details class="observatory-details" open>
+      <details class="observatory-details" data-observation-section="structure" open>
         <summary><span><small>PART EXPLORER</small>부위별로 살펴보기</span></summary>
         <div class="part-list" id="observation-part-list">${partButtons}</div>
       </details>
 
-      <section class="comparison-panel feature-panel">
+      <section class="comparison-panel feature-panel" data-observation-section="comparison">
         <div class="panel-heading"><div><p class="eyebrow">A / B COMPARE</p><h2>두 표본 비교</h2></div><span id="comparison-state">꺼짐</span></div>
         <label class="stacked-field">B 표본<select id="compare-virus">${compareOptions}</select></label>
         <div class="comparison-actions"><button class="primary-action" id="comparison-add" type="button">비교에 추가</button><button id="comparison-swap" type="button" hidden>서로 바꾸기</button><button id="comparison-close" type="button" hidden>비교 종료</button></div>
@@ -142,14 +142,14 @@ export function observationInfoMarkup(): string {
         </div>
       </section>
 
-      <section class="variant-panel feature-panel">
+      <section class="variant-panel feature-panel" data-observation-section="comparison">
         <div class="panel-heading"><div><p class="eyebrow">SPECIMENS</p><h2>표본·변이 차이</h2></div><span id="variant-count">0</span></div>
         <label class="stacked-field">A 표본<select id="variant-a"><option value="">기본 표본</option></select></label>
         <label class="stacked-field" id="variant-b-row" hidden>B 표본<select id="variant-b"><option value="">기본 표본</option></select></label>
         <div id="variant-changes" class="variant-changes"><p>등록된 비교 표본을 선택하면 근거가 있는 영역 차이를 표시해요.</p></div>
       </section>
 
-      <section class="scanner-panel feature-panel">
+      <section class="scanner-panel feature-panel" data-observation-section="structure">
         <div class="panel-heading"><div><p class="eyebrow">STRUCTURE SCANNER</p><h2>얇은 단층 보기</h2></div><label class="compact-switch"><input id="scanner-enabled" type="checkbox" /><span>켜기</span></label></div>
         <p>같은 실제 기하의 얇은 slab를 조립 상태에서 렌더링해요. 종료하면 이전 분해량을 복원해요.</p>
         <div id="scanner-controls" hidden>
@@ -162,27 +162,28 @@ export function observationInfoMarkup(): string {
         <canvas id="scanner-canvas" class="scanner-canvas" aria-label="구조 스캐너 단층 화면"></canvas>
       </section>
 
-      <section class="decoration-panel feature-panel">
+      <section class="decoration-panel feature-panel" data-observation-section="settings">
         <div class="panel-heading"><div><p class="eyebrow">AMBIENCE</p><h2>장식 효과</h2></div></div>
         <label class="stacked-field">강도<select id="decoration-level"><option value="off">끄기</option><option value="subtle" selected>은은하게</option><option value="rich">풍부하게</option></select></label>
         <label class="wide-switch"><input id="decoration-paused" type="checkbox" /><span>파티클 정지</span></label>
         <p>공간감을 위한 장식이며 감염력·변이·물리 농도를 나타내지 않아요.</p>
       </section>
 
-      <div class="fact-box source-fact">
+      <div class="fact-box source-fact" data-observation-section="settings">
         <span>구조 근거와 표현 한계</span>
         <p id="observation-evidence"></p>
         <p id="observation-simplification"></p>
         <div class="source-links compact" id="observation-source-links"></div>
       </div>
-      <details class="developer-metrics"><summary>개발용 렌더 정보</summary><small id="render-budget">렌더 예산 측정 대기</small></details>
+      <details class="developer-metrics" data-observation-section="settings"><summary>개발용 렌더 정보</summary><small id="render-budget">렌더 예산 측정 대기</small></details>
     </section>`;
 }
 
 export function observationFooterMarkup(): string {
   return `
-    <footer class="observation-bar manual-bar">
+    <div class="observation-bar manual-bar">
       <div class="manual-help"><strong>수동 조작</strong><span>드래그 회전 · 우클릭/Shift+드래그 이동 · 휠 확대 · 터치 회전/핀치</span></div>
+      <button id="reset-camera" type="button">전체 보기</button>
       <div class="camera-step-controls" role="group" aria-label="접근 가능한 카메라 조작">
         <button data-camera-step="left" type="button" aria-label="왼쪽으로 회전">↶</button>
         <button data-camera-step="right" type="button" aria-label="오른쪽으로 회전">↷</button>
@@ -193,5 +194,5 @@ export function observationFooterMarkup(): string {
         <button data-camera-step="zoom-in" type="button">확대 +</button>
         <button data-camera-step="zoom-out" type="button">축소 −</button>
       </div>
-    </footer>`;
+    </div>`;
 }

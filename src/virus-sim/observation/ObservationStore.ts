@@ -66,6 +66,10 @@ export class ObservationStore {
     return cloneState(this.state);
   }
 
+  replaceSnapshot(snapshot: ObservationSnapshot): void {
+    this.state = cloneState(snapshot);
+  }
+
   getActiveSpecimen(): SpecimenObservationState {
     return this.state.slots[this.state.activeSlot] ?? this.state.slots.a;
   }
