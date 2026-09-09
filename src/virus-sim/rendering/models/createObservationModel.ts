@@ -4,6 +4,8 @@ import { buildVaccinia } from './complex';
 import { buildHSV, buildInfluenza, buildVSV } from './enveloped';
 import { buildM13, buildTMV } from './helical';
 import { buildAdenovirus, buildMS2, buildRotavirus } from './icosahedral';
+import { buildSignatureIcosahedral } from './icosahedralFamilies';
+import { buildLayeredCapsid } from './layeredCapsids';
 import { buildCoronavirus, buildFilovirus, buildLentivirus } from './emerging';
 import {
   buildGenericEnveloped,
@@ -80,6 +82,12 @@ export function createObservationModel(
       break;
     case 'cystovirus':
       buildCystovirus(collector, quality);
+      break;
+    case 'icosahedral-capsid':
+      buildSignatureIcosahedral(collector, quality);
+      break;
+    case 'layered-capsid':
+      buildLayeredCapsid(collector, quality);
       break;
     case 'generic-icosahedral':
       buildGenericIcosahedral(collector, quality);

@@ -17,7 +17,7 @@ export const ANIMAL_CATALOG = [
     parts: ['capsid', 'capsomer', 'surface-domain', 'channel', 'genome'],
     layers: [layer('capsid', 'T=1 캡시드'), layer('genome', 'ssDNA')],
     sourceIds: ['pdb-1lp3'],
-    modelBuilder: 'generic-icosahedral',
+    modelBuilder: 'icosahedral-capsid',
     geometryProfileId: 'ico-aav2-dimpled',
     simplifications: [
       '축별 표면 고저를 과장 없이 낮은 기하로 표현했어요.',
@@ -42,7 +42,7 @@ export const ANIMAL_CATALOG = [
     parts: ['capsid', 'capsomer', 'surface-domain', 'channel', 'genome'],
     layers: [layer('capsid', '빈 캡시드 참고'), layer('genome', 'ssDNA 개념도')],
     sourceIds: ['pdb-2cas'],
-    modelBuilder: 'generic-icosahedral',
+    modelBuilder: 'icosahedral-capsid',
     geometryProfileId: 'ico-cpv-cylinders',
     simplifications: [
       '구조 출처는 empty capsid임을 명시해요.',
@@ -68,7 +68,7 @@ export const ANIMAL_CATALOG = [
     parts: ['capsid', 'capsomer', 'surface-domain', 'genome'],
     layers: [layer('capsid', 'VLP T=1 캡시드'), layer('genome', '원형 ssDNA 개념도')],
     sourceIds: ['pdb-3jci'],
-    modelBuilder: 'generic-icosahedral',
+    modelBuilder: 'icosahedral-capsid',
     geometryProfileId: 'ico-pcv2-small',
     simplifications: [
       '실제 상대 크기는 화면 확대 때문에 직접 비교할 수 없어요.',
@@ -97,7 +97,7 @@ export const ANIMAL_CATALOG = [
       layer('genome', '원형 dsDNA 개념도'),
     ],
     sourceIds: ['pdb-7kzf'],
-    modelBuilder: 'generic-icosahedral',
+    modelBuilder: 'icosahedral-capsid',
     geometryProfileId: 'ico-papilloma-pentamers',
     simplifications: [
       'VLP 구조 참고 범위를 명시하고 실제 유전체 패킹으로 해석하지 않아요.',
@@ -123,7 +123,7 @@ export const ANIMAL_CATALOG = [
     parts: ['capsid', 'capsomer', 'surface-domain', 'genome'],
     layers: [layer('capsid', 'VP1 캡시드'), layer('genome', '원형 dsDNA')],
     sourceIds: ['pdb-1sva'],
-    modelBuilder: 'generic-icosahedral',
+    modelBuilder: 'icosahedral-capsid',
     geometryProfileId: 'ico-polyoma-sv40',
     simplifications: [
       'capsomer 간 연결을 원자 수준으로 재현하지 않았어요.',
@@ -149,7 +149,7 @@ export const ANIMAL_CATALOG = [
     parts: ['capsid', 'capsomer', 'surface-domain', 'genome'],
     layers: [layer('capsid', 'VP1 캡시드'), layer('genome', '원형 dsDNA')],
     sourceIds: ['pdb-1sie'],
-    modelBuilder: 'generic-icosahedral',
+    modelBuilder: 'icosahedral-capsid',
     geometryProfileId: 'ico-polyoma-murine',
     simplifications: [
       'SV40과의 실제 구조 유사성을 유지했어요.',
@@ -178,7 +178,7 @@ export const ANIMAL_CATALOG = [
       layer('genome', 'ssRNA(+) 개념도'),
     ],
     sourceIds: ['pdb-1ihm'],
-    modelBuilder: 'generic-icosahedral',
+    modelBuilder: 'icosahedral-capsid',
     geometryProfileId: 'ico-calici-protruding',
     simplifications: [
       'VLP 캡시드 자료이며 유전체 위치는 실측 재현이 아니에요.',
@@ -208,7 +208,7 @@ export const ANIMAL_CATALOG = [
       layer('genome', 'ssRNA(+)'),
     ],
     sourceIds: ['pdb-3j1p'],
-    modelBuilder: 'generic-icosahedral',
+    modelBuilder: 'icosahedral-capsid',
     geometryProfileId: 'ico-rhdv-protruding',
     simplifications: [
       'Norwalk와의 계열 유사성을 유지했어요.',
@@ -238,7 +238,7 @@ export const ANIMAL_CATALOG = [
       layer('genome', 'ssRNA(+) 개념도'),
     ],
     sourceIds: ['pdb-5ewn'],
-    modelBuilder: 'generic-icosahedral',
+    modelBuilder: 'icosahedral-capsid',
     geometryProfileId: 'ico-astro-spiked',
     simplifications: [
       'HAstV-1 capsid 단백질 구조를 입자 전체의 저밀도 형태로 확장했어요.',
@@ -356,7 +356,7 @@ export const ANIMAL_CATALOG = [
     parts: ['capsid', 'capsomer', 'surface-domain', 'genome'],
     layers: [layer('capsid', 'T=3 캡시드'), layer('genome', '2분절 ssRNA(+)')],
     sourceIds: ['pdb-4ftb'],
-    modelBuilder: 'generic-icosahedral',
+    modelBuilder: 'icosahedral-capsid',
     geometryProfileId: 'ico-fhv-t3',
     simplifications: [
       'RNA 밀도를 개별 뉴클레오타이드로 그리지 않았어요.',
@@ -385,7 +385,7 @@ export const ANIMAL_CATALOG = [
       layer('genome', '2분절 dsRNA'),
     ],
     sourceIds: ['pdb-2df7'],
-    modelBuilder: 'generic-layered',
+    modelBuilder: 'layered-capsid',
     geometryProfileId: 'layered-ibdv-double',
     simplifications: [
       '두 층의 단백질 종류를 연속 shell로 줄였어요.',
@@ -415,7 +415,7 @@ export const ANIMAL_CATALOG = [
       layer('genome', '10분절 dsRNA'),
     ],
     sourceIds: ['pdb-2btv'],
-    modelBuilder: 'generic-layered',
+    modelBuilder: 'layered-capsid',
     geometryProfileId: 'layered-bluetongue-triple',
     simplifications: [
       '각 층의 실제 화학량론은 렌더 반복 수와 다릅니다.',
@@ -446,7 +446,7 @@ export const ANIMAL_CATALOG = [
       layer('genome', '10분절 dsRNA'),
     ],
     sourceIds: ['pdb-1ej6'],
-    modelBuilder: 'generic-layered',
+    modelBuilder: 'layered-capsid',
     geometryProfileId: 'layered-reovirus-turret',
     simplifications: [
       '꼭짓점 복합체를 짧은 turret 기하로 줄였어요.',
