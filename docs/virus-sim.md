@@ -1,4 +1,4 @@
-# Virus Sim v4.3
+# Virus Sim v4.4
 
 Virus Sim은 71개 바이러스의 형태와 주요 구조를 한 화면에서 관찰하는 3D 구조 뷰어다.
 바이러스를 native dropdown에서 선택하면 해당 표본을 stage 중앙에 다시 맞추고, 마우스와
@@ -16,7 +16,9 @@ Virus Sim은 71개 바이러스의 형태와 주요 구조를 한 화면에서 �
 - PNG 저장, 렌더 품질, 글자 크기 설정
 - 작고 느린 단일 배경 입자 layer
 - WebGL context 중단 안내와 복구
-- 대표 8종의 Structural Signature와 재사용 가능한 절차 컴포넌트
+- 23개 외피형 항목 전체의 명시적 Structural Signature
+- Coronavirus 4개 subgroup profile과 HBV·Alphavirus·Cystovirus 전용 builder
+- 재사용 가능한 외피·표면 단백질·matrix·capsid·RNP 절차 컴포넌트
 
 ## 앱 구조
 
@@ -46,6 +48,7 @@ History 데이터는 렌더링을 모르며 catalog ID로만 선택 항목과 �
 - [v2.5 확장 출처](virus-sim-v2.5-sources.md)
 - [v4.3 History 출처](virus-sim-v4.3-history-sources.md)
 - [v4.3 모델링 규격](virus-sim-v4.3-modeling.md)
+- [v4.4 외피형 rollout](virus-sim-v4.4-modeling.md)
 
 ## 검증
 

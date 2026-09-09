@@ -269,7 +269,7 @@ export const ANIMAL_CATALOG = [
       layer('genome', '부분 dsDNA'),
     ],
     sourceIds: ['pdb-6htx', 'ictv-hepadnaviridae'],
-    modelBuilder: 'generic-enveloped',
+    modelBuilder: 'hbv',
     geometryProfileId: 'enveloped-hbv-dane',
     simplifications: [
       'Dane particle 상태로 한정했어요.',
@@ -300,7 +300,7 @@ export const ANIMAL_CATALOG = [
       layer('genome', 'ssRNA(+)'),
     ],
     sourceIds: ['pdb-6imm'],
-    modelBuilder: 'generic-enveloped',
+    modelBuilder: 'alphavirus',
     geometryProfileId: 'enveloped-alphavirus-sindbis',
     simplifications: [
       'glycoprotein trimer를 원뿔형 반복 단위로 줄였어요.',
@@ -331,7 +331,7 @@ export const ANIMAL_CATALOG = [
       layer('genome', 'ssRNA(+)'),
     ],
     sourceIds: ['emd-sfv', 'ictv-togaviridae'],
-    modelBuilder: 'generic-enveloped',
+    modelBuilder: 'alphavirus',
     geometryProfileId: 'enveloped-alphavirus-sfv',
     simplifications: [
       'Sindbis와의 계열 유사성을 의도적으로 유지했어요.',

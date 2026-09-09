@@ -5,6 +5,7 @@ import {
   addGenome,
   addObjectExplosion,
   createGenomeCoil,
+  createRadialInstances,
   createTube,
   physicalMaterial,
   register,
@@ -18,18 +19,23 @@ import {
   createMatrixShell,
   createSurfaceProteinInstances,
 } from './components';
+import { getCoronavirusRenderProfile } from '../../catalog/envelopedProfiles';
 
 type Quality = 'high' | 'low';
 
 export function buildFilovirus(collector: ModelCollector, quality: Quality): void {
-  const points = filovirusCenterline(quality, collector.definition.id);
+  collector.root.userData.envelopedFamily = 'filovirus';
+  collector.root.userData.familyModel = true;
+  const points = filovirusCenterline(quality);
   const envelope = createTube(points, 0.58, quality, false, 0xc86d9d);
+  envelope.name = 'filovirus-tubular-envelope';
   envelope.material = physicalMaterial(0xc86d9d, 0.72);
   collector.root.add(envelope);
   register(collector, envelope, 'envelope', 'envelope', true);
   addObjectExplosion(collector, envelope, new THREE.Vector3(0.2, 0.65, 0.45), 0.68);
 
   const matrix = createTube(points, 0.47, quality, false, COLORS.matrix);
+  matrix.name = 'filovirus-tubular-matrix';
   matrix.material = physicalMaterial(COLORS.matrix, 0.56);
   collector.root.add(matrix);
   register(collector, matrix, 'matrix', 'matrix', true);
@@ -55,6 +61,7 @@ export function buildFilovirus(collector: ModelCollector, quality: Quality): voi
     );
   }
   const rnp = createTube(rnpPoints, 0.055, quality, false, COLORS.layerViolet);
+  rnp.name = 'filovirus-helical-rnp';
   collector.root.add(rnp);
   register(collector, rnp, 'nucleocapsid', 'nucleocapsid');
   registerPartAlias(collector, rnp, 'genome');
@@ -62,9 +69,9 @@ export function buildFilovirus(collector: ModelCollector, quality: Quality): voi
   collector.genomeObjects.push(rnp);
   addObjectExplosion(collector, rnp, new THREE.Vector3(0.5, -0.25, -0.3), 0.52);
 
-  const spikeGroup = new THREE.Group();
-  const spikeMaterial = standardMaterial(COLORS.spike);
   const spikeCount = quality === 'high' ? 108 : 54;
+  const spikeOrigins: THREE.Vector3[] = [];
+  const spikeDirections: THREE.Vector3[] = [];
   for (let index = 0; index < spikeCount; index += 1) {
     const t = (index + 0.5) / spikeCount;
     const center = curve.getPointAt(t);
@@ -78,21 +85,26 @@ export function buildFilovirus(collector: ModelCollector, quality: Quality): voi
       .multiplyScalar(Math.cos(angle))
       .addScaledVector(binormal, Math.sin(angle))
       .normalize();
-    const spike = new THREE.Mesh(
-      new THREE.CapsuleGeometry(0.045, 0.18, 2, 5),
-      spikeMaterial,
-    );
-    spike.position.copy(center).addScaledVector(radial, 0.68);
-    spike.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), radial);
-    spikeGroup.add(spike);
+    spikeOrigins.push(center.clone().addScaledVector(radial, 0.68));
+    spikeDirections.push(radial);
   }
-  collector.root.add(spikeGroup);
-  register(collector, spikeGroup, 'spike', 'surface-protein', true);
-  addObjectExplosion(collector, spikeGroup, new THREE.Vector3(0.4, 0.15, -0.55), 0.74);
+  const spikes = createRadialInstances(
+    new THREE.CapsuleGeometry(0.045, 0.18, 2, 5),
+    standardMaterial(COLORS.spike),
+    spikeOrigins,
+    spikeDirections,
+  );
+  spikes.mesh.name = 'filovirus-gp-array';
+  collector.root.add(spikes.mesh);
+  register(collector, spikes.mesh, 'spike', 'surface-protein', true);
+  collector.instanceExplosions.push({ ...spikes, distance: 0.74 });
 }
 
 export function buildLentivirus(collector: ModelCollector, quality: Quality): void {
+  collector.root.userData.envelopedFamily = 'lentivirus';
+  collector.root.userData.familyModel = collector.definition.id === 'hiv-2';
   const envelope = createLipidEnvelope(2.1, quality, 0xc66f9f, 0.72);
+  envelope.name = 'lentivirus-envelope';
   collector.root.add(envelope);
   register(collector, envelope, 'envelope', 'envelope', true);
   addObjectExplosion(collector, envelope, new THREE.Vector3(0.55, 0.15, 0.42), 0.74);
@@ -101,6 +113,7 @@ export function buildLentivirus(collector: ModelCollector, quality: Quality): vo
     (component) => component.relativeAbundance === 'sparse',
   );
   const spikes = createSurfaceProteinInstances({
+    id: 'env',
     radius: 2.35,
     count: quality === 'high' ? (sparseEnv ? 22 : 40) : sparseEnv ? 12 : 22,
     shape: 'club',
@@ -112,17 +125,20 @@ export function buildLentivirus(collector: ModelCollector, quality: Quality): vo
   collector.instanceExplosions.push({ ...spikes, distance: 0.78 });
 
   const matrix = createMatrixShell(1.78, quality, 0.46);
+  matrix.name = 'lentivirus-matrix';
   collector.root.add(matrix);
   register(collector, matrix, 'matrix', 'matrix', true);
   addObjectExplosion(collector, matrix, new THREE.Vector3(-0.45, 0.25, 0.38), 0.62);
 
   const capsid = createConicalCore(quality);
+  capsid.name = 'lentivirus-conical-core';
   capsid.position.y = -0.08;
   collector.root.add(capsid);
   register(collector, capsid, 'capsid', 'capsid', true);
   addObjectExplosion(collector, capsid, new THREE.Vector3(0.48, -0.35, -0.3), 0.64);
 
   const genome = new THREE.Group();
+  genome.name = 'lentivirus-paired-rna';
   for (const side of [-1, 1]) {
     const strand = createGenomeCoil(0.34, 12, 0.038, quality, 2);
     strand.position.set(side * 0.2, -0.15, 0);
@@ -132,56 +148,40 @@ export function buildLentivirus(collector: ModelCollector, quality: Quality): vo
 }
 
 export function buildCoronavirus(collector: ModelCollector, quality: Quality): void {
-  const envelope = createLipidEnvelope(2.08, quality, 0xba6b99, 0.74);
+  const profile = getCoronavirusRenderProfile(collector.definition.id);
+  collector.root.userData.envelopedFamily = 'coronavirus';
+  collector.root.userData.envelopedProfileId = profile.id;
+
+  const envelope = createLipidEnvelope(profile.envelopeRadius, quality, 0xba6b99, 0.74);
+  envelope.name = 'coronavirus-envelope';
+  envelope.scale.set(...profile.envelopeScale);
   collector.root.add(envelope);
   register(collector, envelope, 'envelope', 'envelope', true);
   addObjectExplosion(collector, envelope, new THREE.Vector3(0.5, 0.2, 0.42), 0.72);
 
-  const matrix = createMatrixShell(1.78, quality, 0.46);
+  const matrix = createMatrixShell(profile.matrixRadius, quality, 0.46);
+  matrix.name = 'coronavirus-membrane-layer';
   collector.root.add(matrix);
   register(collector, matrix, 'matrix', 'matrix', true);
   addObjectExplosion(collector, matrix, new THREE.Vector3(-0.5, 0.2, 0.36), 0.58);
 
-  const components = collector.signature?.surfaceComponents ?? [
-    {
-      id: 'spike-s',
-      label: 'S',
-      shape: 'club' as const,
-      relativeAbundance: 'dominant' as const,
-      partId: 'spike' as const,
-      layerId: 'surface-protein' as const,
-    },
-  ];
-  components.forEach((component, index) => {
-    const count =
-      component.relativeAbundance === 'dominant'
-        ? quality === 'high'
-          ? 64
-          : 32
-        : component.relativeAbundance === 'minor'
-          ? quality === 'high'
-            ? 28
-            : 14
-          : quality === 'high'
-            ? 10
-            : 5;
-    const radius =
-      component.shape === 'club' ? 2.48 : component.shape === 'knob' ? 2.25 : 2.18;
+  profile.surface.forEach((component, index) => {
     const surface = createSurfaceProteinInstances({
-      radius,
-      count,
+      id: component.id,
+      radius: component.radius,
+      count: quality === 'high' ? component.highCount : component.lowCount,
       shape: component.shape,
-      color:
-        index === 0 ? COLORS.spike : index === 1 ? COLORS.layerGold : COLORS.layerBlue,
-      scale: component.shape === 'club' ? new THREE.Vector3(1.12, 1, 1.12) : undefined,
+      color: component.color,
+      scale: component.shape === 'crown' ? new THREE.Vector3(1.08, 1, 1.08) : undefined,
     });
     collector.root.add(surface.mesh);
-    register(collector, surface.mesh, component.partId, component.layerId, true);
+    register(collector, surface.mesh, 'spike', 'surface-protein', true);
     collector.instanceExplosions.push({ ...surface, distance: 0.78 + index * 0.04 });
   });
 
   const rnp = new THREE.Group();
-  for (let strand = 0; strand < 3; strand += 1) {
+  rnp.name = 'coronavirus-helical-rnp';
+  for (let strand = 0; strand < profile.rnpStrands; strand += 1) {
     const points: THREE.Vector3[] = [];
     const count = quality === 'high' ? 72 : 42;
     for (let index = 0; index <= count; index += 1) {
@@ -191,7 +191,7 @@ export function buildCoronavirus(collector: ModelCollector, quality: Quality): v
       points.push(
         new THREE.Vector3(
           Math.cos(angle) * radius,
-          (t - 0.5) * 2.3 + (strand - 1) * 0.18,
+          (t - 0.5) * 2.3 + (strand - (profile.rnpStrands - 1) / 2) * 0.16,
           Math.sin(angle) * radius,
         ),
       );
@@ -214,18 +214,16 @@ export function buildCoronavirus(collector: ModelCollector, quality: Quality): v
   addObjectExplosion(collector, rnp, new THREE.Vector3(0.52, -0.3, -0.34), 0.6);
 }
 
-function filovirusCenterline(quality: Quality, virusId: string): THREE.Vector3[] {
+function filovirusCenterline(quality: Quality): THREE.Vector3[] {
   const points: THREE.Vector3[] = [];
   const count = quality === 'high' ? 72 : 40;
-  const phase =
-    [...virusId].reduce((sum, character) => sum + character.charCodeAt(0), 0) % 7;
   for (let index = 0; index <= count; index += 1) {
     const t = index / count;
-    const angle = (t - 0.5) * Math.PI * (1.18 + phase * 0.035);
+    const angle = (t - 0.5) * Math.PI * 1.32;
     points.push(
       new THREE.Vector3(
         Math.sin(angle) * 3.15,
-        (t - 0.5) * 3.1 + Math.cos(t * Math.PI * 2 + phase * 0.3) * 0.22,
+        (t - 0.5) * 3.1 + Math.cos(t * Math.PI * 2) * 0.22,
         Math.cos(angle) * 1.05 - 0.38,
       ),
     );
