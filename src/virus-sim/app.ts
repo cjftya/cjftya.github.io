@@ -1,777 +1,239 @@
-import {
-  filterVirusCatalog,
-  getCatalogEntry,
-  isVirusId,
-  nextDiscovery,
-} from './catalog/registry';
-import { getExperienceProfile } from './catalog/experienceProfiles';
-import { getStructureSource } from './catalog/sources';
-import { ExperienceDirector } from './experience/ExperienceDirector';
-import type { ExperienceStage } from './experience/ExperienceState';
+import { isVirusId } from './catalog/registry';
 import { OBSERVATION_PARTS } from './model/observationPresets';
-import { ObservationController } from './observation/ObservationController';
-import { OBSERVATION_FIXED_DT } from './observation/motion';
-import { evaluateSpeciesTour } from './observation/tours';
+import { ObservationStore } from './observation/ObservationStore';
 import type {
-  CatalogTag,
-  InspectionView,
-  MotionMode,
-  ObservationLayerId,
   ObservationPartId,
   ObservationSnapshot,
+  SlotId,
 } from './observation/types';
-import { VirusScene, type SelectionDetails } from './rendering/VirusScene';
-import type { ExperienceQuality } from './rendering/quality/quality';
+import { SceneRenderer, type SelectionDetails } from './rendering/SceneRenderer';
+import { bindVirusSimControls, type VirusSimControlActions } from './ui/bindings';
 import { renderAppLayout, requiredElement } from './ui/layout';
-import {
-  type CatalogCollection,
-  type FontScale,
-  loadFavorites,
-  loadFontScale,
-  loadRecent,
-  pushRecent,
-  saveFavorites,
-  saveFontScale,
-} from './ui/preferences';
+import { VirusSimPanel } from './ui/VirusSimPanel';
 
-const MAX_TICKS_PER_FRAME = 12;
-const UI_UPDATE_INTERVAL = 0.12;
+const UI_UPDATE_INTERVAL = 120;
 
 export class VirusSimApp {
-  private readonly scene: VirusScene;
-  private readonly observation = new ObservationController(
-    window.matchMedia('(prefers-reduced-motion: reduce)').matches,
-  );
-  private readonly storage = window.localStorage;
-  private readonly experienceDirector = new ExperienceDirector();
-  private favorites = loadFavorites(this.storage);
-  private recent = loadRecent(this.storage);
-  private catalogFilter: CatalogTag | 'all' = 'all';
-  private collection: CatalogCollection = 'all';
-  private accumulator = 0;
-  private lastFrameTime = performance.now();
-  private lastUiTime = 0;
-  private animationFrame = 0;
+  private readonly scene: SceneRenderer;
+  private readonly observation: ObservationStore;
+  private readonly panel: VirusSimPanel;
+  private readonly unbindControls: () => void;
   private disposed = false;
-  private lastInteractionTime = performance.now();
-  private momentVisibleUntil = 0;
+  private lastUiTime = 0;
 
   constructor(private readonly root: HTMLElement) {
     renderAppLayout(root);
-    this.applyFontScale(loadFontScale(this.storage));
-    this.scene = new VirusScene(this.element<HTMLElement>('#viewport'), (selection) =>
-      this.updateSelection(selection),
+    this.panel = new VirusSimPanel(root, window.localStorage);
+    this.panel.applySavedFontScale();
+
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const initialId = this.panel.getInitialId();
+    this.observation = new ObservationStore(reducedMotion, initialId);
+    const preferences = this.panel.getDisplayPreferences(reducedMotion);
+    this.observation.setDecorationLevel(preferences.decorationLevel);
+    this.observation.setDecorationPaused(preferences.decorationPaused);
+
+    this.scene = new SceneRenderer(
+      requiredElement<HTMLElement>(root, '#viewport'),
+      requiredElement<HTMLCanvasElement>(root, '#scanner-canvas'),
+      (selection) => this.handleSceneSelection(selection),
+      (slot) => this.activateSlot(slot),
     );
-    this.bindControls();
-    const initialId = this.recent.find(isVirusId) ?? 't4';
-    if (initialId !== 't4') this.observation.setPreset(initialId);
-    this.recordRecent(initialId);
+    this.unbindControls = bindVirusSimControls(root, this.createControlActions());
+
+    this.panel.recordRecent(initialId);
     const snapshot = this.observation.getSnapshot();
     this.scene.show(snapshot);
-    this.updatePresetUi(snapshot);
-    this.syncUi(snapshot);
-    this.updateSelection(null);
-    this.animationFrame = requestAnimationFrame(this.frame);
+    this.syncAll(snapshot);
+    this.panel.clearSelection();
+    this.scene.start((delta) => this.advanceFrame(delta));
   }
 
   dispose(): void {
     if (this.disposed) return;
     this.disposed = true;
-    cancelAnimationFrame(this.animationFrame);
-    document.removeEventListener('visibilitychange', this.handleVisibility);
-    this.root.removeEventListener('pointerdown', this.handleAnyInteraction, true);
-    this.root.removeEventListener('keydown', this.handleAnyInteraction, true);
+    this.unbindControls();
     this.scene.dispose();
     this.root.replaceChildren();
   }
 
-  private bindControls(): void {
-    this.input('#catalog-search').addEventListener('input', () =>
-      this.updateCatalogFilter(),
-    );
-    this.root
-      .querySelectorAll<HTMLButtonElement>('[data-catalog-filter]')
-      .forEach((button) => {
-        button.addEventListener('click', () => {
-          const value = button.dataset.catalogFilter ?? 'all';
-          const allowed: readonly string[] = [
-            'all',
-            'phage',
-            'plant',
-            'animal',
-            'archaea',
-            'helical',
-            'icosahedral',
-            'enveloped',
-          ];
-          this.catalogFilter = allowed.includes(value)
-            ? (value as CatalogTag | 'all')
-            : 'all';
-          this.setActiveGroup('[data-catalog-filter]', button);
-          this.updateCatalogFilter();
-        });
-      });
-
-    this.button('#experience-follow').addEventListener('click', () =>
-      this.activateExperience('follow'),
-    );
-    this.button('#experience-approach').addEventListener('click', () =>
-      this.activateExperience('approach'),
-    );
-    this.button('#experience-surface').addEventListener('click', () =>
-      this.activateExperience('surface'),
-    );
-    this.button('#experience-interior').addEventListener('click', () => {
-      const snapshot = this.observation.getSnapshot();
-      if (!getExperienceProfile(snapshot.presetId).supportedExperience.interiorDive)
-        return;
-      this.observation.enterInterior();
-      this.syncUi(this.observation.getSnapshot());
-    });
-    this.button('#guided-journey').addEventListener('click', () => {
-      const snapshot = this.observation.getSnapshot();
-      if (!getExperienceProfile(snapshot.presetId).interiorPath) return;
-      this.observation.startGuidedJourney();
-      this.syncUi(this.observation.getSnapshot());
-    });
-    this.button('#experience-back-surface').addEventListener('click', () =>
-      this.activateExperience('surface'),
-    );
-    this.button('#experience-exit').addEventListener('click', () =>
-      this.activateExperience('return'),
-    );
-    this.root
-      .querySelectorAll<HTMLButtonElement>('[data-structural-reveal]')
-      .forEach((button) => {
-        button.addEventListener('click', () => {
-          const mode = button.dataset.structuralReveal;
-          if (mode === 'peel' || mode === 'cutaway' || mode === 'exploded') {
-            this.observation.startStructuralReveal(mode);
-            this.syncUi(this.observation.getSnapshot());
-          }
-        });
-      });
-    this.button('#structure-reassemble').addEventListener('click', () => {
-      this.observation.reassemble();
-      this.syncUi(this.observation.getSnapshot());
-    });
-    this.checkbox('#motion-trace').addEventListener('change', (event) => {
-      this.observation.setMotionTraceVisible(
-        (event.target as HTMLInputElement).checked,
-      );
-    });
-    this.checkbox('#temporal-echo').addEventListener('change', (event) => {
-      this.observation.setTemporalEchoVisible(
-        (event.target as HTMLInputElement).checked,
-      );
-    });
-    this.checkbox('#auto-documentary').addEventListener('change', (event) => {
-      this.observation.setAutoDocumentary((event.target as HTMLInputElement).checked);
-      this.syncUi(this.observation.getSnapshot());
-    });
-    this.button('#moment-cue').addEventListener('click', () => {
-      this.activateExperience('documentary');
-      this.experienceDirector.markDocumentaryShot(performance.now());
-      this.element<HTMLElement>('#moment-cue').hidden = true;
-    });
-    this.root
-      .querySelectorAll<HTMLButtonElement>('[data-catalog-collection]')
-      .forEach((button) => {
-        button.addEventListener('click', () => {
-          const value = button.dataset.catalogCollection;
-          this.collection = value === 'favorites' || value === 'recent' ? value : 'all';
-          this.setActiveGroup('[data-catalog-collection]', button);
-          this.updateCatalogFilter();
-        });
-      });
-    this.root
-      .querySelectorAll<HTMLButtonElement>('[data-observation-preset]')
-      .forEach((button) => {
-        button.addEventListener('click', () => {
-          const id = button.dataset.observationPreset;
-          if (id && isVirusId(id)) this.activateVirus(id);
-        });
-      });
-
-    this.button('#toggle-favorite').addEventListener('click', () =>
-      this.toggleFavorite(),
-    );
-    this.button('#next-discovery').addEventListener('click', () => {
-      const entry = nextDiscovery(this.observation.getSnapshot().presetId, this.recent);
-      this.activateVirus(entry.id);
-    });
-    this.button('#save-image').addEventListener('click', async () => {
-      const button = this.button('#save-image');
-      const original = button.textContent;
-      button.disabled = true;
-      button.textContent = '저장 중…';
-      const id = this.observation.getSnapshot().presetId;
-      const ok = await this.scene.savePng(
-        `virus-sim-${id}-${new Date().toISOString().slice(0, 10)}.png`,
-      );
-      button.textContent = ok ? '저장 완료' : '저장 실패';
-      window.setTimeout(() => {
-        button.textContent = original;
-        button.disabled = false;
-      }, 1400);
-    });
-
-    this.root
-      .querySelectorAll<HTMLButtonElement>('[data-observation-view]')
-      .forEach((button) => {
-        button.addEventListener('click', () => {
-          this.observation.setView(button.dataset.observationView as InspectionView);
-          this.syncUi(this.observation.getSnapshot());
-        });
-      });
-    this.input('#observation-explosion').addEventListener('input', (event) => {
-      this.observation.setExplosion(Number((event.target as HTMLInputElement).value));
-      this.syncUi(this.observation.getSnapshot());
-    });
-    this.input('#observation-section-offset').addEventListener('input', (event) => {
-      this.observation.setSectionOffset(
-        Number((event.target as HTMLInputElement).value) / 100,
-      );
-      this.syncUi(this.observation.getSnapshot());
-    });
-    this.checkbox('#observation-genome').addEventListener('change', (event) => {
-      this.observation.setGenomeVisible((event.target as HTMLInputElement).checked);
-      this.syncUi(this.observation.getSnapshot());
-    });
-    this.checkbox('#observation-follow').addEventListener('change', (event) => {
-      this.observation.setFollowTarget((event.target as HTMLInputElement).checked);
-      this.syncUi(this.observation.getSnapshot());
-    });
-    this.select('#observation-motion-mode').addEventListener('change', (event) => {
-      this.observation.setMotionMode(
-        (event.target as HTMLSelectElement).value as MotionMode,
-      );
-      this.accumulator = 0;
-      this.syncUi(this.observation.getSnapshot());
-    });
-    this.root
-      .querySelectorAll<HTMLInputElement>('[data-observation-layer]')
-      .forEach((input) => {
-        input.addEventListener('change', () => {
-          this.observation.setLayerVisible(
-            input.dataset.observationLayer as ObservationLayerId,
-            input.checked,
-          );
-          this.syncUi(this.observation.getSnapshot());
-        });
-      });
-    this.root
-      .querySelectorAll<HTMLButtonElement>('[data-observation-part]')
-      .forEach((button) => {
-        button.addEventListener('click', () => {
-          const partId = button.dataset.observationPart as ObservationPartId;
-          this.observation.freeze(1);
-          this.observation.selectPart(partId);
-          this.scene.selectObservationPart(partId);
-          this.syncUi(this.observation.getSnapshot());
-        });
-      });
-
-    this.button('#start-structure-tour').addEventListener('click', () => {
-      this.observation.startDemo('structure-tour');
-      this.syncUi(this.observation.getSnapshot());
-    });
-    this.button('#demo-toggle').addEventListener('click', () => {
-      this.observation.toggleDemoPlayback();
-      this.syncUi(this.observation.getSnapshot());
-    });
-    this.button('#demo-rewind').addEventListener('click', () => {
-      this.observation.rewindDemo();
-      this.syncUi(this.observation.getSnapshot());
-    });
-    this.button('#demo-exit').addEventListener('click', () => {
-      this.observation.stopDemo();
-      this.syncUi(this.observation.getSnapshot());
-    });
-    this.input('#demo-progress').addEventListener('input', (event) => {
-      this.observation.setDemoProgress(
-        Number((event.target as HTMLInputElement).value) / 1000,
-      );
-      this.syncUi(this.observation.getSnapshot());
-    });
-
-    this.button('#observation-play-pause').addEventListener('click', () => {
-      const snapshot = this.observation.getSnapshot();
-      this.observation.setRunning(!snapshot.running, 1);
-      this.syncUi(this.observation.getSnapshot());
-    });
-    this.button('#observation-restart').addEventListener('click', () => {
-      this.observation.resetMotion();
-      this.accumulator = 0;
-      this.syncUi(this.observation.getSnapshot());
-    });
-    this.button('#observation-return').addEventListener('click', () =>
-      this.activateExperience('return'),
-    );
-    this.root
-      .querySelectorAll<HTMLButtonElement>('[data-observation-speed]')
-      .forEach((button) => {
-        button.addEventListener('click', () => {
-          this.observation.setSpeed(Number(button.dataset.observationSpeed ?? 1));
-          this.setActiveGroup('[data-observation-speed]', button);
-        });
-      });
-    this.checkbox('#observation-translation').addEventListener('change', (event) => {
-      this.observation.setTranslationEnabled(
-        (event.target as HTMLInputElement).checked,
-      );
-      this.syncUi(this.observation.getSnapshot());
-    });
-    this.checkbox('#observation-rotation').addEventListener('change', (event) => {
-      this.observation.setRotationEnabled((event.target as HTMLInputElement).checked);
-      this.syncUi(this.observation.getSnapshot());
-    });
-
-    this.select('#quality-select').addEventListener('change', (event) => {
-      const quality = (event.target as HTMLSelectElement).value as ExperienceQuality;
-      this.scene.setQuality(quality);
-    });
-    this.select('#font-scale').addEventListener('change', (event) => {
-      const value = (event.target as HTMLSelectElement).value as FontScale;
-      this.applyFontScale(value);
-      saveFontScale(this.storage, value);
-    });
-    this.button('#reset-camera').addEventListener('click', () =>
-      this.activateExperience('return'),
-    );
-    this.button('#focus-selection').addEventListener('click', () => {
-      this.observation.freeze(1);
-      this.scene.focusSelection();
-      this.syncUi(this.observation.getSnapshot());
-    });
-    const guide = this.element<HTMLDialogElement>('#model-guide');
-    this.button('#open-guide').addEventListener('click', () => guide.showModal());
-
-    this.root.addEventListener('virus-observation-interaction', () => {
-      this.lastInteractionTime = performance.now();
-      this.scene.cancelCameraAutomation();
-      const snapshot = this.observation.getSnapshot();
-      if (snapshot.demo.kind !== 'none') this.observation.stopDemo();
-      this.observation.takeManualControl();
-      this.syncUi(this.observation.getSnapshot());
-    });
-    this.root.addEventListener('virus-camera-settled', (event) => {
-      if ((event as CustomEvent<string>).detail !== 'return') return;
-      this.observation.completeReturn();
-      this.syncUi(this.observation.getSnapshot());
-    });
-    this.root.addEventListener('virus-context-status', (event) => {
-      const lost = (event as CustomEvent<string>).detail === 'lost';
-      this.element<HTMLElement>('#context-message').hidden = !lost;
-      if (lost) this.observation.setRunning(false);
-    });
-    this.root.addEventListener('pointerdown', this.handleAnyInteraction, true);
-    this.root.addEventListener('keydown', this.handleAnyInteraction, true);
-    document.addEventListener('visibilitychange', this.handleVisibility);
+  private createControlActions(): VirusSimControlActions {
+    return {
+      catalogSearch: () => this.panel.updateCatalogFilter(),
+      catalogFilter: (value) => this.panel.setCatalogFilter(value),
+      catalogCollection: (value) => this.panel.setCollection(value),
+      activateVirus: (id) => this.activateVirus(id),
+      toggleFavorite: () =>
+        this.panel.toggleFavorite(this.observation.getActiveSpecimen().presetId),
+      nextDiscovery: () => {
+        const current = this.observation.getActiveSpecimen().presetId;
+        this.activateVirus(this.panel.getNextDiscoveryId(current));
+      },
+      saveImage: () => this.saveImage(),
+      setView: (view) => this.update(() => this.observation.setView(view)),
+      setExplosion: (value) => this.update(() => this.observation.setExplosion(value)),
+      setSectionOffset: (value) =>
+        this.update(() => this.observation.setSectionOffset(value)),
+      setGenomeVisible: (visible) =>
+        this.update(() => this.observation.setGenomeVisible(visible)),
+      setLayerVisible: (layer, visible) =>
+        this.update(() => this.observation.setLayerVisible(layer, visible)),
+      selectPart: (part) => this.selectPart(part),
+      structuralReveal: (mode) =>
+        this.update(() => this.observation.startStructuralReveal(mode)),
+      reassemble: () => this.update(() => this.observation.reassemble()),
+      addComparison: (id) => {
+        if (!isVirusId(id)) return;
+        this.update(() => this.observation.addComparison(id), true);
+      },
+      swapComparison: () => this.update(() => this.observation.swapComparison(), true),
+      closeComparison: () => {
+        this.observation.closeComparison();
+        this.showStoredSelection();
+        this.refresh(true);
+      },
+      setComparisonLinked: (linked) =>
+        this.update(() => this.observation.setComparisonLinked(linked)),
+      setComparisonScale: (mode) =>
+        this.update(() => this.observation.setComparisonScaleMode(mode)),
+      setScannerEnabled: (enabled) =>
+        this.update(() => this.observation.setScannerEnabled(enabled)),
+      setScannerAxis: (axis) =>
+        this.update(() => this.observation.setScannerAxis(axis)),
+      setScannerPosition: (position) =>
+        this.update(() => this.observation.setScannerPosition(position)),
+      setScannerThickness: (thickness) =>
+        this.update(() => this.observation.setScannerThickness(thickness)),
+      setScannerLinked: (linked) =>
+        this.update(() => this.observation.setScannerLinked(linked)),
+      setVariant: (slot, id) =>
+        this.update(() => this.observation.setVariant(id, slot)),
+      selectChangePart: (part) => this.selectChangePart(part),
+      setDecorationLevel: (level) => {
+        this.observation.setDecorationLevel(level);
+        this.persistDecorationAndRefresh();
+      },
+      setDecorationPaused: (paused) => {
+        this.observation.setDecorationPaused(paused);
+        this.persistDecorationAndRefresh();
+      },
+      setQuality: (quality) => this.scene.setQuality(quality),
+      setFontScale: (scale) => this.panel.persistFontScale(scale),
+      resetCamera: () => this.scene.frameAll(),
+      cameraStep: (step) => this.scene.applyCameraStep(step),
+    };
   }
 
-  private activateExperience(stage: ExperienceStage): void {
-    this.observation.setExperienceStage(stage);
-    this.syncUi(this.observation.getSnapshot());
+  private advanceFrame(delta: number): ObservationSnapshot {
+    this.observation.step(delta);
+    const snapshot = this.observation.getSnapshot();
+    const now = performance.now();
+    if (now - this.lastUiTime >= UI_UPDATE_INTERVAL) {
+      this.lastUiTime = now;
+      this.syncObservationUi(snapshot);
+    }
+    return snapshot;
   }
 
   private activateVirus(id: string): void {
-    this.lastInteractionTime = performance.now();
+    if (!isVirusId(id)) return;
     this.observation.setPreset(id);
-    this.accumulator = 0;
-    this.recordRecent(id);
-    const snapshot = this.observation.getSnapshot();
-    this.scene.show(snapshot);
-    this.updatePresetUi(snapshot);
-    this.syncUi(snapshot);
-    this.updateSelection(null);
+    this.panel.recordRecent(id);
+    this.showStoredSelection();
+    this.refresh(true);
   }
 
-  private recordRecent(id: string): void {
-    this.recent = pushRecent(this.storage, this.recent, id);
-    this.updateCatalogFilter();
+  private activateSlot(slot: SlotId): void {
+    this.observation.setActiveSlot(slot);
+    this.showStoredSelection();
+    this.refresh(true);
   }
 
-  private toggleFavorite(): void {
-    const id = this.observation.getSnapshot().presetId;
-    if (this.favorites.has(id)) this.favorites.delete(id);
-    else this.favorites.add(id);
-    saveFavorites(this.storage, this.favorites);
-    this.updateFavoriteUi(id);
-    this.updateCatalogFilter();
+  private selectPart(partId: ObservationPartId): void {
+    this.observation.selectPart(partId);
+    const part = OBSERVATION_PARTS[partId];
+    this.panel.showSelection(part.name, `${part.detail} ${part.summary}`);
+    this.refresh();
   }
 
-  private updateCatalogFilter(): void {
-    const query = this.input('#catalog-search').value;
-    const collectionIds =
-      this.collection === 'favorites'
-        ? this.favorites
-        : this.collection === 'recent'
-          ? new Set(this.recent)
-          : undefined;
-    const visible = new Set(
-      filterVirusCatalog(query, this.catalogFilter, collectionIds).map(
-        (entry) => entry.id,
-      ),
-    );
-    let count = 0;
-    this.root
-      .querySelectorAll<HTMLButtonElement>('[data-observation-preset]')
-      .forEach((button) => {
-        const id = button.dataset.observationPreset ?? '';
-        button.hidden = !visible.has(id);
-        button.classList.toggle('is-favorite', this.favorites.has(id));
-        if (!button.hidden) count += 1;
-      });
-    this.text('#catalog-filter-count', String(count));
-    this.element<HTMLElement>('#catalog-empty').hidden = count > 0;
-  }
-
-  private updatePresetUi(snapshot: ObservationSnapshot): void {
-    const definition = getCatalogEntry(snapshot.presetId);
-    this.root
-      .querySelectorAll<HTMLElement>('[data-observation-preset]')
-      .forEach((card) => {
-        card.classList.toggle(
-          'is-active',
-          card.dataset.observationPreset === definition.id,
-        );
-      });
-    this.element<HTMLElement>('#observation-preset-description').innerHTML = `
-      <p class="eyebrow">${definition.category}</p><h3>${definition.name}</h3>
-      <p>${definition.description}</p>
-      <dl><div><dt>입자 상태</dt><dd>${definition.particleState}</dd></div><div><dt>핵심 형태</dt><dd>${definition.feature}</dd></div><div><dt>유전체</dt><dd>${definition.genomeLabel}</dd></div></dl>`;
-    this.text('#stage-label', `OBSERVATORY · ${definition.shortName.toUpperCase()}`);
-    const profile = getExperienceProfile(definition.id);
-    this.element<HTMLElement>('#hero-badge').hidden = !profile.hero;
-    this.root
-      .querySelectorAll<HTMLButtonElement>('[data-observation-part]')
-      .forEach((button) => {
-        button.hidden = !definition.parts.includes(
-          button.dataset.observationPart as ObservationPartId,
-        );
-      });
-    this.root
-      .querySelectorAll<HTMLElement>('[data-observation-layer-row]')
-      .forEach((row) => {
-        row.hidden = !definition.layers.some(
-          (layer) => layer.id === row.dataset.observationLayerRow,
-        );
-      });
-    this.element<HTMLElement>('#observation-simplification').innerHTML =
-      definition.simplifications.map((item) => `<span>${item}</span>`).join('');
-    const links = definition.sourceIds
-      .map(getStructureSource)
-      .filter((source) => source !== undefined)
-      .map(
-        (source) =>
-          `<a href="${source.url}" target="_blank" rel="noreferrer" title="${source.scope}">${source.label} ↗</a>`,
-      )
-      .join('');
-    this.element<HTMLElement>('#observation-source-links').innerHTML = links;
-    this.updateFavoriteUi(definition.id);
-    window.setTimeout(() => this.updateRenderBudget(), 100);
-  }
-
-  private updateFavoriteUi(id: string): void {
-    const active = this.favorites.has(id);
-    const button = this.button('#toggle-favorite');
-    button.setAttribute('aria-pressed', String(active));
-    button.textContent = active ? '★ 즐겨찾기됨' : '☆ 즐겨찾기';
-    this.root
-      .querySelectorAll<HTMLElement>('[data-observation-preset]')
-      .forEach((card) => {
-        card.classList.toggle(
-          'is-favorite',
-          this.favorites.has(card.dataset.observationPreset ?? ''),
-        );
-      });
-  }
-
-  private updateRenderBudget(): void {
-    const metrics = this.scene.getRenderMetrics();
-    this.text(
-      '#render-budget',
-      `현재 장면: draw ${metrics.calls} · triangle ${metrics.triangles.toLocaleString('ko-KR')} · geometry ${metrics.geometries}`,
-    );
-  }
-
-  private syncUi(snapshot: ObservationSnapshot): void {
-    const viewLabels: Record<InspectionView, string> = {
-      surface: '외관',
-      transparent: '반투명',
-      section: '단면',
-      exploded: '분해',
-    };
-    this.root
-      .querySelectorAll<HTMLElement>('[data-observation-view]')
-      .forEach((button) => {
-        button.classList.toggle(
-          'is-active',
-          button.dataset.observationView === snapshot.view,
-        );
-      });
-    this.text('#observation-view-label', viewLabels[snapshot.view]);
-    this.element<HTMLElement>('[data-explosion-control]').hidden =
-      snapshot.view !== 'exploded';
-    this.element<HTMLElement>('[data-section-control]').hidden =
-      snapshot.view !== 'section';
-    this.input('#observation-explosion').value = String(snapshot.explosion);
-    this.text('#observation-explosion-value', `${Math.round(snapshot.explosion)}%`);
-    this.input('#observation-section-offset').value = String(
-      Math.round(snapshot.sectionOffset * 100),
-    );
-    this.text('#observation-section-value', snapshot.sectionOffset.toFixed(2));
-    this.checkbox('#observation-genome').checked = snapshot.genomeVisible;
-    this.checkbox('#observation-follow').checked = snapshot.followTarget;
-    this.checkbox('#observation-translation').checked = snapshot.translationEnabled;
-    this.checkbox('#observation-rotation').checked = snapshot.rotationEnabled;
-    this.checkbox('#motion-trace').checked = snapshot.experience.motionTraceVisible;
-    this.checkbox('#temporal-echo').checked = snapshot.experience.temporalEchoVisible;
-    this.checkbox('#auto-documentary').checked = snapshot.experience.autoDocumentary;
-    this.select('#observation-motion-mode').value = snapshot.motion.mode;
-    this.root
-      .querySelectorAll<HTMLInputElement>('[data-observation-layer]')
-      .forEach((input) => {
-        input.checked =
-          snapshot.layerVisibility[
-            input.dataset.observationLayer as ObservationLayerId
-          ];
-      });
-    this.button('#observation-play-pause').textContent = snapshot.running
-      ? 'Ⅱ 정지'
-      : '▶ 계속';
-    this.text('#observation-tick', `tick ${snapshot.tick}`);
-    this.syncExperienceUi(snapshot);
-    const motionLabel: Record<MotionMode, string> = {
-      active: '활동적 관찰',
-      calm: '차분한 관찰',
-      brownian: '확산 모형',
-      static: '정지',
-    };
-    this.text(
-      '#observation-status',
-      snapshot.demo.kind === 'structure-tour'
-        ? '종별 구조 투어'
-        : motionLabel[snapshot.motion.mode],
-    );
-    const timeline = this.element<HTMLElement>('#demo-timeline');
-    timeline.hidden = snapshot.demo.kind === 'none';
-    if (snapshot.demo.kind !== 'none') {
-      this.input('#demo-progress').value = String(
-        Math.round(snapshot.demo.progress * 1000),
-      );
-      this.text('#demo-progress-value', `${Math.round(snapshot.demo.progress * 100)}%`);
-      this.button('#demo-toggle').textContent = snapshot.demo.playing
-        ? 'Ⅱ 일시정지'
-        : '▶ 계속';
-      const pose = evaluateSpeciesTour(
-        getCatalogEntry(snapshot.presetId),
-        snapshot.demo.progress,
-      );
-      this.text('#demo-status-copy', pose.label);
+  private selectChangePart(partId: ObservationPartId): void {
+    this.observation.selectPart(partId, 'a');
+    if (this.observation.getSnapshot().slots.b) {
+      this.observation.selectPart(partId, 'b');
     }
+    const part = OBSERVATION_PARTS[partId];
+    this.panel.showSelection(
+      `A/B · ${part.name}`,
+      `${part.detail} 비교 표본의 근거 연결 영역이며 카메라는 이동하지 않아요.`,
+    );
+    this.refresh();
   }
 
-  private syncExperienceUi(snapshot: ObservationSnapshot): void {
-    const stage = snapshot.experience.stage;
-    const profile = getExperienceProfile(snapshot.presetId);
-    const labels: Record<
-      ExperienceStage,
-      { title: string; path: string; copy: string }
-    > = {
-      observe: {
-        title: 'OBSERVE',
-        path: '관찰실',
-        copy: '개체를 선택하고 움직임을 따라가며 표면까지 연속해서 접근해요.',
-      },
-      follow: {
-        title: 'FOLLOW',
-        path: '관찰실 → 추적',
-        copy: '카메라가 개체와 같은 흐름으로 움직여요. 표면으로 더 가까이 갈 수 있어요.',
-      },
-      approach: {
-        title: 'APPROACH',
-        path: '관찰실 → 추적 → 접근',
-        copy: '실제 공간을 이동하며 표면 구조에 접근하고 있어요.',
-      },
-      surface: {
-        title: 'SURFACE',
-        path: '관찰실 → 표면',
-        copy: profile.hero
-          ? '표면 구조 사이를 둘러보거나 근거가 있는 내부 경로로 들어갈 수 있어요.'
-          : '표면과 구조 분해를 관찰할 수 있어요. 내부 경로는 Hero Virus에만 제공해요.',
-      },
-      interior: {
-        title: 'INTERIOR',
-        path: '관찰실 → 표면 → 내부',
-        copy: '바깥층을 통과해 내부 구조와 유전체 사이를 살펴보고 있어요.',
-      },
-      structure: {
-        title: 'STRUCTURE',
-        path: '관찰실 → 구조 탐색',
-        copy: '외피와 내부 층이 공간적으로 분리되는 과정을 관찰해요.',
-      },
-      documentary: {
-        title: 'DOCUMENTARY',
-        path: '자동 관찰 중 · 입력하면 즉시 종료',
-        copy: '관찰하기 좋은 각도를 따라가고 있어요. 언제든 직접 조작할 수 있어요.',
-      },
-      return: {
-        title: 'RETURN',
-        path: '내부 세계 → 관찰실',
-        copy: '구조 밖으로 빠져나와 전체 관찰실로 돌아가고 있어요.',
-      },
-    };
-    const label = labels[stage];
-    this.text('#experience-stage', label.title);
-    this.text('#experience-path', label.path);
-    this.text('#experience-copy', label.copy);
-    this.text('#time-lens-hud', snapshot.running ? `${snapshot.speed}×` : 'FREEZE');
-    this.button('#experience-follow').hidden = stage !== 'observe';
-    this.button('#experience-approach').hidden = stage !== 'follow';
-    this.button('#experience-surface').hidden = stage !== 'approach';
-    this.button('#experience-interior').hidden =
-      stage !== 'surface' || !profile.supportedExperience.interiorDive;
-    this.button('#guided-journey').hidden =
-      stage !== 'interior' || !profile.interiorPath;
-    this.button('#experience-back-surface').hidden = stage !== 'interior';
-    this.button('#experience-exit').hidden =
-      stage === 'observe' || stage === 'return' || stage === 'documentary';
-    this.element<HTMLElement>('#structural-actions').hidden = ![
-      'surface',
-      'interior',
-      'structure',
-    ].includes(stage);
-    this.root
-      .querySelectorAll<HTMLElement>('[data-observation-speed]')
-      .forEach((button) => {
-        button.classList.toggle(
-          'is-active',
-          Number(button.dataset.observationSpeed) === snapshot.speed,
-        );
-      });
-  }
-
-  private updateSelection(selection: SelectionDetails | null): void {
+  private handleSceneSelection(selection: SelectionDetails | null): void {
     if (!selection) {
       this.observation.selectPart(null);
-      this.text('#selection-title', '부위를 선택해보세요');
-      this.text(
-        '#selection-description',
-        '3D 장면이나 부위 목록을 누르면 역할과 표현 한계를 볼 수 있어요.',
-      );
+      this.panel.clearSelection();
+      this.refresh();
       return;
     }
-    this.observation.freeze(1);
-    this.observation.selectPart(selection.partId);
+    this.observation.setActiveSlot(selection.slot);
+    this.observation.selectPart(selection.partId, selection.slot);
     const part = OBSERVATION_PARTS[selection.partId];
-    this.text('#selection-title', selection.title);
-    this.text('#selection-description', `${selection.description} ${part.summary}`);
-    this.syncUi(this.observation.getSnapshot());
+    this.panel.showSelection(
+      `${selection.slot.toUpperCase()} · ${selection.title}`,
+      `${selection.description} ${part.summary}`,
+    );
+    this.refresh(true);
   }
 
-  private applyFontScale(value: FontScale): void {
-    document.documentElement.dataset.virusTextScale = value;
-    const select = this.root.querySelector<HTMLSelectElement>('#font-scale');
-    if (select) select.value = value;
+  private showStoredSelection(): void {
+    const specimen = this.observation.getActiveSpecimen();
+    const partId = specimen.selectedPartId;
+    if (!partId) {
+      this.panel.clearSelection();
+      return;
+    }
+    const part = OBSERVATION_PARTS[partId];
+    this.panel.showSelection(part.name, `${part.detail} ${part.summary}`);
   }
 
-  private readonly handleVisibility = (): void => {
-    if (document.hidden) {
-      this.observation.freeze(1);
-      this.accumulator = 0;
-    }
-    this.lastFrameTime = performance.now();
-  };
+  private persistDecorationAndRefresh(): void {
+    this.panel.persistDecoration(this.observation.getSnapshot().decoration);
+    this.refresh();
+  }
 
-  private readonly handleAnyInteraction = (): void => {
-    this.lastInteractionTime = performance.now();
-    if (this.observation.getSnapshot().experience.stage !== 'documentary') return;
-    this.scene.cancelCameraAutomation();
-    this.observation.takeManualControl();
-    this.syncUi(this.observation.getSnapshot());
-  };
+  private saveImage(): Promise<boolean> {
+    const id = this.observation.getActiveSpecimen().presetId;
+    return this.scene.savePng(
+      `virus-sim-${id}-${new Date().toISOString().slice(0, 10)}.png`,
+    );
+  }
 
-  private readonly frame = (time: number): void => {
-    if (this.disposed) return;
-    const delta = Math.min(0.1, Math.max(0, (time - this.lastFrameTime) / 1000));
-    this.lastFrameTime = time;
-    this.observation.stepExperience(delta);
-    const snapshotBefore = this.observation.getSnapshot();
-    if (snapshotBefore.running) {
-      this.accumulator += delta * snapshotBefore.speed;
-      let ticks = 0;
-      while (this.accumulator >= OBSERVATION_FIXED_DT && ticks < MAX_TICKS_PER_FRAME) {
-        this.observation.step(OBSERVATION_FIXED_DT);
-        this.accumulator -= OBSERVATION_FIXED_DT;
-        ticks += 1;
-      }
-      if (ticks === MAX_TICKS_PER_FRAME) this.accumulator = 0;
-    }
+  private update(action: () => void, full = false): void {
+    action();
+    this.refresh(full);
+  }
+
+  private refresh(full = false): void {
     const snapshot = this.observation.getSnapshot();
-    this.scene.update(snapshot, this.accumulator / OBSERVATION_FIXED_DT);
-    this.updateExperienceDirector(snapshot, time);
-    if (time - this.lastUiTime >= UI_UPDATE_INTERVAL * 1000) {
-      this.lastUiTime = time;
-      this.syncUi(this.observation.getSnapshot());
-    }
-    this.animationFrame = requestAnimationFrame(this.frame);
-  };
-
-  private updateExperienceDirector(snapshot: ObservationSnapshot, time: number): void {
-    const moment = this.experienceDirector.evaluateMoment(snapshot, time);
-    if (moment) {
-      const cue = this.button('#moment-cue');
-      cue.textContent = moment.label;
-      cue.hidden = false;
-      this.momentVisibleUntil = time + moment.duration * 1000;
-    } else if (time >= this.momentVisibleUntil) {
-      this.element<HTMLElement>('#moment-cue').hidden = true;
-    }
-    if (
-      this.experienceDirector.shouldStartDocumentary(
-        snapshot,
-        time,
-        this.lastInteractionTime,
-      )
-    ) {
-      this.observation.setExperienceStage('documentary');
-      this.experienceDirector.markDocumentaryShot(time);
-      this.syncUi(this.observation.getSnapshot());
-    } else if (this.experienceDirector.shouldAdvanceDocumentary(snapshot, time)) {
-      this.observation.setExperienceStage('documentary');
-      this.syncUi(this.observation.getSnapshot());
-    }
+    this.scene.show(snapshot);
+    if (full) this.syncAll(snapshot);
+    else this.syncObservationUi(snapshot);
   }
 
-  private setActiveGroup(selector: string, active: HTMLElement): void {
-    this.root
-      .querySelectorAll(selector)
-      .forEach((item) => item.classList.toggle('is-active', item === active));
+  private syncAll(snapshot: ObservationSnapshot): void {
+    this.panel.syncAll(
+      snapshot,
+      this.scene.getComparisonScaleStatus(),
+      this.scene.getRenderMetrics(),
+    );
   }
 
-  private text(selector: string, value: string): void {
-    this.element<HTMLElement>(selector).textContent = value;
-  }
-
-  private element<T extends Element>(selector: string): T {
-    return requiredElement<T>(this.root, selector);
-  }
-
-  private input(selector: string): HTMLInputElement {
-    return this.element<HTMLInputElement>(selector);
-  }
-
-  private checkbox(selector: string): HTMLInputElement {
-    return this.element<HTMLInputElement>(selector);
-  }
-
-  private select(selector: string): HTMLSelectElement {
-    return this.element<HTMLSelectElement>(selector);
-  }
-
-  private button(selector: string): HTMLButtonElement {
-    return this.element<HTMLButtonElement>(selector);
+  private syncObservationUi(snapshot: ObservationSnapshot): void {
+    this.panel.syncObservationUi(
+      snapshot,
+      this.scene.getComparisonScaleStatus(),
+      this.scene.getRenderMetrics(),
+    );
   }
 }

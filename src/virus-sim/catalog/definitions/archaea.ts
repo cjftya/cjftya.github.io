@@ -2,6 +2,7 @@ import { defineVirus, layer } from '../shared';
 
 export const ARCHAEA_CATALOG = [
   defineVirus({
+    evidenceStatus: 'observed',
     id: 'ssv1',
     name: 'Sulfolobus 방추형 바이러스 1',
     shortName: 'SSV1',
@@ -30,9 +31,9 @@ export const ARCHAEA_CATALOG = [
     ],
     displayLength: 6.2,
     sectionRadius: 1.65,
-    tourParts: ['terminal-tail', 'capsid', 'genome'],
   }),
   defineVirus({
+    evidenceStatus: 'observed',
     id: 'sirv2',
     name: 'Sulfolobus islandicus 막대형 바이러스 2',
     shortName: 'SIRV2',
@@ -53,16 +54,15 @@ export const ARCHAEA_CATALOG = [
     sourceIds: ['ictv-rudiviridae'],
     modelBuilder: 'generic-rod',
     geometryProfileId: 'rod-sirv2-fibers',
-    motionProfileId: 'calm',
     simplifications: [
       '강체 막대로 유지하며 필라멘트 굽힘을 적용하지 않아요.',
       '말단 섬유의 단백질 세부는 분절 선으로 줄였어요.',
     ],
     displayLength: 8,
     sectionRadius: 0.72,
-    tourParts: ['terminal-tail', 'coat-protein', 'genome'],
   }),
   defineVirus({
+    evidenceStatus: 'observed',
     id: 'stiv',
     name: 'Sulfolobus turreted icosahedral virus',
     shortName: 'STIV',
@@ -90,9 +90,9 @@ export const ARCHAEA_CATALOG = [
     ],
     displayLength: 5.2,
     sectionRadius: 2.35,
-    tourParts: ['turret', 'inner-membrane', 'genome'],
   }),
   defineVirus({
+    evidenceStatus: 'observed',
     id: 'atv',
     name: 'Acidianus 양꼬리바이러스',
     shortName: 'ATV',
@@ -121,6 +121,5 @@ export const ARCHAEA_CATALOG = [
     ],
     displayLength: 8.4,
     sectionRadius: 1.75,
-    tourParts: ['terminal-tail', 'capsid', 'genome'],
   }),
 ] as const;

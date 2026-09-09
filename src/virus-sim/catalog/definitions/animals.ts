@@ -2,6 +2,7 @@ import { defineVirus, layer } from '../shared';
 
 export const ANIMAL_CATALOG = [
   defineVirus({
+    evidenceStatus: 'observed',
     id: 'aav2',
     name: '아데노연관바이러스 2형',
     shortName: 'AAV2',
@@ -24,9 +25,9 @@ export const ANIMAL_CATALOG = [
     ],
     displayLength: 3.8,
     sectionRadius: 1.85,
-    tourParts: ['surface-domain', 'channel', 'genome'],
   }),
   defineVirus({
+    evidenceStatus: 'observed',
     id: 'canine-parvovirus',
     name: '개 파보바이러스',
     shortName: 'CPV',
@@ -49,9 +50,9 @@ export const ANIMAL_CATALOG = [
     ],
     displayLength: 3.9,
     sectionRadius: 1.9,
-    tourParts: ['channel', 'surface-domain', 'capsid'],
   }),
   defineVirus({
+    evidenceStatus: 'observed',
     id: 'pcv2',
     name: '돼지써코바이러스 2형',
     shortName: 'PCV2',
@@ -75,9 +76,9 @@ export const ANIMAL_CATALOG = [
     ],
     displayLength: 3.4,
     sectionRadius: 1.65,
-    tourParts: ['capsomer', 'surface-domain', 'genome'],
   }),
   defineVirus({
+    evidenceStatus: 'observed',
     id: 'hpv16',
     name: '인유두종바이러스 16형',
     shortName: 'HPV16',
@@ -104,9 +105,9 @@ export const ANIMAL_CATALOG = [
     ],
     displayLength: 4.5,
     sectionRadius: 2.2,
-    tourParts: ['capsomer', 'surface-domain', 'genome'],
   }),
   defineVirus({
+    evidenceStatus: 'observed',
     id: 'sv40',
     name: '시미안바이러스 40',
     shortName: 'SV40',
@@ -130,9 +131,9 @@ export const ANIMAL_CATALOG = [
     ],
     displayLength: 4.4,
     sectionRadius: 2.15,
-    tourParts: ['capsomer', 'surface-domain', 'genome'],
   }),
   defineVirus({
+    evidenceStatus: 'observed',
     id: 'murine-polyomavirus',
     name: '쥐 폴리오마바이러스',
     shortName: 'MPyV',
@@ -156,9 +157,9 @@ export const ANIMAL_CATALOG = [
     ],
     displayLength: 4.4,
     sectionRadius: 2.15,
-    tourParts: ['capsomer', 'surface-domain', 'genome'],
   }),
   defineVirus({
+    evidenceStatus: 'observed',
     id: 'norwalk',
     name: '노워크바이러스',
     shortName: 'Norwalk',
@@ -185,9 +186,9 @@ export const ANIMAL_CATALOG = [
     ],
     displayLength: 4.4,
     sectionRadius: 2.05,
-    tourParts: ['surface-domain', 'capsomer', 'genome'],
   }),
   defineVirus({
+    evidenceStatus: 'observed',
     id: 'rhdv',
     name: '토끼출혈병바이러스',
     shortName: 'RHDV',
@@ -215,9 +216,9 @@ export const ANIMAL_CATALOG = [
     ],
     displayLength: 4.5,
     sectionRadius: 2.08,
-    tourParts: ['surface-domain', 'capsid', 'genome'],
   }),
   defineVirus({
+    evidenceStatus: 'observed',
     id: 'astrovirus-1',
     name: '사람 아스트로바이러스 1형',
     shortName: 'HAstV-1',
@@ -245,9 +246,9 @@ export const ANIMAL_CATALOG = [
     ],
     displayLength: 4.2,
     sectionRadius: 2,
-    tourParts: ['spike', 'capsid', 'genome'],
   }),
   defineVirus({
+    evidenceStatus: 'observed',
     id: 'hbv',
     name: 'B형간염바이러스',
     shortName: 'HBV',
@@ -276,9 +277,9 @@ export const ANIMAL_CATALOG = [
     ],
     displayLength: 4.5,
     sectionRadius: 2.15,
-    tourParts: ['spike', 'core-capsid', 'genome'],
   }),
   defineVirus({
+    evidenceStatus: 'observed',
     id: 'sindbis',
     name: '신드비스바이러스',
     shortName: 'Sindbis',
@@ -307,9 +308,9 @@ export const ANIMAL_CATALOG = [
     ],
     displayLength: 4.8,
     sectionRadius: 2.3,
-    tourParts: ['spike', 'nucleocapsid', 'genome'],
   }),
   defineVirus({
+    evidenceStatus: 'observed',
     id: 'semliki-forest',
     name: '셈리키숲바이러스',
     shortName: 'SFV',
@@ -338,9 +339,9 @@ export const ANIMAL_CATALOG = [
     ],
     displayLength: 4.8,
     sectionRadius: 2.3,
-    tourParts: ['spike', 'nucleocapsid', 'genome'],
   }),
   defineVirus({
+    evidenceStatus: 'observed',
     id: 'flock-house',
     name: '플록하우스바이러스',
     shortName: 'FHV',
@@ -363,9 +364,9 @@ export const ANIMAL_CATALOG = [
     ],
     displayLength: 4,
     sectionRadius: 1.98,
-    tourParts: ['capsomer', 'surface-domain', 'genome'],
   }),
   defineVirus({
+    evidenceStatus: 'observed',
     id: 'ibdv',
     name: '감염성F낭병바이러스',
     shortName: 'IBDV',
@@ -392,9 +393,9 @@ export const ANIMAL_CATALOG = [
     ],
     displayLength: 4.6,
     sectionRadius: 2.18,
-    tourParts: ['outer-capsid', 'core-capsid', 'genome'],
   }),
   defineVirus({
+    evidenceStatus: 'observed',
     id: 'bluetongue',
     name: '블루텅바이러스',
     shortName: 'BTV',
@@ -422,9 +423,9 @@ export const ANIMAL_CATALOG = [
     ],
     displayLength: 5,
     sectionRadius: 2.4,
-    tourParts: ['outer-capsid', 'middle-capsid', 'core-capsid'],
   }),
   defineVirus({
+    evidenceStatus: 'observed',
     id: 'reovirus-t3d',
     name: '포유류 오르토레오바이러스 T3D',
     shortName: 'Reovirus T3D',
@@ -453,6 +454,5 @@ export const ANIMAL_CATALOG = [
     ],
     displayLength: 5.2,
     sectionRadius: 2.48,
-    tourParts: ['turret', 'middle-capsid', 'core-capsid'],
   }),
 ] as const;

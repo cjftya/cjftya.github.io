@@ -141,6 +141,73 @@ const EXPANDED_STRUCTURE_SOURCES: readonly StructureSource[] = [
     'bicaudaviridae',
     'ATV형 방추형 입자와 양끝 꼬리 형태',
   ),
+  {
+    id: 'ictv-orthoebolavirus',
+    label: 'ICTV Orthoebolavirus',
+    url: 'https://ictv.global/report/chapter/filoviridae/filoviridae/orthoebolavirus',
+    scope: '필라멘트 형태, 96–98 nm 폭, 길이 범위와 외피·matrix·RNP 구성',
+    checkedOn,
+  },
+  {
+    id: 'ictv-retroviridae',
+    label: 'ICTV Retroviridae profile',
+    url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC8744268/',
+    scope: '80–100 nm 외피 입자와 성숙 core의 계열 구조',
+    checkedOn,
+  },
+  pdb('3J3Q', 'HIV-1 성숙 capsid의 원뿔형 구조 모델. 전체 외피 입자 좌표가 아님'),
+  {
+    id: 'nih-hiv2',
+    label: 'NIH HIV-2 guidance',
+    url: 'https://clinicalinfo.hiv.gov/en/guidelines/hiv-clinical-guidelines-adult-and-adolescent-arv/special-populations-hiv-2-infection',
+    scope: 'HIV-2 정체성과 HIV-1과의 구분. 세부 3D 구조 자료가 아님',
+    checkedOn,
+  },
+  {
+    id: 'hiv-particle-review',
+    label: 'HIV particle review',
+    url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC4924471/',
+    scope: '약 100 nm 성숙 HIV 입자와 외피·matrix·원뿔형 capsid 설명',
+    checkedOn,
+  },
+  {
+    id: 'cdc-human-coronavirus',
+    label: 'CDC Human Coronavirus Types',
+    url: 'https://www.cdc.gov/human-coronaviruses/php/types/index.html',
+    scope: '사람 코로나바이러스 7개 정체성',
+    checkedOn,
+  },
+  {
+    id: 'ictv-coronaviridae',
+    label: 'ICTV Coronaviridae',
+    url: 'https://ictv.global/report/chapter/coronaviridae/coronaviridae',
+    scope: '코로나바이러스 외피, 표면 돌기와 양성가닥 RNA-단백질 복합체의 계열 설명',
+    checkedOn,
+  },
+  pdb('7TOV', 'SARS-CoV-2 Delta spike 부분 구조. 전체 입자 좌표가 아님'),
+  pdb('7T9J', 'SARS-CoV-2 Omicron spike 복합체. 실험 상태 차이에 주의'),
+  {
+    id: 'ebola-makona-a82v',
+    label: 'Marzi et al. 2018',
+    url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC5969531/',
+    scope:
+      'EBOV Makona GP의 A82V 위치와 수용체 결합 영역 연구. 전체 입자 외형 자료가 아님',
+    checkedOn,
+  },
+  {
+    id: 'hiv-env-diversity',
+    label: 'Lynch et al. HIV-1 Env diversity',
+    url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC2853864/',
+    scope: 'HIV-1 아형 사이 Env 다양성과 V3 영역. 전체 입자 형상 차이 자료가 아님',
+    checkedOn,
+  },
+  {
+    id: 'who-sars-variants',
+    label: 'WHO SARS-CoV-2 variant tracking',
+    url: 'https://www.who.int/activities/tracking-SARS-CoV-2-variants',
+    scope: 'SARS-CoV-2 변이 명명과 역사적 계통 식별',
+    checkedOn,
+  },
 ];
 
 export const STRUCTURE_SOURCES: readonly StructureSource[] = [

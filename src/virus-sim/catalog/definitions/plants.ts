@@ -2,6 +2,7 @@ import { defineVirus, layer } from '../shared';
 
 export const PLANT_CATALOG = [
   defineVirus({
+    evidenceStatus: 'observed',
     id: 'ccmv',
     name: '동부콩 퇴록얼룩바이러스',
     shortName: 'CCMV',
@@ -25,9 +26,9 @@ export const PLANT_CATALOG = [
     ],
     displayLength: 4,
     sectionRadius: 2,
-    tourParts: ['capsomer', 'surface-domain', 'genome'],
   }),
   defineVirus({
+    evidenceStatus: 'observed',
     id: 'bmv',
     name: '브롬모자이크바이러스',
     shortName: 'BMV',
@@ -51,9 +52,9 @@ export const PLANT_CATALOG = [
     ],
     displayLength: 4,
     sectionRadius: 1.98,
-    tourParts: ['capsomer', 'surface-domain', 'genome'],
   }),
   defineVirus({
+    evidenceStatus: 'observed',
     id: 'cpmv',
     name: '동부콩모자이크바이러스',
     shortName: 'CPMV',
@@ -77,9 +78,9 @@ export const PLANT_CATALOG = [
     ],
     displayLength: 4.2,
     sectionRadius: 2.1,
-    tourParts: ['surface-domain', 'capsomer', 'genome'],
   }),
   defineVirus({
+    evidenceStatus: 'observed',
     id: 'tbsv',
     name: '토마토덤불위축바이러스',
     shortName: 'TBSV',
@@ -106,9 +107,9 @@ export const PLANT_CATALOG = [
     ],
     displayLength: 4.2,
     sectionRadius: 2.05,
-    tourParts: ['surface-domain', 'capsid', 'genome'],
   }),
   defineVirus({
+    evidenceStatus: 'observed',
     id: 'stmv',
     name: '위성담배모자이크바이러스',
     shortName: 'STMV',
@@ -131,9 +132,9 @@ export const PLANT_CATALOG = [
     ],
     displayLength: 3.4,
     sectionRadius: 1.7,
-    tourParts: ['capsomer', 'capsid', 'genome'],
   }),
   defineVirus({
+    evidenceStatus: 'observed',
     id: 'cmv-fny',
     name: '오이모자이크바이러스 Fny',
     shortName: 'CMV Fny',
@@ -156,9 +157,9 @@ export const PLANT_CATALOG = [
     ],
     displayLength: 4,
     sectionRadius: 2,
-    tourParts: ['capsomer', 'surface-domain', 'genome'],
   }),
   defineVirus({
+    evidenceStatus: 'observed',
     id: 'tymv',
     name: '순무황화모자이크바이러스',
     shortName: 'TYMV',
@@ -182,9 +183,9 @@ export const PLANT_CATALOG = [
     ],
     displayLength: 4,
     sectionRadius: 2,
-    tourParts: ['capsomer', 'surface-domain', 'genome'],
   }),
   defineVirus({
+    evidenceStatus: 'observed',
     id: 'pvx',
     name: '감자바이러스 X',
     shortName: 'PVX',
@@ -201,16 +202,15 @@ export const PLANT_CATALOG = [
     sourceIds: ['emd-pvx'],
     modelBuilder: 'generic-filament',
     geometryProfileId: 'filament-pvx-flexible',
-    localMotion: 'flexible-filament',
     simplifications: [
       '전체 길이를 화면에 맞게 크게 줄였어요.',
       '낮은 진폭의 굽힘은 관찰용 연출이에요.',
     ],
     displayLength: 8,
     sectionRadius: 0.62,
-    tourParts: ['coat-protein', 'terminal-protein', 'genome'],
   }),
   defineVirus({
+    evidenceStatus: 'observed',
     id: 'papmv',
     name: '파파야모자이크바이러스',
     shortName: 'PapMV',
@@ -227,16 +227,15 @@ export const PLANT_CATALOG = [
     sourceIds: ['pdb-4dox', 'ictv-alphaflexiviridae'],
     modelBuilder: 'generic-filament',
     geometryProfileId: 'filament-papmv-flexible',
-    localMotion: 'flexible-filament',
     simplifications: [
       '단백질 구조와 계열 형태를 결합한 절차 재구성이에요.',
       '유전체 원자 배치는 재현하지 않았어요.',
     ],
     displayLength: 7.6,
     sectionRadius: 0.72,
-    tourParts: ['coat-protein', 'terminal-protein', 'genome'],
   }),
   defineVirus({
+    evidenceStatus: 'observed',
     id: 'pvy',
     name: '감자바이러스 Y',
     shortName: 'PVY',
@@ -253,16 +252,15 @@ export const PLANT_CATALOG = [
     sourceIds: ['pdb-6hxx'],
     modelBuilder: 'generic-filament',
     geometryProfileId: 'filament-pvy-thin',
-    localMotion: 'flexible-filament',
     simplifications: [
       '실제 길이를 축소하고 나선 반복 수를 줄였어요.',
       '말단 차이는 색이 아닌 형상 크기로만 구분했어요.',
     ],
     displayLength: 8.4,
     sectionRadius: 0.5,
-    tourParts: ['coat-protein', 'terminal-protein', 'genome'],
   }),
   defineVirus({
+    evidenceStatus: 'observed',
     id: 'camv',
     name: '콜리플라워모자이크바이러스',
     shortName: 'CaMV',
@@ -285,9 +283,9 @@ export const PLANT_CATALOG = [
     ],
     displayLength: 4.2,
     sectionRadius: 2.05,
-    tourParts: ['surface-domain', 'capsid', 'genome'],
   }),
   defineVirus({
+    evidenceStatus: 'observed',
     id: 'maize-streak',
     name: '옥수수줄무늬바이러스',
     shortName: 'MSV',
@@ -312,9 +310,9 @@ export const PLANT_CATALOG = [
     ],
     displayLength: 5.2,
     sectionRadius: 1.55,
-    tourParts: ['geminate-bridge', 'capsomer', 'genome'],
   }),
   defineVirus({
+    evidenceStatus: 'observed',
     id: 'tylcv',
     name: '토마토황화잎말림바이러스',
     shortName: 'TYLCV',
@@ -337,6 +335,5 @@ export const PLANT_CATALOG = [
     ],
     displayLength: 5,
     sectionRadius: 1.5,
-    tourParts: ['geminate-bridge', 'capsomer', 'genome'],
   }),
 ] as const;

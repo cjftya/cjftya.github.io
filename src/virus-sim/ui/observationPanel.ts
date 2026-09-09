@@ -23,7 +23,7 @@ const LAYER_LABELS: Readonly<Record<ObservationLayerId, string>> = {
 export function observationControlsMarkup(): string {
   const viruses = VIRUS_CATALOG.map(
     (virus, index) => `
-      <button class="observation-preset-card${index === 0 ? ' is-active' : ''}" data-observation-preset="${virus.id}" data-catalog-tags="${virus.morphologyTags.join(' ')}" data-catalog-search="${escapeAttribute([virus.name, virus.shortName, virus.nameEn, ...virus.aliases, virus.genomeLabel].join(' ').toLocaleLowerCase('ko-KR'))}" type="button">
+      <button class="observation-preset-card${index === 0 ? ' is-active' : ''}" data-observation-preset="${virus.id}" data-catalog-tags="${virus.morphologyTags.join(' ')}" type="button">
         <span class="preset-silhouette" data-silhouette="${virus.silhouette}" aria-hidden="true"></span>
         <span class="catalog-card-copy"><strong>${virus.shortName}</strong><small>${virus.genomeLabel}</small></span>
         <span class="favorite-mark" aria-hidden="true">★</span>
@@ -33,9 +33,10 @@ export function observationControlsMarkup(): string {
   return `
     <section class="observatory-controls">
       <div class="panel-heading catalog-heading">
-        <div><p class="eyebrow">VERIFIED CATALOG</p><h2>실제 바이러스 도감</h2></div>
+        <div><p class="eyebrow">STRUCTURE CATALOG</p><h2>바이러스 도감</h2></div>
         <span><b id="catalog-filter-count">${VIRUS_CATALOG.length}</b> / ${VIRUS_CATALOG.length}종</span>
       </div>
+      <p class="catalog-count-note">기본 항목 ${VIRUS_CATALOG.length} · 변이 표본은 별도 집계</p>
       <label class="catalog-search"><span class="sr-only">이름 검색</span><input id="catalog-search" type="search" placeholder="한글·영문·유전체 검색" autocomplete="off" /></label>
       <div class="catalog-collections" role="group" aria-label="저장 목록">
         <button class="is-active" data-catalog-collection="all" type="button">전체</button>
@@ -52,7 +53,7 @@ export function observationControlsMarkup(): string {
         <button data-catalog-filter="icosahedral" type="button">다면체</button>
         <button data-catalog-filter="enveloped" type="button">외피형</button>
       </div>
-      <div class="observation-preset-list" role="radiogroup" aria-label="검증된 실제 바이러스 ${VIRUS_CATALOG.length}종">${viruses}</div>
+      <div class="observation-preset-list" role="radiogroup" aria-label="바이러스 기본 항목 ${VIRUS_CATALOG.length}종">${viruses}</div>
       <p class="catalog-empty" id="catalog-empty" hidden>조건에 맞는 항목이 없어요.</p>
       <article class="model-card observatory-preset-description" id="observation-preset-description"></article>
     </section>`;
@@ -63,7 +64,7 @@ export function observationInfoMarkup(): string {
     .map(
       (part) => `
         <button class="part-list-button" data-observation-part="${part.id}" type="button" hidden>
-          <span><strong>${part.name}</strong><small>${part.summary}</small></span><b>집중</b>
+          <span><strong>${part.name}</strong><small>${part.summary}</small></span><b>선택</b>
         </button>`,
     )
     .join('');
@@ -73,6 +74,10 @@ export function observationInfoMarkup(): string {
         `<label data-observation-layer-row="${id}" hidden><input data-observation-layer="${id}" type="checkbox" checked /><span>${label}</span></label>`,
     )
     .join('');
+  const compareOptions = VIRUS_CATALOG.map(
+    (virus) =>
+      `<option value="${virus.id}">${virus.shortName} · ${virus.genomeLabel}</option>`,
+  ).join('');
 
   return `
     <section class="observatory-info">
@@ -82,39 +87,20 @@ export function observationInfoMarkup(): string {
         <button id="save-image" type="button">이미지 저장</button>
       </div>
 
-      <section class="experience-console" aria-label="Scale Dive">
-        <div class="experience-heading"><div><p class="eyebrow">SCALE DIVE</p><h2>하나의 세계로 들어가기</h2></div><span id="hero-badge" hidden>HERO</span></div>
-        <p id="experience-copy">개체를 선택하고 움직임을 따라가며 표면까지 연속해서 접근해요.</p>
-        <div class="experience-actions">
-          <button class="primary-action" id="experience-follow" type="button">개체 따라가기</button>
-          <button class="primary-action" id="experience-approach" type="button" hidden>표면에 접근</button>
-          <button class="primary-action" id="experience-surface" type="button" hidden>초근접 관찰</button>
-          <button class="primary-action" id="experience-interior" type="button" hidden>내부로 진입</button>
-          <button id="guided-journey" type="button" hidden>내부 가이드 여정</button>
-          <button id="experience-back-surface" type="button" hidden>표면으로 나오기</button>
-          <button id="experience-exit" type="button" hidden>관찰실로 복귀</button>
-        </div>
-        <div class="structural-actions" id="structural-actions" hidden>
-          <button data-structural-reveal="peel" type="button">외피 벗기기</button>
+      <section class="manual-observation-card" aria-label="수동 구조 관찰">
+        <div class="panel-heading"><div><p class="eyebrow">MANUAL INSPECTION</p><h2>직접 구조 관찰</h2></div><span id="active-slot-badge">A</span></div>
+        <p>카메라와 표본은 스스로 움직이지 않아요. 선택·종 변경 뒤에도 현재 구도를 유지해요.</p>
+        <div class="structural-actions">
+          <button data-structural-reveal="peel" type="button">겉층 벗기기</button>
           <button data-structural-reveal="cutaway" type="button">점진 단면</button>
           <button data-structural-reveal="exploded" type="button">공간 분해</button>
           <button id="structure-reassemble" type="button">재조립</button>
         </div>
-        <div class="experience-tools">
-          <label><input id="motion-trace" type="checkbox" /><span>이동 궤적</span></label>
-          <label><input id="temporal-echo" type="checkbox" /><span>시간 잔상</span></label>
-          <label><input id="auto-documentary" type="checkbox" checked /><span>자동 다큐</span></label>
-        </div>
       </section>
 
-      <details class="observatory-details" open>
-        <summary><span><small>PART EXPLORER</small>부위별로 살펴보기</span></summary>
-        <div class="part-list" id="observation-part-list">${partButtons}</div>
-      </details>
-
       <div class="control-group view-control-group">
-        <div class="control-label"><span>껍질 보기</span><output id="observation-view-label">외관</output></div>
-        <div class="segmented-view" role="group" aria-label="껍질 표현">
+        <div class="control-label"><span>구조 보기</span><output id="observation-view-label">외관</output></div>
+        <div class="segmented-view" role="group" aria-label="구조 표현">
           <button class="is-active" data-observation-view="surface" type="button">외관</button>
           <button data-observation-view="transparent" type="button">반투명</button>
           <button data-observation-view="section" type="button">단면</button>
@@ -131,49 +117,81 @@ export function observationInfoMarkup(): string {
       </div>
       <div class="switch-row observation-switches">
         <label><input id="observation-genome" type="checkbox" /><span>유전체 표시</span></label>
-        <label><input id="observation-follow" type="checkbox" checked /><span>개체 중심 추적</span></label>
       </div>
       <div class="layer-controls" data-observation-layers>
-        <span>이 항목의 구조 레이어</span>${layerControls}
+        <span>현재 항목의 구조 레이어</span>${layerControls}
       </div>
 
-      <div class="demo-section">
-        <div class="panel-heading"><p class="eyebrow">SPECIES TOUR</p><h2>종별 구조 투어</h2></div>
-        <button class="demo-card" id="start-structure-tour" type="button"><span>약 24초</span><strong>현재 종 둘러보기</strong><small>표면 → 반투명 → 단면 → 분해</small></button>
-        <div class="demo-timeline" id="demo-timeline" hidden>
-          <div class="control-label"><span id="demo-kind-label">종별 구조 투어</span><output id="demo-progress-value">0%</output></div>
-          <input id="demo-progress" type="range" min="0" max="1000" value="0" />
-          <div class="demo-actions"><button id="demo-toggle" type="button">Ⅱ 일시정지</button><button id="demo-rewind" type="button">처음으로</button><button id="demo-exit" type="button">수동 관찰</button></div>
-          <p id="demo-status-copy">표면 구조를 살펴보고 있어요.</p>
+      <details class="observatory-details" open>
+        <summary><span><small>PART EXPLORER</small>부위별로 살펴보기</span></summary>
+        <div class="part-list" id="observation-part-list">${partButtons}</div>
+      </details>
+
+      <section class="comparison-panel feature-panel">
+        <div class="panel-heading"><div><p class="eyebrow">A / B COMPARE</p><h2>두 표본 비교</h2></div><span id="comparison-state">꺼짐</span></div>
+        <label class="stacked-field">B 표본<select id="compare-virus">${compareOptions}</select></label>
+        <div class="comparison-actions"><button class="primary-action" id="comparison-add" type="button">비교에 추가</button><button id="comparison-swap" type="button" hidden>서로 바꾸기</button><button id="comparison-close" type="button" hidden>비교 종료</button></div>
+        <label class="wide-switch" id="comparison-link-row" hidden><input id="comparison-linked" type="checkbox" checked /><span>조작 연결</span></label>
+        <div id="comparison-scale-controls" hidden>
+          <div class="segmented-view" role="group" aria-label="크기 비교 방식">
+            <button class="is-active" data-comparison-scale="normalized" type="button">같은 크기로</button>
+            <button data-comparison-scale="physical" type="button">실제 크기 비율</button>
+          </div>
+          <p class="comparison-note" id="comparison-scale-note">같은 화면 길이로 맞춰 구조를 비교해요. 실제 비율이 아니에요.</p>
+          <div class="dimension-grid" id="comparison-dimensions"></div>
         </div>
-      </div>
+      </section>
+
+      <section class="variant-panel feature-panel">
+        <div class="panel-heading"><div><p class="eyebrow">SPECIMENS</p><h2>표본·변이 차이</h2></div><span id="variant-count">0</span></div>
+        <label class="stacked-field">A 표본<select id="variant-a"><option value="">기본 표본</option></select></label>
+        <label class="stacked-field" id="variant-b-row" hidden>B 표본<select id="variant-b"><option value="">기본 표본</option></select></label>
+        <div id="variant-changes" class="variant-changes"><p>등록된 비교 표본을 선택하면 근거가 있는 영역 차이를 표시해요.</p></div>
+      </section>
+
+      <section class="scanner-panel feature-panel">
+        <div class="panel-heading"><div><p class="eyebrow">STRUCTURE SCANNER</p><h2>얇은 단층 보기</h2></div><label class="compact-switch"><input id="scanner-enabled" type="checkbox" /><span>켜기</span></label></div>
+        <p>같은 실제 기하의 얇은 slab를 조립 상태에서 렌더링해요. 종료하면 이전 분해량을 복원해요.</p>
+        <div id="scanner-controls" hidden>
+          <label class="stacked-field">로컬 축<select id="scanner-axis"><option value="x">X축</option><option value="y">Y축</option><option value="z" selected>Z축</option></select></label>
+          <div class="control-group"><div class="control-label"><label for="scanner-position">위치</label><output id="scanner-position-value">50%</output></div><input id="scanner-position" type="range" min="0" max="100" value="50" /></div>
+          <div class="control-group"><div class="control-label"><label for="scanner-thickness">단층 두께</label><output id="scanner-thickness-value">8%</output></div><input id="scanner-thickness" type="range" min="1" max="30" value="8" /></div>
+          <label class="wide-switch" id="scanner-link-row" hidden><input id="scanner-linked" type="checkbox" checked /><span>A/B 정규화 위치 연결</span></label>
+          <small>같은 50%가 두 표본의 같은 해부학적 부위라는 뜻은 아니에요.</small>
+        </div>
+        <canvas id="scanner-canvas" class="scanner-canvas" aria-label="구조 스캐너 단층 화면"></canvas>
+      </section>
+
+      <section class="decoration-panel feature-panel">
+        <div class="panel-heading"><div><p class="eyebrow">AMBIENCE</p><h2>장식 효과</h2></div></div>
+        <label class="stacked-field">강도<select id="decoration-level"><option value="off">끄기</option><option value="subtle" selected>은은하게</option><option value="rich">풍부하게</option></select></label>
+        <label class="wide-switch"><input id="decoration-paused" type="checkbox" /><span>파티클 정지</span></label>
+        <p>공간감을 위한 장식이며 감염력·변이·물리 농도를 나타내지 않아요.</p>
+      </section>
 
       <div class="fact-box source-fact">
         <span>구조 근거와 표현 한계</span>
-        <p id="observation-simplification">공개 구조 자료를 브라우저용 절차 기하로 단순화했어요.</p>
+        <p id="observation-evidence"></p>
+        <p id="observation-simplification"></p>
         <div class="source-links compact" id="observation-source-links"></div>
       </div>
-      <div class="fact-box observatory-fact">
-        <span>화면용 확대</span><p>각 구조는 보기 좋게 따로 확대해요. 화면 크기는 실제 종 사이의 상대 크기가 아니에요.</p>
-        <small id="render-budget">렌더 예산 측정 대기</small>
-      </div>
+      <details class="developer-metrics"><summary>개발용 렌더 정보</summary><small id="render-budget">렌더 예산 측정 대기</small></details>
     </section>`;
 }
 
 export function observationFooterMarkup(): string {
   return `
-    <footer class="observation-bar">
-      <div class="run-controls"><button class="primary-action" id="observation-play-pause" type="button">Ⅱ 정지</button><button id="observation-restart" type="button">처음 자세</button><button id="observation-return" type="button">대상으로 돌아가기</button></div>
-      <label class="motion-select">움직임<select id="observation-motion-mode"><option value="active" selected>활동적 관찰</option><option value="calm">차분한 관찰</option><option value="brownian">확산 모형(고급)</option><option value="static">정지</option></select></label>
-      <div class="speed-controls observation-speed" role="group" aria-label="Time Lens 배속"><span>Time Lens</span><button data-observation-speed="0.1" type="button">0.1×</button><button data-observation-speed="0.25" type="button">0.25×</button><button data-observation-speed="0.5" type="button">0.5×</button><button class="is-active" data-observation-speed="1" type="button">1×</button><button data-observation-speed="2" type="button">2×</button><button data-observation-speed="4" type="button">4×</button><button data-observation-speed="8" type="button">8×</button></div>
-      <div class="view-toggles motion-toggles"><label><input id="observation-translation" type="checkbox" checked />이동</label><label><input id="observation-rotation" type="checkbox" checked />회전</label></div>
-      <div class="run-meta"><span id="observation-tick">tick 0</span><span id="observation-status">활동적 관찰</span></div>
+    <footer class="observation-bar manual-bar">
+      <div class="manual-help"><strong>수동 조작</strong><span>드래그 회전 · 우클릭/Shift+드래그 이동 · 휠 확대 · 터치 회전/핀치</span></div>
+      <div class="camera-step-controls" role="group" aria-label="접근 가능한 카메라 조작">
+        <button data-camera-step="left" type="button" aria-label="왼쪽으로 회전">↶</button>
+        <button data-camera-step="right" type="button" aria-label="오른쪽으로 회전">↷</button>
+        <button data-camera-step="up" type="button" aria-label="위로 회전">↑</button>
+        <button data-camera-step="down" type="button" aria-label="아래로 회전">↓</button>
+        <button data-camera-step="pan-left" type="button" aria-label="왼쪽으로 이동">⇤</button>
+        <button data-camera-step="pan-right" type="button" aria-label="오른쪽으로 이동">⇥</button>
+        <button data-camera-step="zoom-in" type="button">확대 +</button>
+        <button data-camera-step="zoom-out" type="button">축소 −</button>
+      </div>
     </footer>`;
-}
-
-function escapeAttribute(value: string): string {
-  return value
-    .replaceAll('&', '&amp;')
-    .replaceAll('"', '&quot;')
-    .replaceAll('<', '&lt;');
 }

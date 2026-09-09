@@ -7,6 +7,7 @@ import type {
 } from '../observation/types';
 import { ANIMAL_CATALOG } from './definitions/animals';
 import { ARCHAEA_CATALOG } from './definitions/archaea';
+import { EMERGING_CATALOG } from './definitions/emerging';
 import { PHAGE_CATALOG } from './definitions/phages';
 import { PLANT_CATALOG } from './definitions/plants';
 
@@ -16,10 +17,11 @@ export const VIRUS_CATALOG: readonly ObservationDefinition[] = [
   ...PLANT_CATALOG,
   ...ANIMAL_CATALOG,
   ...ARCHAEA_CATALOG,
+  ...EMERGING_CATALOG,
 ] as const;
 
-export const VERIFIED_VIRUS_COUNT = VIRUS_CATALOG.filter(
-  (entry) => entry.evidenceStatus === 'verified',
+export const OBSERVED_VIRUS_COUNT = VIRUS_CATALOG.filter(
+  (entry) => entry.evidenceStatus === 'observed',
 ).length;
 
 const BY_ID = new Map(VIRUS_CATALOG.map((entry) => [entry.id, entry]));

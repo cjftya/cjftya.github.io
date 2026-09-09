@@ -4,6 +4,7 @@ import { buildVaccinia } from './complex';
 import { buildHSV, buildInfluenza, buildVSV } from './enveloped';
 import { buildM13, buildTMV } from './helical';
 import { buildAdenovirus, buildMS2, buildRotavirus } from './icosahedral';
+import { buildCoronavirus, buildFilovirus, buildLentivirus } from './emerging';
 import {
   buildGenericEnveloped,
   buildGenericFilament,
@@ -60,6 +61,15 @@ export function createObservationModel(
       break;
     case 'vaccinia':
       buildVaccinia(collector, quality);
+      break;
+    case 'filovirus':
+      buildFilovirus(collector, quality);
+      break;
+    case 'lentivirus':
+      buildLentivirus(collector, quality);
+      break;
+    case 'coronavirus':
+      buildCoronavirus(collector, quality);
       break;
     case 'generic-icosahedral':
       buildGenericIcosahedral(collector, quality);
