@@ -95,6 +95,11 @@ export function observationInfoMarkup(): string {
       </div>
     </details>
 
+    <details class="detail-section history-section">
+      <summary><span><small>CONTEXT</small>역사와 실제 영향</span></summary>
+      <div class="detail-body" id="history-impact" aria-live="polite"></div>
+    </details>
+
     <details class="detail-section">
       <summary><span><small>SETTINGS</small>화면 설정</span></summary>
       <div class="detail-body settings-grid">

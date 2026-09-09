@@ -1,14 +1,11 @@
-import {
-  observationControlsMarkup,
-  observationInfoMarkup,
-} from './observationPanel';
+import { observationControlsMarkup, observationInfoMarkup } from './observationPanel';
 
 export function renderAppLayout(root: HTMLElement): void {
   root.innerHTML = `
     <div class="virus-app">
       <header class="app-header">
         <a class="home-link" href="/" aria-label="Jelly Garden 홈으로">← Garden</a>
-        <div class="brand-block"><span class="eyebrow">v4.2</span><h1>Virus Sim</h1></div>
+        <div class="brand-block"><span class="eyebrow">v4.3</span><h1>Virus Sim</h1></div>
         <button class="guide-button" id="open-guide" type="button">안내</button>
       </header>
 

@@ -11,6 +11,8 @@ import type {
   ObservationSurfaceMaterial,
   FlexibleSegment,
 } from './types';
+import { getStructuralSignature } from '../../catalog/structuralSignatures';
+import type { StructuralSignature } from '../../catalog/structuralSignatures';
 
 export const COLORS = {
   capsid: 0x55ddd2,
@@ -30,6 +32,7 @@ export const COLORS = {
 
 export interface ModelCollector {
   definition: ObservationDefinition;
+  signature?: StructuralSignature;
   root: THREE.Group;
   selectables: THREE.Object3D[];
   parts: Map<ObservationPartId, THREE.Object3D[]>;
@@ -48,6 +51,7 @@ export function createCollector(definition: ObservationDefinition): ModelCollect
   root.name = `observation-${definition.id}`;
   const collector: ModelCollector = {
     definition,
+    signature: getStructuralSignature(definition.id),
     root,
     selectables: [],
     parts: new Map(),
@@ -60,6 +64,9 @@ export function createCollector(definition: ObservationDefinition): ModelCollect
     flexibleSegments: [],
     sectionGuide: createSectionGuide(definition.sectionRadius),
   };
+  if (collector.signature) {
+    root.userData.structuralSignatureId = collector.signature.id;
+  }
   root.add(collector.sectionGuide);
   return collector;
 }

@@ -1,12 +1,14 @@
-# Virus Sim v4.2
+# Virus Sim v4.3
 
 Virus Sim은 71개 바이러스의 형태와 주요 구조를 한 화면에서 관찰하는 3D 구조 뷰어다.
 바이러스를 native dropdown에서 선택하면 해당 표본을 stage 중앙에 다시 맞추고, 마우스와
-터치 제스처로 직접 회전·이동·확대할 수 있다.
+터치 제스처로 직접 회전·이동·확대할 수 있다. 각 항목에는 발견 맥락, 숙주, 실제 영향과
+현재 의미를 출처와 함께 제공한다.
 
 ## 현재 기능
 
 - 71개 바이러스 구조와 항목별 근거 링크
+- 71개 바이러스의 History & Impact 데이터와 별도 근거 링크
 - 외관, 반투명, 단면, 분해 보기
 - 유전체와 구조 레이어 표시 전환
 - 3D picking과 부위 설명
@@ -14,6 +16,7 @@ Virus Sim은 71개 바이러스의 형태와 주요 구조를 한 화면에서 �
 - PNG 저장, 렌더 품질, 글자 크기 설정
 - 작고 느린 단일 배경 입자 layer
 - WebGL context 중단 안내와 복구
+- 대표 8종의 Structural Signature와 재사용 가능한 절차 컴포넌트
 
 ## 앱 구조
 
@@ -29,6 +32,10 @@ sphere를 사용해 framing한다. 화면 방향이 바뀌면 새 aspect로 다�
 문서는 브라우저 body 하나만 스크롤한다. stage 내부 canvas만 크기를 제한하며 도구 panel이나
 목록에는 별도의 세로 스크롤을 만들지 않는다.
 
+History 데이터는 렌더링을 모르며 catalog ID로만 선택 항목과 연결된다. 구조 시그니처는
+`GeometryProfile`을 대체하지 않고 표면 단백질 종류, 층 관계, 유전체 조직과 특수 구조를
+상위 계약으로 보완한다.
+
 ## 구조 근거와 표현 한계
 
 모델은 PDB·EMDB 구조 항목과 ICTV 형태 설명을 바탕으로 전체 윤곽, 층 관계와 대표 부위를
@@ -37,6 +44,8 @@ sphere를 사용해 framing한다. 화면 방향이 바뀌면 새 aspect로 다�
 
 - [v2 구조 출처](virus-sim-v2-sources.md)
 - [v2.5 확장 출처](virus-sim-v2.5-sources.md)
+- [v4.3 History 출처](virus-sim-v4.3-history-sources.md)
+- [v4.3 모델링 규격](virus-sim-v4.3-modeling.md)
 
 ## 검증
 
