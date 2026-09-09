@@ -1,9 +1,8 @@
 # Virus Sim v4 — Manual Structure Lab & Physics Arena
 
 Virus Sim은 71개 바이러스 기본 항목의 대표 구조를 수동으로 관찰하고, 별도의 Micro Lab에서
-형태·방향·흐름·통로 접촉을 개념적으로 실험하는 Three.js 앱이다. v4는 v3.5의 A/B 비교,
-구조 스캐너, 표본·변이, 고품질 모델과 수동 카메라를 보존하면서 같은 화면에 Physics Arena를
-추가한다.
+형태·방향·흐름·통로 접촉을 개념적으로 실험하는 Three.js 앱이다. v4.1은 구조 관찰을 단일
+표본 흐름으로 정리하고, 고품질 모델·구조 스캐너·수동 카메라와 Physics Arena에 집중한다.
 
 이 앱은 전체 원자 좌표 복제, 유전체 기반 구조 예측, 정밀 CFD, 감염성·치료 효과나 생물학적
 우열을 계산하는 도구가 아니다. 반복 수, 색, 분해 거리, 일부 내부 배치와 Lab 계수는 브라우저
@@ -16,22 +15,19 @@ npm ci
 npm run dev
 ```
 
-개발 server 또는 build 결과에서 `/projects/virus-sim/`을 연다. 화면 상단의 `구조 관찰실`과
-`Micro Lab` 버튼으로 모드를 바꾼다. stage와 핵심 조작·탭은 viewport 안에 남고, 아래 panel
-본문만 scroll한다.
+개발 server 또는 build 결과에서 `/projects/virus-sim/`을 연다. 화면 상단의 `구조 관찰`과
+`Physics Arena` 버튼으로 모드를 바꾼다. 문서 전체가 자연스럽게 scroll하며 3D stage만
+viewport보다 커지지 않는 높이로 제한한다.
 
 ## 구조 관찰실
 
 - camera는 drag orbit, 우클릭 또는 Shift+drag pan, wheel/pinch zoom, 접근 가능한 보조 버튼과
   사용자가 누른 전체 보기로만 움직인다. idle 자동 camera·tour·표본 운동은 없다.
-- 종을 바꿔도 camera pose와 의미가 유지되는 보기·layer 상태를 보존한다. 새 모델에 없는
-  선택 부위만 해제한다.
+- 종을 바꾸면 외관·전체 layer 상태로 새 표본을 만들고 camera를 전체 보기에 다시 맞춘다.
+  이전 pan·단면·숨긴 layer 때문에 새 바이러스가 화면 밖이나 빈 화면으로 시작하지 않는다.
 - 반투명·단면·분해·재조립은 짧은 구조 전환이며 camera 이동을 시작하지 않는다.
-- A/B는 하나의 WebGLRenderer에서 scissor render한다. 같은 크기 맞춤과 도감 대표 nm의
-  실제 크기 비율을 구분하고, camera 조작 연결을 선택할 수 있다.
 - scanner는 현재 procedural geometry를 두 clipping plane의 slab로 render한다. 별도 WebGL
   context를 만들지 않으며 render target과 material 상태를 복원한다.
-- variant 차이는 근거가 연결된 영역 수준만 표시하고 전체 입자 외형 차이로 과장하지 않는다.
 
 ## Micro Lab 사용법
 
@@ -50,7 +46,7 @@ chamber 밖인 초기 배치는 거부한다.
    안전한 기본값을 사용한다.
 
 Lab에서 `고품질 구조 관찰`을 누르면 실험은 멈추고 기존 관찰 기능을 임시로 연다. 돌아오면
-같은 Lab 시각·배치·camera·환경과 원래 관찰 A/B 상태가 복원되며 상태는 paused다. 관찰의
+같은 Lab 시각·배치·camera·환경과 원래 단일 관찰 상태가 복원되며 상태는 paused다. 관찰의
 분해·단면을 Lab 충돌체에 복사하지 않고 순간 filament 굽힘을 기준 구조로 저장하지 않는다.
 
 ## 물리 해석 한계
@@ -81,7 +77,7 @@ PDB의 단백질 또는 부분 구조를 전체 입자 원자 좌표처럼 설�
 ## 구현 경계
 
 - `catalog/`: 71개 identity, 출처, 실제 치수, variant와 근거
-- `observation/ObservationStore.ts`: 직렬화 가능한 A/B 관찰 상태
+- `observation/ObservationStore.ts`: 직렬화 가능한 단일 표본 관찰 상태
 - `lab/LabSession.ts`: fixed-step world, PRNG, 결과와 replay의 단일 원천
 - `lab/physics/`: DOM/WebGL 없는 vector, field, rigid/filament step
 - `lab/profiles/registry.ts`: 모든 도감 항목의 버전된 physics mapping

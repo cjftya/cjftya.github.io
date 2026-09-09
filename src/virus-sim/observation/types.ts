@@ -24,8 +24,6 @@ export type {
 } from '../catalog/types';
 
 export type InspectionView = 'surface' | 'transparent' | 'section' | 'exploded';
-export type SlotId = 'a' | 'b';
-export type ComparisonScaleMode = 'normalized' | 'physical';
 export type ScannerAxis = 'x' | 'y' | 'z';
 export type DecorationLevel = 'off' | 'subtle' | 'rich';
 export type StructuralRevealMode =
@@ -41,7 +39,6 @@ export interface StructuralTransitionState {
 
 export interface SpecimenObservationState {
   readonly presetId: ObservationPresetId;
-  readonly variantId: string | null;
   readonly view: InspectionView;
   readonly selectedPartId: ObservationPartId | null;
   readonly explosion: number;
@@ -49,12 +46,6 @@ export interface SpecimenObservationState {
   readonly genomeVisible: boolean;
   readonly layerVisibility: LayerVisibility;
   readonly transition: StructuralTransitionState;
-}
-
-export interface ComparisonState {
-  readonly enabled: boolean;
-  readonly linked: boolean;
-  readonly scaleMode: ComparisonScaleMode;
 }
 
 export interface ScannerProbeState {
@@ -65,13 +56,11 @@ export interface ScannerProbeState {
 
 export interface ScannerState {
   readonly enabled: boolean;
-  readonly probes: Readonly<Record<SlotId, ScannerProbeState>>;
-  readonly linked: boolean;
-  readonly restore: Readonly<
-    Partial<
-      Record<SlotId, { readonly view: InspectionView; readonly explosion: number }>
-    >
-  >;
+  readonly probe: ScannerProbeState;
+  readonly restore: {
+    readonly view: InspectionView;
+    readonly explosion: number;
+  } | null;
 }
 
 export interface DecorationState {
@@ -80,13 +69,8 @@ export interface DecorationState {
 }
 
 export interface ObservationState {
-  readonly version: 'virus-observation-v3.5';
-  readonly slots: {
-    readonly a: SpecimenObservationState;
-    readonly b: SpecimenObservationState | null;
-  };
-  readonly activeSlot: SlotId;
-  readonly comparison: ComparisonState;
+  readonly version: 'virus-observation-v4.1';
+  readonly specimen: SpecimenObservationState;
   readonly scanner: ScannerState;
   readonly decoration: DecorationState;
   readonly reducedMotion: boolean;

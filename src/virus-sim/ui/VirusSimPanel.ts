@@ -1,18 +1,10 @@
-import { getPhysicalDimensions } from '../catalog/dimensions';
 import {
-  VIRUS_CATALOG,
   filterVirusCatalog,
   getCatalogEntry,
   isVirusId,
   nextDiscovery,
 } from '../catalog/registry';
 import { getStructureSource } from '../catalog/sources';
-import { scaleBarForNmPerPixel } from '../comparison/scaling';
-import {
-  getChangesForVariants,
-  getVariantsForVirus,
-} from '../catalog/variants/registry';
-import { OBSERVATION_PARTS } from '../model/observationPresets';
 import type {
   CatalogTag,
   DecorationState,
@@ -37,11 +29,6 @@ import {
   saveVirusSimPreferences,
 } from './preferences';
 
-export interface ComparisonScaleStatus {
-  readonly physicalAvailable: boolean;
-  readonly nmPerPixel: number | null;
-}
-
 export interface RenderMetrics {
   readonly calls: number;
   readonly triangles: number;
@@ -53,8 +40,6 @@ export class VirusSimPanel {
   private recent: string[];
   private catalogFilter: CatalogTag | 'all' = 'all';
   private collection: CatalogCollection = 'all';
-  private readonly scrollPositions = new Map<string, number>();
-  private activeWorkspaceKey = 'observation:catalog';
 
   constructor(
     private readonly root: HTMLElement,
@@ -136,11 +121,8 @@ export class VirusSimPanel {
 
   syncWorkspace(snapshot: WorkspaceSnapshot): void {
     const app = this.element<HTMLElement>('.virus-app');
-    const panel = this.element<HTMLElement>('#tool-panel');
-    this.scrollPositions.set(this.activeWorkspaceKey, panel.scrollTop);
     const activeTab =
       snapshot.mode === 'observation' ? snapshot.observationTab : snapshot.labTab;
-    const nextKey = `${snapshot.mode}:${activeTab}`;
     app.dataset.workspaceMode = snapshot.mode;
     app.dataset.observationTab = snapshot.observationTab;
     app.dataset.labTab = snapshot.labTab;
@@ -190,14 +172,7 @@ export class VirusSimPanel {
         snapshot.mode !== 'lab' || item.dataset.labSection !== snapshot.labTab;
     });
     this.button('#return-to-lab').hidden = !snapshot.inspectingLabSpecimen;
-    const labMode = snapshot.mode === 'lab';
-    this.element<HTMLElement>('#lab-stage-state').hidden = !labMode;
-    this.element<HTMLElement>('#slot-label-a').hidden = labMode;
-    const comparisonEnabled = !this.button('#comparison-close').hidden;
-    this.element<HTMLElement>('#slot-label-b').hidden = labMode || !comparisonEnabled;
-    this.element<HTMLElement>('#scale-legend').hidden = labMode;
-    this.activeWorkspaceKey = nextKey;
-    panel.scrollTop = this.scrollPositions.get(nextKey) ?? 0;
+    this.element<HTMLElement>('#lab-stage-state').hidden = snapshot.mode !== 'lab';
   }
 
   showSelection(title: string, description: string): void {
@@ -212,21 +187,13 @@ export class VirusSimPanel {
     );
   }
 
-  syncAll(
-    snapshot: ObservationSnapshot,
-    scaleStatus: ComparisonScaleStatus,
-    metrics: RenderMetrics,
-  ): void {
+  syncAll(snapshot: ObservationSnapshot, metrics: RenderMetrics): void {
     this.updatePresetUi(snapshot);
-    this.syncObservationUi(snapshot, scaleStatus, metrics);
+    this.syncObservationUi(snapshot, metrics);
     this.updateCatalogFilter();
   }
 
-  syncObservationUi(
-    snapshot: ObservationSnapshot,
-    scaleStatus: ComparisonScaleStatus,
-    metrics: RenderMetrics,
-  ): void {
+  syncObservationUi(snapshot: ObservationSnapshot, metrics: RenderMetrics): void {
     const specimen = activeSpecimen(snapshot);
     const viewLabels: Record<InspectionView, string> = {
       surface: '외관',
@@ -234,7 +201,7 @@ export class VirusSimPanel {
       section: '단면',
       exploded: '분해',
     };
-    this.text('#active-slot-badge', snapshot.activeSlot.toUpperCase());
+    this.text('#active-slot-badge', '현재');
     this.root
       .querySelectorAll<HTMLElement>('[data-observation-view]')
       .forEach((button) => {
@@ -264,25 +231,6 @@ export class VirusSimPanel {
           ];
       });
 
-    const comparison = snapshot.comparison.enabled && Boolean(snapshot.slots.b);
-    this.text('#comparison-state', comparison ? 'A/B' : '꺼짐');
-    this.button('#comparison-add').hidden = comparison;
-    this.button('#comparison-swap').hidden = !comparison;
-    this.button('#comparison-close').hidden = !comparison;
-    this.element<HTMLElement>('#comparison-link-row').hidden = !comparison;
-    this.element<HTMLElement>('#comparison-scale-controls').hidden = !comparison;
-    this.checkbox('#comparison-linked').checked = snapshot.comparison.linked;
-    this.root
-      .querySelectorAll<HTMLElement>('[data-comparison-scale]')
-      .forEach((button) => {
-        button.classList.toggle(
-          'is-active',
-          button.dataset.comparisonScale === snapshot.comparison.scaleMode,
-        );
-      });
-    this.updateComparisonUi(snapshot, scaleStatus);
-    this.updateVariantUi(snapshot);
-
     this.checkbox('#scanner-enabled').checked = snapshot.scanner.enabled;
     this.element<HTMLElement>('#scanner-controls').hidden = !snapshot.scanner.enabled;
     this.root
@@ -296,7 +244,7 @@ export class VirusSimPanel {
         button.disabled =
           snapshot.scanner.enabled && button.dataset.observationView === 'exploded';
       });
-    const scannerProbe = snapshot.scanner.probes[snapshot.activeSlot];
+    const scannerProbe = snapshot.scanner.probe;
     this.select('#scanner-axis').value = scannerProbe.axis;
     this.input('#scanner-position').value = String(
       Math.round(scannerProbe.position * 100),
@@ -309,39 +257,8 @@ export class VirusSimPanel {
       '#scanner-thickness-value',
       `${Math.round(scannerProbe.thickness * 100)}%`,
     );
-    this.element<HTMLElement>('#scanner-link-row').hidden = !comparison;
-    this.checkbox('#scanner-linked').checked = snapshot.scanner.linked;
-
     this.select('#decoration-level').value = snapshot.decoration.level;
     this.checkbox('#decoration-paused').checked = snapshot.decoration.paused;
-
-    const a = getCatalogEntry(snapshot.slots.a.presetId);
-    this.text('#slot-name-a', a.shortName);
-    this.element<HTMLElement>('#slot-label-a').classList.toggle(
-      'is-active',
-      snapshot.activeSlot === 'a',
-    );
-    const b = snapshot.slots.b ? getCatalogEntry(snapshot.slots.b.presetId) : null;
-    this.element<HTMLElement>('#slot-label-b').hidden = !comparison;
-    this.element<HTMLElement>('#slot-label-b').classList.toggle(
-      'is-active',
-      snapshot.activeSlot === 'b',
-    );
-    this.text('#slot-name-b', b?.shortName ?? '');
-    const physicalScaleBar =
-      snapshot.comparison.scaleMode === 'physical' &&
-      comparison &&
-      scaleStatus.nmPerPixel
-        ? scaleBarForNmPerPixel(scaleStatus.nmPerPixel)
-        : null;
-    const scaleBar = this.element<HTMLElement>('#scale-bar');
-    scaleBar.style.width = `${physicalScaleBar?.pixels ?? 54}px`;
-    this.text(
-      '#scale-legend-copy',
-      physicalScaleBar
-        ? `${formatNumber(physicalScaleBar.nanometers)} nm · 실제 크기 비율`
-        : '같은 크기로 맞춤 · 실제 비율 아님',
-    );
     this.text(
       '#render-budget',
       `draw ${metrics.calls} · triangle ${metrics.triangles.toLocaleString('ko-KR')} · geometry ${metrics.geometries}`,
@@ -426,81 +343,6 @@ export class VirusSimPanel {
         )
         .join('');
     this.updateFavoriteUi(definition.id);
-    const compare = this.select('#compare-virus');
-    if (compare.value === definition.id) {
-      compare.value =
-        VIRUS_CATALOG.find((item) => item.id !== definition.id)?.id ?? definition.id;
-    }
-  }
-
-  private updateComparisonUi(
-    snapshot: ObservationSnapshot,
-    scaleStatus: ComparisonScaleStatus,
-  ): void {
-    const b = snapshot.slots.b;
-    if (!snapshot.comparison.enabled || !b) {
-      this.element<HTMLElement>('#comparison-dimensions').replaceChildren();
-      this.text(
-        '#comparison-scale-note',
-        '같은 화면 길이로 맞춰 구조를 비교해요. 실제 비율이 아니에요.',
-      );
-      return;
-    }
-    const aDimension = getPhysicalDimensions(snapshot.slots.a.presetId);
-    const bDimension = getPhysicalDimensions(b.presetId);
-    this.text(
-      '#comparison-scale-note',
-      snapshot.comparison.scaleMode === 'physical'
-        ? scaleStatus.physicalAvailable
-          ? `양쪽에 같은 환산을 적용해요${scaleStatus.nmPerPixel ? ` · ${formatNumber(scaleStatus.nmPerPixel)} nm/px` : ''}. 분해 거리는 관찰용이에요.`
-          : '치수 자료가 없어 실제 비율을 표시할 수 없어요.'
-        : '정해진 대표 길이를 같은 화면 길이로 맞춰요. 실제 비율이 아니에요.',
-    );
-    this.element<HTMLElement>('#comparison-dimensions').innerHTML =
-      `${dimensionMarkup('A', snapshot.slots.a.presetId, aDimension)}${dimensionMarkup('B', b.presetId, bDimension)}`;
-  }
-
-  private updateVariantUi(snapshot: ObservationSnapshot): void {
-    this.populateVariantSelect('#variant-a', snapshot.slots.a);
-    const b = snapshot.slots.b;
-    this.element<HTMLElement>('#variant-b-row').hidden = !b;
-    if (b) this.populateVariantSelect('#variant-b', b);
-    const total =
-      getVariantsForVirus(snapshot.slots.a.presetId).length +
-      (b ? getVariantsForVirus(b.presetId).length : 0);
-    this.text('#variant-count', `${total}개`);
-    const changes = getChangesForVariants(
-      snapshot.slots.a.variantId,
-      b?.variantId ?? null,
-    );
-    const container = this.element<HTMLElement>('#variant-changes');
-    if (changes.length === 0) {
-      const selected = Boolean(snapshot.slots.a.variantId || b?.variantId);
-      container.innerHTML = `<p>${selected ? '이 표본 조합의 대응 구조 차이 자료가 부족해요. 같은 모델이 외형 동일성의 증거는 아니에요.' : 'A/B 표본을 선택하면 근거가 있는 영역 수준 차이를 표시해요.'}</p>`;
-      return;
-    }
-    container.innerHTML = changes
-      .map(
-        (change) => `
-      <button type="button" data-change-part="${change.partId}">
-        <strong>${escapeHtml(change.regionId ?? OBSERVATION_PARTS[change.partId].name)}</strong>
-        <span>영역 수준 표시 · 카메라 이동 없음</span><small>${escapeHtml(change.note)}</small>
-      </button>`,
-      )
-      .join('');
-  }
-
-  private populateVariantSelect(
-    selector: string,
-    specimen: SpecimenObservationState,
-  ): void {
-    const select = this.select(selector);
-    if (select.dataset.parent !== specimen.presetId) {
-      const variants = getVariantsForVirus(specimen.presetId);
-      select.innerHTML = `<option value="">기본 표본</option>${variants.map((variant) => `<option value="${variant.id}">${escapeHtml(variant.label)} · ${escapeHtml(variant.referenceLabel)}</option>`).join('')}`;
-      select.dataset.parent = specimen.presetId;
-    }
-    select.value = specimen.variantId ?? '';
   }
 
   private updateFavoriteUi(id: string): void {
@@ -536,28 +378,7 @@ export class VirusSimPanel {
 }
 
 function activeSpecimen(snapshot: ObservationSnapshot): SpecimenObservationState {
-  return snapshot.slots[snapshot.activeSlot] ?? snapshot.slots.a;
-}
-
-function dimensionMarkup(
-  slot: string,
-  virusId: string,
-  dimensions: ReturnType<typeof getPhysicalDimensions>,
-): string {
-  const virus = getCatalogEntry(virusId);
-  if (!dimensions) {
-    return `<article><b>${slot} · ${escapeHtml(virus.shortName)}</b><span>치수 자료 없음</span></article>`;
-  }
-  const range = dimensions.rangeNm
-    ? ` (${formatNumber(dimensions.rangeNm[0])}–${formatNumber(dimensions.rangeNm[1])} nm)`
-    : '';
-  return `<article><b>${slot} · ${escapeHtml(virus.shortName)}</b><span>${formatNumber(dimensions.representativeNm)} nm${range}</span><small>${escapeHtml(dimensions.metric)} · ${escapeHtml(dimensions.particleState)}</small></article>`;
-}
-
-function formatNumber(value: number): string {
-  return value >= 100
-    ? Math.round(value).toLocaleString('ko-KR')
-    : value.toFixed(value < 1 ? 2 : 1).replace(/\.0$/, '');
+  return snapshot.specimen;
 }
 
 function escapeHtml(value: string): string {

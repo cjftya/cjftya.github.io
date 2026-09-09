@@ -426,7 +426,6 @@ button[aria-pressed='true'] {
 }
 
 .stage-overlay,
-.scale-legend,
 .context-message {
   position: absolute;
   z-index: 2;
@@ -454,24 +453,6 @@ button[aria-pressed='true'] {
 
 .viewport-actions button {
   min-height: 38px;
-}
-
-.scale-legend {
-  left: 1rem;
-  bottom: 1rem;
-  color: var(--vs-muted);
-  font-size: calc(14px * var(--virus-text-scale));
-}
-
-.scale-legend span {
-  display: inline-block;
-  width: 54px;
-  margin-right: 0.45rem;
-  border-top: 2px solid var(--vs-text);
-}
-
-.scale-legend b {
-  font-weight: 500;
 }
 
 .context-message {
@@ -803,10 +784,6 @@ input[type='checkbox'] {
     top: auto;
     bottom: 0.8rem;
   }
-
-  .scale-legend {
-    display: none;
-  }
 }
 
 @media (max-width: 520px) {
@@ -842,25 +819,30 @@ input[type='checkbox'] {
   }
 }
 
-/* v4 workspace: one bounded viewport with a single scrolling tool panel */
+/* v4.1 workspace: the document scrolls; only the 3D stage is viewport-bounded */
 html,
-body,
+body {
+  width: 100%;
+  min-height: 100%;
+  overflow-x: hidden;
+}
+
 #virus-sim-app {
   width: 100%;
-  height: 100%;
-  min-height: 0;
-  overflow: hidden;
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow: visible;
 }
 
 .virus-app {
   display: grid;
   width: 100%;
-  height: 100vh;
-  height: 100dvh;
+  min-height: 100vh;
+  min-height: 100dvh;
   min-width: 0;
-  min-height: 0;
-  overflow: hidden;
-  grid-template-rows: auto minmax(190px, 53dvh) auto auto minmax(0, 1fr);
+  height: auto;
+  overflow: visible;
+  grid-template-rows: auto clamp(300px, 53svh, 620px) auto auto auto;
 }
 
 .app-header {
@@ -889,7 +871,8 @@ body,
 .stage {
   min-width: 0;
   min-height: 0;
-  height: auto;
+  height: clamp(300px, 53svh, 620px);
+  max-height: calc(100svh - 72px);
   border-bottom: 1px solid var(--vs-line-soft);
 }
 
@@ -978,14 +961,11 @@ body,
 
 .tool-panel {
   min-width: 0;
-  min-height: 0;
-  overflow-y: auto;
-  overflow-x: hidden;
-  overscroll-behavior: contain;
+  min-height: 1px;
+  overflow: visible;
   padding: 0.85rem max(0.85rem, env(safe-area-inset-right))
     max(0.85rem, env(safe-area-inset-bottom)) max(0.85rem, env(safe-area-inset-left));
   background: rgb(8 16 29 / 98%);
-  scrollbar-gutter: stable;
 }
 
 .workspace-panel {
@@ -1106,7 +1086,11 @@ body,
 
 @media (max-width: 980px) {
   .virus-app {
-    grid-template-rows: auto minmax(180px, 48dvh) auto auto minmax(0, 1fr);
+    grid-template-rows: auto clamp(260px, 48svh, 520px) auto auto auto;
+  }
+
+  .stage {
+    height: clamp(260px, 48svh, 520px);
   }
 
   .app-header {
@@ -1133,7 +1117,7 @@ body,
 @media (max-width: 620px) {
   .virus-app {
     display: grid;
-    grid-template-rows: auto minmax(170px, 43dvh) auto auto minmax(0, 1fr);
+    grid-template-rows: auto clamp(220px, 42svh, 390px) auto auto auto;
   }
 
   .app-header {
@@ -1158,6 +1142,11 @@ body,
 
   .workspace-controls {
     padding-inline: 0.55rem;
+  }
+
+  .stage {
+    height: clamp(220px, 42svh, 390px);
+    max-height: calc(100svh - 64px);
   }
 
   .manual-bar {
@@ -1199,19 +1188,20 @@ body,
   .lab-selection-card {
     grid-column: auto;
   }
-
-  .slot-label {
-    top: 3.6rem;
-  }
 }
 
 @media (max-height: 520px) {
   .virus-app {
-    grid-template-rows: auto minmax(128px, 36dvh) auto auto minmax(0, 1fr);
+    grid-template-rows: auto clamp(160px, 36svh, 260px) auto auto auto;
   }
 
   .app-header {
     min-height: 48px;
+  }
+
+  .stage {
+    height: clamp(160px, 36svh, 260px);
+    max-height: calc(100svh - 52px);
   }
 
   .brand-block .eyebrow,
@@ -1228,8 +1218,7 @@ body,
     min-height: 40px;
   }
 
-  .stage-overlay,
-  .slot-label {
+  .stage-overlay {
     padding-block: 0.25rem;
   }
 }
@@ -1244,7 +1233,7 @@ body,
   }
 }
 
-/* v3.5 manual observation, comparison and scanner */
+/* Manual observation and scanner */
 .catalog-count-note {
   margin: -0.45rem 0 0.7rem;
   color: var(--vs-muted);
@@ -1281,9 +1270,7 @@ body,
   color: var(--vs-muted);
 }
 
-#active-slot-badge,
-#comparison-state,
-#variant-count {
+#active-slot-badge {
   min-width: 34px;
   padding: 0.2rem 0.4rem;
   color: #071716;
@@ -1294,15 +1281,10 @@ body,
   font-weight: 850;
 }
 
-.comparison-actions,
 .camera-step-controls {
   display: flex;
   flex-wrap: wrap;
   gap: 0.4rem;
-}
-
-.comparison-actions {
-  margin: 0.55rem 0;
 }
 
 .stacked-field {
@@ -1326,51 +1308,6 @@ body,
   min-height: 44px;
 }
 
-.dimension-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.45rem;
-  margin-top: 0.55rem;
-}
-
-.dimension-grid article {
-  display: grid;
-  gap: 0.22rem;
-  min-width: 0;
-  padding: 0.55rem;
-  border: 1px solid var(--vs-line-soft);
-  border-radius: 9px;
-  background: rgb(4 13 24 / 54%);
-}
-
-.dimension-grid span,
-.dimension-grid small {
-  overflow-wrap: anywhere;
-  color: var(--vs-muted);
-}
-
-.variant-changes {
-  display: grid;
-  gap: 0.45rem;
-  margin-top: 0.65rem;
-}
-
-.variant-changes button {
-  display: grid;
-  gap: 0.2rem;
-  width: 100%;
-  text-align: left;
-}
-
-.variant-changes span {
-  color: var(--vs-teal);
-}
-
-.variant-changes small {
-  color: var(--vs-muted);
-  white-space: normal;
-}
-
 .scanner-canvas {
   width: 100%;
   aspect-ratio: 8 / 5;
@@ -1390,39 +1327,6 @@ body,
   display: block;
   margin-top: 0.45rem;
   color: var(--vs-muted);
-}
-
-.slot-label {
-  position: absolute;
-  z-index: 2;
-  top: 4.2rem;
-  display: flex;
-  align-items: center;
-  gap: 0.42rem;
-  padding: 0.36rem 0.55rem;
-  border: 1px solid var(--vs-line);
-  border-radius: 9px;
-  color: var(--vs-muted);
-  background: rgb(5 11 23 / 82%);
-  pointer-events: none;
-}
-
-.slot-label b {
-  color: var(--vs-teal);
-}
-
-.slot-label.is-active {
-  border-color: var(--vs-teal);
-  color: var(--vs-text);
-  box-shadow: 0 0 0 1px rgb(99 238 224 / 22%);
-}
-
-.slot-a {
-  left: 1rem;
-}
-
-.slot-b {
-  right: 1rem;
 }
 
 .manual-bar {

@@ -4,11 +4,7 @@ import { loadLabConfigWithStatus, saveLabConfig } from './lab/persistence';
 import type { LabCommandProperty } from './lab/types';
 import { OBSERVATION_PARTS } from './model/observationPresets';
 import { ObservationStore } from './observation/ObservationStore';
-import type {
-  ObservationPartId,
-  ObservationSnapshot,
-  SlotId,
-} from './observation/types';
+import type { ObservationPartId, ObservationSnapshot } from './observation/types';
 import {
   SceneRenderer,
   type SceneFrameSnapshot,
@@ -33,7 +29,7 @@ export class VirusSimApp {
   private readonly labPanel: LabPanel;
   private readonly unbindControls: readonly (() => void)[];
   private inspectionObservation: ObservationSnapshot | null = null;
-  private inspectionCameras: Readonly<Record<SlotId, ManualCameraPose>> | null = null;
+  private inspectionCamera: ManualCameraPose | null = null;
   private disposed = false;
   private lastUiTime = 0;
 
@@ -57,7 +53,6 @@ export class VirusSimApp {
       requiredElement<HTMLElement>(root, '#viewport'),
       requiredElement<HTMLCanvasElement>(root, '#scanner-canvas'),
       (selection) => this.handleSceneSelection(selection),
-      (slot) => this.activateSlot(slot),
       (instanceId) => this.handleLabSelection(instanceId),
     );
     this.unbindControls = [
@@ -105,21 +100,6 @@ export class VirusSimApp {
       structuralReveal: (mode) =>
         this.updateObservation(() => this.observation.startStructuralReveal(mode)),
       reassemble: () => this.updateObservation(() => this.observation.reassemble()),
-      addComparison: (id) => {
-        if (!isVirusId(id)) return;
-        this.updateObservation(() => this.observation.addComparison(id), true);
-      },
-      swapComparison: () =>
-        this.updateObservation(() => this.observation.swapComparison(), true),
-      closeComparison: () => {
-        this.observation.closeComparison();
-        this.showStoredSelection();
-        this.refreshWorkspace(true);
-      },
-      setComparisonLinked: (linked) =>
-        this.updateObservation(() => this.observation.setComparisonLinked(linked)),
-      setComparisonScale: (mode) =>
-        this.updateObservation(() => this.observation.setComparisonScaleMode(mode)),
       setScannerEnabled: (enabled) =>
         this.updateObservation(() => this.observation.setScannerEnabled(enabled)),
       setScannerAxis: (axis) =>
@@ -128,11 +108,6 @@ export class VirusSimApp {
         this.updateObservation(() => this.observation.setScannerPosition(position)),
       setScannerThickness: (thickness) =>
         this.updateObservation(() => this.observation.setScannerThickness(thickness)),
-      setScannerLinked: (linked) =>
-        this.updateObservation(() => this.observation.setScannerLinked(linked)),
-      setVariant: (slot, id) =>
-        this.updateObservation(() => this.observation.setVariant(id, slot)),
-      selectChangePart: (part) => this.selectChangePart(part),
       setDecorationLevel: (level) => {
         this.observation.setDecorationLevel(level);
         this.panel.persistDecoration(this.observation.getSnapshot().decoration);
@@ -293,14 +268,13 @@ export class VirusSimApp {
     const virusId = this.lab.getSelectedVirusId();
     if (!virusId) return;
     this.inspectionObservation = this.observation.getSnapshot();
-    this.inspectionCameras = this.scene.getObservationCameraPoses();
+    this.inspectionCamera = this.scene.getObservationCameraPose();
     this.lab.enterInspection();
     this.workspace.enterLabInspection();
     this.workspace.setTab('structure');
     if (this.observation.getSnapshot().scanner.enabled)
       this.observation.setScannerEnabled(false);
-    this.observation.closeComparison();
-    this.observation.setPreset(virusId, 'a');
+    this.observation.setPreset(virusId);
     this.observation.setView('surface');
     this.panel.recordRecent(virusId);
     this.panel.clearSelection();
@@ -314,25 +288,20 @@ export class VirusSimApp {
     this.lab.leaveInspection();
     this.workspace.leaveLabInspection();
     this.refreshWorkspace(true);
-    if (this.inspectionCameras)
-      this.scene.setObservationCameraPoses(this.inspectionCameras);
+    if (this.inspectionCamera)
+      this.scene.setObservationCameraPose(this.inspectionCamera);
     this.inspectionObservation = null;
-    this.inspectionCameras = null;
+    this.inspectionCamera = null;
   }
 
   private activateVirus(id: string): void {
     if (!isVirusId(id)) return;
     this.observation.setPreset(id);
     this.panel.recordRecent(id);
-    this.showStoredSelection();
+    this.panel.clearSelection();
     this.refreshWorkspace(true);
-  }
-
-  private activateSlot(slot: SlotId): void {
-    if (this.workspace.getSnapshot().mode !== 'observation') return;
-    this.observation.setActiveSlot(slot);
-    this.showStoredSelection();
-    this.refreshWorkspace(true);
+    this.scene.frameAll();
+    this.scrollStageIntoView();
   }
 
   private handleLabSelection(instanceId: string | null): void {
@@ -347,18 +316,6 @@ export class VirusSimApp {
     this.refreshWorkspace();
   }
 
-  private selectChangePart(partId: ObservationPartId): void {
-    this.observation.selectPart(partId, 'a');
-    if (this.observation.getSnapshot().slots.b)
-      this.observation.selectPart(partId, 'b');
-    const part = OBSERVATION_PARTS[partId];
-    this.panel.showSelection(
-      `A/B · ${part.name}`,
-      `${part.detail} 비교 표본의 근거 연결 영역이며 카메라는 이동하지 않아요.`,
-    );
-    this.refreshWorkspace();
-  }
-
   private handleSceneSelection(selection: SelectionDetails | null): void {
     if (this.workspace.getSnapshot().mode !== 'observation') return;
     if (!selection) {
@@ -367,25 +324,23 @@ export class VirusSimApp {
       this.refreshWorkspace();
       return;
     }
-    this.observation.setActiveSlot(selection.slot);
-    this.observation.selectPart(selection.partId, selection.slot);
+    this.observation.selectPart(selection.partId);
     const part = OBSERVATION_PARTS[selection.partId];
     this.panel.showSelection(
-      `${selection.slot.toUpperCase()} · ${selection.title}`,
+      selection.title,
       `${selection.description} ${part.summary}`,
     );
     this.refreshWorkspace(true);
   }
 
-  private showStoredSelection(): void {
-    const specimen = this.observation.getActiveSpecimen();
-    const partId = specimen.selectedPartId;
-    if (!partId) {
-      this.panel.clearSelection();
-      return;
-    }
-    const part = OBSERVATION_PARTS[partId];
-    this.panel.showSelection(part.name, `${part.detail} ${part.summary}`);
+  private scrollStageIntoView(): void {
+    const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      ? 'auto'
+      : 'smooth';
+    requiredElement<HTMLElement>(this.root, '.stage').scrollIntoView({
+      behavior,
+      block: 'start',
+    });
   }
 
   private saveObservationImage(): Promise<boolean> {
@@ -430,18 +385,10 @@ export class VirusSimApp {
   }
 
   private syncAll(snapshot: ObservationSnapshot): void {
-    this.panel.syncAll(
-      snapshot,
-      this.scene.getComparisonScaleStatus(),
-      this.scene.getRenderMetrics(),
-    );
+    this.panel.syncAll(snapshot, this.scene.getRenderMetrics());
   }
 
   private syncObservationUi(snapshot: ObservationSnapshot): void {
-    this.panel.syncObservationUi(
-      snapshot,
-      this.scene.getComparisonScaleStatus(),
-      this.scene.getRenderMetrics(),
-    );
+    this.panel.syncObservationUi(snapshot, this.scene.getRenderMetrics());
   }
 }
