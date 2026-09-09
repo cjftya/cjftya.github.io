@@ -22,7 +22,7 @@
 | 재실험·저장      | 완료      | 현재 조건 restart, tick command 정확 재생, 재생 분기, 단일 localStorage 슬롯  |
 | 구조 관찰 연결   | 완료      | Lab 일시정지, 단일 관찰 상태·카메라 저장, 임시 고품질 관찰 후 정확 복귀       |
 | 자동 검증        | 완료      | lint, 33개 파일·181개 테스트, production build 성공                           |
-| 브라우저 시각 QA | 진행 중   | v4.1 공개 배포 후 document scroll과 제한된 stage를 다시 측정                  |
+| 브라우저 시각 QA | 부분 완료 | 공개본의 document scroll, 제한된 stage, 비교 UI 제거와 fallback 확인          |
 
 ## 확정된 구현 계약
 
@@ -69,17 +69,18 @@ npm run build
 
 - 테스트: 33개 파일, 181개 성공
 - build: `/`, `/projects/virus-sim/`, `/projects/uriel/`, `/projects/viola/` 산출물 유지
-- Virus Sim 번들: JS 약 248.25 kB, gzip 약 68.06 kB
+- Virus Sim 번들: JS 약 247.20 kB, gzip 약 67.82 kB
 - 자동 fixture: 정지 불변, 30/60/120Hz cadence, 유한 와류, 상대 점성, capsule 방향,
   filament 길이·깊이 경계, 전체 몸체 통과, 8개 instance, 실제 크기 비율, 정확 재생,
   재생 분기, 손상·구버전 저장 거부
 
 ## 배포와 남은 확인
 
-- 공개 배포 커밋: `9f0dd860f609579c17e00e776d12cf4afad9798e`
+- v4.1 기능 배포 커밋: `4a2678e78b6bd0dda59a7b55cfd64796b21ec177`
 - 공개 주소: `https://cjftya.github.io/projects/virus-sim/`
-- 원격 Chrome 1363×936에서 v4 title과 body 무스크롤을 확인했다. stage, 핵심 조작, tabs는
-  viewport 안에 유지되고 하단 panel만 남은 높이를 사용했다.
+- 원격 Chrome 1363×936에서 문서 2250px/viewport 936px, body 세로 overflow `auto`,
+  tool panel overflow `visible`을 확인했다. stage는 약 496px로 viewport보다 작고
+  `overflow: hidden`이며, 비교 tab과 A/B control은 없다.
 - 해당 원격 Chrome은 GPU/WebGL을 비활성화해 3D context를 만들지 못했다. 안내 fallback이
   stage 내부에 표시되고 문서 높이를 늘리지 않는 것은 확인했다.
 

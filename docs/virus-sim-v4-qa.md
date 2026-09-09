@@ -15,7 +15,7 @@
 | 형태·통로                     | 통과 | capsule 방향 폭, filament 길이/깊이, 전체 AABB 출구 통과    |
 | 저장                          | 통과 | 정상 round trip, 손상 JSON 삭제, engine mismatch 사유 반환  |
 
-마지막 build의 Virus Sim 산출물은 JS 약 248.25 kB(gzip 68.06 kB), CSS 약
+마지막 build의 Virus Sim 산출물은 JS 약 247.20 kB(gzip 67.82 kB), CSS 약
 19.04 kB(gzip 4.78 kB)였다. 이 크기는 네트워크/CPU 성능 측정값이 아니다.
 
 ## 레이아웃 계약
@@ -36,19 +36,19 @@
 
 ## 브라우저 QA 상태
 
-기존 v4 공개본은 원격 Chrome 1363×936에서 body 무스크롤과 고정 workspace를 확인했다.
-v4.1은 이 계약을 의도적으로 document scroll로 바꿨으므로, 기존 측정값은 현재 합격 근거로
-사용하지 않는다. 새 배포에서 scroll 높이, stage 상한과 비교 UI 제거를 다시 측정한다.
+공개 배포 커밋 `4a2678e78b6bd0dda59a7b55cfd64796b21ec177`을 원격 Chrome
+1363×936에서 확인했다. 문서 높이는 2250px, viewport 높이는 936px이고 body의 세로 overflow는
+`auto`다. tool panel은 별도 scroll container가 아니며, stage 높이는 약 496px이고
+`overflow: hidden`, `max-height: 864px`로 측정됐다. 비교 tab과 A/B control selector는 0개다.
 
-이 환경은 GPU/WebGL을 비활성화해 `THREE.WebGLRenderer`가 context를 만들지 못했다. 앱은
 원격 Chrome은 GPU/WebGL을 비활성화해 정상 3D 화면과 상호작용을 확인할 수 없다. context
-unavailable 안내가 stage 내부에 머무르는 fallback 경로는 새 배포에서도 확인한다.
+unavailable 안내가 제한된 stage 내부에 머무르는 fallback 경로는 확인했다.
 
 | 확인 대상                                      | 상태          |
 | ---------------------------------------------- | ------------- |
-| document scroll과 stage 높이 상한              | 배포 후 검증  |
-| 비교 tab·A/B control 제거                      | 배포 후 검증  |
-| WebGL context unavailable fallback 실제 화면   | 배포 후 검증  |
+| document scroll과 stage 높이 상한              | 통과          |
+| 비교 tab·A/B control 제거                      | 통과          |
+| WebGL context unavailable fallback 실제 화면   | 통과          |
 | 390×844, 430×932 모바일 선택과 document scroll | 미검증        |
 | 높이 600px 이하와 130% 글자                    | 미검증        |
 | WebGL 정상 렌더와 context loss 복구            | 환경상 미검증 |
