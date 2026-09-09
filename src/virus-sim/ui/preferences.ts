@@ -1,42 +1,19 @@
-import { isVirusId } from '../catalog/registry';
 import type { DecorationLevel } from '../observation/types';
 
-export type CatalogCollection = 'all' | 'favorites' | 'recent';
 export type FontScale = '100' | '115' | '130';
 
-const FAVORITES_KEY = 'virus-sim-v2.5-favorites';
-const RECENT_KEY = 'virus-sim-v2.5-recent';
 const FONT_SCALE_KEY = 'virus-sim-v2.5-font-scale';
 const SETTINGS_KEY = 'virus-sim-v3.5-settings';
+const LEGACY_KEYS = [
+  'virus-sim:lab-config:v1',
+  'virus-sim-v2.5-favorites',
+  'virus-sim-v2.5-recent',
+] as const;
 
 export interface VirusSimPreferences {
   readonly version: 1;
   readonly decorationLevel: DecorationLevel;
   readonly decorationPaused: boolean;
-}
-
-export function loadFavorites(storage: Storage): Set<string> {
-  return new Set(loadIds(storage, FAVORITES_KEY));
-}
-
-export function saveFavorites(storage: Storage, ids: ReadonlySet<string>): void {
-  write(storage, FAVORITES_KEY, JSON.stringify([...ids].filter(isVirusId)));
-}
-
-export function loadRecent(storage: Storage): string[] {
-  return [...new Set(loadIds(storage, RECENT_KEY))].slice(0, 12);
-}
-
-export function pushRecent(
-  storage: Storage,
-  current: readonly string[],
-  id: string,
-): string[] {
-  const next = [id, ...current.filter((candidate) => candidate !== id)]
-    .filter(isVirusId)
-    .slice(0, 12);
-  write(storage, RECENT_KEY, JSON.stringify(next));
-  return next;
 }
 
 export function loadFontScale(storage: Storage): FontScale {
@@ -61,11 +38,9 @@ export function loadVirusSimPreferences(
     const value: unknown = JSON.parse(storage.getItem(SETTINGS_KEY) ?? 'null');
     if (!value || typeof value !== 'object') return fallback;
     const candidate = value as Record<string, unknown>;
-    const level = candidate.decorationLevel;
     return {
       version: 1,
-      decorationLevel:
-        level === 'off' || level === 'rich' || level === 'subtle' ? level : 'subtle',
+      decorationLevel: candidate.decorationLevel === 'off' ? 'off' : 'subtle',
       decorationPaused:
         typeof candidate.decorationPaused === 'boolean'
           ? candidate.decorationPaused
@@ -80,20 +55,16 @@ export function saveVirusSimPreferences(
   storage: Storage,
   preferences: VirusSimPreferences,
 ): void {
-  // v2/v3 autoDocumentary, follow, motion and speed fields are deliberately omitted.
   write(storage, SETTINGS_KEY, JSON.stringify(preferences));
 }
 
-function loadIds(storage: Storage, key: string): string[] {
-  try {
-    const value: unknown = JSON.parse(storage.getItem(key) ?? '[]');
-    return Array.isArray(value)
-      ? value.filter(
-          (item): item is string => typeof item === 'string' && isVirusId(item),
-        )
-      : [];
-  } catch {
-    return [];
+export function removeLegacyVirusSimStorage(storage: Storage): void {
+  for (const key of LEGACY_KEYS) {
+    try {
+      storage.removeItem(key);
+    } catch {
+      // Storage access must never prevent the viewer from starting.
+    }
   }
 }
 
@@ -109,6 +80,6 @@ function write(storage: Storage, key: string, value: string): void {
   try {
     storage.setItem(key, value);
   } catch {
-    // Private browsing or a full quota must not block the observatory.
+    // Private browsing or a full quota must not block the viewer.
   }
 }

@@ -4,22 +4,13 @@ import type {
   ObservationLayerId,
   ObservationPartId,
   ScannerAxis,
-  StructuralRevealMode,
 } from '../observation/types';
 import type { RenderQuality } from '../rendering/quality/quality';
 import { requiredElement } from './layout';
 import type { FontScale } from './preferences';
 
-export type CameraStep =
-  'left' | 'right' | 'up' | 'down' | 'pan-left' | 'pan-right' | 'zoom-in' | 'zoom-out';
-
 export interface VirusSimControlActions {
-  readonly catalogSearch: () => void;
-  readonly catalogFilter: (value: string) => void;
-  readonly catalogCollection: (value: string) => void;
   readonly activateVirus: (id: string) => void;
-  readonly toggleFavorite: () => void;
-  readonly nextDiscovery: () => void;
   readonly saveImage: () => Promise<boolean>;
   readonly setView: (view: InspectionView) => void;
   readonly setExplosion: (value: number) => void;
@@ -27,10 +18,6 @@ export interface VirusSimControlActions {
   readonly setGenomeVisible: (visible: boolean) => void;
   readonly setLayerVisible: (layer: ObservationLayerId, visible: boolean) => void;
   readonly selectPart: (part: ObservationPartId) => void;
-  readonly structuralReveal: (
-    mode: Exclude<StructuralRevealMode, 'none' | 'reassemble'>,
-  ) => void;
-  readonly reassemble: () => void;
   readonly setScannerEnabled: (enabled: boolean) => void;
   readonly setScannerAxis: (axis: ScannerAxis) => void;
   readonly setScannerPosition: (position: number) => void;
@@ -39,8 +26,6 @@ export interface VirusSimControlActions {
   readonly setDecorationPaused: (paused: boolean) => void;
   readonly setQuality: (quality: RenderQuality) => void;
   readonly setFontScale: (scale: FontScale) => void;
-  readonly resetCamera: () => void;
-  readonly cameraStep: (step: CameraStep) => void;
 }
 
 export function bindVirusSimControls(
@@ -52,55 +37,12 @@ export function bindVirusSimControls(
   const element = <T extends Element>(selector: string): T =>
     requiredElement<T>(root, selector);
 
-  element<HTMLInputElement>('#catalog-search').addEventListener(
-    'input',
-    actions.catalogSearch,
+  element<HTMLSelectElement>('#virus-select').addEventListener(
+    'change',
+    (event) => actions.activateVirus(inputValue(event)),
     options,
   );
-  root
-    .querySelectorAll<HTMLButtonElement>('[data-catalog-filter]')
-    .forEach((button) => {
-      button.addEventListener(
-        'click',
-        () => {
-          setActiveGroup(root, '[data-catalog-filter]', button);
-          actions.catalogFilter(button.dataset.catalogFilter ?? 'all');
-        },
-        options,
-      );
-    });
-  root
-    .querySelectorAll<HTMLButtonElement>('[data-catalog-collection]')
-    .forEach((button) => {
-      button.addEventListener(
-        'click',
-        () => {
-          setActiveGroup(root, '[data-catalog-collection]', button);
-          actions.catalogCollection(button.dataset.catalogCollection ?? 'all');
-        },
-        options,
-      );
-    });
-  root
-    .querySelectorAll<HTMLButtonElement>('[data-observation-preset]')
-    .forEach((button) => {
-      button.addEventListener(
-        'click',
-        () => actions.activateVirus(button.dataset.observationPreset ?? ''),
-        options,
-      );
-    });
 
-  element<HTMLButtonElement>('#toggle-favorite').addEventListener(
-    'click',
-    actions.toggleFavorite,
-    options,
-  );
-  element<HTMLButtonElement>('#next-discovery').addEventListener(
-    'click',
-    actions.nextDiscovery,
-    options,
-  );
   const saveButton = element<HTMLButtonElement>('#save-image');
   saveButton.addEventListener(
     'click',
@@ -165,25 +107,6 @@ export function bindVirusSimControls(
         options,
       );
     });
-  root
-    .querySelectorAll<HTMLButtonElement>('[data-structural-reveal]')
-    .forEach((button) => {
-      button.addEventListener(
-        'click',
-        () => {
-          const mode = button.dataset.structuralReveal;
-          if (mode === 'peel' || mode === 'cutaway' || mode === 'exploded') {
-            actions.structuralReveal(mode);
-          }
-        },
-        options,
-      );
-    });
-  element<HTMLButtonElement>('#structure-reassemble').addEventListener(
-    'click',
-    actions.reassemble,
-    options,
-  );
 
   element<HTMLInputElement>('#scanner-enabled').addEventListener(
     'change',
@@ -225,18 +148,6 @@ export function bindVirusSimControls(
     (event) => actions.setFontScale(inputValue(event) as FontScale),
     options,
   );
-  element<HTMLButtonElement>('#reset-camera').addEventListener(
-    'click',
-    actions.resetCamera,
-    options,
-  );
-  root.querySelectorAll<HTMLButtonElement>('[data-camera-step]').forEach((button) => {
-    button.addEventListener(
-      'click',
-      () => actions.cameraStep(button.dataset.cameraStep as CameraStep),
-      options,
-    );
-  });
 
   const guide = element<HTMLDialogElement>('#model-guide');
   element<HTMLButtonElement>('#open-guide').addEventListener(
@@ -262,10 +173,4 @@ function inputValue(event: Event): string {
 
 function inputChecked(event: Event): boolean {
   return (event.target as HTMLInputElement).checked;
-}
-
-function setActiveGroup(root: ParentNode, selector: string, active: HTMLElement): void {
-  root
-    .querySelectorAll(selector)
-    .forEach((item) => item.classList.toggle('is-active', item === active));
 }

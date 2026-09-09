@@ -189,12 +189,18 @@ describe('Virus Sim v3.5 catalog contracts', () => {
     }
   });
 
-  it('renders 71 catalog controls without removed automatic experience UI', () => {
+  it('renders every catalog entry in one native select', () => {
     const root = { innerHTML: '' } as HTMLElement;
     renderAppLayout(root);
-    expect([
-      ...root.innerHTML.matchAll(/data-observation-preset="([^"]+)"/g),
-    ]).toHaveLength(71);
+    const selectMarkup = root.innerHTML.match(
+      /<select id="virus-select">([\s\S]*?)<\/select>/,
+    )?.[1];
+    const options = [...(selectMarkup ?? '').matchAll(/<option value="([^"]+)">/g)].map(
+      (match) => match[1],
+    );
+    expect(options).toHaveLength(71);
+    expect(new Set(options)).toEqual(new Set(VIRUS_CATALOG.map((entry) => entry.id)));
+    expect(root.innerHTML).toContain('<select id="virus-select">');
     for (const removedCopy of [
       '자동 다큐',
       'FOLLOW',
@@ -202,12 +208,14 @@ describe('Virus Sim v3.5 catalog contracts', () => {
       'INTERIOR',
       'Time Lens',
       'Hero Virus',
+      'Physics Arena',
+      'Micro Lab',
     ]) {
       expect(root.innerHTML).not.toContain(removedCopy);
     }
-    expect(root.innerHTML).not.toContain('data-workspace-tab="comparison"');
-    expect(root.innerHTML).not.toContain('comparison-add');
-    expect(root.innerHTML).not.toContain('variant-a');
+    expect(root.innerHTML).not.toContain('data-camera-step');
+    expect(root.innerHTML).not.toContain('reset-camera');
+    expect(root.innerHTML).not.toContain('observation-preset-card');
   });
 });
 

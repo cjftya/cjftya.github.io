@@ -4,7 +4,7 @@ import { QUALITY_SETTINGS, type RenderQuality } from '../quality/quality';
 
 export class DecorativeParticles {
   readonly root = new THREE.Group();
-  private readonly layers: THREE.Points[] = [];
+  private points: THREE.Points | null = null;
   private level: DecorationLevel = 'subtle';
   private paused = false;
 
@@ -26,71 +26,51 @@ export class DecorativeParticles {
     this.level = level;
     this.paused = paused;
     this.root.visible = level !== 'off';
-    const opacity = level === 'rich' ? 1 : level === 'subtle' ? 0.52 : 0;
-    for (const points of this.layers) {
-      const material = points.material as THREE.ShaderMaterial;
-      material.uniforms.uOpacity!.value =
-        opacity * (points.userData.layerOpacity as number);
-    }
   }
 
   update(elapsedSeconds: number): void {
-    if (this.level === 'off' || this.paused) return;
-    for (const points of this.layers) {
-      const material = points.material as THREE.ShaderMaterial;
-      material.uniforms.uTime!.value = elapsedSeconds;
-    }
+    if (this.level === 'off' || this.paused || !this.points) return;
+    const material = this.points.material as THREE.ShaderMaterial;
+    material.uniforms.uTime!.value = elapsedSeconds;
   }
 
   dispose(): void {
-    this.disposeLayers();
+    this.disposePoints();
     this.scene.remove(this.root);
   }
 
   private rebuild(quality: RenderQuality): void {
-    this.disposeLayers();
+    this.disposePoints();
     const base = QUALITY_SETTINGS[quality].particleCount;
     const mobile = window.matchMedia('(pointer: coarse)').matches;
-    const total = mobile
-      ? Math.min(500, Math.max(220, base))
-      : Math.min(1200, Math.max(650, base * 2));
-    this.layers.push(
-      createLayer(Math.round(total * 0.72), 6, 24, 0x78cbd0, 781, 2.4, 0.34),
-      createLayer(Math.round(total * 0.28), 3, 11, 0xd4eff0, 1597, 6.2, 0.2),
-    );
-    this.root.add(...this.layers);
+    const count = mobile
+      ? Math.min(180, Math.max(110, Math.round(base * 0.32)))
+      : Math.min(320, Math.max(180, Math.round(base * 0.48)));
+    this.points = createParticles(count);
+    this.root.add(this.points);
     this.setState(this.level, this.paused);
   }
 
-  private disposeLayers(): void {
-    for (const points of this.layers) {
-      this.root.remove(points);
-      points.geometry.dispose();
-      (points.material as THREE.Material).dispose();
-    }
-    this.layers.length = 0;
+  private disposePoints(): void {
+    if (!this.points) return;
+    this.root.remove(this.points);
+    this.points.geometry.dispose();
+    (this.points.material as THREE.Material).dispose();
+    this.points = null;
   }
 }
 
-function createLayer(
-  count: number,
-  minimumRadius: number,
-  maximumRadius: number,
-  color: number,
-  initialSeed: number,
-  pointSize: number,
-  layerOpacity: number,
-): THREE.Points {
+function createParticles(count: number): THREE.Points {
   const positions = new Float32Array(count * 3);
   const phases = new Float32Array(count);
-  let state = initialSeed;
+  let state = 781;
   const next = (): number => {
     state = (state * 16_807) % 2_147_483_647;
     return state / 2_147_483_647;
   };
   for (let index = 0; index < count; index += 1) {
     const offset = index * 3;
-    const radius = minimumRadius + next() * (maximumRadius - minimumRadius);
+    const radius = 6 + next() * 14;
     const theta = next() * Math.PI * 2;
     const phi = Math.acos(2 * next() - 1);
     positions[offset] = radius * Math.sin(phi) * Math.cos(theta);
@@ -104,43 +84,36 @@ function createLayer(
   const material = new THREE.ShaderMaterial({
     transparent: true,
     depthWrite: false,
-    blending: THREE.AdditiveBlending,
+    blending: THREE.NormalBlending,
     uniforms: {
       uTime: { value: 0 },
-      uColor: { value: new THREE.Color(color) },
-      uOpacity: { value: layerOpacity },
-      uPointSize: { value: pointSize },
+      uColor: { value: new THREE.Color(0x9bc9ca) },
+      uOpacity: { value: 0.3 },
     },
     vertexShader: `
       attribute float aPhase;
       uniform float uTime;
-      uniform float uPointSize;
-      varying float vPulse;
       void main() {
         vec3 p = position;
-        p.y += sin(uTime * 0.18 + aPhase) * 0.12;
-        p.x += cos(uTime * 0.11 + aPhase * 1.7) * 0.07;
+        p.y += sin(uTime * 0.09 + aPhase) * 0.05;
+        p.x += cos(uTime * 0.07 + aPhase * 1.4) * 0.035;
         vec4 mv = modelViewMatrix * vec4(p, 1.0);
         gl_Position = projectionMatrix * mv;
-        gl_PointSize = uPointSize * (280.0 / max(1.0, -mv.z));
-        vPulse = 0.72 + 0.28 * sin(uTime * 0.31 + aPhase);
+        gl_PointSize = clamp(1.55 * (10.0 / max(1.0, -mv.z)), 1.0, 2.0);
       }
     `,
     fragmentShader: `
       uniform vec3 uColor;
       uniform float uOpacity;
-      varying float vPulse;
       void main() {
-        vec2 p = gl_PointCoord - vec2(0.5);
-        float radius = length(p);
-        float alpha = smoothstep(0.5, 0.08, radius) * uOpacity * vPulse;
-        if (alpha < 0.004) discard;
+        float radius = length(gl_PointCoord - vec2(0.5));
+        float alpha = (1.0 - smoothstep(0.38, 0.5, radius)) * uOpacity;
+        if (alpha < 0.02) discard;
         gl_FragColor = vec4(uColor, alpha);
       }
     `,
   });
   const points = new THREE.Points(geometry, material);
   points.userData.ignoreCameraBounds = true;
-  points.userData.layerOpacity = layerOpacity;
   return points;
 }

@@ -25,17 +25,9 @@ export type {
 
 export type InspectionView = 'surface' | 'transparent' | 'section' | 'exploded';
 export type ScannerAxis = 'x' | 'y' | 'z';
-export type DecorationLevel = 'off' | 'subtle' | 'rich';
-export type StructuralRevealMode =
-  'none' | 'peel' | 'cutaway' | 'exploded' | 'reassemble';
+export type DecorationLevel = 'off' | 'subtle';
 
 export type LayerVisibility = Readonly<Record<ObservationLayerId, boolean>>;
-
-export interface StructuralTransitionState {
-  readonly mode: StructuralRevealMode;
-  readonly progress: number;
-  readonly fromExplosion: number;
-}
 
 export interface SpecimenObservationState {
   readonly presetId: ObservationPresetId;
@@ -45,7 +37,6 @@ export interface SpecimenObservationState {
   readonly sectionOffset: number;
   readonly genomeVisible: boolean;
   readonly layerVisibility: LayerVisibility;
-  readonly transition: StructuralTransitionState;
 }
 
 export interface ScannerProbeState {
@@ -69,7 +60,7 @@ export interface DecorationState {
 }
 
 export interface ObservationState {
-  readonly version: 'virus-observation-v4.1';
+  readonly version: 'virus-observation-v4.2';
   readonly specimen: SpecimenObservationState;
   readonly scanner: ScannerState;
   readonly decoration: DecorationState;

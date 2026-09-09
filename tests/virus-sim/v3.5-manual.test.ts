@@ -1,20 +1,20 @@
 import * as THREE from 'three';
 import { describe, expect, it } from 'vitest';
 import { ObservationStore } from '../../src/virus-sim/observation/ObservationStore';
+import { ManualCamera } from '../../src/virus-sim/rendering/ManualCamera';
 import { SpecimenView } from '../../src/virus-sim/rendering/SpecimenView';
 import { normalizedSlabRange } from '../../src/virus-sim/scanner/math';
 import {
-  loadFavorites,
   loadFontScale,
   loadVirusSimPreferences,
+  removeLegacyVirusSimStorage,
   saveVirusSimPreferences,
 } from '../../src/virus-sim/ui/preferences';
 
 describe('Virus Sim manual observation contracts', () => {
-  it('does not change specimen pose or observation state while idle', () => {
+  it('keeps observation state stable between user actions', () => {
     const store = new ObservationStore(false, 't4');
     const before = store.getSnapshot();
-    for (let index = 0; index < 10_000; index += 1) store.step(1 / 60);
     expect(store.getSnapshot()).toEqual(before);
   });
 
@@ -36,19 +36,6 @@ describe('Virus Sim manual observation contracts', () => {
     expect(specimen.genomeVisible).toBe(false);
     expect(specimen.selectedPartId).toBeNull();
     expect(specimen.layerVisibility.envelope).toBe(true);
-  });
-
-  it('reassembles to exact original structural values', () => {
-    const store = new ObservationStore(false, 't4');
-    store.startStructuralReveal('exploded');
-    for (let index = 0; index < 80; index += 1) store.step(1 / 60);
-    expect(store.getSnapshot().specimen.explosion).toBeCloseTo(74);
-    store.reassemble();
-    for (let index = 0; index < 80; index += 1) store.step(1 / 60);
-    const rebuilt = store.getSnapshot().specimen;
-    expect(rebuilt.view).toBe('surface');
-    expect(rebuilt.explosion).toBe(0);
-    expect(rebuilt.sectionOffset).toBe(0);
   });
 
   it('restores exploded inspection after scanner exit', () => {
@@ -106,7 +93,7 @@ describe('Virus Sim manual observation contracts', () => {
     view.dispose();
   });
 
-  it('keeps durable catalog preferences without reviving old automatic settings', () => {
+  it('keeps display preferences while removing retired collection data', () => {
     const storage = memoryStorage();
     storage.setItem(
       'virus-sim-v2.5-favorites',
@@ -117,7 +104,6 @@ describe('Virus Sim manual observation contracts', () => {
       'virus-sim-v3-settings',
       JSON.stringify({ autoDocumentary: true, motion: 'active', follow: true }),
     );
-    expect([...loadFavorites(storage)]).toEqual(['t4', 'hiv-1']);
     expect(loadFontScale(storage)).toBe('130');
     expect(loadVirusSimPreferences(storage, false)).toEqual({
       version: 1,
@@ -127,15 +113,37 @@ describe('Virus Sim manual observation contracts', () => {
 
     saveVirusSimPreferences(storage, {
       version: 1,
-      decorationLevel: 'rich',
+      decorationLevel: 'subtle',
       decorationPaused: true,
     });
     const saved = JSON.parse(storage.getItem('virus-sim-v3.5-settings') ?? '{}');
     expect(saved).toEqual({
       version: 1,
-      decorationLevel: 'rich',
+      decorationLevel: 'subtle',
       decorationPaused: true,
     });
+    storage.setItem('virus-sim:lab-config:v1', '{}');
+    storage.setItem('virus-sim-v2.5-recent', '["t4"]');
+    removeLegacyVirusSimStorage(storage);
+    expect(storage.getItem('virus-sim:lab-config:v1')).toBeNull();
+    expect(storage.getItem('virus-sim-v2.5-favorites')).toBeNull();
+    expect(storage.getItem('virus-sim-v2.5-recent')).toBeNull();
+  });
+
+  it('frames an off-center specimen around its geometric center on mobile aspect', () => {
+    const camera = new ManualCamera();
+    camera.setViewport(360, 380);
+    const specimen = new THREE.Group();
+    const mesh = new THREE.Mesh(new THREE.BoxGeometry(2, 6, 2));
+    mesh.position.set(1.5, -2.25, 0.4);
+    specimen.add(mesh);
+    camera.frameObject(specimen);
+    const pose = camera.getPose();
+    expect(pose.target.x).toBeCloseTo(1.5);
+    expect(pose.target.y).toBeCloseTo(-2.25);
+    expect(pose.target.z).toBeCloseTo(0.4);
+    expect(pose.distance).toBeGreaterThan(6 / 2);
+    mesh.geometry.dispose();
   });
 });
 
