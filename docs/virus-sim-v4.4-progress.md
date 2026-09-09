@@ -39,4 +39,5 @@
 - v4.3 대비 JS: +10.48 kB, gzip +2.48 kB
 - 23개 외피형 high/low: finite bounds, part/layer, source, profile 통과
 - 대표 8종: surface·transparent·section·exploded·scanner flow 통과
-- 공개 Pages smoke QA: 배포 후 기록
+- 공개 Pages smoke QA: v4.4 badge, 바이러스 71종, T4 정보, History·출처 링크 확인
+- cloud QA 환경은 WebGL2 비활성: fallback 안내 화면 확인, 3D 모델 경로는 high/low·표현 모드 회귀로 검증
