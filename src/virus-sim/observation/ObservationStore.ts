@@ -1,10 +1,4 @@
 import { getCatalogEntry } from '../catalog/registry';
-import {
-  EMPTY_TRANSITION,
-  beginReassembly,
-  beginStructuralTransition,
-  stepStructuralTransition,
-} from '../inspection/transition';
 import type {
   DecorationLevel,
   InspectionView,
@@ -16,25 +10,12 @@ import type {
   ObservationState,
   ScannerAxis,
   SpecimenObservationState,
-  StructuralRevealMode,
 } from './types';
 
 const ALL_LAYER_IDS: readonly ObservationLayerId[] = [
-  'envelope',
-  'surface-protein',
-  'tegument',
-  'capsid',
-  'tail',
-  'outer-capsid',
-  'middle-capsid',
-  'core-capsid',
-  'inner-membrane',
-  'matrix',
-  'nucleocapsid',
-  'membrane',
-  'core-wall',
-  'lateral-body',
-  'genome',
+  'envelope', 'surface-protein', 'tegument', 'capsid', 'tail',
+  'outer-capsid', 'middle-capsid', 'core-capsid', 'inner-membrane',
+  'matrix', 'nucleocapsid', 'membrane', 'core-wall', 'lateral-body', 'genome',
 ] as const;
 
 export class ObservationStore {
@@ -42,7 +23,7 @@ export class ObservationStore {
 
   constructor(reducedMotion = false, initialId: ObservationPresetId = 't4') {
     this.state = {
-      version: 'virus-observation-v4.1',
+      version: 'virus-observation-v4.2',
       specimen: createSpecimen(initialId),
       scanner: {
         enabled: false,
@@ -58,21 +39,8 @@ export class ObservationStore {
     return cloneState(this.state);
   }
 
-  replaceSnapshot(snapshot: ObservationSnapshot): void {
-    this.state = cloneState(snapshot);
-  }
-
   getActiveSpecimen(): SpecimenObservationState {
     return this.state.specimen;
-  }
-
-  step(dt: number): void {
-    const specimen = stepStructuralTransition(
-      this.state.specimen,
-      dt,
-      this.state.reducedMotion,
-    );
-    if (specimen !== this.state.specimen) this.state = { ...this.state, specimen };
   }
 
   setPreset(presetId: ObservationPresetId): void {
@@ -94,7 +62,6 @@ export class ObservationStore {
           : view === 'exploded'
             ? specimen.explosion
             : 0,
-      transition: EMPTY_TRANSITION,
     }));
   }
 
@@ -104,7 +71,6 @@ export class ObservationStore {
       ...specimen,
       view: 'exploded',
       explosion: clamp(explosion, 0, 100),
-      transition: EMPTY_TRANSITION,
     }));
   }
 
@@ -113,7 +79,6 @@ export class ObservationStore {
       ...specimen,
       view: 'section',
       sectionOffset: clamp(sectionOffset, -1, 1),
-      transition: EMPTY_TRANSITION,
     }));
   }
 
@@ -138,26 +103,6 @@ export class ObservationStore {
     this.updateSpecimen((specimen) => ({ ...specimen, selectedPartId }));
   }
 
-  startStructuralReveal(
-    mode: Exclude<StructuralRevealMode, 'none' | 'reassemble'>,
-  ): void {
-    if (this.state.scanner.enabled) return;
-    this.updateSpecimen((specimen) => beginStructuralTransition(specimen, mode));
-  }
-
-  reassemble(): void {
-    if (this.state.scanner.enabled) {
-      this.updateSpecimen((specimen) => ({
-        ...specimen,
-        view: 'surface',
-        explosion: 0,
-        transition: EMPTY_TRANSITION,
-      }));
-      return;
-    }
-    this.updateSpecimen(beginReassembly);
-  }
-
   setScannerEnabled(enabled: boolean): void {
     if (enabled === this.state.scanner.enabled) return;
     if (enabled) {
@@ -168,7 +113,6 @@ export class ObservationStore {
           ...specimen,
           view: specimen.view === 'exploded' ? 'surface' : specimen.view,
           explosion: 0,
-          transition: EMPTY_TRANSITION,
         },
         scanner: {
           ...this.state.scanner,
@@ -191,10 +135,7 @@ export class ObservationStore {
   }
 
   setScannerPosition(position: number): void {
-    this.updateScannerProbe((probe) => ({
-      ...probe,
-      position: clamp(position, 0, 1),
-    }));
+    this.updateScannerProbe((probe) => ({ ...probe, position: clamp(position, 0, 1) }));
   }
 
   setScannerThickness(thickness: number): void {
@@ -240,7 +181,6 @@ function createSpecimen(presetId: ObservationPresetId): SpecimenObservationState
     sectionOffset: 0,
     genomeVisible: false,
     layerVisibility: createLayerVisibility(definition.layers.map((item) => item.id)),
-    transition: EMPTY_TRANSITION,
   };
 }
 
@@ -253,18 +193,13 @@ function createLayerVisibility(
   ) as unknown as LayerVisibility;
 }
 
-function cloneSpecimen(specimen: SpecimenObservationState): SpecimenObservationState {
-  return {
-    ...specimen,
-    layerVisibility: { ...specimen.layerVisibility },
-    transition: { ...specimen.transition },
-  };
-}
-
 function cloneState(state: ObservationState): ObservationState {
   return {
     ...state,
-    specimen: cloneSpecimen(state.specimen),
+    specimen: {
+      ...state.specimen,
+      layerVisibility: { ...state.specimen.layerVisibility },
+    },
     scanner: {
       ...state.scanner,
       probe: { ...state.scanner.probe },

@@ -76,11 +76,7 @@ export class SpecimenView {
 
   update(state: SpecimenObservationState): void {
     this.applyView(state);
-    this.applyExplosion(
-      state.view === 'exploded' || state.transition.mode === 'peel'
-        ? state.explosion
-        : 0,
-    );
+    this.applyExplosion(state.view === 'exploded' ? state.explosion : 0);
     this.applySection(state.view === 'section', state.sectionOffset);
     this.applySelection(state.selectedPartId);
   }
@@ -216,21 +212,17 @@ export class SpecimenView {
 
   private applyView(state: SpecimenObservationState): void {
     const transparent = state.view === 'transparent' || state.view === 'exploded';
-    const peel = state.transition.mode === 'peel';
-    const peelProgress = smoothStep(state.transition.progress);
     for (const entry of this.model.surfaceMaterials) {
       const material = entry.material;
       if (!('opacity' in material)) continue;
-      const nextTransparent = transparent || peel || entry.opacity < 1;
-      const nextDepthWrite = transparent || peel ? false : entry.depthWrite;
+      const nextTransparent = transparent || entry.opacity < 1;
+      const nextDepthWrite = transparent ? false : entry.depthWrite;
       const programChanged =
         material.transparent !== nextTransparent ||
         material.depthWrite !== nextDepthWrite;
       material.transparent = nextTransparent;
       const baseOpacity = transparent ? Math.min(entry.opacity, 0.24) : entry.opacity;
-      material.opacity = peel
-        ? THREE.MathUtils.lerp(baseOpacity, Math.min(entry.opacity, 0.1), peelProgress)
-        : baseOpacity;
+      material.opacity = baseOpacity;
       material.depthWrite = nextDepthWrite;
       if (programChanged) material.needsUpdate = true;
     }
@@ -352,11 +344,6 @@ function findObservationTarget(
 function partCopy(partId: ObservationPartId): SpecimenPick {
   const part = OBSERVATION_PARTS[partId];
   return { partId, title: part.name, description: part.detail };
-}
-
-function smoothStep(value: number): number {
-  const safe = THREE.MathUtils.clamp(value, 0, 1);
-  return safe * safe * (3 - 2 * safe);
 }
 
 function disposeTree(root: THREE.Object3D): void {

@@ -1,10 +1,8 @@
 import * as THREE from 'three';
 import { getCatalogEntry } from '../catalog/registry';
 import type { ObservationSnapshot } from '../observation/types';
-import type { LabSnapshot } from '../lab/types';
 import { DecorativeParticles } from './effects/DecorativeParticles';
-import { ManualCamera, type ManualCameraPose } from './ManualCamera';
-import { LabScene } from './lab/LabScene';
+import { ManualCamera } from './ManualCamera';
 import { QUALITY_SETTINGS, type RenderQuality } from './quality/quality';
 import { ScannerRenderer } from './scanner/ScannerRenderer';
 import { SpecimenView, type SpecimenPick } from './SpecimenView';
@@ -31,25 +29,18 @@ interface PointerGesture {
   mode: 'orbit' | 'pan';
 }
 
-export type SceneFrameSnapshot =
-  | { readonly mode: 'observation'; readonly snapshot: ObservationSnapshot }
-  | { readonly mode: 'lab'; readonly snapshot: LabSnapshot };
-
-type SnapshotSource = (deltaSeconds: number) => SceneFrameSnapshot;
+type SnapshotSource = (deltaSeconds: number) => ObservationSnapshot;
 
 export class SceneRenderer {
   private readonly renderer: THREE.WebGLRenderer;
   private readonly canvas: HTMLCanvasElement;
   private readonly scanner: ScannerRenderer;
-  private readonly labScene: LabScene;
   private readonly resizeObserver: ResizeObserver;
   private readonly observationScene: ObservationScene;
   private readonly raycaster = new THREE.Raycaster();
   private readonly pointer = new THREE.Vector2();
   private readonly activePointers = new Map<number, PointerGesture>();
   private snapshot: ObservationSnapshot | null = null;
-  private labSnapshot: LabSnapshot | null = null;
-  private activeMode: SceneFrameSnapshot['mode'] = 'observation';
   private quality: RenderQuality = 'standard';
   private animationFrame = 0;
   private resizeAnimationFrame = 0;
@@ -57,7 +48,8 @@ export class SceneRenderer {
   private lastFrameTime = performance.now();
   private startedAt = performance.now();
   private disposed = false;
-  private initialized = false;
+  private pendingRefit = true;
+  private viewportOrientation = window.innerWidth < window.innerHeight;
   private lastTouchDistance = 0;
   private lastTouchCenter: { x: number; y: number } | null = null;
 
@@ -65,7 +57,6 @@ export class SceneRenderer {
     private readonly container: HTMLElement,
     scannerCanvas: HTMLCanvasElement,
     private readonly onSelect: (selection: SelectionDetails | null) => void,
-    private readonly onLabSelect: (instanceId: string | null) => void = () => undefined,
   ) {
     this.canvas = document.createElement('canvas');
     this.canvas.className = 'virus-canvas';
@@ -87,7 +78,6 @@ export class SceneRenderer {
     this.setRendererPixelRatio(this.quality);
     this.observationScene = this.createObservationScene();
     this.scanner = new ScannerRenderer(this.renderer, scannerCanvas);
-    this.labScene = new LabScene(this.quality);
     this.scanner.clear();
 
     this.canvas.addEventListener('pointerdown', this.handlePointerDown);
@@ -98,9 +88,10 @@ export class SceneRenderer {
     this.canvas.addEventListener('contextmenu', this.handleContextMenu);
     this.canvas.addEventListener('webglcontextlost', this.handleContextLost);
     this.canvas.addEventListener('webglcontextrestored', this.handleContextRestored);
+    window.addEventListener('orientationchange', this.handleOrientationChange);
     this.resizeObserver = new ResizeObserver(this.resize);
     this.resizeObserver.observe(container);
-    this.resize();
+    this.commitResize();
   }
 
   start(source: SnapshotSource): void {
@@ -111,23 +102,10 @@ export class SceneRenderer {
   }
 
   show(snapshot: ObservationSnapshot): void {
-    this.activeMode = 'observation';
     this.snapshot = snapshot;
-    this.ensureView(snapshot);
+    const changed = this.ensureView(snapshot);
     this.applySnapshot(snapshot);
-    if (!this.initialized && this.observationScene.view) {
-      this.observationScene.camera.frameObject(
-        this.observationScene.view.getRenderRoot(),
-      );
-      this.initialized = true;
-    }
-    this.renderFrame();
-  }
-
-  showLab(snapshot: LabSnapshot): void {
-    this.activeMode = 'lab';
-    this.labSnapshot = snapshot;
-    this.scanner.clear();
+    if ((changed || this.pendingRefit) && this.observationScene.view) this.frameAll();
     this.renderFrame();
   }
 
@@ -139,94 +117,17 @@ export class SceneRenderer {
     this.observationScene.view?.dispose();
     this.observationScene.view = null;
     this.scanner.invalidate();
-    this.labScene.setQuality(quality);
-    if (this.activeMode === 'lab' && this.labSnapshot) this.showLab(this.labSnapshot);
-    else if (this.snapshot) this.show(this.snapshot);
-    this.resize();
+    this.pendingRefit = true;
+    if (this.snapshot) this.show(this.snapshot);
+    this.commitResize();
   }
 
   frameAll(): void {
-    if (this.activeMode === 'lab') {
-      this.labScene.frameAll();
-      this.renderFrame();
-      return;
-    }
     if (!this.snapshot || !this.observationScene.view) return;
     this.observationScene.camera.frameObject(
       this.observationScene.view.getRenderRoot(),
     );
-    this.renderFrame();
-  }
-
-  applyCameraStep(
-    action:
-      | 'left'
-      | 'right'
-      | 'up'
-      | 'down'
-      | 'pan-left'
-      | 'pan-right'
-      | 'zoom-in'
-      | 'zoom-out',
-  ): void {
-    if (this.activeMode === 'lab') {
-      switch (action) {
-        case 'left':
-          this.labScene.orbit(-18, 0);
-          break;
-        case 'right':
-          this.labScene.orbit(18, 0);
-          break;
-        case 'up':
-          this.labScene.orbit(0, -18);
-          break;
-        case 'down':
-          this.labScene.orbit(0, 18);
-          break;
-        case 'pan-left':
-          this.labScene.pan(-18, 0);
-          break;
-        case 'pan-right':
-          this.labScene.pan(18, 0);
-          break;
-        case 'zoom-in':
-          this.labScene.dolly(-110);
-          break;
-        case 'zoom-out':
-          this.labScene.dolly(110);
-          break;
-      }
-      this.renderFrame();
-      return;
-    }
-    if (!this.snapshot) return;
-    const camera = this.observationScene.camera;
-    switch (action) {
-      case 'left':
-        camera.orbit(-18, 0);
-        break;
-      case 'right':
-        camera.orbit(18, 0);
-        break;
-      case 'up':
-        camera.orbit(0, -18);
-        break;
-      case 'down':
-        camera.orbit(0, 18);
-        break;
-      case 'pan-left':
-        camera.pan(-18, 0);
-        break;
-      case 'pan-right':
-        camera.pan(18, 0);
-        break;
-      case 'zoom-in':
-        camera.dolly(-110);
-        break;
-      case 'zoom-out':
-        camera.dolly(110);
-        break;
-    }
+    this.pendingRefit = false;
     this.renderFrame();
   }
 
@@ -245,13 +146,11 @@ export class SceneRenderer {
     exportCanvas.width = this.canvas.width;
     exportCanvas.height = this.canvas.height;
     const context = exportCanvas.getContext('2d');
-    if ((!snapshot && !this.labSnapshot) || !context) return Promise.resolve(false);
+    if (!snapshot || !context) return Promise.resolve(false);
     context.drawImage(this.canvas, 0, 0);
     const scaleX = exportCanvas.width / Math.max(1, this.container.clientWidth);
     const scaleY = exportCanvas.height / Math.max(1, this.container.clientHeight);
-    if (this.activeMode === 'lab' && this.labSnapshot)
-      this.drawLabExportOverlay(context, this.labSnapshot, scaleX, scaleY);
-    else if (snapshot) this.drawExportOverlay(context, snapshot, scaleX, scaleY);
+    this.drawExportOverlay(context, snapshot, scaleX, scaleY);
     return new Promise((resolve) => {
       exportCanvas.toBlob((blob) => {
         if (!blob) return resolve(false);
@@ -264,15 +163,6 @@ export class SceneRenderer {
         resolve(true);
       }, 'image/png');
     });
-  }
-
-  getObservationCameraPose(): ManualCameraPose {
-    return this.observationScene.camera.getPose();
-  }
-
-  setObservationCameraPose(pose: ManualCameraPose): void {
-    this.observationScene.camera.setPose(pose);
-    this.renderFrame();
   }
 
   private drawExportOverlay(
@@ -296,38 +186,6 @@ export class SceneRenderer {
     context.restore();
   }
 
-  private drawLabExportOverlay(
-    context: CanvasRenderingContext2D,
-    snapshot: LabSnapshot,
-    scaleX: number,
-    scaleY: number,
-  ): void {
-    context.save();
-    context.scale(scaleX, scaleY);
-    const width = Math.max(240, this.container.clientWidth - 28);
-    context.fillStyle = 'rgba(5, 11, 23, 0.84)';
-    context.fillRect(14, 14, width, 82);
-    context.fillStyle = '#f2f7ff';
-    context.font = '700 17px system-ui, sans-serif';
-    context.fillText('MICRO LAB · PHYSICS ARENA', 26, 24);
-    context.fillStyle = '#b8c7da';
-    context.font = '600 14px system-ui, sans-serif';
-    const scaleLabel =
-      snapshot.config.scaleMode === 'physical'
-        ? '실제 대표 nm 비율'
-        : '대표 길이 맞춤 · 실제 비율 아님';
-    context.fillText(
-      `${scaleLabel} · ${snapshot.config.environment.flowPreset} · ${snapshot.simTime.toFixed(2)} sim-s · ${snapshot.status}`,
-      26,
-      48,
-    );
-    const names = snapshot.bodies
-      .map((body) => getCatalogEntry(body.virusId).shortName)
-      .join(' · ');
-    context.fillText(fitCanvasText(context, `표본 ${names}`, width - 24), 26, 70);
-    context.restore();
-  }
-
   dispose(): void {
     if (this.disposed) return;
     this.disposed = true;
@@ -343,9 +201,9 @@ export class SceneRenderer {
     this.canvas.removeEventListener('contextmenu', this.handleContextMenu);
     this.canvas.removeEventListener('webglcontextlost', this.handleContextLost);
     this.canvas.removeEventListener('webglcontextrestored', this.handleContextRestored);
+    window.removeEventListener('orientationchange', this.handleOrientationChange);
     this.observationScene.view?.dispose();
     this.observationScene.particles.dispose();
-    this.labScene.dispose();
     this.scanner.dispose();
     this.renderer.dispose();
     this.canvas.remove();
@@ -363,9 +221,9 @@ export class SceneRenderer {
     };
   }
 
-  private ensureView(snapshot: ObservationSnapshot): void {
+  private ensureView(snapshot: ObservationSnapshot): boolean {
     const state = snapshot.specimen;
-    if (this.observationScene.view?.presetId === state.presetId) return;
+    if (this.observationScene.view?.presetId === state.presetId) return false;
     this.observationScene.view?.dispose();
     this.observationScene.view = new SpecimenView(
       this.observationScene.scene,
@@ -373,6 +231,7 @@ export class SceneRenderer {
       this.quality,
     );
     this.scanner.invalidate();
+    return true;
   }
 
   private applySnapshot(snapshot: ObservationSnapshot): void {
@@ -388,16 +247,6 @@ export class SceneRenderer {
   }
 
   private renderFrame(): void {
-    if (this.activeMode === 'lab') {
-      if (!this.labSnapshot) return;
-      this.labScene.show(this.labSnapshot);
-      this.labScene.render(
-        this.renderer,
-        Math.max(1, this.container.clientWidth),
-        Math.max(1, this.container.clientHeight),
-      );
-      return;
-    }
     const snapshot = this.snapshot;
     if (!snapshot) return;
     this.ensureView(snapshot);
@@ -449,40 +298,13 @@ export class SceneRenderer {
     if (this.disposed) return;
     const delta = Math.min(0.1, Math.max(0, (time - this.lastFrameTime) / 1000));
     this.lastFrameTime = time;
-    const wasTransitioning =
-      this.snapshot && this.activeMode === 'observation'
-        ? this.hasActiveTransition(this.snapshot)
-        : false;
-    const previousLabTime = this.labSnapshot?.simTime ?? -1;
-    if (this.frameSource) {
-      const frame = this.frameSource(delta);
-      if (frame.mode === 'lab') {
-        this.activeMode = 'lab';
-        this.labSnapshot = frame.snapshot;
-      } else {
-        this.activeMode = 'observation';
-        this.snapshot = frame.snapshot;
-      }
-    }
-    if (
-      this.activeMode === 'lab' &&
-      this.labSnapshot &&
-      (this.labSnapshot.status === 'running' ||
-        this.labSnapshot.simTime !== previousLabTime)
-    ) {
-      this.renderFrame();
-    } else if (this.snapshot) {
+    if (this.frameSource) this.snapshot = this.frameSource(delta);
+    if (this.snapshot) {
       const elapsed = (time - this.startedAt) / 1000;
       const particlesAnimating =
         this.snapshot.decoration.level !== 'off' && !this.snapshot.decoration.paused;
       if (particlesAnimating) this.observationScene.particles.update(elapsed);
-      if (
-        particlesAnimating ||
-        wasTransitioning ||
-        this.hasActiveTransition(this.snapshot)
-      ) {
-        this.renderFrame();
-      }
+      if (particlesAnimating) this.renderFrame();
     }
     this.animationFrame = requestAnimationFrame(this.frame);
   };
@@ -498,31 +320,24 @@ export class SceneRenderer {
   private commitResize(): void {
     const width = Math.max(1, this.container.clientWidth);
     const height = Math.max(1, this.container.clientHeight);
+    const orientation = window.innerWidth < window.innerHeight;
+    if (orientation !== this.viewportOrientation) {
+      this.viewportOrientation = orientation;
+      this.pendingRefit = true;
+    }
     this.renderer.setSize(width, height, false);
-    if (this.activeMode === 'observation' && this.snapshot)
-      this.applySnapshot(this.snapshot);
+    if (this.snapshot) this.applySnapshot(this.snapshot);
     this.scanner.invalidate();
+    if (this.pendingRefit && this.observationScene.view) this.frameAll();
     this.renderFrame();
   }
 
+  private readonly handleOrientationChange = (): void => {
+    this.pendingRefit = true;
+    this.resize();
+  };
+
   private readonly handlePointerDown = (event: PointerEvent): void => {
-    if (this.activeMode === 'lab') {
-      this.canvas.setPointerCapture(event.pointerId);
-      this.activePointers.set(event.pointerId, {
-        id: event.pointerId,
-        startX: event.clientX,
-        startY: event.clientY,
-        startedAt: performance.now(),
-        lastX: event.clientX,
-        lastY: event.clientY,
-        moved: false,
-        mode:
-          event.button === 1 || event.button === 2 || event.shiftKey ? 'pan' : 'orbit',
-      });
-      this.lastTouchDistance = 0;
-      this.lastTouchCenter = null;
-      return;
-    }
     this.canvas.setPointerCapture(event.pointerId);
     this.activePointers.set(event.pointerId, {
       id: event.pointerId,
@@ -560,32 +375,19 @@ export class SceneRenderer {
         first.lastY - second.lastY,
       );
       if (this.lastTouchCenter && this.lastTouchDistance > 0) {
-        if (this.activeMode === 'lab') {
-          this.labScene.pan(
-            center.x - this.lastTouchCenter.x,
-            center.y - this.lastTouchCenter.y,
-          );
-          this.labScene.dolly((this.lastTouchDistance - distance) * 3);
-        } else {
-          const camera = this.observationScene.camera;
-          camera.pan(
-            center.x - this.lastTouchCenter.x,
-            center.y - this.lastTouchCenter.y,
-          );
-          camera.dolly((this.lastTouchDistance - distance) * 3);
-        }
+        const camera = this.observationScene.camera;
+        camera.pan(
+          center.x - this.lastTouchCenter.x,
+          center.y - this.lastTouchCenter.y,
+        );
+        camera.dolly((this.lastTouchDistance - distance) * 3);
       }
       this.lastTouchCenter = center;
       this.lastTouchDistance = distance;
     } else {
-      if (this.activeMode === 'lab') {
-        if (gesture.mode === 'pan') this.labScene.pan(deltaX, deltaY);
-        else this.labScene.orbit(deltaX, deltaY);
-      } else {
-        const camera = this.observationScene.camera;
-        if (gesture.mode === 'pan') camera.pan(deltaX, deltaY);
-        else camera.orbit(deltaX, deltaY);
-      }
+      const camera = this.observationScene.camera;
+      if (gesture.mode === 'pan') camera.pan(deltaX, deltaY);
+      else camera.orbit(deltaX, deltaY);
     }
     this.renderFrame();
   };
@@ -596,17 +398,8 @@ export class SceneRenderer {
     this.lastTouchDistance = 0;
     this.lastTouchCenter = null;
     if (!gesture) return;
-    if (!gesture.moved && performance.now() - gesture.startedAt < 560) {
-      if (this.activeMode === 'lab')
-        this.onLabSelect(
-          this.labScene.pick(
-            event.clientX,
-            event.clientY,
-            this.canvas.getBoundingClientRect(),
-          ),
-        );
-      else this.pick(event);
-    }
+    if (!gesture.moved && performance.now() - gesture.startedAt < 560)
+      this.pick(event);
   };
 
   private readonly handlePointerCancel = (event: PointerEvent): void => {
@@ -617,11 +410,6 @@ export class SceneRenderer {
 
   private readonly handleWheel = (event: WheelEvent): void => {
     event.preventDefault();
-    if (this.activeMode === 'lab') {
-      this.labScene.dolly(event.deltaY);
-      this.renderFrame();
-      return;
-    }
     this.observationScene.camera.dolly(event.deltaY);
     this.renderFrame();
   };
@@ -647,10 +435,6 @@ export class SceneRenderer {
     this.onSelect(selection ? { ...selection, kind: 'part' } : null);
   }
 
-  private hasActiveTransition(snapshot: ObservationSnapshot): boolean {
-    return snapshot.specimen.transition.mode !== 'none';
-  }
-
   private setRendererPixelRatio(quality: RenderQuality): void {
     const configured = QUALITY_SETTINGS[quality].pixelRatio;
     const maximum = window.matchMedia('(pointer: coarse)').matches
@@ -672,8 +456,7 @@ export class SceneRenderer {
     this.container.dispatchEvent(
       new CustomEvent('virus-context-status', { bubbles: true, detail: 'restored' }),
     );
-    if (this.activeMode === 'lab' && this.labSnapshot) this.showLab(this.labSnapshot);
-    else if (this.snapshot) this.show(this.snapshot);
+    if (this.snapshot) this.show(this.snapshot);
   };
 }
 
@@ -691,16 +474,4 @@ function addLights(scene: THREE.Scene): void {
   const warm = new THREE.PointLight(0xffc580, 12, 16, 2);
   warm.position.set(4, -3, 3);
   scene.add(warm);
-}
-
-function fitCanvasText(
-  context: CanvasRenderingContext2D,
-  value: string,
-  maximumWidth: number,
-): string {
-  if (context.measureText(value).width <= maximumWidth) return value;
-  let result = value;
-  while (result.length > 1 && context.measureText(`${result}…`).width > maximumWidth)
-    result = result.slice(0, -1);
-  return `${result}…`;
 }

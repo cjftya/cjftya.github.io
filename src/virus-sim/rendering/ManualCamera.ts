@@ -70,18 +70,20 @@ export class ManualCamera {
   frameObject(object: THREE.Object3D): void {
     const bounds = visibleBounds(object);
     if (bounds.isEmpty()) return;
-    const center = bounds.getCenter(new THREE.Vector3());
-    const size = bounds.getSize(new THREE.Vector3());
-    const verticalSize = Math.max(
-      size.y,
-      size.x / Math.max(this.width / this.height, 0.45),
+    const sphere = bounds.getBoundingSphere(new THREE.Sphere());
+    const verticalHalfFov = THREE.MathUtils.degToRad(this.perspective.fov * 0.5);
+    const horizontalHalfFov = Math.atan(
+      Math.tan(verticalHalfFov) * this.perspective.aspect,
     );
-    const fill = this.width / this.height < 0.72 ? 0.58 : 0.68;
-    this.target.copy(center);
+    const limitingHalfFov = Math.max(
+      THREE.MathUtils.degToRad(5),
+      Math.min(verticalHalfFov, horizontalHalfFov),
+    );
+    const fill = this.perspective.aspect < 0.72 ? 0.72 : 0.78;
+    this.target.copy(sphere.center);
     this.distance = Math.max(
       1.2,
-      verticalSize /
-        (2 * Math.tan(THREE.MathUtils.degToRad(this.perspective.fov * 0.5)) * fill),
+      sphere.radius / (Math.sin(limitingHalfFov) * fill),
     );
     this.syncCameras();
   }
