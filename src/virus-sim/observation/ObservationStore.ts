@@ -13,9 +13,21 @@ import type {
 } from './types';
 
 const ALL_LAYER_IDS: readonly ObservationLayerId[] = [
-  'envelope', 'surface-protein', 'tegument', 'capsid', 'tail',
-  'outer-capsid', 'middle-capsid', 'core-capsid', 'inner-membrane',
-  'matrix', 'nucleocapsid', 'membrane', 'core-wall', 'lateral-body', 'genome',
+  'envelope',
+  'surface-protein',
+  'tegument',
+  'capsid',
+  'tail',
+  'outer-capsid',
+  'middle-capsid',
+  'core-capsid',
+  'inner-membrane',
+  'matrix',
+  'nucleocapsid',
+  'membrane',
+  'core-wall',
+  'lateral-body',
+  'genome',
 ] as const;
 
 export class ObservationStore {
@@ -23,7 +35,7 @@ export class ObservationStore {
 
   constructor(reducedMotion = false, initialId: ObservationPresetId = 't4') {
     this.state = {
-      version: 'virus-observation-v4.2',
+      version: 'virus-observation-v4.3',
       specimen: createSpecimen(initialId),
       scanner: {
         enabled: false,

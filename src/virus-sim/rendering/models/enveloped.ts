@@ -14,6 +14,11 @@ import {
   registerPartAlias,
   standardMaterial,
 } from './shared';
+import {
+  createMatrixShell,
+  createSegmentedRnp,
+  createSurfaceProteinInstances,
+} from './components';
 
 export function buildHSV(collector: ModelCollector, quality: 'high' | 'low'): void {
   addSphericalEnvelope(collector, quality, 2.48, 0xd477ad, 0.78);
@@ -67,59 +72,39 @@ export function buildInfluenza(
   const envelope = addSphericalEnvelope(collector, quality, 2.22, 0xb75f98, 0.84);
   envelope.scale.set(1.02, 0.96, 1);
 
-  const directions = fibonacciDirections(quality === 'high' ? 64 : 34);
-  const haDirections = directions.filter((_, index) => index % 5 !== 0);
-  const naDirections = directions.filter((_, index) => index % 5 === 0);
-  const ha = createRadialInstances(
-    new THREE.ConeGeometry(0.11, 0.48, 7),
-    standardMaterial(0xf1aacb),
-    haDirections.map((direction) => direction.clone().multiplyScalar(2.47)),
-    haDirections,
-  );
-  collector.root.add(ha.mesh);
-  register(collector, ha.mesh, 'spike', 'surface-protein', true);
-  collector.instanceExplosions.push({ ...ha, distance: 0.74 });
-  const na = createRadialInstances(
-    new THREE.CapsuleGeometry(0.105, 0.28, 3, 6),
-    standardMaterial(COLORS.layerGold),
-    naDirections.map((direction) => direction.clone().multiplyScalar(2.46)),
-    naDirections,
-  );
-  collector.root.add(na.mesh);
-  register(collector, na.mesh, 'spike', 'surface-protein', true);
-  collector.instanceExplosions.push({ ...na, distance: 0.74 });
+  const surfaceComponents = [
+    {
+      shape: 'cone' as const,
+      count: quality === 'high' ? 52 : 27,
+      radius: 2.47,
+      color: 0xf1aacb,
+    },
+    {
+      shape: 'knob' as const,
+      count: quality === 'high' ? 13 : 7,
+      radius: 2.43,
+      color: COLORS.layerGold,
+    },
+    {
+      shape: 'channel' as const,
+      count: quality === 'high' ? 7 : 4,
+      radius: 2.29,
+      color: COLORS.layerBlue,
+    },
+  ];
+  surfaceComponents.forEach((component, index) => {
+    const surface = createSurfaceProteinInstances(component);
+    collector.root.add(surface.mesh);
+    register(collector, surface.mesh, 'spike', 'surface-protein', true);
+    collector.instanceExplosions.push({ ...surface, distance: 0.7 + index * 0.04 });
+  });
 
-  const matrix = new THREE.Mesh(
-    new THREE.SphereGeometry(
-      1.88,
-      quality === 'high' ? 40 : 22,
-      quality === 'high' ? 28 : 14,
-    ),
-    physicalMaterial(COLORS.matrix, 0.62, false),
-  );
+  const matrix = createMatrixShell(1.88, quality, 0.62);
   collector.root.add(matrix);
   register(collector, matrix, 'matrix', 'matrix', true);
   addObjectExplosion(collector, matrix, new THREE.Vector3(-0.55, 0.25, 0.4), 0.72);
 
-  const rnpGroup = new THREE.Group();
-  for (let segment = 0; segment < 8; segment += 1) {
-    const angle = (segment / 8) * Math.PI * 2;
-    const length = 1.05 + (segment % 3) * 0.22;
-    const points: THREE.Vector3[] = [];
-    for (let index = 0; index <= 12; index += 1) {
-      const t = index / 12;
-      points.push(
-        new THREE.Vector3(
-          Math.cos(angle) * (0.28 + segment * 0.03) + Math.sin(t * Math.PI * 2) * 0.08,
-          (t - 0.5) * length,
-          Math.sin(angle) * (0.28 + segment * 0.03) + Math.cos(t * Math.PI * 2) * 0.08,
-        ),
-      );
-    }
-    rnpGroup.add(
-      createTube(points, 0.055, quality, false, segment % 2 ? 0xb78cff : 0xd1a7ff),
-    );
-  }
+  const rnpGroup = createSegmentedRnp(8, quality);
   collector.root.add(rnpGroup);
   register(collector, rnpGroup, 'rnp', 'nucleocapsid');
   registerPartAlias(collector, rnpGroup, 'genome');

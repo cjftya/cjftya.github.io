@@ -1,4 +1,6 @@
 import { getCatalogEntry } from '../catalog/registry';
+import { getVirusHistory } from '../catalog/history/registry';
+import { getHistorySource } from '../catalog/history/sources';
 import { getStructureSource } from '../catalog/sources';
 import type {
   DecorationState,
@@ -181,6 +183,50 @@ export class VirusSimPanel {
             `<a href="${source.url}" target="_blank" rel="noreferrer" title="${escapeAttribute(source.scope)}">${escapeHtml(source.label)} ↗</a>`,
         )
         .join('');
+    this.renderHistory(definition.id);
+  }
+
+  private renderHistory(virusId: string): void {
+    const history = getVirusHistory(virusId);
+    const discoveryLabel = [
+      history.discovery?.dateLabel ?? history.discovery?.year,
+      history.discovery?.place,
+    ]
+      .filter(Boolean)
+      .join(' · ');
+    const hostNames = history.hostContext?.primaryHosts?.join(' · ');
+    const events = history.events.length
+      ? `<div class="history-block history-events"><h3>주요 사건</h3><ul>${history.events
+          .map(
+            (event) =>
+              `<li><strong>${escapeHtml(event.period)} · ${escapeHtml(event.title)}</strong><span>${escapeHtml(event.summary)}</span></li>`,
+          )
+          .join('')}</ul></div>`
+      : '';
+    const uncertainty = history.uncertainty?.length
+      ? `<div class="history-note"><strong>확인 한계</strong>${history.uncertainty
+          .map((item) => `<span>${escapeHtml(item)}</span>`)
+          .join('')}</div>`
+      : '';
+    const sources = history.sourceIds
+      .map(getHistorySource)
+      .filter((source) => source !== undefined)
+      .map(
+        (source) =>
+          `<a href="${source.url}" target="_blank" rel="noreferrer" title="${escapeAttribute(source.scope)}">${escapeHtml(source.label)} ↗</a>`,
+      )
+      .join('');
+
+    this.element<HTMLElement>('#history-impact').innerHTML = `
+      <div class="history-grid">
+        ${history.discovery ? `<section class="history-block"><h3>최초 확인</h3>${discoveryLabel ? `<strong>${escapeHtml(String(discoveryLabel))}</strong>` : ''}<p>${escapeHtml(history.discovery.context)}</p></section>` : ''}
+        ${history.hostContext ? `<section class="history-block"><h3>숙주와 저장소</h3>${hostNames ? `<strong>${escapeHtml(hostNames)}</strong>` : ''}${history.hostContext.reservoir ? `<p>${escapeHtml(history.hostContext.reservoir)}</p>` : ''}${history.hostContext.note ? `<p>${escapeHtml(history.hostContext.note)}</p>` : ''}</section>` : ''}
+      </div>
+      <section class="history-block history-impact-summary"><h3>실제 영향</h3><p>${escapeHtml(history.impactSummary)}</p></section>
+      ${events}
+      ${history.currentStatus ? `<section class="history-block"><h3>현재 의미</h3><p>${escapeHtml(history.currentStatus)}</p></section>` : ''}
+      ${uncertainty}
+      <div class="history-sources"><span>${escapeHtml(history.verifiedAt)} 확인</span><div class="source-links">${sources}</div></div>`;
   }
 
   private text(selector: string, value: string): void {
@@ -204,7 +250,9 @@ export class VirusSimPanel {
   }
 }
 
-function evidenceStatusLabel(status: 'observed' | 'conceptual' | 'unavailable'): string {
+function evidenceStatusLabel(
+  status: 'observed' | 'conceptual' | 'unavailable',
+): string {
   if (status === 'observed') return '관찰 자료 기반';
   if (status === 'conceptual') return '계열 공통 개념 표현';
   return '구조 정보 부족';
