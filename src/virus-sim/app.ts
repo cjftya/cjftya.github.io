@@ -29,17 +29,20 @@ export class VirusSimApp {
     this.observation.setDecorationLevel(preferences.decorationLevel);
     this.observation.setDecorationPaused(preferences.decorationPaused);
 
+    this.panel.clearSelection();
+    this.panel.syncAll(this.observation.getSnapshot(), {
+      calls: 0,
+      triangles: 0,
+      geometries: 0,
+    });
+
     this.scene = new SceneRenderer(
       requiredElement<HTMLElement>(root, '#viewport'),
       requiredElement<HTMLCanvasElement>(root, '#scanner-canvas'),
       (selection) => this.handleSceneSelection(selection),
     );
-    this.unbindControls = bindVirusSimControls(
-      root,
-      this.createObservationActions(),
-    );
+    this.unbindControls = bindVirusSimControls(root, this.createObservationActions());
 
-    this.panel.clearSelection();
     this.refresh(true);
     this.scene.start((delta) => this.advanceFrame(delta));
   }
