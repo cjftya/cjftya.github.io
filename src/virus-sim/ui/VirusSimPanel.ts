@@ -22,6 +22,7 @@ import type {
   ObservationSnapshot,
   SpecimenObservationState,
 } from '../observation/types';
+import type { WorkspaceSnapshot } from '../workspace/WorkspaceStore';
 import { requiredElement } from './layout';
 import {
   type CatalogCollection,
@@ -52,6 +53,8 @@ export class VirusSimPanel {
   private recent: string[];
   private catalogFilter: CatalogTag | 'all' = 'all';
   private collection: CatalogCollection = 'all';
+  private readonly scrollPositions = new Map<string, number>();
+  private activeWorkspaceKey = 'observation:catalog';
 
   constructor(
     private readonly root: HTMLElement,
@@ -129,6 +132,72 @@ export class VirusSimPanel {
       decorationLevel: decoration.level,
       decorationPaused: decoration.paused,
     });
+  }
+
+  syncWorkspace(snapshot: WorkspaceSnapshot): void {
+    const app = this.element<HTMLElement>('.virus-app');
+    const panel = this.element<HTMLElement>('#tool-panel');
+    this.scrollPositions.set(this.activeWorkspaceKey, panel.scrollTop);
+    const activeTab =
+      snapshot.mode === 'observation' ? snapshot.observationTab : snapshot.labTab;
+    const nextKey = `${snapshot.mode}:${activeTab}`;
+    app.dataset.workspaceMode = snapshot.mode;
+    app.dataset.observationTab = snapshot.observationTab;
+    app.dataset.labTab = snapshot.labTab;
+    this.root
+      .querySelectorAll<HTMLButtonElement>('[data-workspace-mode-button]')
+      .forEach((button) => {
+        const active = button.dataset.workspaceModeButton === snapshot.mode;
+        button.classList.toggle('is-active', active);
+        button.setAttribute('aria-selected', String(active));
+      });
+    this.root.querySelectorAll<HTMLElement>('[data-mode-toolbar]').forEach((item) => {
+      item.hidden = item.dataset.modeToolbar !== snapshot.mode;
+    });
+    this.root.querySelectorAll<HTMLElement>('[data-mode-tabs]').forEach((item) => {
+      item.hidden = item.dataset.modeTabs !== snapshot.mode;
+    });
+    this.root
+      .querySelectorAll<HTMLButtonElement>(
+        `[data-mode-tabs="${snapshot.mode}"] [data-workspace-tab]`,
+      )
+      .forEach((button) => {
+        const active = button.dataset.workspaceTab === activeTab;
+        button.classList.toggle('is-active', active);
+        button.setAttribute('aria-selected', String(active));
+      });
+    const catalog = this.element<HTMLElement>(
+      '[data-workspace-panel="observation-catalog"]',
+    );
+    const observation = this.element<HTMLElement>(
+      '[data-workspace-panel="observation-tools"]',
+    );
+    const lab = this.element<HTMLElement>('[data-workspace-panel="lab"]');
+    catalog.hidden = snapshot.mode !== 'observation' || activeTab !== 'catalog';
+    observation.hidden = snapshot.mode !== 'observation' || activeTab === 'catalog';
+    lab.hidden = snapshot.mode !== 'lab';
+    this.root
+      .querySelectorAll<HTMLElement>('[data-observation-section]')
+      .forEach((item) => {
+        item.classList.toggle(
+          'workspace-section-hidden',
+          snapshot.mode !== 'observation' ||
+            item.dataset.observationSection !== snapshot.observationTab,
+        );
+      });
+    this.root.querySelectorAll<HTMLElement>('[data-lab-section]').forEach((item) => {
+      item.hidden =
+        snapshot.mode !== 'lab' || item.dataset.labSection !== snapshot.labTab;
+    });
+    this.button('#return-to-lab').hidden = !snapshot.inspectingLabSpecimen;
+    const labMode = snapshot.mode === 'lab';
+    this.element<HTMLElement>('#lab-stage-state').hidden = !labMode;
+    this.element<HTMLElement>('#slot-label-a').hidden = labMode;
+    const comparisonEnabled = !this.button('#comparison-close').hidden;
+    this.element<HTMLElement>('#slot-label-b').hidden = labMode || !comparisonEnabled;
+    this.element<HTMLElement>('#scale-legend').hidden = labMode;
+    this.activeWorkspaceKey = nextKey;
+    panel.scrollTop = this.scrollPositions.get(nextKey) ?? 0;
   }
 
   showSelection(title: string, description: string): void {
