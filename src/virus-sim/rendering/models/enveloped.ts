@@ -21,8 +21,32 @@ import {
 } from './components';
 
 export function buildHSV(collector: ModelCollector, quality: 'high' | 'low'): void {
-  addSphericalEnvelope(collector, quality, 2.48, 0xd477ad, 0.78);
-  addSphericalSpikes(collector, quality, 2.72, 58, 30, 0xf0a6ca);
+  collector.root.userData.envelopedFamily = 'herpesvirus';
+  const envelope = addSphericalEnvelope(collector, quality, 2.48, 0xd477ad, 0.72);
+  envelope.name = 'hsv-envelope';
+
+  const surfaceProfiles = [
+    {
+      id: 'glycoprotein-long',
+      shape: 'crown' as const,
+      radius: 2.76,
+      count: quality === 'high' ? 54 : 28,
+      color: 0xf0a6ca,
+    },
+    {
+      id: 'glycoprotein-short',
+      shape: 'knob' as const,
+      radius: 2.62,
+      count: quality === 'high' ? 18 : 9,
+      color: COLORS.layerGold,
+    },
+  ];
+  surfaceProfiles.forEach((profile, index) => {
+    const surface = createSurfaceProteinInstances(profile);
+    collector.root.add(surface.mesh);
+    register(collector, surface.mesh, 'spike', 'surface-protein', true);
+    collector.instanceExplosions.push({ ...surface, distance: 0.78 + index * 0.05 });
+  });
 
   const tegumentDirections = fibonacciDirections(quality === 'high' ? 48 : 25);
   const tegument = createRadialInstances(
@@ -34,6 +58,7 @@ export function buildHSV(collector: ModelCollector, quality: 'high' | 'low'): vo
     tegumentDirections,
     new THREE.Vector3(1, 0.75, 1),
   );
+  tegument.mesh.name = 'hsv-tegument-cloud';
   collector.root.add(tegument.mesh);
   register(collector, tegument.mesh, 'tegument', 'tegument', true);
   collector.instanceExplosions.push({ ...tegument, distance: 0.72 });
@@ -42,6 +67,7 @@ export function buildHSV(collector: ModelCollector, quality: 'high' | 'low'): vo
     new THREE.IcosahedronGeometry(1.28, 1),
     physicalMaterial(COLORS.capsid, 0.88, true),
   );
+  capsid.name = 'hsv-icosahedral-capsid';
   collector.root.add(capsid);
   register(collector, capsid, 'capsid', 'capsid', true);
   addObjectExplosion(collector, capsid, new THREE.Vector3(-0.55, 0.2, 0.45), 0.88);
@@ -69,6 +95,7 @@ export function buildInfluenza(
   collector: ModelCollector,
   quality: 'high' | 'low',
 ): void {
+  collector.root.userData.envelopedFamily = 'orthomyxovirus';
   const envelope = addSphericalEnvelope(collector, quality, 2.22, 0xb75f98, 0.84);
   envelope.scale.set(1.02, 0.96, 1);
 
@@ -93,7 +120,10 @@ export function buildInfluenza(
     },
   ];
   surfaceComponents.forEach((component, index) => {
-    const surface = createSurfaceProteinInstances(component);
+    const surface = createSurfaceProteinInstances({
+      id: ['ha', 'na', 'm2'][index],
+      ...component,
+    });
     collector.root.add(surface.mesh);
     register(collector, surface.mesh, 'spike', 'surface-protein', true);
     collector.instanceExplosions.push({ ...surface, distance: 0.7 + index * 0.04 });
@@ -105,6 +135,7 @@ export function buildInfluenza(
   addObjectExplosion(collector, matrix, new THREE.Vector3(-0.55, 0.25, 0.4), 0.72);
 
   const rnpGroup = createSegmentedRnp(8, quality);
+  rnpGroup.name = 'influenza-eight-rnp-segments';
   collector.root.add(rnpGroup);
   register(collector, rnpGroup, 'rnp', 'nucleocapsid');
   registerPartAlias(collector, rnpGroup, 'genome');
@@ -113,24 +144,27 @@ export function buildInfluenza(
 }
 
 export function buildVSV(collector: ModelCollector, quality: 'high' | 'low'): void {
+  collector.root.userData.envelopedFamily = 'rhabdovirus';
   const profile = bulletProfile(1);
   const envelope = new THREE.Mesh(
     new THREE.LatheGeometry(profile, quality === 'high' ? 48 : 24),
     physicalMaterial(0xbd6f9d, 0.82, false),
   );
+  envelope.name = 'vsv-bullet-envelope';
   collector.root.add(envelope);
   register(collector, envelope, 'envelope', 'envelope', true);
   addObjectExplosion(collector, envelope, new THREE.Vector3(0.55, 0.2, 0.4), 0.7);
 
   const spikes = createBulletSpikes(quality);
-  collector.root.add(spikes);
-  register(collector, spikes, 'spike', 'surface-protein', true);
-  addObjectExplosion(collector, spikes, new THREE.Vector3(0.6, -0.1, -0.35), 0.72);
+  collector.root.add(spikes.mesh);
+  register(collector, spikes.mesh, 'spike', 'surface-protein', true);
+  collector.instanceExplosions.push({ ...spikes, distance: 0.72 });
 
   const matrix = new THREE.Mesh(
     new THREE.LatheGeometry(bulletProfile(0.84), quality === 'high' ? 40 : 20),
     physicalMaterial(COLORS.matrix, 0.5, false),
   );
+  matrix.name = 'vsv-bullet-matrix';
   collector.root.add(matrix);
   register(collector, matrix, 'matrix', 'matrix', true);
   addObjectExplosion(collector, matrix, new THREE.Vector3(-0.5, 0.35, 0.35), 0.62);
@@ -155,6 +189,7 @@ export function buildVSV(collector: ModelCollector, quality: 'high' | 'low'): vo
     false,
     COLORS.layerViolet,
   );
+  nucleocapsid.name = 'vsv-directional-helical-rnp';
   collector.root.add(nucleocapsid);
   register(collector, nucleocapsid, 'nucleocapsid', 'nucleocapsid');
   registerPartAlias(collector, nucleocapsid, 'genome');
@@ -184,26 +219,6 @@ function addSphericalEnvelope(
   return envelope;
 }
 
-function addSphericalSpikes(
-  collector: ModelCollector,
-  quality: 'high' | 'low',
-  radius: number,
-  highCount: number,
-  lowCount: number,
-  color: number,
-): void {
-  const directions = fibonacciDirections(quality === 'high' ? highCount : lowCount);
-  const spikes = createRadialInstances(
-    new THREE.ConeGeometry(0.13, 0.5, 7),
-    standardMaterial(color),
-    directions.map((direction) => direction.clone().multiplyScalar(radius)),
-    directions,
-  );
-  collector.root.add(spikes.mesh);
-  register(collector, spikes.mesh, 'spike', 'surface-protein', true);
-  collector.instanceExplosions.push({ ...spikes, distance: 0.82 });
-}
-
 function bulletProfile(scale: number): THREE.Vector2[] {
   return [
     new THREE.Vector2(0.08 * scale, -2.45),
@@ -218,10 +233,10 @@ function bulletProfile(scale: number): THREE.Vector2[] {
   ];
 }
 
-function createBulletSpikes(quality: 'high' | 'low'): THREE.Group {
-  const group = new THREE.Group();
-  const material = standardMaterial(COLORS.spike);
+function createBulletSpikes(quality: 'high' | 'low') {
   const count = quality === 'high' ? 42 : 24;
+  const origins: THREE.Vector3[] = [];
+  const directions: THREE.Vector3[] = [];
   for (let index = 0; index < count; index += 1) {
     const t = (index + 0.5) / count;
     const y = -2.15 + t * 4.25;
@@ -234,10 +249,17 @@ function createBulletSpikes(quality: 'high' | 'low'): THREE.Group {
       cap ? (y - 1.1) / 1.38 : 0,
       Math.sin(angle),
     ).normalize();
-    const spike = new THREE.Mesh(new THREE.ConeGeometry(0.11, 0.38, 6), material);
-    spike.position.set(Math.cos(angle) * radius, y, Math.sin(angle) * radius);
-    spike.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), direction);
-    group.add(spike);
+    origins.push(
+      new THREE.Vector3(Math.cos(angle) * radius, y, Math.sin(angle) * radius),
+    );
+    directions.push(direction);
   }
-  return group;
+  const result = createRadialInstances(
+    new THREE.ConeGeometry(0.11, 0.38, 6),
+    standardMaterial(COLORS.spike),
+    origins,
+    directions,
+  );
+  result.mesh.name = 'surface-glycoprotein-g';
+  return result;
 }

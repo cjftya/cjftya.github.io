@@ -16,6 +16,7 @@ import {
   buildGenericSpindle,
 } from './generic';
 import { buildLambdaPhage, buildT4Phage, buildT7Phage } from './phages';
+import { buildAlphavirus, buildCystovirus, buildHBV } from './specialEnveloped';
 import { createCollector, finishCollector } from './shared';
 import type { ObservationModel } from './types';
 
@@ -70,6 +71,15 @@ export function createObservationModel(
       break;
     case 'coronavirus':
       buildCoronavirus(collector, quality);
+      break;
+    case 'hbv':
+      buildHBV(collector, quality);
+      break;
+    case 'alphavirus':
+      buildAlphavirus(collector, quality);
+      break;
+    case 'cystovirus':
+      buildCystovirus(collector, quality);
       break;
     case 'generic-icosahedral':
       buildGenericIcosahedral(collector, quality);

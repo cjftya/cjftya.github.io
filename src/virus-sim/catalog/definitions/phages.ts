@@ -257,7 +257,7 @@ export const PHAGE_CATALOG = [
       layer('genome', '3분절 dsRNA'),
     ],
     sourceIds: ['ictv-cystoviridae'],
-    modelBuilder: 'generic-enveloped',
+    modelBuilder: 'cystovirus',
     geometryProfileId: 'enveloped-phi6',
     simplifications: [
       '외피의 불규칙성은 완만한 구형으로 줄였어요.',
