@@ -25,10 +25,11 @@
 - lint: 통과
 - tests: 33 files, 175 cases 통과
 - build: 통과
-- Virus Sim JS: 207.26 kB, gzip 58.96 kB
+- Virus Sim JS: 207.35 kB, gzip 58.99 kB
 - Virus Sim CSS: 10.14 kB, gzip 2.91 kB
 - History: 71/71 entry, 중복·누락·미등록 source 없음
 - 대표 8종: high/low 모델과 surface·transparent·section·exploded·scanner flow 통과
+- WebGL2가 없는 환경에서도 catalog와 History 텍스트를 먼저 동기화하는 fallback 확인
 
 ## 후속 버전
 
