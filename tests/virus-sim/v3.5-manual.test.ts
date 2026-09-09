@@ -1,18 +1,8 @@
-import { describe, expect, it } from 'vitest';
 import * as THREE from 'three';
-import {
-  computeNmPerPixel,
-  layoutComparisonViewports,
-  normalizedSpecimenScale,
-  physicalSpecimenScale,
-  projectedLengthPixels,
-  scaleBarForNmPerPixel,
-  type ViewportRect,
-} from '../../src/virus-sim/comparison/scaling';
+import { describe, expect, it } from 'vitest';
 import { ObservationStore } from '../../src/virus-sim/observation/ObservationStore';
 import { SpecimenView } from '../../src/virus-sim/rendering/SpecimenView';
 import { normalizedSlabRange } from '../../src/virus-sim/scanner/math';
-import type { PhysicalDimensions } from '../../src/virus-sim/catalog/types';
 import {
   loadFavorites,
   loadFontScale,
@@ -20,15 +10,7 @@ import {
   saveVirusSimPreferences,
 } from '../../src/virus-sim/ui/preferences';
 
-const dimension = (representativeNm: number): PhysicalDimensions => ({
-  metric: 'diameter',
-  representativeNm,
-  particleState: 'fixture',
-  includesProjections: false,
-  sourceIds: ['fixture'],
-});
-
-describe('Virus Sim v3.5 manual observation contracts', () => {
+describe('Virus Sim manual observation contracts', () => {
   it('does not change specimen pose or observation state while idle', () => {
     const store = new ObservationStore(false, 't4');
     const before = store.getSnapshot();
@@ -36,28 +18,34 @@ describe('Virus Sim v3.5 manual observation contracts', () => {
     expect(store.getSnapshot()).toEqual(before);
   });
 
-  it('preserves inspection state on species change and drops unavailable selection', () => {
+  it('starts every selected species in a complete visible state', () => {
     const store = new ObservationStore(false, 't4');
     store.setView('section');
     store.setSectionOffset(0.37);
     store.setGenomeVisible(true);
+    store.setLayerVisible('envelope', false);
     store.selectPart('tail-fiber');
+
     store.setPreset('hiv-1');
-    const specimen = store.getSnapshot().slots.a;
-    expect(specimen.view).toBe('section');
-    expect(specimen.sectionOffset).toBeCloseTo(0.37);
-    expect(specimen.genomeVisible).toBe(true);
+
+    const specimen = store.getSnapshot().specimen;
+    expect(specimen.presetId).toBe('hiv-1');
+    expect(specimen.view).toBe('surface');
+    expect(specimen.explosion).toBe(0);
+    expect(specimen.sectionOffset).toBe(0);
+    expect(specimen.genomeVisible).toBe(false);
     expect(specimen.selectedPartId).toBeNull();
+    expect(specimen.layerVisibility.envelope).toBe(true);
   });
 
   it('reassembles to exact original structural values', () => {
     const store = new ObservationStore(false, 't4');
     store.startStructuralReveal('exploded');
     for (let index = 0; index < 80; index += 1) store.step(1 / 60);
-    expect(store.getSnapshot().slots.a.explosion).toBeCloseTo(74);
+    expect(store.getSnapshot().specimen.explosion).toBeCloseTo(74);
     store.reassemble();
     for (let index = 0; index < 80; index += 1) store.step(1 / 60);
-    const rebuilt = store.getSnapshot().slots.a;
+    const rebuilt = store.getSnapshot().specimen;
     expect(rebuilt.view).toBe('surface');
     expect(rebuilt.explosion).toBe(0);
     expect(rebuilt.sectionOffset).toBe(0);
@@ -67,101 +55,26 @@ describe('Virus Sim v3.5 manual observation contracts', () => {
     const store = new ObservationStore(false, 't4');
     store.setExplosion(68);
     store.setScannerEnabled(true);
-    expect(store.getSnapshot().slots.a.explosion).toBe(0);
-    expect(store.getSnapshot().slots.a.view).toBe('surface');
+    expect(store.getSnapshot().specimen.explosion).toBe(0);
+    expect(store.getSnapshot().specimen.view).toBe('surface');
     store.setScannerEnabled(false);
-    expect(store.getSnapshot().slots.a.explosion).toBe(68);
-    expect(store.getSnapshot().slots.a.view).toBe('exploded');
+    expect(store.getSnapshot().specimen.explosion).toBe(68);
+    expect(store.getSnapshot().specimen.view).toBe('exploded');
   });
 
-  it('keeps scanner views assembled and preserves restore values across a swap', () => {
-    const store = new ObservationStore(false, 't4');
-    store.setExplosion(71);
-    store.addComparison('hiv-1');
-    store.setComparisonLinked(false);
-    store.setExplosion(32);
-    store.setActiveSlot('a');
-    store.setScannerEnabled(true);
-    store.setExplosion(94);
-    store.startStructuralReveal('exploded');
-    expect(store.getSnapshot().slots.a.explosion).toBe(0);
-    store.swapComparison();
-    store.setScannerEnabled(false);
-    expect(store.getSnapshot().slots.b?.presetId).toBe('t4');
-    expect(store.getSnapshot().slots.b?.explosion).toBe(71);
-    expect(store.getSnapshot().slots.b?.view).toBe('exploded');
-    expect(store.getSnapshot().slots.a.explosion).toBe(32);
-  });
-
-  it('links inspection state without aliasing slot objects', () => {
+  it('keeps a single normalized scanner probe', () => {
     const store = new ObservationStore(false, 'hiv-1');
-    store.addComparison('sars-cov-2');
-    store.setView('transparent');
-    const snapshot = store.getSnapshot();
-    expect(snapshot.slots.a.view).toBe('transparent');
-    expect(snapshot.slots.b?.view).toBe('transparent');
-    expect(snapshot.slots.a).not.toBe(snapshot.slots.b);
-    expect(snapshot.slots.a.layerVisibility).not.toBe(
-      snapshot.slots.b?.layerVisibility,
-    );
-  });
-
-  it('links scanner probes by default and isolates them after unlinking', () => {
-    const store = new ObservationStore(false, 'hiv-1');
-    store.addComparison('sars-cov-2');
-    store.setScannerAxis('x');
-    store.setScannerPosition(0.72);
-    let scanner = store.getSnapshot().scanner;
-    expect(scanner.probes.a).toEqual(scanner.probes.b);
-
-    store.setScannerLinked(false);
-    store.setActiveSlot('a');
     store.setScannerAxis('y');
     store.setScannerPosition(0.18);
-    scanner = store.getSnapshot().scanner;
-    expect(scanner.probes.a.axis).toBe('y');
-    expect(scanner.probes.a.position).toBeCloseTo(0.18);
-    expect(scanner.probes.b.axis).toBe('x');
-    expect(scanner.probes.b.position).toBeCloseTo(0.72);
+    store.setScannerThickness(0.12);
+    expect(store.getSnapshot().scanner.probe).toEqual({
+      axis: 'y',
+      position: 0.18,
+      thickness: 0.12,
+    });
   });
 
-  it('projects physical 100/200 nm fixtures at a 1:2 ratio and normalizes equally', () => {
-    const viewports = layoutComparisonViewports(1000, 600, true).filter(
-      (viewport): viewport is ViewportRect => Boolean(viewport),
-    );
-    const first = dimension(100);
-    const second = dimension(200);
-    const nmPerPixel = computeNmPerPixel([first, second], viewports)!;
-    expect(
-      projectedLengthPixels(second, nmPerPixel) /
-        projectedLengthPixels(first, nmPerPixel),
-    ).toBeCloseTo(2);
-    expect(normalizedSpecimenScale(4)).toBeCloseTo(normalizedSpecimenScale(8) * 2);
-    expect(physicalSpecimenScale(4, first)).toBeCloseTo(
-      physicalSpecimenScale(8, second),
-    );
-  });
-
-  it('uses one nm-per-pixel value even when viewport heights differ', () => {
-    const viewports = [
-      { x: 0, y: 0, width: 500, height: 600 },
-      { x: 500, y: 0, width: 500, height: 300 },
-    ];
-    const value = computeNmPerPixel([dimension(100), dimension(200)], viewports)!;
-    expect(projectedLengthPixels(dimension(100), value)).toBeCloseTo(
-      projectedLengthPixels(dimension(200), value) / 2,
-    );
-  });
-
-  it('keeps the visible physical scale bar mathematically tied to nm-per-pixel', () => {
-    const bar = scaleBarForNmPerPixel(2.5, 80)!;
-    expect(bar.nanometers / bar.pixels).toBeCloseTo(2.5);
-    expect([1, 2, 5]).toContain(
-      bar.nanometers / 10 ** Math.floor(Math.log10(bar.nanometers)),
-    );
-  });
-
-  it('maps a normalized scanner position to the requested slab in transformed bounds', () => {
+  it('maps a normalized scanner position to the requested slab', () => {
     const slab = normalizedSlabRange(-4, 6, 0.25, 0.08);
     expect(slab.center).toBeCloseTo(-1.5);
     expect(slab.halfThickness).toBeCloseTo(0.4);

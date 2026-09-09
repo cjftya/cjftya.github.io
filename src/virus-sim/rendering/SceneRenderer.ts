@@ -1,20 +1,6 @@
 import * as THREE from 'three';
-import { getPhysicalDimensions } from '../catalog/dimensions';
 import { getCatalogEntry } from '../catalog/registry';
-import {
-  computeNmPerPixel,
-  layoutComparisonViewports,
-  normalizedSpecimenScale,
-  physicalSpecimenScale,
-  scaleBarForNmPerPixel,
-  viewportForPoint,
-  type ViewportRect,
-} from '../comparison/scaling';
-import type {
-  ObservationSnapshot,
-  SlotId,
-  SpecimenObservationState,
-} from '../observation/types';
+import type { ObservationSnapshot } from '../observation/types';
 import type { LabSnapshot } from '../lab/types';
 import { DecorativeParticles } from './effects/DecorativeParticles';
 import { ManualCamera, type ManualCameraPose } from './ManualCamera';
@@ -23,14 +9,11 @@ import { QUALITY_SETTINGS, type RenderQuality } from './quality/quality';
 import { ScannerRenderer } from './scanner/ScannerRenderer';
 import { SpecimenView, type SpecimenPick } from './SpecimenView';
 
-const WORLD_UNITS_PER_NM = 0.02;
-
 export interface SelectionDetails extends SpecimenPick {
   readonly kind: 'part';
-  readonly slot: SlotId;
 }
 
-interface SlotScene {
+interface ObservationScene {
   readonly scene: THREE.Scene;
   readonly camera: ManualCamera;
   readonly particles: DecorativeParticles;
@@ -39,7 +22,6 @@ interface SlotScene {
 
 interface PointerGesture {
   readonly id: number;
-  readonly slot: SlotId;
   readonly startX: number;
   readonly startY: number;
   readonly startedAt: number;
@@ -61,7 +43,7 @@ export class SceneRenderer {
   private readonly scanner: ScannerRenderer;
   private readonly labScene: LabScene;
   private readonly resizeObserver: ResizeObserver;
-  private readonly slots: Record<SlotId, SlotScene>;
+  private readonly observationScene: ObservationScene;
   private readonly raycaster = new THREE.Raycaster();
   private readonly pointer = new THREE.Vector2();
   private readonly activePointers = new Map<number, PointerGesture>();
@@ -69,9 +51,6 @@ export class SceneRenderer {
   private labSnapshot: LabSnapshot | null = null;
   private activeMode: SceneFrameSnapshot['mode'] = 'observation';
   private quality: RenderQuality = 'standard';
-  private viewports: readonly [ViewportRect, ViewportRect?] = [
-    { x: 0, y: 0, width: 1, height: 1 },
-  ];
   private animationFrame = 0;
   private resizeAnimationFrame = 0;
   private frameSource: SnapshotSource | null = null;
@@ -81,14 +60,11 @@ export class SceneRenderer {
   private initialized = false;
   private lastTouchDistance = 0;
   private lastTouchCenter: { x: number; y: number } | null = null;
-  private comparisonWasEnabled = false;
-  private comparisonWasLinked = true;
 
   constructor(
     private readonly container: HTMLElement,
     scannerCanvas: HTMLCanvasElement,
     private readonly onSelect: (selection: SelectionDetails | null) => void,
-    private readonly onActiveSlot: (slot: SlotId) => void,
     private readonly onLabSelect: (instanceId: string | null) => void = () => undefined,
   ) {
     this.canvas = document.createElement('canvas');
@@ -109,10 +85,7 @@ export class SceneRenderer {
     this.renderer.localClippingEnabled = true;
     this.renderer.autoClear = false;
     this.setRendererPixelRatio(this.quality);
-    this.slots = {
-      a: this.createSlotScene(),
-      b: this.createSlotScene(),
-    };
+    this.observationScene = this.createObservationScene();
     this.scanner = new ScannerRenderer(this.renderer, scannerCanvas);
     this.labScene = new LabScene(this.quality);
     this.scanner.clear();
@@ -140,24 +113,12 @@ export class SceneRenderer {
   show(snapshot: ObservationSnapshot): void {
     this.activeMode = 'observation';
     this.snapshot = snapshot;
-    this.ensureViews(snapshot);
-    if (snapshot.comparison.enabled && !this.comparisonWasEnabled && snapshot.slots.b) {
-      this.slots.b.camera.setPose(this.slots.a.camera.getPose());
-    } else if (
-      snapshot.comparison.enabled &&
-      snapshot.comparison.linked &&
-      !this.comparisonWasLinked &&
-      snapshot.slots.b
-    ) {
-      const source = snapshot.activeSlot;
-      const target: SlotId = source === 'a' ? 'b' : 'a';
-      this.slots[target].camera.setPose(this.slots[source].camera.getPose());
-    }
-    this.comparisonWasEnabled = snapshot.comparison.enabled;
-    this.comparisonWasLinked = snapshot.comparison.linked;
+    this.ensureView(snapshot);
     this.applySnapshot(snapshot);
-    if (!this.initialized && this.slots.a.view) {
-      this.slots.a.camera.frameObject(this.slots.a.view.getRenderRoot());
+    if (!this.initialized && this.observationScene.view) {
+      this.observationScene.camera.frameObject(
+        this.observationScene.view.getRenderRoot(),
+      );
       this.initialized = true;
     }
     this.renderFrame();
@@ -174,11 +135,9 @@ export class SceneRenderer {
     if (quality === this.quality) return;
     this.quality = quality;
     this.setRendererPixelRatio(quality);
-    for (const slot of Object.values(this.slots)) {
-      slot.particles.setQuality(quality);
-      slot.view?.dispose();
-      slot.view = null;
-    }
+    this.observationScene.particles.setQuality(quality);
+    this.observationScene.view?.dispose();
+    this.observationScene.view = null;
     this.scanner.invalidate();
     this.labScene.setQuality(quality);
     if (this.activeMode === 'lab' && this.labSnapshot) this.showLab(this.labSnapshot);
@@ -192,11 +151,10 @@ export class SceneRenderer {
       this.renderFrame();
       return;
     }
-    if (!this.snapshot) return;
-    for (const slotId of this.visibleSlots(this.snapshot)) {
-      const slot = this.slots[slotId];
-      if (slot.view) slot.camera.frameObject(slot.view.getRenderRoot());
-    }
+    if (!this.snapshot || !this.observationScene.view) return;
+    this.observationScene.camera.frameObject(
+      this.observationScene.view.getRenderRoot(),
+    );
     this.renderFrame();
   }
 
@@ -241,12 +199,8 @@ export class SceneRenderer {
       this.renderFrame();
       return;
     }
-    const snapshot = this.snapshot;
-    if (!snapshot) return;
-    const slotId = snapshot.activeSlot;
-    const camera = this.slots[slotId].camera;
-    const physical =
-      snapshot.comparison.enabled && snapshot.comparison.scaleMode === 'physical';
+    if (!this.snapshot) return;
+    const camera = this.observationScene.camera;
     switch (action) {
       case 'left':
         camera.orbit(-18, 0);
@@ -261,19 +215,18 @@ export class SceneRenderer {
         camera.orbit(0, 18);
         break;
       case 'pan-left':
-        camera.pan(-18, 0, physical);
+        camera.pan(-18, 0);
         break;
       case 'pan-right':
-        camera.pan(18, 0, physical);
+        camera.pan(18, 0);
         break;
       case 'zoom-in':
-        camera.dolly(-110, physical);
+        camera.dolly(-110);
         break;
       case 'zoom-out':
-        camera.dolly(110, physical);
+        camera.dolly(110);
         break;
     }
-    this.syncLinkedCamera(slotId);
     this.renderFrame();
   }
 
@@ -283,26 +236,6 @@ export class SceneRenderer {
       triangles: this.renderer.info.render.triangles,
       geometries: this.renderer.info.memory.geometries,
     };
-  }
-
-  getComparisonScaleStatus(): {
-    readonly physicalAvailable: boolean;
-    readonly nmPerPixel: number | null;
-  } {
-    if (this.activeMode === 'lab')
-      return { physicalAvailable: false, nmPerPixel: null };
-    const snapshot = this.snapshot;
-    if (!snapshot?.comparison.enabled || !snapshot.slots.b) {
-      return { physicalAvailable: false, nmPerPixel: null };
-    }
-    const value = computeNmPerPixel(
-      [
-        getPhysicalDimensions(snapshot.slots.a.presetId),
-        getPhysicalDimensions(snapshot.slots.b.presetId),
-      ],
-      this.viewports.filter((viewport): viewport is ViewportRect => Boolean(viewport)),
-    );
-    return { physicalAvailable: value !== null, nmPerPixel: value };
   }
 
   savePng(filename: string): Promise<boolean> {
@@ -333,25 +266,12 @@ export class SceneRenderer {
     });
   }
 
-  getLabCameraPose(): ManualCameraPose {
-    return this.labScene.getCameraPose();
+  getObservationCameraPose(): ManualCameraPose {
+    return this.observationScene.camera.getPose();
   }
 
-  setLabCameraPose(pose: ManualCameraPose): void {
-    this.labScene.setCameraPose(pose);
-    this.renderFrame();
-  }
-
-  getObservationCameraPoses(): Readonly<Record<SlotId, ManualCameraPose>> {
-    return {
-      a: this.slots.a.camera.getPose(),
-      b: this.slots.b.camera.getPose(),
-    };
-  }
-
-  setObservationCameraPoses(poses: Readonly<Record<SlotId, ManualCameraPose>>): void {
-    this.slots.a.camera.setPose(poses.a);
-    this.slots.b.camera.setPose(poses.b);
+  setObservationCameraPose(pose: ManualCameraPose): void {
+    this.observationScene.camera.setPose(pose);
     this.renderFrame();
   }
 
@@ -365,54 +285,14 @@ export class SceneRenderer {
     context.scale(scaleX, scaleY);
     context.textBaseline = 'top';
     context.font = '700 17px system-ui, sans-serif';
-    const visible = this.visibleSlots(snapshot);
-    const viewports = this.viewports.filter((value): value is ViewportRect =>
-      Boolean(value),
-    );
-    visible.forEach((slotId, index) => {
-      const viewport = viewports[index]!;
-      const specimen = snapshot.slots[slotId]!;
-      const dimensions = getPhysicalDimensions(specimen.presetId);
-      const physical =
-        snapshot.comparison.enabled && snapshot.comparison.scaleMode === 'physical';
-      const name = `${slotId.toUpperCase()} · ${getCatalogEntry(specimen.presetId).shortName}${physical && dimensions ? ` · ${formatNm(dimensions.representativeNm)} nm` : ''}`;
-      const width = context.measureText(name).width + 24;
-      const x = viewport.x + 14;
-      const y = viewport.y + 14;
-      context.fillStyle = 'rgba(5, 11, 23, 0.82)';
-      context.fillRect(x, y, width, 34);
-      context.strokeStyle = slotId === snapshot.activeSlot ? '#63eee0' : '#637b91';
-      context.strokeRect(x, y, width, 34);
-      context.fillStyle = '#f2f7ff';
-      context.fillText(name, x + 12, y + 7);
-    });
-    const physical =
-      snapshot.comparison.enabled && snapshot.comparison.scaleMode === 'physical';
-    const nmPerPixel = physical
-      ? computeNmPerPixel(
-          visible.map((slotId) =>
-            getPhysicalDimensions(snapshot.slots[slotId]!.presetId),
-          ),
-          viewports,
-        )
-      : null;
-    const scaleBar = nmPerPixel ? scaleBarForNmPerPixel(nmPerPixel) : null;
-    const legend = scaleBar
-      ? `${formatNm(scaleBar.nanometers)} nm · 실제 크기 비율`
-      : '같은 크기로 맞춤 · 실제 비율 아님';
-    context.font = '600 15px system-ui, sans-serif';
-    const lineWidth = scaleBar?.pixels ?? 42;
-    const legendWidth = context.measureText(legend).width + lineWidth + 36;
-    const legendY = this.container.clientHeight - 48;
+    const name = getCatalogEntry(snapshot.specimen.presetId).shortName;
+    const width = context.measureText(name).width + 24;
     context.fillStyle = 'rgba(5, 11, 23, 0.82)';
-    context.fillRect(14, legendY, legendWidth, 34);
-    context.strokeStyle = '#f2f7ff';
-    context.beginPath();
-    context.moveTo(26, legendY + 17);
-    context.lineTo(26 + lineWidth, legendY + 17);
-    context.stroke();
-    context.fillStyle = '#b8c7da';
-    context.fillText(legend, 34 + lineWidth, legendY + 8);
+    context.fillRect(14, 14, width, 34);
+    context.strokeStyle = '#63eee0';
+    context.strokeRect(14, 14, width, 34);
+    context.fillStyle = '#f2f7ff';
+    context.fillText(name, 26, 21);
     context.restore();
   }
 
@@ -463,17 +343,15 @@ export class SceneRenderer {
     this.canvas.removeEventListener('contextmenu', this.handleContextMenu);
     this.canvas.removeEventListener('webglcontextlost', this.handleContextLost);
     this.canvas.removeEventListener('webglcontextrestored', this.handleContextRestored);
-    for (const slot of Object.values(this.slots)) {
-      slot.view?.dispose();
-      slot.particles.dispose();
-    }
+    this.observationScene.view?.dispose();
+    this.observationScene.particles.dispose();
     this.labScene.dispose();
     this.scanner.dispose();
     this.renderer.dispose();
     this.canvas.remove();
   }
 
-  private createSlotScene(): SlotScene {
+  private createObservationScene(): ObservationScene {
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x06101c);
     addLights(scene);
@@ -485,67 +363,28 @@ export class SceneRenderer {
     };
   }
 
-  private ensureViews(snapshot: ObservationSnapshot): void {
-    this.ensureView('a', snapshot.slots.a);
-    if (snapshot.comparison.enabled && snapshot.slots.b)
-      this.ensureView('b', snapshot.slots.b);
-    else if (this.slots.b.view) {
-      this.slots.b.view.dispose();
-      this.slots.b.view = null;
-    }
-  }
-
-  private ensureView(slotId: SlotId, state: SpecimenObservationState): void {
-    const slot = this.slots[slotId];
-    if (slot.view?.presetId === state.presetId) return;
-    slot.view?.dispose();
-    slot.view = new SpecimenView(slot.scene, state.presetId, this.quality);
+  private ensureView(snapshot: ObservationSnapshot): void {
+    const state = snapshot.specimen;
+    if (this.observationScene.view?.presetId === state.presetId) return;
+    this.observationScene.view?.dispose();
+    this.observationScene.view = new SpecimenView(
+      this.observationScene.scene,
+      state.presetId,
+      this.quality,
+    );
     this.scanner.invalidate();
   }
 
   private applySnapshot(snapshot: ObservationSnapshot): void {
-    const visible = this.visibleSlots(snapshot);
-    this.viewports = layoutComparisonViewports(
+    const { camera, particles, view } = this.observationScene;
+    camera.setViewport(
       Math.max(1, this.container.clientWidth),
       Math.max(1, this.container.clientHeight),
-      snapshot.comparison.enabled && Boolean(snapshot.slots.b),
     );
-    const viewportList = this.viewports.filter((value): value is ViewportRect =>
-      Boolean(value),
-    );
-    const dimensions = visible.map((slotId) =>
-      getPhysicalDimensions(snapshot.slots[slotId]!.presetId),
-    );
-    const nmPerPixel =
-      snapshot.comparison.scaleMode === 'physical'
-        ? computeNmPerPixel(dimensions, viewportList)
-        : null;
-    visible.forEach((slotId, index) => {
-      const slot = this.slots[slotId];
-      const state = snapshot.slots[slotId]!;
-      const viewport = viewportList[index]!;
-      slot.camera.setViewport(viewport.width, viewport.height);
-      const definition = getCatalogEntry(state.presetId);
-      const dimension = getPhysicalDimensions(state.presetId);
-      const physical =
-        snapshot.comparison.enabled &&
-        snapshot.comparison.scaleMode === 'physical' &&
-        dimension &&
-        nmPerPixel;
-      slot.view?.setScale(
-        physical
-          ? physicalSpecimenScale(
-              definition.displayLength,
-              dimension,
-              WORLD_UNITS_PER_NM,
-            )
-          : normalizedSpecimenScale(definition.displayLength),
-      );
-      if (physical)
-        slot.camera.setOrthographicWorldPerPixel(nmPerPixel * WORLD_UNITS_PER_NM);
-      slot.view?.update(state);
-      slot.particles.setState(snapshot.decoration.level, snapshot.decoration.paused);
-    });
+    const definition = getCatalogEntry(snapshot.specimen.presetId);
+    view?.setScale(4.8 / Math.max(0.001, definition.displayLength));
+    view?.update(snapshot.specimen);
+    particles.setState(snapshot.decoration.level, snapshot.decoration.paused);
   }
 
   private renderFrame(): void {
@@ -561,32 +400,19 @@ export class SceneRenderer {
     }
     const snapshot = this.snapshot;
     if (!snapshot) return;
-    this.ensureViews(snapshot);
+    this.ensureView(snapshot);
     this.applySnapshot(snapshot);
-    const visible = this.visibleSlots(snapshot);
-    const viewports = this.viewports.filter((value): value is ViewportRect =>
-      Boolean(value),
-    );
+    const width = Math.max(1, this.container.clientWidth);
+    const height = Math.max(1, this.container.clientHeight);
     this.renderer.setRenderTarget(null);
-    this.renderer.setScissorTest(true);
-    visible.forEach((slotId, index) => {
-      const viewport = viewports[index]!;
-      const slot = this.slots[slotId];
-      const bottom = this.container.clientHeight - viewport.y - viewport.height;
-      this.renderer.setViewport(viewport.x, bottom, viewport.width, viewport.height);
-      this.renderer.setScissor(viewport.x, bottom, viewport.width, viewport.height);
-      this.renderer.setClearColor(
-        slotId === snapshot.activeSlot ? 0x081927 : 0x06101c,
-        1,
-      );
-      this.renderer.clear(true, true, true);
-      const camera =
-        snapshot.comparison.enabled && snapshot.comparison.scaleMode === 'physical'
-          ? slot.camera.orthographic
-          : slot.camera.perspective;
-      this.renderer.render(slot.scene, camera);
-    });
+    this.renderer.setViewport(0, 0, width, height);
     this.renderer.setScissorTest(false);
+    this.renderer.setClearColor(0x081927, 1);
+    this.renderer.clear(true, true, true);
+    this.renderer.render(
+      this.observationScene.scene,
+      this.observationScene.camera.perspective,
+    );
     this.renderScanner(snapshot);
   }
 
@@ -595,13 +421,11 @@ export class SceneRenderer {
       this.scanner.clear();
       return;
     }
-    const slotId = snapshot.activeSlot;
-    const slot = this.slots[slotId];
-    const state = snapshot.slots[slotId];
-    if (!slot.view || !state) return;
-    const probe = snapshot.scanner.probes[slotId];
+    const state = snapshot.specimen;
+    const { scene, view } = this.observationScene;
+    if (!view) return;
+    const probe = snapshot.scanner.probe;
     const signature = [
-      slotId,
       state.presetId,
       state.view,
       state.genomeVisible,
@@ -609,11 +433,11 @@ export class SceneRenderer {
       probe.axis,
       probe.position.toFixed(4),
       probe.thickness.toFixed(4),
-      slot.view.getRenderRoot().scale.x.toFixed(5),
+      view.getRenderRoot().scale.x.toFixed(5),
     ].join(':');
     this.scanner.render(
-      slot.scene,
-      slot.view,
+      scene,
+      view,
       probe.axis,
       probe.position,
       probe.thickness,
@@ -651,11 +475,7 @@ export class SceneRenderer {
       const elapsed = (time - this.startedAt) / 1000;
       const particlesAnimating =
         this.snapshot.decoration.level !== 'off' && !this.snapshot.decoration.paused;
-      if (particlesAnimating) {
-        for (const slotId of this.visibleSlots(this.snapshot)) {
-          this.slots[slotId].particles.update(elapsed);
-        }
-      }
+      if (particlesAnimating) this.observationScene.particles.update(elapsed);
       if (
         particlesAnimating ||
         wasTransitioning ||
@@ -690,7 +510,6 @@ export class SceneRenderer {
       this.canvas.setPointerCapture(event.pointerId);
       this.activePointers.set(event.pointerId, {
         id: event.pointerId,
-        slot: 'a',
         startX: event.clientX,
         startY: event.clientY,
         startedAt: performance.now(),
@@ -704,19 +523,9 @@ export class SceneRenderer {
       this.lastTouchCenter = null;
       return;
     }
-    const rect = this.canvas.getBoundingClientRect();
-    const index = viewportForPoint(
-      this.viewports.filter((value): value is ViewportRect => Boolean(value)),
-      event.clientX - rect.left,
-      event.clientY - rect.top,
-    );
-    const slot: SlotId = index === 1 ? 'b' : 'a';
-    if (slot === 'b' && !this.snapshot?.slots.b) return;
-    this.onActiveSlot(slot);
     this.canvas.setPointerCapture(event.pointerId);
     this.activePointers.set(event.pointerId, {
       id: event.pointerId,
-      slot,
       startX: event.clientX,
       startY: event.clientY,
       startedAt: performance.now(),
@@ -758,17 +567,12 @@ export class SceneRenderer {
           );
           this.labScene.dolly((this.lastTouchDistance - distance) * 3);
         } else {
-          const camera = this.slots[gesture.slot].camera;
+          const camera = this.observationScene.camera;
           camera.pan(
             center.x - this.lastTouchCenter.x,
             center.y - this.lastTouchCenter.y,
-            this.isPhysicalComparison(),
           );
-          camera.dolly(
-            (this.lastTouchDistance - distance) * 3,
-            this.isPhysicalComparison(),
-          );
-          this.syncLinkedCamera(gesture.slot);
+          camera.dolly((this.lastTouchDistance - distance) * 3);
         }
       }
       this.lastTouchCenter = center;
@@ -778,11 +582,9 @@ export class SceneRenderer {
         if (gesture.mode === 'pan') this.labScene.pan(deltaX, deltaY);
         else this.labScene.orbit(deltaX, deltaY);
       } else {
-        const camera = this.slots[gesture.slot].camera;
-        if (gesture.mode === 'pan')
-          camera.pan(deltaX, deltaY, this.isPhysicalComparison());
+        const camera = this.observationScene.camera;
+        if (gesture.mode === 'pan') camera.pan(deltaX, deltaY);
         else camera.orbit(deltaX, deltaY);
-        this.syncLinkedCamera(gesture.slot);
       }
     }
     this.renderFrame();
@@ -803,7 +605,7 @@ export class SceneRenderer {
             this.canvas.getBoundingClientRect(),
           ),
         );
-      else this.pick(event, gesture.slot);
+      else this.pick(event);
     }
   };
 
@@ -820,71 +622,33 @@ export class SceneRenderer {
       this.renderFrame();
       return;
     }
-    const rect = this.canvas.getBoundingClientRect();
-    const index = viewportForPoint(
-      this.viewports.filter((value): value is ViewportRect => Boolean(value)),
-      event.clientX - rect.left,
-      event.clientY - rect.top,
-    );
-    const slot: SlotId = index === 1 ? 'b' : 'a';
-    if (slot === 'b' && !this.snapshot?.slots.b) return;
-    this.onActiveSlot(slot);
-    this.slots[slot].camera.dolly(event.deltaY, this.isPhysicalComparison());
-    this.syncLinkedCamera(slot);
+    this.observationScene.camera.dolly(event.deltaY);
     this.renderFrame();
   };
 
-  private pick(event: PointerEvent, slotId: SlotId): void {
+  private pick(event: PointerEvent): void {
     const snapshot = this.snapshot;
-    const state = snapshot?.slots[slotId];
-    const view = this.slots[slotId].view;
+    const state = snapshot?.specimen;
+    const view = this.observationScene.view;
     if (!snapshot || !state || !view) return this.onSelect(null);
     const rect = this.canvas.getBoundingClientRect();
-    const index = slotId === 'b' ? 1 : 0;
-    const viewport = this.viewports[index];
-    if (!viewport) return;
-    const x = event.clientX - rect.left - viewport.x;
-    const y = event.clientY - rect.top - viewport.y;
-    this.pointer.set((x / viewport.width) * 2 - 1, -(y / viewport.height) * 2 + 1);
-    const camera = this.isPhysicalComparison()
-      ? this.slots[slotId].camera.orthographic
-      : this.slots[slotId].camera.perspective;
-    this.raycaster.setFromCamera(this.pointer, camera);
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+    this.pointer.set((x / rect.width) * 2 - 1, -(y / rect.height) * 2 + 1);
+    this.raycaster.setFromCamera(
+      this.pointer,
+      this.observationScene.camera.perspective,
+    );
     const selection = view.pick(
       this.raycaster,
       state.sectionOffset,
       state.view === 'section',
     );
-    this.onSelect(selection ? { ...selection, kind: 'part', slot: slotId } : null);
-  }
-
-  private syncLinkedCamera(source: SlotId): void {
-    const snapshot = this.snapshot;
-    if (
-      !snapshot?.comparison.enabled ||
-      !snapshot.comparison.linked ||
-      !snapshot.slots.b
-    )
-      return;
-    const target: SlotId = source === 'a' ? 'b' : 'a';
-    this.slots[target].camera.setPose(this.slots[source].camera.getPose());
-  }
-
-  private visibleSlots(snapshot: ObservationSnapshot): readonly SlotId[] {
-    return snapshot.comparison.enabled && snapshot.slots.b ? ['a', 'b'] : ['a'];
-  }
-
-  private isPhysicalComparison(): boolean {
-    return Boolean(
-      this.snapshot?.comparison.enabled &&
-      this.snapshot.comparison.scaleMode === 'physical',
-    );
+    this.onSelect(selection ? { ...selection, kind: 'part' } : null);
   }
 
   private hasActiveTransition(snapshot: ObservationSnapshot): boolean {
-    return this.visibleSlots(snapshot).some(
-      (slotId) => snapshot.slots[slotId]?.transition.mode !== 'none',
-    );
+    return snapshot.specimen.transition.mode !== 'none';
   }
 
   private setRendererPixelRatio(quality: RenderQuality): void {
@@ -927,12 +691,6 @@ function addLights(scene: THREE.Scene): void {
   const warm = new THREE.PointLight(0xffc580, 12, 16, 2);
   warm.position.set(4, -3, 3);
   scene.add(warm);
-}
-
-function formatNm(value: number): string {
-  return value >= 100
-    ? Math.round(value).toLocaleString('ko-KR')
-    : value.toFixed(value < 1 ? 2 : 1).replace(/\.0$/, '');
 }
 
 function fitCanvasText(

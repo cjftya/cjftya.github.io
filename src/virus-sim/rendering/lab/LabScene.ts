@@ -4,7 +4,7 @@ import {
   type AxisAlignedBox,
 } from '../../lab/chambers/descriptors';
 import type { LabSnapshot } from '../../lab/types';
-import { ManualCamera, type ManualCameraPose } from '../ManualCamera';
+import { ManualCamera } from '../ManualCamera';
 import type { RenderQuality } from '../quality/quality';
 import { LabFlowMarkers } from './LabFlowMarkers';
 import { LabSpecimenView } from './LabSpecimenView';
@@ -83,14 +83,6 @@ export class LabScene {
 
   frameAll(): void {
     this.camera.frameObject(this.chamberRoot);
-  }
-
-  getCameraPose(): ManualCameraPose {
-    return this.camera.getPose();
-  }
-
-  setCameraPose(pose: ManualCameraPose): void {
-    this.camera.setPose(pose);
   }
 
   pick(clientX: number, clientY: number, rect: DOMRect): string | null {

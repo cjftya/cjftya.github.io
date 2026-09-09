@@ -8,26 +8,25 @@ flowchart TD
   App --> Stores["ObservationStore · LabSession · WorkspaceStore"]
   Stores --> Snapshots["읽기 전용 snapshots"]
   Snapshots --> Renderer["SceneRenderer · 단일 RAF/WebGLRenderer"]
-  Renderer --> Scenes["관찰 A/B · LabScene"]
+  Renderer --> Scenes["단일 관찰 scene · LabScene"]
 ```
 
 UI는 Three.js 객체나 물리 world를 직접 변경하지 않는다. `VirusSimApp`은 typed action을
 세 상태 소유자에 전달하고, 렌더러는 관찰 또는 Lab의 discriminated snapshot만 읽는다.
-기존 관찰 scene 경로는 그대로 보존하고 새 실험 geometry와 marker는 `LabScene` 아래에
-격리했다.
+관찰 scene과 실험 geometry·marker는 분리하며, 실험 쪽 자원은 `LabScene` 아래에 격리했다.
 
 ## 상태 소유자
 
 | 상태                                            | 소유자                      | 경계                            |
 | ----------------------------------------------- | --------------------------- | ------------------------------- |
-| 관찰 A/B, 레이어, 분해, 스캐너, 변이            | `ObservationStore`          | Lab 물리 상태를 알지 않음       |
+| 단일 관찰 표본, 레이어, 분해, 스캐너            | `ObservationStore`          | Lab 물리 상태를 알지 않음       |
 | Lab config, world, PRNG, sim-time, 결과, replay | `LabSession`                | DOM·Three.js를 알지 않음        |
 | 현재 모드와 모드별 탭                           | `WorkspaceStore`            | 도감·물리 내용을 소유하지 않음  |
-| 관찰 A/B 카메라 pose                            | A/B `ManualCamera`          | 자동 경로·idle motion 없음      |
+| 관찰 카메라 pose                                | 관찰 `ManualCamera`         | 자동 경로·idle motion 없음      |
 | Lab 카메라 pose                                 | `LabScene`의 `ManualCamera` | 관찰 pose와 공유하지 않음       |
 | WebGL renderer, RAF, 입력 라우팅                | `SceneRenderer`             | 물리 적분을 수행하지 않음       |
 | Lab 외형·챔버·trajectory·flow marker            | `LabScene`                  | snapshot을 표시하고 자원을 관리 |
-| 하단 패널 scroll 위치                           | `VirusSimPanel`             | 모드·탭별 위치를 별도 저장      |
+| 문서 scroll                                     | 브라우저 document           | 내부 panel scroll을 만들지 않음 |
 
 ## 주요 모듈
 
@@ -45,7 +44,7 @@ UI는 Three.js 객체나 물리 world를 직접 변경하지 않는다. `VirusSi
 | `rendering/lab/LabSpecimenView.ts`    | profile과 같은 축·scale·centerline의 경량 외관              |
 | `rendering/lab/LabFlowMarkers.ts`     | physics와 같은 `sampleVelocityField`를 읽는 marker          |
 | `ui/LabPanel.ts`, `ui/labBindings.ts` | snapshot 표시와 DOM event/action 변환                       |
-| `rendering/SceneRenderer.ts`          | 기존 관찰 A/B와 Lab pass를 한 renderer/RAF로 조정           |
+| `rendering/SceneRenderer.ts`          | 단일 관찰 scene과 Lab pass를 한 renderer/RAF로 조정         |
 
 ## 프레임과 모드 전환
 
@@ -57,9 +56,9 @@ snapshot을 한 번 받고, Lab은 `running`이거나 sim-time이 바뀐 때만 
 구조 관찰 진입은 작은 transaction이다.
 
 1. Lab을 `inspecting`으로 정지한다.
-2. 원래 `ObservationSnapshot`, A/B camera pose, Lab camera pose와 패널 위치를 보관한다.
-3. 선택한 Lab 항목을 기존 고품질 관찰 A에 임시로 연다.
-4. 복귀 시 원래 관찰 snapshot과 A/B pose를 복원하고 Lab은 `paused`로 남긴다.
+2. 원래 `ObservationSnapshot`과 관찰 camera pose를 보관한다.
+3. 선택한 Lab 항목을 고품질 단일 관찰 scene에 임시로 연다.
+4. 복귀 시 원래 관찰 snapshot과 pose를 복원하고 Lab은 `paused`로 남긴다.
 
 실험 순간의 filament 굽힘, Lab scale, 관찰 분해·단면은 서로 복사하지 않는다.
 
@@ -73,5 +72,5 @@ snapshot을 한 번 받고, Lab은 `running`이거나 sim-time이 바뀐 때만 
 - 앱 dispose 시 ResizeObserver, 입력 listener, 관찰 view, Lab view, scanner target, marker,
   renderer를 정리한다. UI listener는 AbortController 두 개로 일괄 해제한다.
 
-기존 관찰 구현을 대규모로 이동시키지 않고 Lab 전용 책임만 새 모듈로 분리했다. 이 선택은
-검증된 A/B·scanner 경로의 회귀 위험과 새 코드의 결합도를 함께 낮춘다.
+비교용 B scene·분할 viewport·연결 camera·물리 배율 경로는 제거했다. 관찰은 한 표본과 한
+camera만 소유하고, 다중 표본은 목적이 분명한 Physics Arena에서만 관리한다.

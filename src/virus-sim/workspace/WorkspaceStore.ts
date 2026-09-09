@@ -1,5 +1,5 @@
 export type WorkspaceMode = 'observation' | 'lab';
-export type ObservationTab = 'catalog' | 'structure' | 'comparison' | 'settings';
+export type ObservationTab = 'catalog' | 'structure' | 'settings';
 export type LabTab = 'specimens' | 'environment' | 'results' | 'settings';
 
 export interface WorkspaceSnapshot {
@@ -42,7 +42,7 @@ export class WorkspaceStore {
 }
 
 function isObservationTab(tab: string): tab is ObservationTab {
-  return ['catalog', 'structure', 'comparison', 'settings'].includes(tab);
+  return ['catalog', 'structure', 'settings'].includes(tab);
 }
 
 function isLabTab(tab: string): tab is LabTab {

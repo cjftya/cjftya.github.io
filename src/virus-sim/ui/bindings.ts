@@ -1,11 +1,9 @@
 import type {
-  ComparisonScaleMode,
   DecorationLevel,
   InspectionView,
   ObservationLayerId,
   ObservationPartId,
   ScannerAxis,
-  SlotId,
   StructuralRevealMode,
 } from '../observation/types';
 import type { RenderQuality } from '../rendering/quality/quality';
@@ -33,18 +31,10 @@ export interface VirusSimControlActions {
     mode: Exclude<StructuralRevealMode, 'none' | 'reassemble'>,
   ) => void;
   readonly reassemble: () => void;
-  readonly addComparison: (id: string) => void;
-  readonly swapComparison: () => void;
-  readonly closeComparison: () => void;
-  readonly setComparisonLinked: (linked: boolean) => void;
-  readonly setComparisonScale: (mode: ComparisonScaleMode) => void;
   readonly setScannerEnabled: (enabled: boolean) => void;
   readonly setScannerAxis: (axis: ScannerAxis) => void;
   readonly setScannerPosition: (position: number) => void;
   readonly setScannerThickness: (thickness: number) => void;
-  readonly setScannerLinked: (linked: boolean) => void;
-  readonly setVariant: (slot: SlotId, id: string | null) => void;
-  readonly selectChangePart: (part: ObservationPartId) => void;
   readonly setDecorationLevel: (level: DecorationLevel) => void;
   readonly setDecorationPaused: (paused: boolean) => void;
   readonly setQuality: (quality: RenderQuality) => void;
@@ -195,39 +185,6 @@ export function bindVirusSimControls(
     options,
   );
 
-  element<HTMLButtonElement>('#comparison-add').addEventListener(
-    'click',
-    () => actions.addComparison(element<HTMLSelectElement>('#compare-virus').value),
-    options,
-  );
-  element<HTMLButtonElement>('#comparison-swap').addEventListener(
-    'click',
-    actions.swapComparison,
-    options,
-  );
-  element<HTMLButtonElement>('#comparison-close').addEventListener(
-    'click',
-    actions.closeComparison,
-    options,
-  );
-  element<HTMLInputElement>('#comparison-linked').addEventListener(
-    'change',
-    (event) => actions.setComparisonLinked(inputChecked(event)),
-    options,
-  );
-  root
-    .querySelectorAll<HTMLButtonElement>('[data-comparison-scale]')
-    .forEach((button) => {
-      button.addEventListener(
-        'click',
-        () =>
-          actions.setComparisonScale(
-            button.dataset.comparisonScale as ComparisonScaleMode,
-          ),
-        options,
-      );
-    });
-
   element<HTMLInputElement>('#scanner-enabled').addEventListener(
     'change',
     (event) => actions.setScannerEnabled(inputChecked(event)),
@@ -248,35 +205,6 @@ export function bindVirusSimControls(
     (event) => actions.setScannerThickness(Number(inputValue(event)) / 100),
     options,
   );
-  element<HTMLInputElement>('#scanner-linked').addEventListener(
-    'change',
-    (event) => actions.setScannerLinked(inputChecked(event)),
-    options,
-  );
-
-  element<HTMLSelectElement>('#variant-a').addEventListener(
-    'change',
-    (event) => actions.setVariant('a', inputValue(event) || null),
-    options,
-  );
-  element<HTMLSelectElement>('#variant-b').addEventListener(
-    'change',
-    (event) => actions.setVariant('b', inputValue(event) || null),
-    options,
-  );
-  element<HTMLElement>('#variant-changes').addEventListener(
-    'click',
-    (event) => {
-      const button = (event.target as Element).closest<HTMLButtonElement>(
-        '[data-change-part]',
-      );
-      if (button) {
-        actions.selectChangePart(button.dataset.changePart as ObservationPartId);
-      }
-    },
-    options,
-  );
-
   element<HTMLSelectElement>('#decoration-level').addEventListener(
     'change',
     (event) => actions.setDecorationLevel(inputValue(event) as DecorationLevel),

@@ -5,20 +5,16 @@ export interface ManualCameraPose {
   readonly azimuth: number;
   readonly polar: number;
   readonly distance: number;
-  readonly orthographicZoom: number;
 }
 
 export class ManualCamera {
   readonly perspective = new THREE.PerspectiveCamera(42, 1, 0.04, 200);
-  readonly orthographic = new THREE.OrthographicCamera(-4, 4, 4, -4, 0.04, 200);
   private target = new THREE.Vector3();
   private azimuth = 0.7;
   private polar = 1.08;
   private distance = 10;
   private width = 1;
   private height = 1;
-  private orthographicBaseWorldPerPixel = 0.02;
-  private orthographicZoom = 1;
 
   constructor() {
     this.syncCameras();
@@ -29,12 +25,6 @@ export class ManualCamera {
     this.height = Math.max(1, height);
     this.perspective.aspect = this.width / this.height;
     this.perspective.updateProjectionMatrix();
-    this.updateOrthographicProjection();
-  }
-
-  setOrthographicWorldPerPixel(value: number): void {
-    this.orthographicBaseWorldPerPixel = Math.max(0.00001, value);
-    this.updateOrthographicProjection();
   }
 
   getPose(): ManualCameraPose {
@@ -43,7 +33,6 @@ export class ManualCamera {
       azimuth: this.azimuth,
       polar: this.polar,
       distance: this.distance,
-      orthographicZoom: this.orthographicZoom,
     };
   }
 
@@ -52,7 +41,6 @@ export class ManualCamera {
     this.azimuth = pose.azimuth;
     this.polar = clamp(pose.polar, 0.08, Math.PI - 0.08);
     this.distance = clamp(pose.distance, 0.08, 120);
-    this.orthographicZoom = clamp(pose.orthographicZoom, 0.08, 18);
     this.syncCameras();
   }
 
@@ -62,12 +50,11 @@ export class ManualCamera {
     this.syncCameras();
   }
 
-  pan(deltaX: number, deltaY: number, orthographic = false): void {
+  pan(deltaX: number, deltaY: number): void {
     const camera = this.perspective;
-    const worldPerPixel = orthographic
-      ? this.orthographicBaseWorldPerPixel * this.orthographicZoom
-      : (2 * this.distance * Math.tan(THREE.MathUtils.degToRad(camera.fov * 0.5))) /
-        this.height;
+    const worldPerPixel =
+      (2 * this.distance * Math.tan(THREE.MathUtils.degToRad(camera.fov * 0.5))) /
+      this.height;
     const right = new THREE.Vector3(1, 0, 0).applyQuaternion(camera.quaternion);
     const up = new THREE.Vector3(0, 1, 0).applyQuaternion(camera.quaternion);
     this.target.addScaledVector(right, -deltaX * worldPerPixel);
@@ -75,16 +62,7 @@ export class ManualCamera {
     this.syncCameras();
   }
 
-  dolly(delta: number, orthographic = false): void {
-    if (orthographic) {
-      this.orthographicZoom = clamp(
-        this.orthographicZoom * Math.exp(delta * 0.0015),
-        0.08,
-        18,
-      );
-      this.updateOrthographicProjection();
-      return;
-    }
+  dolly(delta: number): void {
     this.distance = clamp(this.distance * Math.exp(delta * 0.0015), 0.08, 120);
     this.syncCameras();
   }
@@ -115,23 +93,11 @@ export class ManualCamera {
       Math.cos(this.polar),
       sinPolar * Math.cos(this.azimuth),
     );
-    for (const camera of [this.perspective, this.orthographic]) {
-      camera.position.copy(this.target).addScaledVector(direction, this.distance);
-      camera.up.set(0, 1, 0);
-      camera.lookAt(this.target);
-      camera.updateMatrixWorld(true);
-    }
-  }
-
-  private updateOrthographicProjection(): void {
-    const worldPerPixel = this.orthographicBaseWorldPerPixel * this.orthographicZoom;
-    const halfWidth = (this.width * worldPerPixel) / 2;
-    const halfHeight = (this.height * worldPerPixel) / 2;
-    this.orthographic.left = -halfWidth;
-    this.orthographic.right = halfWidth;
-    this.orthographic.top = halfHeight;
-    this.orthographic.bottom = -halfHeight;
-    this.orthographic.updateProjectionMatrix();
+    const camera = this.perspective;
+    camera.position.copy(this.target).addScaledVector(direction, this.distance);
+    camera.up.set(0, 1, 0);
+    camera.lookAt(this.target);
+    camera.updateMatrixWorld(true);
   }
 }
 

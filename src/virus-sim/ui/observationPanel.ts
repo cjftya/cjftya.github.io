@@ -74,11 +74,6 @@ export function observationInfoMarkup(): string {
         `<label data-observation-layer-row="${id}" hidden><input data-observation-layer="${id}" type="checkbox" checked /><span>${label}</span></label>`,
     )
     .join('');
-  const compareOptions = VIRUS_CATALOG.map(
-    (virus) =>
-      `<option value="${virus.id}">${virus.shortName} · ${virus.genomeLabel}</option>`,
-  ).join('');
-
   return `
     <section class="observatory-info">
       <div class="current-actions" data-observation-section="structure">
@@ -127,28 +122,6 @@ export function observationInfoMarkup(): string {
         <div class="part-list" id="observation-part-list">${partButtons}</div>
       </details>
 
-      <section class="comparison-panel feature-panel" data-observation-section="comparison">
-        <div class="panel-heading"><div><p class="eyebrow">A / B COMPARE</p><h2>두 표본 비교</h2></div><span id="comparison-state">꺼짐</span></div>
-        <label class="stacked-field">B 표본<select id="compare-virus">${compareOptions}</select></label>
-        <div class="comparison-actions"><button class="primary-action" id="comparison-add" type="button">비교에 추가</button><button id="comparison-swap" type="button" hidden>서로 바꾸기</button><button id="comparison-close" type="button" hidden>비교 종료</button></div>
-        <label class="wide-switch" id="comparison-link-row" hidden><input id="comparison-linked" type="checkbox" checked /><span>조작 연결</span></label>
-        <div id="comparison-scale-controls" hidden>
-          <div class="segmented-view" role="group" aria-label="크기 비교 방식">
-            <button class="is-active" data-comparison-scale="normalized" type="button">같은 크기로</button>
-            <button data-comparison-scale="physical" type="button">실제 크기 비율</button>
-          </div>
-          <p class="comparison-note" id="comparison-scale-note">같은 화면 길이로 맞춰 구조를 비교해요. 실제 비율이 아니에요.</p>
-          <div class="dimension-grid" id="comparison-dimensions"></div>
-        </div>
-      </section>
-
-      <section class="variant-panel feature-panel" data-observation-section="comparison">
-        <div class="panel-heading"><div><p class="eyebrow">SPECIMENS</p><h2>표본·변이 차이</h2></div><span id="variant-count">0</span></div>
-        <label class="stacked-field">A 표본<select id="variant-a"><option value="">기본 표본</option></select></label>
-        <label class="stacked-field" id="variant-b-row" hidden>B 표본<select id="variant-b"><option value="">기본 표본</option></select></label>
-        <div id="variant-changes" class="variant-changes"><p>등록된 비교 표본을 선택하면 근거가 있는 영역 차이를 표시해요.</p></div>
-      </section>
-
       <section class="scanner-panel feature-panel" data-observation-section="structure">
         <div class="panel-heading"><div><p class="eyebrow">STRUCTURE SCANNER</p><h2>얇은 단층 보기</h2></div><label class="compact-switch"><input id="scanner-enabled" type="checkbox" /><span>켜기</span></label></div>
         <p>같은 실제 기하의 얇은 slab를 조립 상태에서 렌더링해요. 종료하면 이전 분해량을 복원해요.</p>
@@ -156,8 +129,7 @@ export function observationInfoMarkup(): string {
           <label class="stacked-field">로컬 축<select id="scanner-axis"><option value="x">X축</option><option value="y">Y축</option><option value="z" selected>Z축</option></select></label>
           <div class="control-group"><div class="control-label"><label for="scanner-position">위치</label><output id="scanner-position-value">50%</output></div><input id="scanner-position" type="range" min="0" max="100" value="50" /></div>
           <div class="control-group"><div class="control-label"><label for="scanner-thickness">단층 두께</label><output id="scanner-thickness-value">8%</output></div><input id="scanner-thickness" type="range" min="1" max="30" value="8" /></div>
-          <label class="wide-switch" id="scanner-link-row" hidden><input id="scanner-linked" type="checkbox" checked /><span>A/B 정규화 위치 연결</span></label>
-          <small>같은 50%가 두 표본의 같은 해부학적 부위라는 뜻은 아니에요.</small>
+          <small>위치는 선택한 바이러스의 로컬 축을 기준으로 정규화해요.</small>
         </div>
         <canvas id="scanner-canvas" class="scanner-canvas" aria-label="구조 스캐너 단층 화면"></canvas>
       </section>

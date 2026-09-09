@@ -205,6 +205,9 @@ describe('Virus Sim v3.5 catalog contracts', () => {
     ]) {
       expect(root.innerHTML).not.toContain(removedCopy);
     }
+    expect(root.innerHTML).not.toContain('data-workspace-tab="comparison"');
+    expect(root.innerHTML).not.toContain('comparison-add');
+    expect(root.innerHTML).not.toContain('variant-a');
   });
 });
 

@@ -29,9 +29,6 @@ export function renderAppLayout(root: HTMLElement): void {
         <div class="microscope-depth" aria-hidden="true"></div>
         <div class="stage-overlay top-left"><span class="live-dot"></span><span id="stage-label">OBSERVATORY · T4</span></div>
         <div class="stage-overlay top-right lab-stage-state" id="lab-stage-state" hidden>READY</div>
-        <div class="slot-label slot-a" id="slot-label-a"><b>A</b><span id="slot-name-a">T4</span></div>
-        <div class="slot-label slot-b" id="slot-label-b" hidden><b>B</b><span id="slot-name-b"></span></div>
-        <div class="scale-legend" id="scale-legend"><span id="scale-bar"></span><b id="scale-legend-copy">같은 크기로 맞춤 · 실제 비율 아님</b></div>
         <div class="context-message" id="context-message" hidden>3D 컨텍스트가 중단됐어요. 실험은 정지됐으며 복구 후 직접 재개할 수 있어요.</div>
       </section>
 
@@ -45,7 +42,6 @@ export function renderAppLayout(root: HTMLElement): void {
         <div data-mode-tabs="observation" role="tablist">
           <button class="is-active" data-workspace-tab="catalog" role="tab" aria-selected="true" type="button">도감</button>
           <button data-workspace-tab="structure" role="tab" aria-selected="false" type="button">구조</button>
-          <button data-workspace-tab="comparison" role="tab" aria-selected="false" type="button">비교</button>
           <button data-workspace-tab="settings" role="tab" aria-selected="false" type="button">설정</button>
         </div>
         <div data-mode-tabs="lab" role="tablist" hidden>
