@@ -1,11 +1,15 @@
-import type { ObservationVec3 } from './types';
+interface Vec3Like {
+  readonly x: number;
+  readonly y: number;
+  readonly z: number;
+}
 
 export function calculateExplodedPosition(
-  origin: ObservationVec3,
-  direction: ObservationVec3,
+  origin: Vec3Like,
+  direction: Vec3Like,
   amount: number,
   distance: number,
-): ObservationVec3 {
+): Vec3Like {
   const normalized = Math.min(1, Math.max(0, amount));
   return {
     x: origin.x + direction.x * normalized * distance,

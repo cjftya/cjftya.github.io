@@ -1,9 +1,13 @@
-# Virus Sim v3 — Microworld Experience
+# Virus Sim v3.5 — Manual Structure Lab
 
-Virus Sim은 공개 구조 자료를 바탕으로 실제 바이러스 도감 항목 56개를 한 종씩 크게
-살펴보는 Three.js 관찰실이다. v3는 모델을 확대하는 화면에서 더 나아가 개체 추적,
-표면 접근, 내부 진입, 공간 분해와 관찰실 복귀를 하나의 연속된 카메라 경험으로 묶는다.
-전체 원자 좌표를 복제하거나 유전체 서열에서 입자 구조를 예측하는 도구는 아니다.
+Virus Sim은 공개 구조 자료를 바탕으로 바이러스 입자의 층과 대표 형태를 살펴보는
+Three.js 관찰실이다. v3.5는 자동 카메라·개체 이동·다큐 투어를 제거하고 회전, 이동,
+확대와 부위 선택을 모두 사용자 입력에 맡긴다. 기존 56개 기본 항목에 필로바이러스,
+HIV, 사람 코로나바이러스 15개를 더해 기본 항목은 71개다. 계통·아형·분리주는 기본
+항목과 별도인 비교 표본으로 집계한다.
+
+이 앱은 전체 원자 좌표를 복제하거나 유전체 서열에서 입자 구조를 예측하는 도구가
+아니다. 반복 수, 색, 분해 거리와 일부 내부 배치는 브라우저 관찰을 위한 절차 표현이다.
 
 ## 실행
 
@@ -14,180 +18,108 @@ npm run dev
 
 개발 서버 또는 빌드 결과에서 `/projects/virus-sim/`을 연다.
 
-## v3 경험
+## v3.5 관찰 원칙
 
-- `OBSERVE → FOLLOW → APPROACH → SURFACE → INTERIOR → RETURN`은 하나의
-  `ExperienceState`를 사용한다. 메뉴나 별도 장면으로 이동하지 않는다.
-- 카메라는 현재 위치와 target에서 smoothstep 보간하고, 마우스·터치 입력이 시작되면
-  자동 전환과 Guided Journey를 즉시 취소한다.
-- 56종 모두 Follow·Approach·Surface, 공통 재질·조명·매질, 기본 Cutaway·Exploded,
-  Time Lens와 seed 기반 개체 차이를 지원한다.
-- T4, Influenza A, HSV-1, Adenovirus 5, Rotavirus RRV, Vaccinia MV, TMV, M13,
-  STIV, SSV1의 10종은 Hero Virus다. 이 항목에는 내부 경로와 전용 다큐 구도를 둔다.
-- Peel·Cutaway·Exploded·Reassemble은 visibility를 즉시 바꾸지 않고 시간에 따라
-  opacity, clipping plane, 구조 위치를 보간한다. 표본 시간이 정지해도 구조 연출과
-  카메라는 계속 조작할 수 있다.
-- Time Lens는 0.1×, 0.25×, 0.5×, 1×, 2×, 4×, 8×와 Freeze를 지원한다. 최근 이동은
-  사용자가 켠 경우에만 Motion Trace와 약한 Temporal Echo로 표시한다.
-- Observation Director는 현재 pose에서 관찰 가치가 있는 순간을 계산한다. 자동 다큐가
-  켜져 있고 14초 동안 입력이 없을 때만 차분한 카메라 구도를 순환한다.
-- Performance, Standard, Enhanced 품질 단계는 기하 밀도·pixel ratio·입자 밀도를
-  조정하지만 Scale Dive 자체는 제거하지 않는다.
+- 유휴 상태에서 표본과 카메라 pose는 변하지 않는다. 카메라 조작은 드래그, 우클릭
+  또는 Shift+드래그, 휠, 터치 회전·핀치와 접근 가능한 버튼으로만 일어난다.
+- 종이나 표본을 바꿔도 현재 카메라 pose와 의미가 유지되는 보기·레이어 상태를
+  보존한다. 새 모델에 없는 선택 부위만 해제한다.
+- 반투명·단면·분해·재조립은 짧은 구조 전환이다. 카메라 이동이나 이후 자동 루프를
+  시작하지 않는다.
+- 배경 파티클은 장식 레이어이며 표본의 물리 운동을 뜻하지 않는다. 끄기·정지와
+  성능별 개수 예산을 제공한다.
+- 감염, 숙주, 결합, 방어, 약물과 치료 효과는 v3.5 범위에 포함하지 않는다.
 
-## 보존한 v2.5 기준
+## 도감과 근거 단계
 
-- 제품 진입점은 **구조 관찰실 한 가지**다. v2의 일반화 구조 탭과 감염 실험은 제거했다.
-- 기존 12개와 신규 44개, 총 56개 실제 바이러스 도감 항목을 제공한다.
-- 항목별 안정 ID, 이름·별칭, 입자 상태, 유전체, 출처 범위, 표현 한계, 기하 프로필과
-  투어 순서를 별도 데이터로 유지한다.
-- 즐겨찾기, 최근 관찰 12개, 글자 배율 100/115/130%는 브라우저 로컬 저장소에
-  기억한다. 존재하지 않는 과거 ID나 손상된 값은 읽을 때 제거한다.
-- `다음 발견`은 최근 항목을 피하고 가능하면 다른 builder 계열을 선택한다.
-- 현재 카메라 뷰는 PNG로 저장할 수 있다.
+| 그룹                                     | 기본 항목 | 표현 원칙                               |
+| ---------------------------------------- | --------: | --------------------------------------- |
+| 기존 파지·식물·동물·곤충·고세균 바이러스 |        56 | 기존 identity와 전용/공통 builder 유지  |
+| 에볼라 계열                              |         6 | 계열 공통 필라멘트·외피·matrix·나선 RNP |
+| HIV                                      |         2 | 외피·matrix·성숙 원뿔형 capsid·유전체   |
+| 사람 코로나바이러스                      |         7 | 외피·표면 돌기·matrix·RNA-단백질 복합체 |
+| **합계**                                 |    **71** | 변이·계통·아형 표본은 별도 집계         |
 
-보류한 감염 기능의 기준 커밋과 복원 경로는
-[virus-sim-deferred-infection.md](virus-sim-deferred-infection.md)에 기록했다.
+모든 항목은 `observed`, `conceptual`, `unavailable` 가운데 하나의 근거 단계를 갖는다.
+직접 종별 입체 자료가 부족한 세부는 같은 계열의 공통 구조를 사용하고 `conceptual`로
+표시한다. PDB가 단백질이나 부분 구조만 다루는 경우 이를 전체 입자 좌표처럼 설명하지
+않는다.
 
-## 도감 구성
+각 항목의 실제 크기 데이터에는 대표값과 범위, 측정 축, 돌기 포함 여부, 입자 상태와
+출처 ID가 함께 있다. `displayLength`는 화면용 모델 단위이며 나노미터로 해석하지 않는다.
 
-| 그룹               |   기존 |   신규 |   합계 | 대표 형태                                   |
-| ------------------ | -----: | -----: | -----: | ------------------------------------------- |
-| 세균 바이러스      |      6 |     11 |     17 | 꼬리형, 작은 RNA capsid, 내부막·외피형 파지 |
-| 식물 바이러스      |      1 |     13 |     14 | T=1/T=3 capsid, 유연한 filament, geminate   |
-| 동물·곤충 바이러스 |      5 |     16 |     21 | 다면체, 다층, 외피·core                     |
-| 고세균 바이러스    |      0 |      4 |      4 | 방추형, 막대형, turret형                    |
-| **합계**           | **12** | **44** | **56** |                                             |
+## 두 표본 비교
 
-제품의 ‘56종’은 도감 identity 항목 수다. ICTV의 현재 species rank 개수를 뜻하지
-않는다. 같은 항목의 VLP, empty capsid, 성숙 단계나 색 변형을 별도 항목으로 세지 않는다.
-VLP·빈 capsid·부분 구조가 근거인 경우 해당 상태와 유전체 개념 표시를 분리해 적는다.
-전체 종별 자료는 [v2.5 출처 문서](virus-sim-v2.5-sources.md)에 있다.
+비교 모드는 A와 B를 별도 scene과 상태로 유지하면서 하나의 `WebGLRenderer`와 하나의
+프레임 루프에서 scissor 렌더링한다. 넓은 화면은 좌우, 좁은 화면은 상하로 배치한다.
 
-## 구조 표현
+- `같은 크기로`: 각 모델의 화면상 대표 길이를 맞춰 구조를 비교한다. 실제 크기 비율이
+  아니라는 안내를 항상 표시한다.
+- `실제 크기로`: 두 항목의 대표 나노미터 값과 두 viewport를 함께 계산해 하나의
+  nm-per-pixel 값을 적용한다. 100 nm와 200 nm 표본은 화면에서도 1:2가 된다.
+- 조작 연결을 켜면 A/B 카메라 pose와 수동 보기 상태가 동기화된다. 슬롯 객체와 레이어
+  map은 서로 복제해 한쪽 변경이 참조 공유로 번지지 않는다.
 
-기존 12개는 각자의 전용 builder를 유지한다. 신규 44개는 다음 계열 builder와 항목별
-기하 프로필을 조합한다.
+## 표본·변이 차이
 
-| builder 계열                      | 표현 범위                                   |
-| --------------------------------- | ------------------------------------------- |
-| `generic-icosahedral`             | T=1/T=3, 축별 돌출, P-domain, 오각 capsomer |
-| `generic-phage`                   | 머리 비율, 짧거나 긴 꼬리, base·tailspike   |
-| `generic-filament`                | 굵기·길이·나선 피복과 낮은 진폭 굽힘        |
-| `generic-enveloped`               | 외피 spike, 내부 capsid 또는 nucleocapsid   |
-| `generic-layered`                 | 두세 단백질층, 내부막, 꼭짓점 turret        |
-| `generic-geminate`                | 두 capsid 엽과 연결부                       |
-| `generic-spindle` / `generic-rod` | 고세균 바이러스의 극성 말단과 몸체          |
+v3.5에는 에볼라 Mayinga/Makona, HIV-1 B/C와 HIV-2 A/B, SARS-CoV-2 기준·Alpha·Beta·
+Gamma·Delta·BA.1·BA.2·BA.5·XBB.1.5·JN.1 표본이 있다. 구조 차이는 근거가 연결된
+다음 세 영역만 강조한다.
 
-비슷한 실제 바이러스는 공통 구조를 유지한다. 항목을 시각적으로 다르게 만들기 위해
-자료에 없는 돌기나 꼬리를 추가하지 않는다. 모델별 반복 수는 실제 단백질 화학량론이
-아니며, 색과 분해 거리는 관찰을 위한 연출이다. 각 모델은 따로 프레이밍되므로 화면 크기로
-실제 나노미터 상대 크기를 비교할 수 없다.
+| 비교                    | 표시 영역                       | 한계                                                  |
+| ----------------------- | ------------------------------- | ----------------------------------------------------- |
+| EBOV Mayinga ↔ Makona   | GP 수용체 결합 영역의 A82V 위치 | 절차 표면의 점을 잔기 좌표라고 주장하지 않음          |
+| HIV-1 subtype B ↔ C     | Env gp120 V3 영역               | 성숙 입자 전체 외형 차이로 확대하지 않음              |
+| SARS-CoV-2 Delta ↔ BA.1 | Spike receptor-binding domain   | 서로 다른 PDB 구조 상태를 동일 조건으로 가정하지 않음 |
 
-## 관찰과 움직임
+## 구조 스캐너
 
-모든 항목은 외관·반투명·단면·분해 보기, 유전체와 종별 레이어 표시, 3D 선택과 키보드로
-접근 가능한 부위 목록을 지원한다. 단면 평면은 모델 로컬 좌표에서 월드 좌표로 변환하고,
-분해 위치는 매번 원본 transform에서 계산하므로 `0 → 100 → 0`에서 누적 오차가 없다.
+스캐너는 별도 WebGL 컨텍스트를 만들지 않는다. 현재 scene과 실제 procedural geometry에
+두 clipping plane으로 얇은 slab를 만들고, 임시 orthographic camera와 render target으로
+렌더한 뒤 픽셀을 2D canvas에 복사한다. 축, 정규화 위치와 두께를 조절할 수 있다.
 
-종별 구조 투어는 24초의 순수 progress 함수다.
-
-1. 표면의 대표 구조
-2. 반투명 보기
-3. 단면과 내부 층
-4. 분해된 대표 부위
-5. 전체 외관 복귀
-
-각 항목의 `tourStops`가 실제 강조 부위와 문구를 정한다. 사용자가 카메라나 보기 설정을
-직접 조작하면 투어를 끝내고 수동 관찰로 돌아간다.
-
-### 움직임 모드
-
-관찰 이동은 시드 기반 상태와 `1/60` 고정 tick을 사용한다. 프레임률은 렌더 보간만
-바꾸며 같은 specimen seed·tick은 같은 위치와 quaternion을 만든다. 종과 인스턴스
-번호에서 만든 `SpecimenPersonality`는 경로 크기, 위상과 회전 성향만 바꾸며 구조 자체는
-변형하지 않는다.
-
-| 모드            | 이동                                  | 회전 제어값 | 방어 상한 |
-| --------------- | ------------------------------------- | ----------: | --------: |
-| 활동적 관찰     | 3.2초 B-spline 구간, 넓은 저주파 경로 |   6~12도/초 |   18도/초 |
-| 차분한 관찰     | 4.4초 구간, 활동 모드의 55% 반경      |    3~6도/초 |   12도/초 |
-| 확산 모형(고급) | 반사 경계를 둔 Gaussian 증분          |   회전 확산 | 해당 없음 |
-| 정지            | pose 고정                             |   pose 고정 | 해당 없음 |
-
-활동·차분 모드는 9초 주기의 연속 리듬 변조를 쓰며 spline 제어점 사이의 위치와 속도
-연속성을 유지한다. 이동과 회전의 위상은 별도 상태다. 토글이 꺼진 동안 해당 위상은
-진행하지 않으므로 다시 켤 때 숨겨진 pose로 점프하지 않는다. 정지·모드 전환·부위 집중은
-마지막 표시 pose를 새 anchor로 삼는다.
-
-PVX·PapMV·PVY의 유연한 filament 모델만 여러 segment의 낮은 진폭 굽힘을 허용한다.
-단면·분해·부위 집중 중에는 이 국소 연출을 원래 transform으로 되돌린다. 막대형 SIRV2
-등 강체 항목에는 굽힘을 적용하지 않는다. `prefers-reduced-motion`에서는 정지 상태가
-기본이다.
-
-## 가독성과 접근성
-
-- 시스템 한글 글꼴을 사용하고 본문은 17px, 주요 설명은 18px 수준으로 표시한다.
-- 버튼·입력은 16px 이상, 포인터 목표는 최소 44px로 둔다.
-- 기본 전경 `#f2f7ff`, 보조 전경 `#b8c7da`, 강조 `#63eee0`을 불투명한 청남색
-  패널 위에서 사용한다.
-- 활성 상태는 색뿐 아니라 채움·테두리·굵기·별표를 함께 사용한다.
-- 좁은 화면에서도 글자를 축소하지 않고 패널을 세로로 재배치한다.
-- 브라우저 확대를 차단하지 않으며 130% 앱 배율을 별도 제공한다.
+스캐너 진입 시 분해 보기는 잠시 접고 종료 시 이전 분해 값으로 정확히 복원한다. 렌더
+타깃, viewport, scissor, clear color, clipping material과 장식 표시 상태도 매 스캔 뒤
+원래 값으로 돌린다.
 
 ## 모듈 경계
 
-- `catalog/registry.ts`: 56개 identity의 단일 조회·검색 진입점
-- `catalog/definitions/`: 파지, 식물, 동물·곤충, 고세균 신규 항목
-- `catalog/geometryProfiles.ts`: 56개 항목의 기하 매개변수 계약
-- `catalog/sources.ts`: 출처 URL과 적용 범위
-- `observation/motion/`: 고정 tick 움직임과 확산 고급 옵션
-- `observation/specimen/`: 구조를 바꾸지 않는 seed 기반 개체 성향
-- `experience/`: 경험 상태, 관찰 순간과 자동 다큐 조건
-- `catalog/experienceProfiles.ts`: 56종 공통 경험과 Hero Virus 내부 경로
-- `rendering/CameraRig.ts`: 취소 가능한 연속 카메라 전환과 waypoint 경로
-- `rendering/materials/`: 구조 레이어별 scientific-cinematic 재질
-- `rendering/environment/`: 현미경 매질 haze와 깊이 입자
-- `rendering/quality/`: Performance / Standard / Enhanced 예산
-- `time/`: Time Lens 배율, Motion Trace와 Temporal Echo
-- `observation/tours/`: 종별 투어 순수 평가
-- `rendering/models/`: 전용·공통 Three.js builder
-- `ui/preferences.ts`: 즐겨찾기·최근·글자 배율 저장 정제
-
-관찰의 `normalizeSeed`는 `common/random.ts`에 있어 제거된 감염 모듈을 import하지 않는다.
-런타임은 외부 구조 파일을 내려받지 않으며 출처 링크만 데이터베이스로 연결한다.
+- `catalog/`: 71개 identity, 출처, 실제 치수, 표본·변이와 근거 단계
+- `observation/ObservationStore.ts`: A/B 관찰 상태의 단일 원천과 직렬화 가능한 전이
+- `inspection/transition.ts`: 자동 카메라와 분리된 짧은 구조 전환
+- `comparison/scaling.ts`: 반응형 viewport와 정규화/실제 크기 환산
+- `scanner/math.ts`: 정규화 위치를 모델 bounds의 얇은 slab로 변환
+- `rendering/ManualCamera.ts`: 명시적 orbit·pan·dolly·전체 보기만 제공
+- `rendering/SpecimenView.ts`: 모델, 레이어, 단면, 분해와 선택 처리
+- `rendering/SceneRenderer.ts`: 단일 renderer·프레임 루프, A/B scissor와 입력 라우팅
+- `rendering/scanner/ScannerRenderer.ts`: render target 기반 실제 geometry 단층
+- `rendering/effects/DecorativeParticles.ts`: 의미 없는 장식 파티클 레이어
+- `ui/VirusSimPanel.ts`: 71개 도감과 관찰·비교·변이·스캐너 표시 상태
+- `ui/bindings.ts`: DOM 이벤트를 action으로 변환하고 한 AbortController로 수명 관리
+- `app.ts`: 상태 저장소·렌더러·UI action 연결과 해제
 
 ## 검증 계약
 
-`tests/virus-sim/observation.test.ts`는 다음을 확인한다.
+`tests/virus-sim/v3.5-catalog.test.ts`는 56개 기존 identity와 15개 신규 identity, 전체
+71개 치수·출처, 변이 참조 무결성, 모든 고품질 모델의 선언 부위·레이어와 렌더 예산을
+확인한다.
 
-1. 도감 identity·출처·기하 프로필이 각각 56개이고 중복이 없다.
-2. 모든 항목의 근거 상태, 투어, 표현 한계와 source URL이 완전하다.
-3. 56개 고품질 모델이 모든 선언 부위·레이어를 실제 객체에 연결한다.
-4. 모델당 150 draw 대상, 250,000 mesh triangle 예산을 넘지 않는다.
-5. 고정 tick 결정성, 30/60/120fps 스케줄 독립성, spline 연속성과 각속도 상한을 지킨다.
-6. 정지·모드 전환·축 토글에서 pose가 튀지 않고 확산 모형은 경계 안에 머문다.
-7. 56개 종별 투어가 같은 progress에서 같은 pose를 만들고 24초에 완료된다.
-8. 앱 마크업에 단일 관찰실과 56개 카드만 있으며 과거 모드 패널은 없다.
-9. 즐겨찾기·최근·글자 설정에서 손상되거나 존재하지 않는 ID를 제거한다.
-
-`tests/virus-sim/v3-experience.test.ts`는 다음을 추가로 확인한다.
-
-1. 56종 모두 v3 Experience Profile을 가지며 10종 Hero에 내부 경로가 있다.
-2. 개체 성향이 시드에 대해 결정적이고 인스턴스마다 달라진다.
-3. Scale Dive와 Return이 하나의 상태 원천에서 전이된다.
-4. Freeze 상태에서도 구조 분해·재조립이 연속적으로 완료된다.
-5. Time Lens 전체 배율, trace·echo, 자동 다큐 idle 조건이 유지된다.
-6. 56종 모델 모두 구조 역할에 맞는 v3 재질 규칙을 적용받는다.
+`tests/virus-sim/v3.5-manual.test.ts`는 장시간 유휴 상태 불변, 종 변경 시 관찰 상태
+보존, 분해 후 정확한 재조립, 스캐너 종료 복원, A/B 비공유 상태, 100/200 nm 1:2 환산,
+서로 다른 viewport의 공통 nm-per-pixel과 slab 위치 계산을 확인한다.
 
 전체 저장소는 `npm run lint`, `npm run test`, `npm run build`를 통과해야 한다. 빌드 뒤
-`dist/projects/virus-sim/index.html`은 해시된 번들 asset을 참조해야 하며 `/`, Uriel,
-Viola와 Virus Sim 경로가 함께 유지되어야 한다.
+`dist/projects/virus-sim/index.html`은 해시된 번들을 참조하고 `/`, Uriel, Viola와 Virus
+Sim 경로를 함께 유지해야 한다.
 
 ## 주요 데이터베이스
 
 - [RCSB Protein Data Bank](https://www.rcsb.org/)
 - [Electron Microscopy Data Bank](https://www.ebi.ac.uk/emdb/)
 - [ICTV Virus Taxonomy Profiles](https://ictv.global/report)
+- [ICTV Orthoebolavirus](https://ictv.global/report/chapter/filoviridae/filoviridae/orthoebolavirus)
+- [ICTV Retroviridae profile](https://pmc.ncbi.nlm.nih.gov/articles/PMC8744268/)
+- [ICTV Coronaviridae](https://ictv.global/report/chapter/coronaviridae/coronaviridae)
+- [CDC Human Coronavirus Types](https://www.cdc.gov/human-coronaviruses/php/types/index.html)
 
-개별 링크는 앱과 종별 출처 문서에서 자료가 실제로 다루는 입자 상태·범위와 함께
-표시한다.
+개별 링크와 자료 적용 범위는 `catalog/sources.ts`와 앱의 현재 항목 출처 패널에 표시한다.

@@ -2,6 +2,7 @@ import { defineVirus, layer } from '../shared';
 
 export const PHAGE_CATALOG = [
   defineVirus({
+    evidenceStatus: 'observed',
     id: 'phix174',
     name: 'ΦX174 파지',
     shortName: 'ΦX174',
@@ -29,9 +30,9 @@ export const PHAGE_CATALOG = [
     ],
     displayLength: 3.7,
     sectionRadius: 1.85,
-    tourParts: ['spike', 'capsid', 'genome'],
   }),
   defineVirus({
+    evidenceStatus: 'observed',
     id: 'qbeta',
     name: 'Qβ 파지',
     shortName: 'Qβ',
@@ -55,9 +56,9 @@ export const PHAGE_CATALOG = [
     ],
     displayLength: 3.8,
     sectionRadius: 1.9,
-    tourParts: ['maturation-protein', 'capsomer', 'genome'],
   }),
   defineVirus({
+    evidenceStatus: 'observed',
     id: 'phi29',
     name: 'Φ29 파지',
     shortName: 'Φ29',
@@ -84,9 +85,9 @@ export const PHAGE_CATALOG = [
     ],
     displayLength: 5.2,
     sectionRadius: 1.55,
-    tourParts: ['capsid', 'portal', 'tail-fiber'],
   }),
   defineVirus({
+    evidenceStatus: 'observed',
     id: 'p22',
     name: 'P22 파지',
     shortName: 'P22',
@@ -107,16 +108,15 @@ export const PHAGE_CATALOG = [
     sourceIds: ['pdb-5uu5', 'pdb-8tvr'],
     modelBuilder: 'generic-phage',
     geometryProfileId: 'phage-p22-tailspike',
-    localMotion: 'articulated-fiber',
     simplifications: [
       'ejection 단백질의 내부 배치는 생략했어요.',
       'tailspike 도메인은 굵은 분절로 줄였어요.',
     ],
     displayLength: 4.8,
     sectionRadius: 1.65,
-    tourParts: ['tailspike', 'portal', 'capsid'],
   }),
   defineVirus({
+    evidenceStatus: 'observed',
     id: 'hk97',
     name: 'HK97 파지',
     shortName: 'HK97',
@@ -144,9 +144,9 @@ export const PHAGE_CATALOG = [
     ],
     displayLength: 6.6,
     sectionRadius: 1.6,
-    tourParts: ['capsomer', 'neck', 'flexible-tail'],
   }),
   defineVirus({
+    evidenceStatus: 'observed',
     id: 't5',
     name: 'T5 파지',
     shortName: 'T5',
@@ -167,16 +167,15 @@ export const PHAGE_CATALOG = [
     sourceIds: ['pdb-8zvi'],
     modelBuilder: 'generic-phage',
     geometryProfileId: 'phage-long-t5',
-    localMotion: 'articulated-fiber',
     simplifications: [
       '꼬리 반복 단위를 연속 관과 링으로 줄였어요.',
       '말단 단백질은 형태 관계만 표시했어요.',
     ],
     displayLength: 8.2,
     sectionRadius: 1.7,
-    tourParts: ['capsid', 'flexible-tail', 'tail-fiber'],
   }),
   defineVirus({
+    evidenceStatus: 'observed',
     id: 't1',
     name: 'T1 파지',
     shortName: 'T1',
@@ -197,16 +196,15 @@ export const PHAGE_CATALOG = [
     sourceIds: ['pdb-9l01'],
     modelBuilder: 'generic-phage',
     geometryProfileId: 'phage-long-t1',
-    localMotion: 'articulated-fiber',
     simplifications: [
       'T5보다 단순한 말단 윤곽을 중심으로 표현했어요.',
       '꼬리의 실제 반복 수는 줄였어요.',
     ],
     displayLength: 7.8,
     sectionRadius: 1.55,
-    tourParts: ['capsid', 'flexible-tail', 'tail-fiber'],
   }),
   defineVirus({
+    evidenceStatus: 'observed',
     id: 'prd1',
     name: 'PRD1 파지',
     shortName: 'PRD1',
@@ -235,9 +233,9 @@ export const PHAGE_CATALOG = [
     ],
     displayLength: 4.7,
     sectionRadius: 2.15,
-    tourParts: ['spike', 'inner-membrane', 'capsid'],
   }),
   defineVirus({
+    evidenceStatus: 'observed',
     id: 'phi6',
     name: 'Φ6 파지',
     shortName: 'Φ6',
@@ -267,9 +265,9 @@ export const PHAGE_CATALOG = [
     ],
     displayLength: 4.8,
     sectionRadius: 2.3,
-    tourParts: ['spike', 'outer-capsid', 'core-capsid'],
   }),
   defineVirus({
+    evidenceStatus: 'observed',
     id: 'pm2',
     name: 'PM2 파지',
     shortName: 'PM2',
@@ -297,9 +295,9 @@ export const PHAGE_CATALOG = [
     ],
     displayLength: 4.5,
     sectionRadius: 2.05,
-    tourParts: ['spike', 'inner-membrane', 'genome'],
   }),
   defineVirus({
+    evidenceStatus: 'observed',
     id: 'ap205',
     name: 'AP205 파지',
     shortName: 'AP205',
@@ -323,6 +321,5 @@ export const PHAGE_CATALOG = [
     ],
     displayLength: 3.6,
     sectionRadius: 1.8,
-    tourParts: ['capsomer', 'surface-domain', 'genome'],
   }),
 ] as const;

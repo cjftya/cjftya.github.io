@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import type { ObservationLayerId } from '../../observation/types';
-import type { ExperienceQuality } from '../quality/quality';
+import type { RenderQuality } from '../quality/quality';
 import type { ObservationModel } from '../models/types';
 
 interface MaterialProfile {
@@ -96,7 +96,7 @@ const MATERIAL_PROFILES: Partial<Record<ObservationLayerId, MaterialProfile>> = 
 export function applyScientificMaterials(
   model: ObservationModel,
   virusId: string,
-  quality: ExperienceQuality,
+  quality: RenderQuality,
 ): void {
   const materialLayers = new Map<THREE.Material, ObservationLayerId>();
   for (const [layer, objects] of model.layers) {

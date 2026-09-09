@@ -1,8 +1,4 @@
-import type {
-  LayerDefinition,
-  ObservationDefinition,
-  ObservationPartId,
-} from '../observation/types';
+import type { LayerDefinition, ObservationDefinition } from '../observation/types';
 
 const layer = (
   id: LayerDefinition['id'],
@@ -12,14 +8,7 @@ const layer = (
 
 type LegacyV2Definition = Omit<
   ObservationDefinition,
-  | 'identityKey'
-  | 'aliases'
-  | 'particleState'
-  | 'geometryProfileId'
-  | 'motionProfileId'
-  | 'evidenceStatus'
-  | 'localMotion'
-  | 'tourStops'
+  'identityKey' | 'aliases' | 'particleState' | 'geometryProfileId' | 'evidenceStatus'
 >;
 
 const V2_VIRUS_CATALOG_BASE: readonly LegacyV2Definition[] = [
@@ -366,11 +355,6 @@ const V2_VIRUS_CATALOG_BASE: readonly LegacyV2Definition[] = [
 
 export const V2_VIRUS_CATALOG: readonly ObservationDefinition[] =
   V2_VIRUS_CATALOG_BASE.map((entry) => {
-    const focusParts = entry.parts.filter(
-      (partId): partId is ObservationPartId => partId !== 'genome',
-    );
-    const first = focusParts[0] ?? 'capsid';
-    const second = focusParts.at(-1) ?? first;
     return {
       ...entry,
       identityKey: entry.id,
@@ -382,26 +366,6 @@ export const V2_VIRUS_CATALOG: readonly ObservationDefinition[] =
             ? '삼중 캡시드 입자'
             : '성숙 입자',
       geometryProfileId: entry.id,
-      motionProfileId: entry.id === 'tmv' ? 'calm' : 'active',
-      evidenceStatus: 'verified',
-      localMotion:
-        entry.id === 'm13'
-          ? 'flexible-filament'
-          : entry.id === 'lambda'
-            ? 'articulated-fiber'
-            : 'none',
-      tourStops: [
-        {
-          partId: first,
-          label: `${entry.shortName}의 ${entry.feature}`,
-          view: 'surface',
-        },
-        {
-          partId: second,
-          label: `${entry.category}의 층과 내부`,
-          view: 'section',
-          genomeVisible: true,
-        },
-      ],
+      evidenceStatus: 'observed',
     } satisfies ObservationDefinition;
   });

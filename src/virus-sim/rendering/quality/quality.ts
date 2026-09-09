@@ -1,4 +1,4 @@
-export type ExperienceQuality = 'performance' | 'standard' | 'enhanced';
+export type RenderQuality = 'performance' | 'standard' | 'enhanced';
 
 export interface QualitySettings {
   readonly modelQuality: 'low' | 'high';
@@ -8,7 +8,7 @@ export interface QualitySettings {
   readonly shadows: boolean;
 }
 
-export const QUALITY_SETTINGS: Readonly<Record<ExperienceQuality, QualitySettings>> = {
+export const QUALITY_SETTINGS: Readonly<Record<RenderQuality, QualitySettings>> = {
   performance: {
     modelQuality: 'low',
     pixelRatio: 1,
