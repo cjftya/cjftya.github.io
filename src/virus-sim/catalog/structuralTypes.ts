@@ -9,9 +9,73 @@ export type GenomeOrganization =
   | 'packed-dna'
   | 'circular-partial-dna'
   | 'icosahedral-rna-core'
+  | 'single-rna-core'
+  | 'segmented-rna-core'
+  | 'single-stranded-dna-core'
+  | 'double-stranded-dna-core'
+  | 'circular-dna-core'
   | 'segmented-dsrna-core'
   | 'layered-segments'
   | 'helical-rna';
+
+export type CapsidFaceting = 'smooth' | 'moderate' | 'strong';
+
+export type IcosahedralSurfacePattern =
+  | 'compact-t3'
+  | 'vertex-spiked'
+  | 'dimpled'
+  | 'channelled'
+  | 'pentameric'
+  | 'protruding-domain'
+  | 'star-feature'
+  | 'plant-soft'
+  | 'plant-pseudo-t3'
+  | 'plant-dense'
+  | 'plant-protruding'
+  | 'plant-rounded';
+
+export type VertexFeatureKind = 'penton-fiber' | 'spike' | 'turret';
+
+export interface VertexFeatureSignature {
+  readonly kind: VertexFeatureKind;
+  readonly count: number;
+  readonly relativeLength: number;
+  readonly opening?: boolean;
+}
+
+export interface IcosahedralTopologySignature {
+  readonly shell: {
+    readonly faceting: CapsidFaceting;
+    readonly surfacePattern: IcosahedralSurfacePattern;
+  };
+  readonly capsomerOrganization:
+    't1-like' | 't3-like' | 'pseudo-t3-like' | 'pentamer-dominant' | 'family-fallback';
+  readonly vertexFeature?: VertexFeatureSignature;
+  readonly surfaceDomainScale?: number;
+  readonly asymmetricFeature?: 'maturation-protein';
+  readonly genomeSegmentCount?: number;
+}
+
+export type LayeredCapsidRole =
+  'capsid' | 'outer-capsid' | 'middle-capsid' | 'core-capsid' | 'inner-membrane';
+
+export type LayerSurfacePattern =
+  'faceted-units' | 'smooth-protein' | 'porous-protein' | 'membrane' | 'dense-core';
+
+export interface LayeredCapsidLayerSignature {
+  readonly role: LayeredCapsidRole;
+  readonly radiusScale: number;
+  readonly faceting: CapsidFaceting;
+  readonly surfacePattern: LayerSurfacePattern;
+  readonly opacity: number;
+}
+
+export interface LayeredCapsidSignature {
+  readonly layers: readonly LayeredCapsidLayerSignature[];
+  readonly vertexFeature?: VertexFeatureSignature;
+  readonly projectionCount?: number;
+  readonly genomeSegmentCount?: number;
+}
 
 export interface SurfaceComponentSignature {
   readonly id: string;
@@ -46,4 +110,6 @@ export interface StructuralSignature {
   readonly genomeOrganization: GenomeOrganization;
   readonly specialStructures: readonly string[];
   readonly evidence: readonly StructuralComponentEvidence[];
+  readonly icosahedral?: IcosahedralTopologySignature;
+  readonly layeredCapsid?: LayeredCapsidSignature;
 }

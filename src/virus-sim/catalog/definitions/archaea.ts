@@ -82,7 +82,7 @@ export const ARCHAEA_CATALOG = [
       layer('genome', '원형 dsDNA'),
     ],
     sourceIds: ['pdb-3j31'],
-    modelBuilder: 'generic-layered',
+    modelBuilder: 'layered-capsid',
     geometryProfileId: 'layered-stiv-turret',
     simplifications: [
       'turret의 내부 채널은 속이 빈 굵은 돌기로 표시했어요.',

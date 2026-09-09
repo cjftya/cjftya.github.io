@@ -18,7 +18,7 @@ export const PLANT_CATALOG = [
     parts: ['capsid', 'capsomer', 'surface-domain', 'genome'],
     layers: [layer('capsid', 'T=3 캡시드'), layer('genome', '분절 ssRNA(+)')],
     sourceIds: ['pdb-1cwp'],
-    modelBuilder: 'generic-icosahedral',
+    modelBuilder: 'icosahedral-capsid',
     geometryProfileId: 'ico-plant-t3-soft',
     simplifications: [
       '팽창 상태가 아닌 native compact 구조를 선택했어요.',
@@ -44,7 +44,7 @@ export const PLANT_CATALOG = [
     parts: ['capsid', 'capsomer', 'surface-domain', 'genome'],
     layers: [layer('capsid', 'T=3 캡시드'), layer('genome', '분절 ssRNA(+)')],
     sourceIds: ['pdb-1js9'],
-    modelBuilder: 'generic-icosahedral',
+    modelBuilder: 'icosahedral-capsid',
     geometryProfileId: 'ico-plant-t3-compact',
     simplifications: [
       'CCMV와의 구조적 유사성을 의도적으로 유지했어요.',
@@ -70,7 +70,7 @@ export const PLANT_CATALOG = [
     parts: ['capsid', 'capsomer', 'surface-domain', 'genome'],
     layers: [layer('capsid', 'pseudo T=3 캡시드'), layer('genome', '분절 ssRNA(+)')],
     sourceIds: ['pdb-1ny7', 'pdb-5a33'],
-    modelBuilder: 'generic-icosahedral',
+    modelBuilder: 'icosahedral-capsid',
     geometryProfileId: 'ico-plant-pseudo-t3',
     simplifications: [
       '큰·작은 단위의 구역을 두 크기의 표면 기하로 줄였어요.',
@@ -99,7 +99,7 @@ export const PLANT_CATALOG = [
       layer('genome', 'ssRNA(+)'),
     ],
     sourceIds: ['pdb-2tbv'],
-    modelBuilder: 'generic-icosahedral',
+    modelBuilder: 'icosahedral-capsid',
     geometryProfileId: 'ico-plant-t3-protruding',
     simplifications: [
       '돌출 도메인을 개별 원자 표면 대신 굵은 반복 단위로 표시했어요.',
@@ -124,7 +124,7 @@ export const PLANT_CATALOG = [
     parts: ['capsid', 'capsomer', 'genome'],
     layers: [layer('capsid', 'T=1 캡시드'), layer('genome', 'ssRNA(+)')],
     sourceIds: ['pdb-1a34'],
-    modelBuilder: 'generic-icosahedral',
+    modelBuilder: 'icosahedral-capsid',
     geometryProfileId: 'ico-stmv-small',
     simplifications: [
       '실제 상대 크기는 카드 간 화면 확대 때문에 직접 비교할 수 없어요.',
@@ -149,7 +149,7 @@ export const PLANT_CATALOG = [
     parts: ['capsid', 'capsomer', 'surface-domain', 'genome'],
     layers: [layer('capsid', 'T=3 피복'), layer('genome', '분절 ssRNA(+)')],
     sourceIds: ['pdb-1f15'],
-    modelBuilder: 'generic-icosahedral',
+    modelBuilder: 'icosahedral-capsid',
     geometryProfileId: 'ico-cmv-fny',
     simplifications: [
       'Fny 균주 구조로 범위를 한정했어요.',
@@ -175,7 +175,7 @@ export const PLANT_CATALOG = [
     parts: ['capsid', 'capsomer', 'surface-domain', 'genome'],
     layers: [layer('capsid', 'T=3 캡시드'), layer('genome', 'ssRNA(+)')],
     sourceIds: ['pdb-1auy'],
-    modelBuilder: 'generic-icosahedral',
+    modelBuilder: 'icosahedral-capsid',
     geometryProfileId: 'ico-tymv-dense',
     simplifications: [
       '표면 단위 밀도를 렌더 예산에 맞게 줄였어요.',
@@ -275,7 +275,7 @@ export const PLANT_CATALOG = [
     parts: ['capsid', 'capsomer', 'surface-domain', 'genome'],
     layers: [layer('capsid', '등축성 캡시드'), layer('genome', '원형 dsDNA-RT')],
     sourceIds: ['ictv-caulimoviridae'],
-    modelBuilder: 'generic-icosahedral',
+    modelBuilder: 'icosahedral-capsid',
     geometryProfileId: 'ico-camv-rounded',
     simplifications: [
       '완전한 고해상도 virion 좌표가 아닌 공식 형태 설명 기반이에요.',

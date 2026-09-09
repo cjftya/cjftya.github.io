@@ -22,7 +22,7 @@ export const PHAGE_CATALOG = [
       layer('genome', 'ssDNA'),
     ],
     sourceIds: ['pdb-2bpa'],
-    modelBuilder: 'generic-icosahedral',
+    modelBuilder: 'icosahedral-capsid',
     geometryProfileId: 'ico-spiked-t1',
     simplifications: [
       '외부 조립 보조 단백질은 성숙 입자에서 제외했어요.',
@@ -48,7 +48,7 @@ export const PHAGE_CATALOG = [
     parts: ['capsid', 'capsomer', 'maturation-protein', 'genome'],
     layers: [layer('capsid', 'T=3 피복'), layer('genome', 'ssRNA(+)')],
     sourceIds: ['pdb-1qbe'],
-    modelBuilder: 'generic-icosahedral',
+    modelBuilder: 'icosahedral-capsid',
     geometryProfileId: 'ico-rna-t3-asymmetric',
     simplifications: [
       'RNA 접힘은 내부 개념 곡선이에요.',
@@ -225,7 +225,7 @@ export const PHAGE_CATALOG = [
       layer('genome', 'dsDNA'),
     ],
     sourceIds: ['pdb-1w8x'],
-    modelBuilder: 'generic-layered',
+    modelBuilder: 'layered-capsid',
     geometryProfileId: 'layered-prd1',
     simplifications: [
       '막의 지질 조성과 포털 세부는 표시하지 않았어요.',
@@ -287,7 +287,7 @@ export const PHAGE_CATALOG = [
       layer('genome', '원형 dsDNA'),
     ],
     sourceIds: ['ictv-corticoviridae'],
-    modelBuilder: 'generic-layered',
+    modelBuilder: 'layered-capsid',
     geometryProfileId: 'layered-pm2',
     simplifications: [
       'PRD1과 공유되는 층 원리를 유지하되 더 둥근 표면으로 표현했어요.',
@@ -313,7 +313,7 @@ export const PHAGE_CATALOG = [
     parts: ['capsid', 'capsomer', 'surface-domain', 'genome'],
     layers: [layer('capsid', 'T=3 캡시드'), layer('genome', 'ssRNA(+) 개념도')],
     sourceIds: ['pdb-5jzr'],
-    modelBuilder: 'generic-icosahedral',
+    modelBuilder: 'icosahedral-capsid',
     geometryProfileId: 'ico-ap205-compact',
     simplifications: [
       'NMR 조립 구조를 원자 표면으로 재현하지 않았어요.',

@@ -25,6 +25,8 @@ export type ModelBuilderId =
   | 'hbv'
   | 'alphavirus'
   | 'cystovirus'
+  | 'icosahedral-capsid'
+  | 'layered-capsid'
   | 'generic-icosahedral'
   | 'generic-phage'
   | 'generic-filament'
