@@ -9,14 +9,7 @@ export interface GeometryProfile {
   readonly unitScale?: number;
   readonly protrusion?: number;
   readonly spikeCount?: number;
-  readonly tailLength?: number;
-  readonly tailStyle?: 'short' | 'long' | 'spiked';
   readonly layers?: 2 | 3;
-  readonly filamentLength?: number;
-  readonly filamentRadius?: number;
-  readonly bend?: number;
-  readonly lobeSpacing?: number;
-  readonly terminalTails?: 1 | 2;
   readonly turretCount?: number;
 }
 
@@ -35,20 +28,14 @@ export const GEOMETRY_PROFILES: Readonly<Record<string, ProfileInput>> = {
     radius: 1.42,
     elongation: 1.22,
     unitCount: 58,
-    tailLength: 3.6,
-    tailStyle: 'spiked',
   }),
   lambda: profile('phage', {
     radius: 1.28,
     unitCount: 48,
-    tailLength: 4.35,
-    tailStyle: 'long',
   }),
   t7: profile('phage', {
     radius: 1.5,
     unitCount: 56,
-    tailLength: 0.8,
-    tailStyle: 'short',
   }),
   ms2: profile('icosahedral', {
     radius: 1.95,
@@ -58,16 +45,11 @@ export const GEOMETRY_PROFILES: Readonly<Record<string, ProfileInput>> = {
   }),
   tmv: profile('filament', {
     radius: 1,
-    filamentLength: 6.5,
-    filamentRadius: 0.69,
     unitCount: 68,
   }),
   m13: profile('filament', {
     radius: 1,
-    filamentLength: 7.8,
-    filamentRadius: 0.3,
     unitCount: 82,
-    bend: 0.22,
   }),
   'adenovirus-5': profile('icosahedral', {
     radius: 1.9,
@@ -114,10 +96,7 @@ export const GEOMETRY_PROFILES: Readonly<Record<string, ProfileInput>> = {
   }),
   'filovirus-v3.5': profile('filament', {
     radius: 1,
-    filamentLength: 8.2,
-    filamentRadius: 0.58,
     unitCount: 76,
-    bend: 0.28,
     spikeCount: 42,
     protrusion: 0.14,
   }),
@@ -152,36 +131,26 @@ export const GEOMETRY_PROFILES: Readonly<Record<string, ProfileInput>> = {
     radius: 1.34,
     elongation: 1.25,
     unitCount: 42,
-    tailLength: 1.35,
-    tailStyle: 'short',
   }),
   'phage-p22-tailspike': profile('phage', {
     radius: 1.45,
     elongation: 1.04,
     unitCount: 46,
-    tailLength: 0.82,
-    tailStyle: 'spiked',
   }),
   'phage-hk97-thin': profile('phage', {
     radius: 1.48,
     elongation: 1.01,
     unitCount: 54,
-    tailLength: 0.72,
-    tailStyle: 'short',
   }),
   'phage-long-t5': profile('phage', {
     radius: 1.22,
     elongation: 1.08,
     unitCount: 38,
-    tailLength: 4.05,
-    tailStyle: 'long',
   }),
   'phage-long-t1': profile('phage', {
     radius: 1.18,
     elongation: 1.05,
     unitCount: 36,
-    tailLength: 3.5,
-    tailStyle: 'long',
   }),
   'layered-prd1': profile('layered', {
     radius: 1.76,
@@ -255,24 +224,15 @@ export const GEOMETRY_PROFILES: Readonly<Record<string, ProfileInput>> = {
   }),
   'filament-pvx-flexible': profile('filament', {
     radius: 1,
-    filamentLength: 6.6,
-    filamentRadius: 0.48,
     unitCount: 82,
-    bend: 0.17,
   }),
   'filament-papmv-flexible': profile('filament', {
     radius: 1,
-    filamentLength: 6.1,
-    filamentRadius: 0.5,
     unitCount: 76,
-    bend: 0.2,
   }),
   'filament-pvy-thin': profile('filament', {
     radius: 1,
-    filamentLength: 6.8,
-    filamentRadius: 0.39,
     unitCount: 88,
-    bend: 0.14,
   }),
   'ico-camv-rounded': profile('icosahedral', {
     radius: 1.72,
@@ -284,13 +244,11 @@ export const GEOMETRY_PROFILES: Readonly<Record<string, ProfileInput>> = {
     radius: 1.22,
     unitCount: 32,
     unitScale: 0.16,
-    lobeSpacing: 1.45,
   }),
   'geminate-tylcv': profile('geminate', {
     radius: 1.18,
     unitCount: 30,
     unitScale: 0.15,
-    lobeSpacing: 1.36,
   }),
   'ico-aav2-dimpled': profile('icosahedral', {
     radius: 1.58,
@@ -403,15 +361,10 @@ export const GEOMETRY_PROFILES: Readonly<Record<string, ProfileInput>> = {
   'spindle-ssv1-one-tail': profile('spindle', {
     radius: 1.25,
     elongation: 2.05,
-    terminalTails: 1,
-    tailLength: 0.8,
     unitCount: 34,
   }),
   'rod-sirv2-fibers': profile('rod', {
     radius: 0.68,
-    filamentLength: 5.5,
-    terminalTails: 2,
-    tailLength: 0.72,
     unitCount: 50,
   }),
   'layered-stiv-turret': profile('layered', {
@@ -425,8 +378,6 @@ export const GEOMETRY_PROFILES: Readonly<Record<string, ProfileInput>> = {
   'spindle-atv-two-tail': profile('spindle', {
     radius: 1.18,
     elongation: 2.2,
-    terminalTails: 2,
-    tailLength: 1.35,
     unitCount: 36,
   }),
 };

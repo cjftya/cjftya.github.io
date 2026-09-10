@@ -140,6 +140,50 @@ export interface SpecialGeometrySignature {
   readonly internalStructures?: readonly string[];
 }
 
+export type PhageHeadShape = 'isometric' | 'prolate' | 'elongated';
+export type PhageHeadSurfacePattern =
+  'regular-lattice' | 'prolate-lattice' | 'crosslinked-thin';
+export type PhageNeckStyle = 'simple' | 'ringed' | 'collar';
+export type PhageTailType = 'contractile' | 'long-noncontractile' | 'short' | 'minimal';
+export type PhageBaseplateStyle = 'simple-hub' | 'hexagonal' | 'contractile-complex';
+export type PhageReceptorKind = 'tail-fiber' | 'tailspike';
+
+export interface PhageReceptorSignature {
+  readonly kind: PhageReceptorKind;
+  readonly count: number;
+  readonly reach: number;
+  readonly segmented: boolean;
+}
+
+export interface PhageStructuralSignature {
+  readonly head: {
+    readonly shape: PhageHeadShape;
+    readonly radius: number;
+    readonly elongation: number;
+    readonly surfacePattern: PhageHeadSurfacePattern;
+    readonly capsomerCount: number;
+  };
+  readonly portal?: {
+    readonly present: boolean;
+    readonly scale: number;
+  };
+  readonly neck?: {
+    readonly style: PhageNeckStyle;
+  };
+  readonly tail: {
+    readonly type: PhageTailType;
+    readonly length: number;
+    readonly radius: number;
+    readonly flexibility: 'rigid' | 'semi-flexible' | 'flexible';
+    readonly sheathRings?: number;
+    readonly innerTube: boolean;
+  };
+  readonly distal?: {
+    readonly baseplate?: PhageBaseplateStyle;
+    readonly receptor?: PhageReceptorSignature;
+  };
+}
+
 export interface SurfaceComponentSignature {
   readonly id: string;
   readonly label: string;
@@ -177,4 +221,5 @@ export interface StructuralSignature {
   readonly layeredCapsid?: LayeredCapsidSignature;
   readonly helical?: HelicalSignature;
   readonly specialGeometry?: SpecialGeometrySignature;
+  readonly phage?: PhageStructuralSignature;
 }

@@ -71,7 +71,9 @@ describe('Virus Sim v4.4 enveloped structural fidelity rollout', () => {
 
   it('removes generic-enveloped from the active catalog', () => {
     expect(
-      ENVELOPED_ENTRIES.filter((entry) => entry.modelBuilder === 'generic-enveloped'),
+      ENVELOPED_ENTRIES.filter(
+        (entry) => String(entry.modelBuilder) === 'generic-enveloped',
+      ),
     ).toEqual([]);
     expect(VIRUS_CATALOG.filter((entry) => entry.modelBuilder === 'hbv')).toHaveLength(
       1,

@@ -10,6 +10,7 @@ export type ModelBuilderId =
   | 't4'
   | 'lambda'
   | 't7'
+  | 'phage-family'
   | 'ms2'
   | 'tmv'
   | 'm13'
@@ -30,15 +31,7 @@ export type ModelBuilderId =
   | 'plant-filament'
   | 'archaeal-rod'
   | 'spindle-virus'
-  | 'geminate-capsid'
-  | 'generic-icosahedral'
-  | 'generic-phage'
-  | 'generic-filament'
-  | 'generic-enveloped'
-  | 'generic-layered'
-  | 'generic-geminate'
-  | 'generic-spindle'
-  | 'generic-rod';
+  | 'geminate-capsid';
 
 export type GeometryFamily =
   | 'icosahedral'

@@ -83,10 +83,12 @@ describe('Virus Sim v4.5 icosahedral and layered structural fidelity rollout', (
 
   it('removes both generic capsid builders from the active catalog', () => {
     expect(
-      VIRUS_CATALOG.filter((entry) => entry.modelBuilder === 'generic-icosahedral'),
+      VIRUS_CATALOG.filter(
+        (entry) => String(entry.modelBuilder) === 'generic-icosahedral',
+      ),
     ).toEqual([]);
     expect(
-      VIRUS_CATALOG.filter((entry) => entry.modelBuilder === 'generic-layered'),
+      VIRUS_CATALOG.filter((entry) => String(entry.modelBuilder) === 'generic-layered'),
     ).toEqual([]);
     expect(
       ROLLOUT_ENTRIES.filter((entry) => entry.modelBuilder === 'icosahedral-capsid'),
