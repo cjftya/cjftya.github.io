@@ -200,7 +200,7 @@ export const PLANT_CATALOG = [
     parts: ['capsid', 'coat-protein', 'terminal-protein', 'genome'],
     layers: [layer('capsid', '나선 피복'), layer('genome', 'ssRNA(+)')],
     sourceIds: ['emd-pvx'],
-    modelBuilder: 'generic-filament',
+    modelBuilder: 'plant-filament',
     geometryProfileId: 'filament-pvx-flexible',
     simplifications: [
       '전체 길이를 화면에 맞게 크게 줄였어요.',
@@ -225,7 +225,7 @@ export const PLANT_CATALOG = [
     parts: ['capsid', 'coat-protein', 'terminal-protein', 'genome'],
     layers: [layer('capsid', '나선 피복'), layer('genome', 'ssRNA(+) 개념도')],
     sourceIds: ['pdb-4dox', 'ictv-alphaflexiviridae'],
-    modelBuilder: 'generic-filament',
+    modelBuilder: 'plant-filament',
     geometryProfileId: 'filament-papmv-flexible',
     simplifications: [
       '단백질 구조와 계열 형태를 결합한 절차 재구성이에요.',
@@ -250,7 +250,7 @@ export const PLANT_CATALOG = [
     parts: ['capsid', 'coat-protein', 'terminal-protein', 'genome'],
     layers: [layer('capsid', '나선 피복'), layer('genome', 'ssRNA(+)')],
     sourceIds: ['pdb-6hxx'],
-    modelBuilder: 'generic-filament',
+    modelBuilder: 'plant-filament',
     geometryProfileId: 'filament-pvy-thin',
     simplifications: [
       '실제 길이를 축소하고 나선 반복 수를 줄였어요.',
@@ -302,7 +302,7 @@ export const PLANT_CATALOG = [
     parts: ['capsid', 'capsomer', 'geminate-bridge', 'genome'],
     layers: [layer('capsid', '쌍둥이형 캡시드'), layer('genome', '원형 ssDNA')],
     sourceIds: ['ictv-geminiviridae'],
-    modelBuilder: 'generic-geminate',
+    modelBuilder: 'geminate-capsid',
     geometryProfileId: 'geminate-msv',
     simplifications: [
       '두 반쪽의 접합부를 연속 단백질 덩어리로 줄였어요.',
@@ -327,7 +327,7 @@ export const PLANT_CATALOG = [
     parts: ['capsid', 'capsomer', 'geminate-bridge', 'genome'],
     layers: [layer('capsid', '쌍둥이형 캡시드'), layer('genome', '원형 ssDNA')],
     sourceIds: ['ictv-geminiviridae'],
-    modelBuilder: 'generic-geminate',
+    modelBuilder: 'geminate-capsid',
     geometryProfileId: 'geminate-tylcv',
     simplifications: [
       'MSV와 공유되는 geminate 원리를 유지했어요.',

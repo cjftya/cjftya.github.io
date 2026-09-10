@@ -1,4 +1,4 @@
-# Virus Sim v4.5
+# Virus Sim v4.6
 
 Virus Sim은 71개 바이러스의 형태와 주요 구조를 한 화면에서 관찰하는 3D 구조 뷰어다.
 바이러스를 native dropdown에서 선택하면 해당 표본을 stage 중앙에 다시 맞추고, 마우스와
@@ -23,6 +23,10 @@ Virus Sim은 71개 바이러스의 형태와 주요 구조를 한 화면에서 �
 - subdivision 기반 ordered capsomer와 vertex-aware fiber·spike·turret 배치
 - dimpled, pentameric, protruding-domain, plant T=3 계열 표면 profile
 - 역할·표면·투명도가 다른 layered shell과 분절 유전체·내부 막 표현
+- rigid/semi-flexible/flexible centerline과 parallel-transport frame 기반 filament
+- TMV·M13·식물 filament의 나선 피복, 유전체 경로와 말단 구조
+- filovirus의 외피·matrix·나선 RNP 및 archaeal rod·spindle·geminate 특수형
+- Vaccinia의 둥근 layered brick 외곽과 아령형 core·paired lateral body
 
 ## 앱 구조
 
@@ -54,6 +58,7 @@ History 데이터는 렌더링을 모르며 catalog ID로만 선택 항목과 �
 - [v4.3 모델링 규격](virus-sim-v4.3-modeling.md)
 - [v4.4 외피형 rollout](virus-sim-v4.4-modeling.md)
 - [v4.5 Icosahedral·Layered rollout](virus-sim-v4.5-modeling.md)
+- [v4.6 Filament·Special Geometry rollout](virus-sim-v4.6-modeling.md)
 
 ## 검증
 

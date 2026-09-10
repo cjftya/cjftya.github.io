@@ -19,6 +19,12 @@ import {
 } from './generic';
 import { buildLambdaPhage, buildT4Phage, buildT7Phage } from './phages';
 import { buildAlphavirus, buildCystovirus, buildHBV } from './specialEnveloped';
+import {
+  buildArchaealRod,
+  buildGeminateCapsid,
+  buildPlantFilament,
+  buildSpindleVirus,
+} from './specialGeometry';
 import { createCollector, finishCollector } from './shared';
 import type { ObservationModel } from './types';
 
@@ -88,6 +94,18 @@ export function createObservationModel(
       break;
     case 'layered-capsid':
       buildLayeredCapsid(collector, quality);
+      break;
+    case 'plant-filament':
+      buildPlantFilament(collector, quality);
+      break;
+    case 'archaeal-rod':
+      buildArchaealRod(collector, quality);
+      break;
+    case 'spindle-virus':
+      buildSpindleVirus(collector, quality);
+      break;
+    case 'geminate-capsid':
+      buildGeminateCapsid(collector, quality);
       break;
     case 'generic-icosahedral':
       buildGenericIcosahedral(collector, quality);
