@@ -118,4 +118,21 @@ similarity는 결함으로 보지 않으며, 색상만으로 종 차이를 만�
 - native virus select, 44px 이상 주요 control, visible focus ring과 semantic button 상태 유지
 - 외부 source link는 `noopener noreferrer`를 사용
 
-실제 GPU public smoke QA 결과와 배포 run은 최종 반영 뒤 이 문서와 progress 문서에 기록한다.
+## 배포와 public smoke QA
+
+| 항목                     | 결과                                                   |
+| ------------------------ | ------------------------------------------------------ |
+| 구현 master              | `b4954a980436b05b924d2ab6c0117fdc2c425acb`             |
+| GitHub Pages workflow    | run `34445273092`, success                             |
+| 공개 URL                 | <https://cjftya.github.io/projects/virus-sim/>         |
+| title / version badge    | v4.8 / v4.8 PASS                                       |
+| native virus select      | 71 options, T4 기본 선택 PASS                          |
+| desktop layout           | 1363×936, 수평 overflow 없음                           |
+| details / external links | 5 sections, 모든 새 창 link `noopener noreferrer` PASS |
+| WebGL fallback           | 안내와 재시도 활성, 3D 의존 control 비활성화 PASS      |
+
+공개 QA에 사용한 cloud browser는 `GL_VENDOR = Disabled`로 WebGL context를 만들 수 없었다. 따라서
+실제 GPU의 대표 모델 육안 비교, mode·scanner 조작, 이미지 저장은 이 환경에서 `NEEDS REVIEW`로 남긴다.
+기능 경로는 위 자동 검증의 142개 high/low build, 71종 mode, 639개 scanner setup·restore와 dispose
+검사로 보완했다. 모바일 breakpoint와 130% font도 CSS 계약 및 회귀 테스트로 확인했지만 실제 mobile
+device emulation은 같은 QA browser에서 제공되지 않았다.
