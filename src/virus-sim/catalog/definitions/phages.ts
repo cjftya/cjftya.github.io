@@ -77,7 +77,7 @@ export const PHAGE_CATALOG = [
       layer('genome', 'dsDNA'),
     ],
     sourceIds: ['pdb-6qvk'],
-    modelBuilder: 'generic-phage',
+    modelBuilder: 'phage-family',
     geometryProfileId: 'phage-prolate-short',
     simplifications: [
       '포장 모터의 분자 세부는 생략했어요.',
@@ -106,7 +106,7 @@ export const PHAGE_CATALOG = [
       layer('genome', 'dsDNA'),
     ],
     sourceIds: ['pdb-5uu5', 'pdb-8tvr'],
-    modelBuilder: 'generic-phage',
+    modelBuilder: 'phage-family',
     geometryProfileId: 'phage-p22-tailspike',
     simplifications: [
       'ejection 단백질의 내부 배치는 생략했어요.',
@@ -136,7 +136,7 @@ export const PHAGE_CATALOG = [
       layer('genome', 'dsDNA 개념도'),
     ],
     sourceIds: ['pdb-2ft1'],
-    modelBuilder: 'generic-phage',
+    modelBuilder: 'phage-family',
     geometryProfileId: 'phage-hk97-thin',
     simplifications: [
       'Head II 구조 근거가 가장 강하며 꼬리는 계열 수준으로 단순화했어요.',
@@ -165,7 +165,7 @@ export const PHAGE_CATALOG = [
       layer('genome', 'dsDNA'),
     ],
     sourceIds: ['pdb-8zvi'],
-    modelBuilder: 'generic-phage',
+    modelBuilder: 'phage-family',
     geometryProfileId: 'phage-long-t5',
     simplifications: [
       '꼬리 반복 단위를 연속 관과 링으로 줄였어요.',
@@ -194,7 +194,7 @@ export const PHAGE_CATALOG = [
       layer('genome', 'dsDNA'),
     ],
     sourceIds: ['pdb-9l01'],
-    modelBuilder: 'generic-phage',
+    modelBuilder: 'phage-family',
     geometryProfileId: 'phage-long-t1',
     simplifications: [
       'T5보다 단순한 말단 윤곽을 중심으로 표현했어요.',

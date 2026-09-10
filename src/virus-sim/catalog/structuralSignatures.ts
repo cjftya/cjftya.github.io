@@ -1,6 +1,7 @@
 import { ENVELOPED_SIGNATURE_PROFILES } from './envelopedProfiles';
 import { CAPSID_SIGNATURE_PROFILES } from './capsidProfiles';
 import { SPECIAL_GEOMETRY_SIGNATURE_PROFILES } from './specialGeometryProfiles';
+import { PHAGE_SIGNATURE_PROFILES } from './phageProfiles';
 import type { StructuralSignature } from './structuralTypes';
 
 export type {
@@ -28,6 +29,14 @@ export type {
   SpecialGeometrySignature,
   TerminalStructureKind,
   TerminalStructureSignature,
+  PhageBaseplateStyle,
+  PhageHeadShape,
+  PhageHeadSurfacePattern,
+  PhageNeckStyle,
+  PhageReceptorKind,
+  PhageReceptorSignature,
+  PhageStructuralSignature,
+  PhageTailType,
 } from './structuralTypes';
 
 const signature = (input: StructuralSignature): StructuralSignature => input;
@@ -87,30 +96,31 @@ const SPECIAL_GEOMETRY_SIGNATURES = SPECIAL_GEOMETRY_SIGNATURE_PROFILES.flatMap(
     ),
 );
 
-const FOUNDATION_SIGNATURES: readonly StructuralSignature[] = [
-  signature({
-    id: 't4-fidelity-v1',
-    virusId: 't4',
-    builder: 't4',
-    surfaceComponents: [],
-    layers: ['prolate head', 'contractile sheath', 'inner tube'],
-    genomeOrganization: 'packed-dna',
-    specialStructures: ['neck', 'baseplate', 'long tail fibers'],
-    evidence: [
-      {
-        componentId: 'particle',
-        level: 'observed',
-        sourceIds: ['pdb-7vs5', 'pdb-2bsg'],
-      },
-    ],
-  }),
-] as const;
+const PHAGE_SIGNATURES = PHAGE_SIGNATURE_PROFILES.flatMap((profile) =>
+  profile.virusIds.map((virusId) =>
+    signature({
+      id: `${virusId}-${profile.id}-v1`,
+      virusId,
+      profileId: profile.id,
+      builder: profile.builder,
+      surfaceComponents: [],
+      layers: ['head capsid', 'tail architecture', 'packed genome'],
+      genomeOrganization: 'packed-dna',
+      specialStructures: [
+        `${profile.signature.head.shape} head`,
+        `${profile.signature.tail.type} tail`,
+      ],
+      evidence: profile.evidence,
+      phage: profile.signature,
+    }),
+  ),
+);
 
 const ALL_STRUCTURAL_SIGNATURES: readonly StructuralSignature[] = [
   ...ENVELOPED_SIGNATURES,
   ...CAPSID_SIGNATURES,
   ...SPECIAL_GEOMETRY_SIGNATURES,
-  ...FOUNDATION_SIGNATURES,
+  ...PHAGE_SIGNATURES,
 ];
 
 export const STRUCTURAL_SIGNATURES: readonly StructuralSignature[] = [
