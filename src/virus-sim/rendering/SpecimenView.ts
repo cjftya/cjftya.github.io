@@ -193,18 +193,6 @@ export class SpecimenView {
     };
   }
 
-  getRenderMetrics(renderer: THREE.WebGLRenderer): {
-    calls: number;
-    triangles: number;
-    geometries: number;
-  } {
-    return {
-      calls: renderer.info.render.calls,
-      triangles: renderer.info.render.triangles,
-      geometries: renderer.info.memory.geometries,
-    };
-  }
-
   dispose(): void {
     this.scene.remove(this.root);
     disposeTree(this.root);

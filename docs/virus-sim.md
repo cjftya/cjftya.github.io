@@ -1,4 +1,4 @@
-# Virus Sim v4.7
+# Virus Sim v4.8
 
 Virus Sim은 71개 바이러스의 형태와 주요 구조를 한 화면에서 관찰하는 3D 구조 뷰어다.
 바이러스를 native dropdown에서 선택하면 해당 표본을 stage 중앙에 다시 맞추고, 마우스와
@@ -30,6 +30,8 @@ Virus Sim은 71개 바이러스의 형태와 주요 구조를 한 화면에서 �
 - T4·Lambda·T7·Φ29·P22·HK97·T5·T1의 명시적 head–tail Structural Signature
 - 수축형·긴 비수축형·짧은 꼬리와 baseplate·tail fiber·tailspike 공용 컴포넌트
 - 활성 항목이 없던 모든 generic builder 제거와 typed model builder registry
+- 전체 71종 high/low 모델의 bounds·부위·레이어·모드·scanner·dispose 전수 감사
+- 모델당 64 objects, 48 geometries, 32 materials, 75K triangles의 회귀 상한
 
 ## 앱 구조
 
@@ -64,6 +66,9 @@ History 데이터는 렌더링을 모르며 catalog ID로만 선택 항목과 �
 - [v4.6 Filament·Special Geometry rollout](virus-sim-v4.6-modeling.md)
 - [v4.7 Phage Family rollout](virus-sim-v4.7-modeling.md)
 - [v4.7 Generic 감사](virus-sim-v4.7-generic-audit.md)
+- [v4.8 통합 모델링 요약](virus-sim-v4.8-modeling-summary.md)
+- [v4.8 최종 Generic 감사](virus-sim-v4.8-generic-final-audit.md)
+- [v4.8 Fidelity Matrix와 QA](virus-sim-v4.8-qa.md)
 
 ## 검증
 

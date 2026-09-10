@@ -180,7 +180,7 @@ export class VirusSimPanel {
         .filter((source) => source !== undefined)
         .map(
           (source) =>
-            `<a href="${source.url}" target="_blank" rel="noreferrer" title="${escapeAttribute(source.scope)}">${escapeHtml(source.label)} ↗</a>`,
+            `<a href="${source.url}" target="_blank" rel="noopener noreferrer" title="${escapeAttribute(source.scope)}">${escapeHtml(source.label)} ↗</a>`,
         )
         .join('');
     this.renderHistory(definition.id);
@@ -213,7 +213,7 @@ export class VirusSimPanel {
       .filter((source) => source !== undefined)
       .map(
         (source) =>
-          `<a href="${source.url}" target="_blank" rel="noreferrer" title="${escapeAttribute(source.scope)}">${escapeHtml(source.label)} ↗</a>`,
+          `<a href="${source.url}" target="_blank" rel="noopener noreferrer" title="${escapeAttribute(source.scope)}">${escapeHtml(source.label)} ↗</a>`,
       )
       .join('');
 

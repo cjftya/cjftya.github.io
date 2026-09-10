@@ -276,7 +276,7 @@ describe('Virus Sim v4.7 phage rollout and global cleanup', () => {
     for (const id of VIEW_REPRESENTATIVES) {
       const scene = new THREE.Scene();
       const store = new ObservationStore(false, id);
-      expect(store.getSnapshot().version).toBe('virus-observation-v4.7');
+      expect(store.getSnapshot().version).toBe('virus-observation-v4.8');
       const view = new SpecimenView(scene, id, 'performance');
       for (const mode of ['surface', 'transparent', 'section', 'exploded'] as const) {
         store.setView(mode);

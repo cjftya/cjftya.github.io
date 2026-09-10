@@ -1,5 +1,9 @@
 # Virus Sim v3.5 아키텍처
 
+> 이 문서는 v3.5 당시의 역사적 구조 기록이다. 비교·변형 registry와 A/B 렌더 경로는 v4.2와
+> v4.8에서 제거됐다. 현재 구조는 [`virus-sim.md`](virus-sim.md)와
+> [`virus-sim-v4.8-modeling-summary.md`](virus-sim-v4.8-modeling-summary.md)를 기준으로 한다.
+
 ## 데이터 흐름
 
 ```mermaid

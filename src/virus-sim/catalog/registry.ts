@@ -19,10 +19,6 @@ export const VIRUS_CATALOG: readonly ObservationDefinition[] = [
   ...EMERGING_CATALOG,
 ] as const;
 
-export const OBSERVED_VIRUS_COUNT = VIRUS_CATALOG.filter(
-  (entry) => entry.evidenceStatus === 'observed',
-).length;
-
 const BY_ID = new Map(VIRUS_CATALOG.map((entry) => [entry.id, entry]));
 
 export function getCatalogEntry(id: ObservationPresetId): ObservationDefinition {

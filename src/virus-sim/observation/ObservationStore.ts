@@ -35,7 +35,7 @@ export class ObservationStore {
 
   constructor(reducedMotion = false, initialId: ObservationPresetId = 't4') {
     this.state = {
-      version: 'virus-observation-v4.7',
+      version: 'virus-observation-v4.8',
       specimen: createSpecimen(initialId),
       scanner: {
         enabled: false,

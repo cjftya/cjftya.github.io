@@ -1,5 +1,8 @@
 # Virus Sim v4.6 Filament & Special Geometry 모델링
 
+> 현재 generic builder 상태는 v4.7에서 모두 제거된 뒤 v4.8에서 재검증됐다.
+> 최종 상태는 [`virus-sim-v4.8-generic-final-audit.md`](virus-sim-v4.8-generic-final-audit.md)를 따른다.
+
 ## 범위와 원칙
 
 v4.6은 길쭉한 입자를 더 복잡한 원통으로 만드는 작업이 아니라 rigidity, centerline, helical
