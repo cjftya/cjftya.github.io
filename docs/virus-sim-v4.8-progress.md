@@ -42,8 +42,23 @@
 - v4.7 대비 JS: -0.16 kB, gzip -0.03 kB
 - unrelated project bundle: 유지
 
-## 남은 순서
+## 배포와 공개본 확인
 
-1. master push와 GitHub Pages workflow 확인
-2. 공개본 mobile/desktop·핵심 모델·mode·scanner·fallback smoke QA
-3. 최종 SHA와 공개 QA 결과 기록
+- 구현 master: `b4954a980436b05b924d2ab6c0117fdc2c425acb`
+- GitHub Pages workflow: run `34445273092`, success
+- 공개 URL: <https://cjftya.github.io/projects/virus-sim/>
+- 공개본 title/badge: v4.8 PASS
+- native virus select: 71 options PASS
+- desktop smoke: 1363×936, 수평 overflow 없음
+- 정보 panel: 5개 details와 외부 source link 정책 PASS
+- WebGL fallback: 안내·재시도 노출, 3D 의존 control 비활성화 PASS
+- 공개 QA용 cloud browser는 WebGL이 비활성화되어 실제 GPU 렌더·mode·scanner·저장 조작은
+  실행하지 못했다. 이 범위는 71종 high/low build, 모든 mode·part·layer, scanner 전수 검사와 dispose
+  검사로 보완했다.
+
+## 최종 상태
+
+- 코드·catalog·문서·배포: 완료
+- 자동 검증: PASS
+- 공개 페이지와 WebGL fallback: PASS
+- GPU 화면 육안 확인: QA 환경 제한으로 `NEEDS REVIEW`
