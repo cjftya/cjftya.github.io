@@ -49,5 +49,10 @@
 - geometry profile: 미참조 profile 0개
 - 파지 8종: source, signature, portal, high/low identity marker와 render budget 통과
 - 대표 파지 5종: surface·transparent·section·exploded·scanner flow 통과
-- browser visual QA: cloud browser가 local preview 주소를 차단해 자동 geometry·interaction 테스트로 대체
-- 공개본 smoke QA: master 반영 후 수행 예정
+- master: `322345927ad29970918bbfd0c172610280070be5`
+- GitHub Actions `Validate and deploy GitHub Pages` run #91: 통과
+- 공개본: v4.7 title/header, 71개 catalog option과 v4.7 bundle 확인
+- 공개 desktop 1363×936: document scroll 유지, body 가로 overflow 없음, WebGL fallback UI 정상
+- cloud browser는 sandbox에서 WebGL context가 비활성화되어 3D contact sheet와 지정 모바일
+  viewport 수동 캡처는 수행할 수 없었고, 해당 범위는 geometry bounds와 view/scanner 자동
+  회귀 테스트로 대체
