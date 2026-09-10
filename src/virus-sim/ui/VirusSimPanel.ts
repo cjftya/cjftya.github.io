@@ -1,4 +1,5 @@
 import { getCatalogEntry } from '../catalog/registry';
+import type { StructureExplanation } from '../catalog/explanations/registry';
 import { getVirusHistory } from '../catalog/history/registry';
 import { getHistorySource } from '../catalog/history/sources';
 import { getStructureSource } from '../catalog/sources';
@@ -61,16 +62,47 @@ export class VirusSimPanel {
     removeLegacyVirusSimStorage(this.storage);
   }
 
-  showSelection(title: string, description: string): void {
-    this.text('#selection-title', title);
-    this.text('#selection-description', description);
+  showStructureExplanation(explanation: StructureExplanation): void {
+    this.text('#selection-title', explanation.actualName);
+    this.text(
+      '#selection-description',
+      `${explanation.genericSummary} ${explanation.role}`,
+    );
+    const details = this.element<HTMLElement>('#selection-details');
+    details.hidden = false;
+    const locationRow = this.element<HTMLElement>('#selection-location-row');
+    locationRow.hidden = !explanation.location;
+    this.text('#selection-location', explanation.location ?? '');
+    this.text('#selection-model', explanation.modelRepresentation);
+    this.element<HTMLElement>('#selection-relationships').innerHTML = explanation
+      .relationships?.length
+      ? `<ul>${explanation.relationships
+          .map((relationship) => `<li>${escapeHtml(relationship)}</li>`)
+          .join('')}</ul>`
+      : '';
+    this.text('#selection-simplification', explanation.simplification ?? '');
+    this.text(
+      '#selection-structure-evidence',
+      structureEvidenceLabel(explanation.evidence, explanation.scope),
+    );
+    this.element<HTMLElement>('#selection-source-links').innerHTML =
+      explanation.sourceIds
+        .map(getStructureSource)
+        .filter((source) => source !== undefined)
+        .map(
+          (source) =>
+            `<a href="${source.url}" target="_blank" rel="noopener noreferrer" title="${escapeAttribute(source.scope)}">${escapeHtml(source.label)} ↗</a>`,
+        )
+        .join('');
   }
 
   clearSelection(): void {
-    this.showSelection(
-      '부위를 선택해보세요',
+    this.text('#selection-title', '부위를 선택해보세요');
+    this.text(
+      '#selection-description',
       '3D 장면이나 아래 부위 목록을 누르면 구조 정보를 볼 수 있어요.',
     );
+    this.element<HTMLElement>('#selection-details').hidden = true;
   }
 
   syncAll(snapshot: ObservationSnapshot, metrics: RenderMetrics): void {
@@ -256,6 +288,25 @@ function evidenceStatusLabel(
   if (status === 'observed') return '관찰 자료 기반';
   if (status === 'conceptual') return '계열 공통 개념 표현';
   return '구조 정보 부족';
+}
+
+function structureEvidenceLabel(
+  evidence: StructureExplanation['evidence'],
+  scope: StructureExplanation['scope'],
+): string {
+  const evidenceLabel =
+    evidence === 'observed'
+      ? '직접 관찰 구조 근거'
+      : evidence === 'family-supported'
+        ? '계열 구조 근거'
+        : '개념적 표현';
+  const scopeLabel =
+    scope === 'entry'
+      ? '이 바이러스 전용 설명'
+      : scope === 'family'
+        ? '계열 공통 설명'
+        : '공통 설명';
+  return `${evidenceLabel} · ${scopeLabel}`;
 }
 
 function escapeHtml(value: string): string {
