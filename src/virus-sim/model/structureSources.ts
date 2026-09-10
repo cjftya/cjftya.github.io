@@ -22,6 +22,13 @@ export const V2_STRUCTURE_SOURCES: readonly StructureSource[] = [
     checkedOn: '2026-09-08',
   },
   {
+    id: 'pdb-5iv5',
+    label: 'PDB 5IV5',
+    url: 'https://www.rcsb.org/structure/5IV5',
+    scope: 'T4 기저판·꼬리관 복합체와 수축형 sheath 작동 구조',
+    checkedOn: '2026-09-10',
+  },
+  {
     id: 'pdb-8iyd',
     label: 'PDBj 8IYD',
     url: 'https://pdbj.org/mine/summary/8iyd',

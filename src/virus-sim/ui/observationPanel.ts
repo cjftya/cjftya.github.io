@@ -76,7 +76,24 @@ export function observationInfoMarkup(): string {
     <details class="detail-section">
       <summary><span><small>EXPLORE</small>부위와 레이어</span></summary>
       <div class="detail-body">
-        <section class="selection-card" aria-live="polite"><p class="eyebrow">SELECTED</p><h3 id="selection-title">부위를 선택해보세요</h3><p id="selection-description">3D 장면이나 아래 부위 목록을 누르면 구조 정보를 볼 수 있어요.</p></section>
+        <section class="selection-card" aria-live="polite">
+          <p class="eyebrow">SELECTED</p>
+          <h3 id="selection-title">부위를 선택해보세요</h3>
+          <p id="selection-description">3D 장면이나 아래 부위 목록을 누르면 구조 정보를 볼 수 있어요.</p>
+          <div id="selection-details" hidden>
+            <dl class="selection-facts">
+              <div id="selection-location-row"><dt>위치</dt><dd id="selection-location"></dd></div>
+              <div><dt>현재 3D 표현</dt><dd id="selection-model"></dd></div>
+            </dl>
+            <details class="selection-more">
+              <summary>관계·단순화·근거</summary>
+              <div id="selection-relationships"></div>
+              <p id="selection-simplification"></p>
+              <p id="selection-structure-evidence"></p>
+              <div class="source-links" id="selection-source-links"></div>
+            </details>
+          </div>
+        </section>
         <div class="part-list" id="observation-part-list">${partButtons}</div>
         <div class="layer-controls"><strong>표시할 구조 레이어</strong>${layerControls}</div>
       </div>

@@ -1,7 +1,14 @@
+import {
+  getStructureExplanation,
+  type StructureExplanationTarget,
+} from './catalog/explanations/registry';
 import { isVirusId } from './catalog/registry';
-import { OBSERVATION_PARTS } from './model/observationPresets';
 import { ObservationStore } from './observation/ObservationStore';
-import type { ObservationPartId, ObservationSnapshot } from './observation/types';
+import type {
+  ObservationLayerId,
+  ObservationPartId,
+  ObservationSnapshot,
+} from './observation/types';
 import { SceneRenderer, type SelectionDetails } from './rendering/SceneRenderer';
 import { bindVirusSimControls, type VirusSimControlActions } from './ui/bindings';
 import { renderAppLayout, requiredElement } from './ui/layout';
@@ -66,8 +73,7 @@ export class VirusSimApp {
         this.updateObservation(() => this.observation.setSectionOffset(value)),
       setGenomeVisible: (visible) =>
         this.updateObservation(() => this.observation.setGenomeVisible(visible)),
-      setLayerVisible: (layer, visible) =>
-        this.updateObservation(() => this.observation.setLayerVisible(layer, visible)),
+      setLayerVisible: (layer, visible) => this.setLayerVisible(layer, visible),
       selectPart: (part) => this.selectPart(part),
       setScannerEnabled: (enabled) =>
         this.updateObservation(() => this.observation.setScannerEnabled(enabled)),
@@ -113,8 +119,14 @@ export class VirusSimApp {
 
   private selectPart(partId: ObservationPartId): void {
     this.observation.selectPart(partId);
-    const part = OBSERVATION_PARTS[partId];
-    this.panel.showSelection(part.name, `${part.detail} ${part.summary}`);
+    this.showStructureTarget({ kind: 'part', id: partId });
+    this.refresh();
+  }
+
+  private setLayerVisible(layerId: ObservationLayerId, visible: boolean): void {
+    this.observation.setLayerVisible(layerId, visible);
+    this.observation.selectPart(null);
+    this.showStructureTarget({ kind: 'layer', id: layerId });
     this.refresh();
   }
 
@@ -126,12 +138,15 @@ export class VirusSimApp {
       return;
     }
     this.observation.selectPart(selection.partId);
-    const part = OBSERVATION_PARTS[selection.partId];
-    this.panel.showSelection(
-      selection.title,
-      `${selection.description} ${part.summary}`,
-    );
+    this.showStructureTarget({ kind: 'part', id: selection.partId });
     this.refresh(true);
+  }
+
+  private showStructureTarget(target: StructureExplanationTarget): void {
+    const virusId = this.observation.getActiveSpecimen().presetId;
+    const explanation = getStructureExplanation(virusId, target);
+    if (explanation) this.panel.showStructureExplanation(explanation);
+    else this.panel.clearSelection();
   }
 
   private saveObservationImage(): Promise<boolean> {

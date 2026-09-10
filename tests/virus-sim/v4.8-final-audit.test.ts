@@ -296,10 +296,10 @@ describe('Virus Sim v4.8 final catalog and lifecycle audit', () => {
     }
   });
 
-  it('keeps the v4.8 native-select UI compact, semantic and externally safe', () => {
+  it('keeps the v4.8.1 native-select UI compact, semantic and externally safe', () => {
     const root = { innerHTML: '' } as HTMLElement;
     renderAppLayout(root);
-    expect(root.innerHTML).toContain('<span class="eyebrow">v4.8</span>');
+    expect(root.innerHTML).toContain('<span class="eyebrow">v4.8.1</span>');
     expect(root.innerHTML.match(/<details class="detail-section/g)).toHaveLength(5);
     expect(root.innerHTML.match(/<select id="virus-select">/g)).toHaveLength(1);
     const virusSelect =
