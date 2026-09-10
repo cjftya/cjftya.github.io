@@ -46,4 +46,9 @@
 - 모든 대표 구조: 48 draw-call-equivalent, 250K triangles 예산 이내
 - 대표 8종: surface·transparent·section·exploded·scanner flow 통과
 - v4.4 외피형과 v4.5 capsid 대표 모델, History & Impact mapping 회귀 통과
-- local cloud browser는 loopback 접근을 차단해 수동 viewport 캡처는 공개 배포 후 수행
+- GitHub Actions `Validate and deploy GitHub Pages` run #89: 통과
+- 공개본: v4.6 title/header, 71개 catalog option, v4.6 bundle과 핵심 special-geometry marker 확인
+- 공개 desktop 1363×936: document scroll 유지, body 가로 overflow 없음, WebGL fallback UI 정상
+- cloud browser는 sandbox에서 WebGL context가 비활성화되어 3D contact sheet와 지정 모바일
+  viewport 수동 캡처는 수행할 수 없었고, 해당 범위는 geometry bounds와 view/scanner 자동
+  회귀 테스트로 대체
