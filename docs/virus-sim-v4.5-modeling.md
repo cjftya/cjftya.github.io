@@ -1,5 +1,8 @@
 # Virus Sim v4.5 Icosahedral & Layered 모델링
 
+> 현재 generic builder 상태는 v4.7에서 모두 제거된 뒤 v4.8에서 재검증됐다.
+> 최종 상태는 [`virus-sim-v4.8-generic-final-audit.md`](virus-sim-v4.8-generic-final-audit.md)를 따른다.
+
 ## 범위와 원칙
 
 v4.5는 정이십면체를 더 매끈하게 만드는 작업이 아니라 capsid topology, 표면 domain,

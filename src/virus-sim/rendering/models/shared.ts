@@ -9,7 +9,6 @@ import type {
   ObjectExplosion,
   ObservationModel,
   ObservationSurfaceMaterial,
-  FlexibleSegment,
 } from './types';
 import { getStructuralSignature } from '../../catalog/structuralSignatures';
 import type { StructuralSignature } from '../../catalog/structuralSignatures';
@@ -43,7 +42,6 @@ export interface ModelCollector {
   instanceExplosions: InstanceExplosion[];
   genomeObjects: THREE.Object3D[];
   sectionGuide: THREE.Object3D;
-  flexibleSegments: FlexibleSegment[];
 }
 
 export function createCollector(definition: ObservationDefinition): ModelCollector {
@@ -61,7 +59,6 @@ export function createCollector(definition: ObservationDefinition): ModelCollect
     objectExplosions: [],
     instanceExplosions: [],
     genomeObjects: [],
-    flexibleSegments: [],
     sectionGuide: createSectionGuide(definition.sectionRadius),
   };
   if (collector.signature) {
@@ -69,16 +66,6 @@ export function createCollector(definition: ObservationDefinition): ModelCollect
   }
   root.add(collector.sectionGuide);
   return collector;
-}
-
-export function registerFlexibleSegment(
-  collector: ModelCollector,
-  object: THREE.Object3D,
-): void {
-  collector.flexibleSegments.push({
-    object,
-    baseRotation: object.rotation.clone(),
-  });
 }
 
 export function finishCollector(collector: ModelCollector): ObservationModel {

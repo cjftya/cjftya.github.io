@@ -500,24 +500,3 @@ export const PHYSICAL_DIMENSIONS: Readonly<Record<string, PhysicalDimensions>> =
     sourceIds: ['ictv-coronaviridae'],
   }),
 };
-
-export function getPhysicalDimensions(virusId: string): PhysicalDimensions | undefined {
-  return PHYSICAL_DIMENSIONS[virusId];
-}
-
-export function physicalScaleFactor(
-  displayLength: number,
-  dimensions: PhysicalDimensions,
-  worldUnitsPerNm = 0.02,
-): number {
-  return (
-    (dimensions.representativeNm * worldUnitsPerNm) / Math.max(0.001, displayLength)
-  );
-}
-
-export function normalizedScaleFactor(
-  displayLength: number,
-  targetLength = 4.8,
-): number {
-  return targetLength / Math.max(0.001, displayLength);
-}

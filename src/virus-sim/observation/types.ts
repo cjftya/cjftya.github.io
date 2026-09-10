@@ -17,9 +17,6 @@ export type {
   ObservationPresetId,
   PhysicalDimensions,
   SourceScope,
-  SpecimenVariant,
-  StructureChange,
-  VariantKind,
   VirusId,
 } from '../catalog/types';
 
@@ -60,7 +57,7 @@ export interface DecorationState {
 }
 
 export interface ObservationState {
-  readonly version: 'virus-observation-v4.7';
+  readonly version: 'virus-observation-v4.8';
   readonly specimen: SpecimenObservationState;
   readonly scanner: ScannerState;
   readonly decoration: DecorationState;

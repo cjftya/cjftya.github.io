@@ -4,7 +4,6 @@ export type ObservationPresetId = VirusId;
 export type SourceScope =
   'whole-particle' | 'protein' | 'domain' | 'family-description';
 export type EvidenceLevel = 'observed' | 'conceptual' | 'unavailable';
-export type VariantKind = 'lineage' | 'subtype' | 'isolate';
 
 export type ModelBuilderId =
   | 't4'
@@ -162,25 +161,4 @@ export interface PhysicalDimensions {
   readonly includesProjections: boolean;
   readonly sourceIds: readonly string[];
   readonly note?: string;
-}
-
-export interface SpecimenVariant {
-  readonly id: string;
-  readonly parentVirusId: string;
-  readonly label: string;
-  readonly kind: VariantKind;
-  readonly referenceLabel: string;
-  readonly sourceIds: readonly string[];
-  readonly changeIds: readonly string[];
-}
-
-export interface StructureChange {
-  readonly id: string;
-  readonly comparisonPairId: string;
-  readonly partId: ObservationPartId;
-  readonly regionId?: string;
-  readonly precision: 'region' | 'mapped-structure' | 'unavailable';
-  readonly evidence: EvidenceLevel;
-  readonly sourceIds: readonly string[];
-  readonly note: string;
 }

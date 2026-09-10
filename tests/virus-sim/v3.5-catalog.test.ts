@@ -3,10 +3,6 @@ import * as THREE from 'three';
 import { PHYSICAL_DIMENSIONS } from '../../src/virus-sim/catalog/dimensions';
 import { VIRUS_CATALOG } from '../../src/virus-sim/catalog/registry';
 import { getStructureSource } from '../../src/virus-sim/catalog/sources';
-import {
-  SPECIMEN_VARIANTS,
-  STRUCTURE_CHANGES,
-} from '../../src/virus-sim/catalog/variants/registry';
 import { createObservationModel } from '../../src/virus-sim/rendering/models/createObservationModel';
 import { renderAppLayout } from '../../src/virus-sim/ui/layout';
 
@@ -88,12 +84,11 @@ const NEW_IDS = [
 ] as const;
 
 describe('Virus Sim v3.5 catalog contracts', () => {
-  it('preserves 56 identities and adds 15 basic entries without counting variants', () => {
+  it('preserves 56 identities and adds 15 additional catalog entries', () => {
     expect(VIRUS_CATALOG).toHaveLength(71);
     const ids = VIRUS_CATALOG.map((entry) => entry.id);
     expect(new Set(ids).size).toBe(71);
     expect(ids).toEqual(expect.arrayContaining([...ORIGINAL_IDS, ...NEW_IDS]));
-    expect(SPECIMEN_VARIANTS.length).toBeGreaterThanOrEqual(16);
   });
 
   it('gives every entry explicit evidence, dimensions and valid sources', () => {
@@ -105,26 +100,6 @@ describe('Virus Sim v3.5 catalog contracts', () => {
       for (const sourceId of entry.sourceIds)
         expect(getStructureSource(sourceId)).toBeDefined();
       for (const sourceId of PHYSICAL_DIMENSIONS[entry.id]!.sourceIds)
-        expect(getStructureSource(sourceId)).toBeDefined();
-    }
-  });
-
-  it('keeps variant parents, sources and comparison changes referentially valid', () => {
-    const virusIds = new Set(VIRUS_CATALOG.map((entry) => entry.id));
-    const variantIds = new Set(SPECIMEN_VARIANTS.map((variant) => variant.id));
-    const changeIds = new Set(STRUCTURE_CHANGES.map((change) => change.id));
-    for (const variant of SPECIMEN_VARIANTS) {
-      expect(virusIds.has(variant.parentVirusId)).toBe(true);
-      for (const sourceId of variant.sourceIds)
-        expect(getStructureSource(sourceId)).toBeDefined();
-      for (const changeId of variant.changeIds)
-        expect(changeIds.has(changeId)).toBe(true);
-    }
-    for (const change of STRUCTURE_CHANGES) {
-      const [first, second] = change.comparisonPairId.split('::');
-      expect(variantIds.has(first!)).toBe(true);
-      expect(variantIds.has(second!)).toBe(true);
-      for (const sourceId of change.sourceIds)
         expect(getStructureSource(sourceId)).toBeDefined();
     }
   });

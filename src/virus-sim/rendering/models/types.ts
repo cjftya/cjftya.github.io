@@ -23,11 +23,6 @@ export interface InstanceExplosion {
   readonly distance: number;
 }
 
-export interface FlexibleSegment {
-  readonly object: THREE.Object3D;
-  readonly baseRotation: THREE.Euler;
-}
-
 export interface ObservationModel {
   readonly root: THREE.Group;
   readonly selectables: readonly THREE.Object3D[];
@@ -39,5 +34,4 @@ export interface ObservationModel {
   readonly instanceExplosions: readonly InstanceExplosion[];
   readonly genomeObjects: readonly THREE.Object3D[];
   readonly sectionGuide: THREE.Object3D;
-  readonly flexibleSegments: readonly FlexibleSegment[];
 }

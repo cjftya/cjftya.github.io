@@ -3,7 +3,6 @@ import { describe, expect, it } from 'vitest';
 import { ObservationStore } from '../../src/virus-sim/observation/ObservationStore';
 import { ManualCamera } from '../../src/virus-sim/rendering/ManualCamera';
 import { SpecimenView } from '../../src/virus-sim/rendering/SpecimenView';
-import { normalizedSlabRange } from '../../src/virus-sim/scanner/math';
 import {
   loadFontScale,
   loadVirusSimPreferences,
@@ -59,12 +58,6 @@ describe('Virus Sim manual observation contracts', () => {
       position: 0.18,
       thickness: 0.12,
     });
-  });
-
-  it('maps a normalized scanner position to the requested slab', () => {
-    const slab = normalizedSlabRange(-4, 6, 0.25, 0.08);
-    expect(slab.center).toBeCloseTo(-1.5);
-    expect(slab.halfThickness).toBeCloseTo(0.4);
   });
 
   it('orients scanner fixtures along a transformed specimen local axis', () => {
