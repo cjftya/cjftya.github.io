@@ -23,7 +23,7 @@ export const ARCHAEA_CATALOG = [
       layer('genome', '원형 dsDNA'),
     ],
     sourceIds: ['ictv-fuselloviridae'],
-    modelBuilder: 'generic-spindle',
+    modelBuilder: 'spindle-virus',
     geometryProfileId: 'spindle-ssv1-one-tail',
     simplifications: [
       '한쪽 말단의 가는 부속 구조만 강조했어요.',
@@ -52,7 +52,7 @@ export const ARCHAEA_CATALOG = [
       layer('genome', '선형 dsDNA'),
     ],
     sourceIds: ['ictv-rudiviridae'],
-    modelBuilder: 'generic-rod',
+    modelBuilder: 'archaeal-rod',
     geometryProfileId: 'rod-sirv2-fibers',
     simplifications: [
       '강체 막대로 유지하며 필라멘트 굽힘을 적용하지 않아요.',
@@ -113,7 +113,7 @@ export const ARCHAEA_CATALOG = [
       layer('genome', '선형 dsDNA'),
     ],
     sourceIds: ['ictv-bicaudaviridae'],
-    modelBuilder: 'generic-spindle',
+    modelBuilder: 'spindle-virus',
     geometryProfileId: 'spindle-atv-two-tail',
     simplifications: [
       '세포 밖에서 꼬리가 발달한 상태로 고정했어요.',

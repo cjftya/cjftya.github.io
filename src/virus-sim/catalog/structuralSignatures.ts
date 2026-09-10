@@ -1,5 +1,6 @@
 import { ENVELOPED_SIGNATURE_PROFILES } from './envelopedProfiles';
 import { CAPSID_SIGNATURE_PROFILES } from './capsidProfiles';
+import { SPECIAL_GEOMETRY_SIGNATURE_PROFILES } from './specialGeometryProfiles';
 import type { StructuralSignature } from './structuralTypes';
 
 export type {
@@ -17,6 +18,16 @@ export type {
   LayerSurfacePattern,
   VertexFeatureKind,
   VertexFeatureSignature,
+  CenterlineArchetype,
+  GenomePathKind,
+  HelicalCoatOrganization,
+  HelicalCoatUnitShape,
+  HelicalRigidity,
+  HelicalSignature,
+  SpecialGeometryKind,
+  SpecialGeometrySignature,
+  TerminalStructureKind,
+  TerminalStructureSignature,
 } from './structuralTypes';
 
 const signature = (input: StructuralSignature): StructuralSignature => input;
@@ -56,6 +67,26 @@ const CAPSID_SIGNATURES = CAPSID_SIGNATURE_PROFILES.flatMap((profile) =>
   ),
 );
 
+const SPECIAL_GEOMETRY_SIGNATURES = SPECIAL_GEOMETRY_SIGNATURE_PROFILES.flatMap(
+  (profile) =>
+    profile.virusIds.map((virusId) =>
+      signature({
+        id: `${virusId}-${profile.id}-v1`,
+        virusId,
+        profileId: profile.id,
+        builder: profile.builder,
+        envelopeShape: profile.envelopeShape,
+        surfaceComponents: profile.surfaceComponents,
+        layers: profile.layers,
+        genomeOrganization: profile.genomeOrganization,
+        specialStructures: profile.specialStructures,
+        evidence: profile.evidence,
+        helical: profile.helical,
+        specialGeometry: profile.specialGeometry,
+      }),
+    ),
+);
+
 const FOUNDATION_SIGNATURES: readonly StructuralSignature[] = [
   signature({
     id: 't4-fidelity-v1',
@@ -73,22 +104,19 @@ const FOUNDATION_SIGNATURES: readonly StructuralSignature[] = [
       },
     ],
   }),
-  signature({
-    id: 'tmv-fidelity-v1',
-    virusId: 'tmv',
-    builder: 'tmv',
-    surfaceComponents: [],
-    layers: ['helical coat', 'central channel'],
-    genomeOrganization: 'helical-rna',
-    specialStructures: ['rigid rod', 'coat 안쪽 RNA 경로'],
-    evidence: [{ componentId: 'particle', level: 'observed', sourceIds: ['pdb-2tmv'] }],
-  }),
 ] as const;
 
-export const STRUCTURAL_SIGNATURES: readonly StructuralSignature[] = [
+const ALL_STRUCTURAL_SIGNATURES: readonly StructuralSignature[] = [
   ...ENVELOPED_SIGNATURES,
   ...CAPSID_SIGNATURES,
+  ...SPECIAL_GEOMETRY_SIGNATURES,
   ...FOUNDATION_SIGNATURES,
+];
+
+export const STRUCTURAL_SIGNATURES: readonly StructuralSignature[] = [
+  ...new Map(
+    ALL_STRUCTURAL_SIGNATURES.map((entry) => [entry.virusId, entry] as const),
+  ).values(),
 ];
 
 const SIGNATURE_BY_VIRUS = new Map(

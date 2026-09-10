@@ -20,13 +20,22 @@ import {
   createSurfaceProteinInstances,
 } from './components';
 import { getCoronavirusRenderProfile } from '../../catalog/envelopedProfiles';
+import { createBodyCenterline, sampleFrame } from './filamentComponents';
 
 type Quality = 'high' | 'low';
 
 export function buildFilovirus(collector: ModelCollector, quality: Quality): void {
   collector.root.userData.envelopedFamily = 'filovirus';
   collector.root.userData.familyModel = true;
-  const points = filovirusCenterline(quality);
+  const signature = collector.signature?.helical;
+  if (!signature)
+    throw new Error(`Missing filovirus signature for ${collector.definition.id}`);
+  const path = createBodyCenterline(
+    signature.centerline,
+    signature.body.length,
+    quality,
+  );
+  const points = path.points;
   const envelope = createTube(points, 0.58, quality, false, 0xc86d9d);
   envelope.name = 'filovirus-tubular-envelope';
   envelope.material = physicalMaterial(0xc86d9d, 0.72);
@@ -42,16 +51,10 @@ export function buildFilovirus(collector: ModelCollector, quality: Quality): voi
   addObjectExplosion(collector, matrix, new THREE.Vector3(-0.45, 0.2, 0.35), 0.58);
 
   const rnpPoints: THREE.Vector3[] = [];
-  const curve = new THREE.CatmullRomCurve3(points, false, 'catmullrom', 0.45);
   const samples = quality === 'high' ? 180 : 96;
   for (let index = 0; index <= samples; index += 1) {
     const t = index / samples;
-    const center = curve.getPointAt(t);
-    const tangent = curve.getTangentAt(t).normalize();
-    const normal = new THREE.Vector3(0, 1, 0).cross(tangent);
-    if (normal.lengthSq() < 0.01) normal.set(1, 0, 0);
-    normal.normalize();
-    const binormal = tangent.clone().cross(normal).normalize();
+    const { point: center, normal, binormal } = sampleFrame(path, t);
     const angle = t * Math.PI * 42;
     rnpPoints.push(
       center
@@ -74,14 +77,10 @@ export function buildFilovirus(collector: ModelCollector, quality: Quality): voi
   const spikeDirections: THREE.Vector3[] = [];
   for (let index = 0; index < spikeCount; index += 1) {
     const t = (index + 0.5) / spikeCount;
-    const center = curve.getPointAt(t);
-    const tangent = curve.getTangentAt(t).normalize();
-    const normal = new THREE.Vector3(0, 1, 0).cross(tangent);
-    if (normal.lengthSq() < 0.01) normal.set(1, 0, 0);
-    normal.normalize();
-    const binormal = tangent.clone().cross(normal).normalize();
+    const { point: center, normal, binormal } = sampleFrame(path, t);
     const angle = index * 2.39996;
     const radial = normal
+      .clone()
       .multiplyScalar(Math.cos(angle))
       .addScaledVector(binormal, Math.sin(angle))
       .normalize();
@@ -98,6 +97,9 @@ export function buildFilovirus(collector: ModelCollector, quality: Quality): voi
   collector.root.add(spikes.mesh);
   register(collector, spikes.mesh, 'spike', 'surface-protein', true);
   collector.instanceExplosions.push({ ...spikes, distance: 0.74 });
+  collector.root.userData.helicalProfileId = collector.signature?.profileId;
+  collector.root.userData.rigidity = signature.rigidity;
+  collector.root.userData.centerline = path.points.map((point) => point.toArray());
 }
 
 export function buildLentivirus(collector: ModelCollector, quality: Quality): void {
@@ -212,21 +214,4 @@ export function buildCoronavirus(collector: ModelCollector, quality: Quality): v
   registerLayerAlias(collector, rnp, 'genome');
   collector.genomeObjects.push(rnp);
   addObjectExplosion(collector, rnp, new THREE.Vector3(0.52, -0.3, -0.34), 0.6);
-}
-
-function filovirusCenterline(quality: Quality): THREE.Vector3[] {
-  const points: THREE.Vector3[] = [];
-  const count = quality === 'high' ? 72 : 40;
-  for (let index = 0; index <= count; index += 1) {
-    const t = index / count;
-    const angle = (t - 0.5) * Math.PI * 1.32;
-    points.push(
-      new THREE.Vector3(
-        Math.sin(angle) * 3.15,
-        (t - 0.5) * 3.1 + Math.cos(t * Math.PI * 2) * 0.22,
-        Math.cos(angle) * 1.05 - 0.38,
-      ),
-    );
-  }
-  return points;
 }

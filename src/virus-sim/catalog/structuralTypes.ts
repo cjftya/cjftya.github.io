@@ -77,6 +77,69 @@ export interface LayeredCapsidSignature {
   readonly genomeSegmentCount?: number;
 }
 
+export type HelicalRigidity = 'rigid' | 'semi-flexible' | 'flexible';
+export type CenterlineArchetype = 'straight' | 'gentle-bend' | 'flexible-s';
+export type HelicalCoatOrganization = 'helical-units' | 'ring-like' | 'smooth-concept';
+export type HelicalCoatUnitShape =
+  'capsule-like' | 'wedge-like' | 'short-rod' | 'disc-like';
+export type GenomePathKind =
+  | 'helical-path'
+  | 'central-path'
+  | 'looped-path'
+  | 'paired-path'
+  | 'centerline-following';
+export type TerminalStructureKind = 'cap' | 'fiber' | 'tail' | 'protein-cluster';
+
+export interface TerminalStructureSignature {
+  readonly end: 'start' | 'end' | 'both';
+  readonly kind: TerminalStructureKind;
+  readonly count: number;
+  readonly relativeLength: number;
+}
+
+export interface HelicalSignature {
+  readonly rigidity: HelicalRigidity;
+  readonly centerline: CenterlineArchetype;
+  readonly body: {
+    readonly length: number;
+    readonly radius: number;
+    readonly pitch?: number;
+    readonly strandCount?: number;
+  };
+  readonly coat: {
+    readonly organization: HelicalCoatOrganization;
+    readonly unitShape: HelicalCoatUnitShape;
+    readonly unitScale: number;
+  };
+  readonly channel?: {
+    readonly present: boolean;
+    readonly radiusScale: number;
+  };
+  readonly genomePath: GenomePathKind;
+  readonly terminalStructures?: readonly TerminalStructureSignature[];
+}
+
+export type SpecialGeometryKind = 'spindle' | 'rod' | 'geminate' | 'brick';
+
+export interface SpecialGeometrySignature {
+  readonly kind: SpecialGeometryKind;
+  readonly body: {
+    readonly length: number;
+    readonly radius: number;
+    readonly taper?: number;
+    readonly lobeSpacing?: number;
+    readonly roundness?: number;
+  };
+  readonly surfaceOrganization:
+    | 'fusiform-shell'
+    | 'rigid-rod-coat'
+    | 'faceted-twin-lobes'
+    | 'layered-rounded-brick';
+  readonly genomePath: GenomePathKind;
+  readonly terminalStructures?: readonly TerminalStructureSignature[];
+  readonly internalStructures?: readonly string[];
+}
+
 export interface SurfaceComponentSignature {
   readonly id: string;
   readonly label: string;
@@ -112,4 +175,6 @@ export interface StructuralSignature {
   readonly evidence: readonly StructuralComponentEvidence[];
   readonly icosahedral?: IcosahedralTopologySignature;
   readonly layeredCapsid?: LayeredCapsidSignature;
+  readonly helical?: HelicalSignature;
+  readonly specialGeometry?: SpecialGeometrySignature;
 }
