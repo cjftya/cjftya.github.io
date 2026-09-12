@@ -487,8 +487,16 @@ const ENTRY_PROFILES: Readonly<Record<string, EntryProfile>> = {
     capsid: 'PRD1 P3 major capsid-protein shell',
     capsomer: 'PRD1 P3 trimers',
     'inner-membrane': 'PRD1 internal lipid membrane',
-    spike: 'PRD1 vertex spike and receptor-recognition complex',
-    genome: 'Linear dsDNA genome',
+    spike: profile('PRD1 vertex spike and receptor-recognition complex', {
+      evidence: 'family-supported',
+      simplification:
+        'PDB 1W8X의 꼭짓점 맥락을 바탕으로 수용체 인식 장치를 절차적 돌기로 단순화했어요.',
+    }),
+    genome: profile('Linear dsDNA genome', {
+      evidence: 'family-supported',
+      simplification:
+        '유전체의 위치와 종류를 내부 코일로 표시하며 원자 좌표나 실제 응축 상태로 해석하지 않아요.',
+    }),
   },
   pm2: {
     capsid: 'PM2 major capsid-protein shell',
@@ -499,7 +507,15 @@ const ENTRY_PROFILES: Readonly<Record<string, EntryProfile>> = {
   },
   ibdv: {
     'outer-capsid': 'IBDV VP2 outer capsid',
-    'core-capsid': 'IBDV VP3 inner ribonucleoprotein layer',
+    'core-capsid': profile('IBDV VP3 inner ribonucleoprotein layer', {
+      summary:
+        'VP3가 dsRNA와 polymerase 복합체를 조직하는 내부 ribonucleoprotein 영역이에요.',
+      role: '분절 dsRNA를 결합하고 복제·전사 복합체를 VP2 capsid 안쪽에 조직해요.',
+      relationship: 'VP2 outer capsid 안쪽에서 두 dsRNA 분절과 polymerase를 묶어요.',
+      model: '작은 연속 다면체 shell로 내부 VP3–RNP 영역을 표시해요.',
+      simplification: '닫힌 VP3 capsid가 관찰됐다는 뜻이 아닌 공간적 추상화예요.',
+      evidence: 'family-supported',
+    }),
     capsomer: 'IBDV VP2 trimeric capsomers',
     genome: 'Two-segment dsRNA genome',
   },
@@ -653,29 +669,33 @@ export const TARGETED_ENTRY_STRUCTURE_EXPLANATIONS: readonly EntryExplanationReg
         simplification:
           'HIV-2 p26 격자의 종별 직접 구조로 해석하지 않고 lentivirus 공통 core 형태만 사용해요.',
         evidence: 'family-supported',
-        sourceIds: ['ictv-retroviridae', 'nih-hiv2'],
+        sourceIds: ['ictv-retroviridae', 'emd-hiv2-capsid'],
       },
     },
-    ...(['hcov-oc43', 'hcov-hku1'] as const).map(
-      (virusId): EntryExplanationRegistration => ({
-        virusId,
-        targets: [partTarget('spike'), layerTarget('surface-protein')],
-        explanation: {
-          genericSummary:
-            'Embecovirus 표면에는 주된 S glycoprotein과 더 짧은 hemagglutinin-esterase가 함께 있어요.',
-          actualName: 'Spike (S) glycoprotein and hemagglutinin-esterase (HE)',
-          role: 'S는 수용체 결합과 막 융합을 담당하고 HE는 sialic-acid 계열 부착·esterase 기능을 보조해요.',
-          location: '지질 외피 표면',
-          relationships: ['두 단백질은 같은 외피에 박히지만 크기와 기능이 달라요.'],
-          modelRepresentation:
-            '현재 모델은 왕관형 S 돌기만 반복하며 더 짧은 HE를 독립된 형상으로 구분하지 않아요.',
-          simplification:
-            'S와 HE의 실제 비율·배열·당쇄를 하나의 surface-protein 선택 그룹으로 줄였어요.',
-          evidence: 'family-supported',
-          sourceIds: ['ictv-coronaviridae'],
-        },
-      }),
-    ),
+    ...(
+      [
+        ['hcov-oc43', 'pdb-5n11'],
+        ['hcov-hku1', 'hku1-he-cryoem'],
+      ] as const
+    ).map(([virusId, heSourceId]): EntryExplanationRegistration => ({
+      virusId,
+      targets: [partTarget('spike'), layerTarget('surface-protein')],
+      explanation: {
+        genericSummary:
+          'Embecovirus 표면에는 주된 S glycoprotein과 더 짧은 hemagglutinin-esterase가 함께 있어요.',
+        actualName:
+          'Spike (S), hemagglutinin-esterase (HE), membrane (M), and envelope (E) proteins',
+        role: 'S는 수용체 결합·융합, HE는 부착·esterase, M과 E는 조립과 입자 형성에 관여해요.',
+        location: '지질 외피 표면',
+        relationships: ['네 성분은 같은 외피에 박히며 크기·양·기능이 달라요.'],
+        modelRepresentation:
+          'S는 왕관형, HE는 더 짧은 club형, M은 짧은 돌기, E는 channel 표식으로 구분해요.',
+        simplification:
+          'S와 HE의 실제 비율·배열·당쇄를 하나의 surface-protein 선택 그룹으로 줄였어요.',
+        evidence: 'family-supported',
+        sourceIds: ['ictv-coronaviridae', heSourceId],
+      },
+    })),
   ];
 
 function resolveProfile(

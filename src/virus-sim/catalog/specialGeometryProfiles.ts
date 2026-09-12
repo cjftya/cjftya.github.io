@@ -96,6 +96,9 @@ export const SPECIAL_GEOMETRY_SIGNATURE_PROFILES: readonly SpecialGeometrySignat
           unitScale: 0.09,
         },
         genomePath: 'centerline-following',
+        terminalStructures: [
+          { end: 'both', kind: 'cap', count: 1, relativeLength: 0.18 },
+        ],
       },
     },
     {
@@ -117,6 +120,9 @@ export const SPECIAL_GEOMETRY_SIGNATURE_PROFILES: readonly SpecialGeometrySignat
           unitScale: 0.12,
         },
         genomePath: 'helical-path',
+        terminalStructures: [
+          { end: 'both', kind: 'cap', count: 1, relativeLength: 0.18 },
+        ],
       },
     },
     {
@@ -189,7 +195,7 @@ export const SPECIAL_GEOMETRY_SIGNATURE_PROFILES: readonly SpecialGeometrySignat
       layers: ['rigid coat', 'terminal fibers', 'linear DNA'],
       genomeOrganization: 'double-stranded-dna-core',
       specialStructures: ['three terminal fibers at each end'],
-      evidence: evidence(['ictv-rudiviridae']),
+      evidence: evidence(['ictv-rudiviridae'], 'family-supported'),
       specialGeometry: {
         kind: 'rod',
         body: { length: 5.5, radius: 0.68 },
@@ -208,7 +214,7 @@ export const SPECIAL_GEOMETRY_SIGNATURE_PROFILES: readonly SpecialGeometrySignat
       layers: ['outer shell', 'spindle body', 'terminal fibers', 'DNA'],
       genomeOrganization: 'circular-dna-core',
       specialStructures: ['fusiform taper', 'one polar terminal assembly'],
-      evidence: evidence(['ictv-fuselloviridae']),
+      evidence: evidence(['ictv-fuselloviridae'], 'family-supported'),
       specialGeometry: {
         kind: 'spindle',
         body: { length: 5.12, radius: 1.25, taper: 0.82 },
@@ -227,7 +233,7 @@ export const SPECIAL_GEOMETRY_SIGNATURE_PROFILES: readonly SpecialGeometrySignat
       layers: ['outer shell', 'spindle body', 'two tails', 'DNA'],
       genomeOrganization: 'double-stranded-dna-core',
       specialStructures: ['long tails at both tapered poles'],
-      evidence: evidence(['ictv-bicaudaviridae']),
+      evidence: evidence(['ictv-bicaudaviridae'], 'family-supported'),
       specialGeometry: {
         kind: 'spindle',
         body: { length: 5.2, radius: 1.18, taper: 0.92 },
