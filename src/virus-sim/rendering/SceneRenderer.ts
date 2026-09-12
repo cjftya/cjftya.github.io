@@ -398,8 +398,7 @@ export class SceneRenderer {
     this.lastTouchDistance = 0;
     this.lastTouchCenter = null;
     if (!gesture) return;
-    if (!gesture.moved && performance.now() - gesture.startedAt < 560)
-      this.pick(event);
+    if (!gesture.moved && performance.now() - gesture.startedAt < 560) this.pick(event);
   };
 
   private readonly handlePointerCancel = (event: PointerEvent): void => {

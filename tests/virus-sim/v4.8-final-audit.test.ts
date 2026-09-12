@@ -51,6 +51,7 @@ const EXPECTED_BUILDERS = [
   'archaeal-rod',
   'spindle-virus',
   'geminate-capsid',
+  'human-rnp',
 ] as const;
 
 const SCANNER_AXES: readonly ScannerAxis[] = ['x', 'y', 'z'];
@@ -58,8 +59,8 @@ const SCANNER_AXES: readonly ScannerAxis[] = ['x', 'y', 'z'];
 describe('Virus Sim v4.8 final catalog and lifecycle audit', () => {
   it('keeps catalog, signature, dimensions and history registries exact', () => {
     const catalogIds = VIRUS_CATALOG.map((entry) => entry.id);
-    expect(catalogIds).toHaveLength(71);
-    expect(new Set(catalogIds).size).toBe(71);
+    expect(catalogIds).toHaveLength(95);
+    expect(new Set(catalogIds).size).toBe(95);
     expect(new Set(STRUCTURAL_SIGNATURES.map((entry) => entry.virusId))).toEqual(
       new Set(catalogIds),
     );
@@ -296,16 +297,16 @@ describe('Virus Sim v4.8 final catalog and lifecycle audit', () => {
     }
   });
 
-  it('keeps the v4.8.3 native-select UI compact, semantic and externally safe', () => {
+  it('keeps the v4.8.4 native-select UI compact, semantic and externally safe', () => {
     const root = { innerHTML: '' } as HTMLElement;
     renderAppLayout(root);
-    expect(root.innerHTML).toContain('<span class="eyebrow">v4.8.3</span>');
+    expect(root.innerHTML).toContain('<span class="eyebrow">v4.8.4</span>');
     expect(root.innerHTML.match(/<details class="detail-section/g)).toHaveLength(5);
     expect(root.innerHTML.match(/<select id="virus-select">/g)).toHaveLength(1);
     const virusSelect =
       root.innerHTML.match(/<select id="virus-select">([\s\S]*?)<\/select>/)?.[1] ?? '';
     const virusOptions = virusSelect.match(/<option value=/g);
-    expect(virusOptions).toHaveLength(71);
+    expect(virusOptions).toHaveLength(95);
     for (const link of root.innerHTML.matchAll(/target="_blank"[^>]+>/g)) {
       expect(link[0]).toContain('rel="noopener noreferrer"');
     }

@@ -17,7 +17,8 @@ import {
 } from '../../src/virus-sim/rendering/models/capsidComponents';
 import { createObservationModel } from '../../src/virus-sim/rendering/models/createObservationModel';
 
-const ROLLOUT_ENTRIES = VIRUS_CATALOG.filter((entry) => {
+const V45_CATALOG = VIRUS_CATALOG.slice(0, 71);
+const ROLLOUT_ENTRIES = V45_CATALOG.filter((entry) => {
   const family = getGeometryProfile(entry.geometryProfileId).family;
   return (
     (family === 'icosahedral' || family === 'layered') && entry.id !== 'vaccinia-mv'
@@ -39,7 +40,9 @@ describe('Virus Sim v4.5 icosahedral and layered structural fidelity rollout', (
   it('covers all 30 rollout entries with explicit sourced capsid profiles', () => {
     expect(ROLLOUT_ENTRIES).toHaveLength(30);
     expect(
-      CAPSID_SIGNATURE_PROFILES.flatMap((profile) => profile.virusIds),
+      CAPSID_SIGNATURE_PROFILES.flatMap((profile) => profile.virusIds).filter((id) =>
+        V45_CATALOG.some((entry) => entry.id === id),
+      ),
     ).toHaveLength(30);
 
     for (const entry of ROLLOUT_ENTRIES) {

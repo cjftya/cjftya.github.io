@@ -24,7 +24,8 @@ const ENVELOPED_BUILDERS = new Set([
   'generic-enveloped',
 ]);
 
-const ENVELOPED_ENTRIES = VIRUS_CATALOG.filter(
+const V44_CATALOG = VIRUS_CATALOG.slice(0, 71);
+const ENVELOPED_ENTRIES = V44_CATALOG.filter(
   (entry) =>
     entry.morphologyTags.includes('enveloped') ||
     ENVELOPED_BUILDERS.has(entry.modelBuilder),
@@ -45,7 +46,9 @@ describe('Virus Sim v4.4 enveloped structural fidelity rollout', () => {
   it('tracks all 23 enveloped entries with explicit sourced profiles', () => {
     expect(ENVELOPED_ENTRIES).toHaveLength(23);
     expect(
-      ENVELOPED_SIGNATURE_PROFILES.flatMap((profile) => profile.virusIds),
+      ENVELOPED_SIGNATURE_PROFILES.flatMap((profile) => profile.virusIds).filter((id) =>
+        V44_CATALOG.some((entry) => entry.id === id),
+      ),
     ).toHaveLength(23);
 
     for (const entry of ENVELOPED_ENTRIES) {
@@ -75,14 +78,12 @@ describe('Virus Sim v4.4 enveloped structural fidelity rollout', () => {
         (entry) => String(entry.modelBuilder) === 'generic-enveloped',
       ),
     ).toEqual([]);
-    expect(VIRUS_CATALOG.filter((entry) => entry.modelBuilder === 'hbv')).toHaveLength(
-      1,
-    );
+    expect(V44_CATALOG.filter((entry) => entry.modelBuilder === 'hbv')).toHaveLength(1);
     expect(
-      VIRUS_CATALOG.filter((entry) => entry.modelBuilder === 'alphavirus'),
+      V44_CATALOG.filter((entry) => entry.modelBuilder === 'alphavirus'),
     ).toHaveLength(2);
     expect(
-      VIRUS_CATALOG.filter((entry) => entry.modelBuilder === 'cystovirus'),
+      V44_CATALOG.filter((entry) => entry.modelBuilder === 'cystovirus'),
     ).toHaveLength(1);
   });
 

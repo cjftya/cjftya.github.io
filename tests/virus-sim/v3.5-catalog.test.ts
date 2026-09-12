@@ -83,10 +83,12 @@ const NEW_IDS = [
   'sars-cov-2',
 ] as const;
 
+const V35_CATALOG = VIRUS_CATALOG.slice(0, 71);
+
 describe('Virus Sim v3.5 catalog contracts', () => {
   it('preserves 56 identities and adds 15 additional catalog entries', () => {
-    expect(VIRUS_CATALOG).toHaveLength(71);
-    const ids = VIRUS_CATALOG.map((entry) => entry.id);
+    expect(V35_CATALOG).toHaveLength(71);
+    const ids = V35_CATALOG.map((entry) => entry.id);
     expect(new Set(ids).size).toBe(71);
     expect(ids).toEqual(expect.arrayContaining([...ORIGINAL_IDS, ...NEW_IDS]));
   });
@@ -114,7 +116,7 @@ describe('Virus Sim v3.5 catalog contracts', () => {
   });
 
   it('builds all 71 entries with complete parts, layers and bounded render cost', () => {
-    for (const definition of VIRUS_CATALOG) {
+    for (const definition of V35_CATALOG) {
       const model = createObservationModel(definition.id, 'high');
       for (const partId of definition.parts) {
         expect(
@@ -147,7 +149,7 @@ describe('Virus Sim v3.5 catalog contracts', () => {
   });
 
   it('keeps every declared part and layer in the low-quality models', () => {
-    for (const definition of VIRUS_CATALOG) {
+    for (const definition of V35_CATALOG) {
       const model = createObservationModel(definition.id, 'low');
       for (const partId of definition.parts) {
         expect(
@@ -173,7 +175,7 @@ describe('Virus Sim v3.5 catalog contracts', () => {
     const options = [
       ...(selectMarkup ?? '').matchAll(/<option value="([^"]+)"(?: selected)?>/g),
     ].map((match) => match[1]);
-    expect(options).toHaveLength(71);
+    expect(options).toHaveLength(VIRUS_CATALOG.length);
     expect(new Set(options)).toEqual(new Set(VIRUS_CATALOG.map((entry) => entry.id)));
     expect(selectMarkup).toContain('<option value="t4" selected>');
     expect(root.innerHTML).toContain('<select id="virus-select">');

@@ -1,4 +1,5 @@
 import { V2_STRUCTURE_SOURCES, type StructureSource } from '../model/structureSources';
+import { HUMAN_EXPANSION_STRUCTURE_SOURCES } from './humanExpansionSources';
 
 const checkedOn = '2026-09-12';
 
@@ -227,6 +228,7 @@ const EXPANDED_STRUCTURE_SOURCES: readonly StructureSource[] = [
 export const STRUCTURE_SOURCES: readonly StructureSource[] = [
   ...V2_STRUCTURE_SOURCES,
   ...EXPANDED_STRUCTURE_SOURCES,
+  ...HUMAN_EXPANSION_STRUCTURE_SOURCES,
 ];
 
 const STRUCTURE_SOURCE_BY_ID = new Map(

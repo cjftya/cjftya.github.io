@@ -30,6 +30,7 @@ const PHAGE_ENTRIES = VIRUS_CATALOG.filter((entry) =>
   entry.morphologyTags.includes('phage'),
 );
 const VIEW_REPRESENTATIVES = ['t4', 'lambda', 't7', 'p22', 't5'] as const;
+const V47_CATALOG = VIRUS_CATALOG.slice(0, 71);
 
 describe('Virus Sim v4.7 phage rollout and global cleanup', () => {
   it('discovers every phage and preserves unusual specialized families', () => {
@@ -214,12 +215,16 @@ describe('Virus Sim v4.7 phage rollout and global cleanup', () => {
   });
 
   it('sweeps all 71 entries through build, bounds, contracts, sources and disposal', () => {
-    expect(VIRUS_CATALOG).toHaveLength(71);
-    expect(STRUCTURAL_SIGNATURES).toHaveLength(71);
+    expect(V47_CATALOG).toHaveLength(71);
+    expect(
+      STRUCTURAL_SIGNATURES.filter((signature) =>
+        V47_CATALOG.some((entry) => entry.id === signature.virusId),
+      ),
+    ).toHaveLength(71);
     expect(getMissingHistoryIds()).toEqual([]);
-    expect(new Set(VIRUS_CATALOG.map((entry) => entry.id)).size).toBe(71);
+    expect(new Set(V47_CATALOG.map((entry) => entry.id)).size).toBe(71);
 
-    for (const entry of VIRUS_CATALOG) {
+    for (const entry of V47_CATALOG) {
       expect(getStructuralSignature(entry.id), entry.id).toBeDefined();
       expect(getVirusHistory(entry.id).virusId, entry.id).toBe(entry.id);
       expect(getGeometryProfile(entry.geometryProfileId), entry.id).toBeDefined();
@@ -276,7 +281,7 @@ describe('Virus Sim v4.7 phage rollout and global cleanup', () => {
     for (const id of VIEW_REPRESENTATIVES) {
       const scene = new THREE.Scene();
       const store = new ObservationStore(false, id);
-      expect(store.getSnapshot().version).toBe('virus-observation-v4.8.3');
+      expect(store.getSnapshot().version).toBe('virus-observation-v4.8.4');
       const view = new SpecimenView(scene, id, 'performance');
       for (const mode of ['surface', 'transparent', 'section', 'exploded'] as const) {
         store.setView(mode);

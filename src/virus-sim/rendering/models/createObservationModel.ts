@@ -15,6 +15,7 @@ import {
   buildT7Phage,
 } from './phages';
 import { buildAlphavirus, buildCystovirus, buildHBV } from './specialEnveloped';
+import { buildHumanRnpVirus } from './humanEnveloped';
 import {
   buildArchaealRod,
   buildGeminateCapsid,
@@ -52,6 +53,7 @@ const MODEL_BUILDERS = {
   'archaeal-rod': buildArchaealRod,
   'spindle-virus': buildSpindleVirus,
   'geminate-capsid': buildGeminateCapsid,
+  'human-rnp': buildHumanRnpVirus,
 } satisfies Record<ModelBuilderId, ModelBuilder>;
 
 export function createObservationModel(

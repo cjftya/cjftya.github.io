@@ -152,6 +152,7 @@ export const SPECIAL_GEOMETRY_SIGNATURE_PROFILES: readonly SpecialGeometrySignat
     {
       id: 'filovirus-family',
       virusIds: [
+        'marburg-virus',
         'ebola-virus',
         'sudan-virus',
         'bundibugyo-virus',
@@ -174,7 +175,10 @@ export const SPECIAL_GEOMETRY_SIGNATURE_PROFILES: readonly SpecialGeometrySignat
       layers: ['envelope', 'surface-protein', 'matrix', 'nucleocapsid', 'genome'],
       genomeOrganization: 'helical-rnp',
       specialStructures: ['pleomorphic curved filament', 'helical nucleocapsid'],
-      evidence: evidence(['ictv-orthoebolavirus'], 'family-supported'),
+      evidence: evidence(
+        ['ictv-orthoebolavirus', 'ictv-filoviridae-structure'],
+        'family-supported',
+      ),
       helical: {
         rigidity: 'flexible',
         centerline: 'flexible-s',
@@ -263,7 +267,7 @@ export const SPECIAL_GEOMETRY_SIGNATURE_PROFILES: readonly SpecialGeometrySignat
     },
     {
       id: 'poxvirus-vaccinia-fallback',
-      virusIds: ['vaccinia-mv'],
+      virusIds: ['vaccinia-mv', 'mpox-virus', 'variola-virus'],
       builder: 'vaccinia',
       envelopeShape: 'brick',
       surfaceComponents: [],

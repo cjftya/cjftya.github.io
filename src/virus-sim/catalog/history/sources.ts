@@ -1,8 +1,10 @@
 import type { HistorySource } from './types';
+import { HUMAN_EXPANSION_HISTORY_SOURCES } from './humanExpansionSources';
 
 const checkedOn = '2026-09-09';
 
 export const HISTORY_SOURCES: readonly HistorySource[] = [
+  ...HUMAN_EXPANSION_HISTORY_SOURCES,
   {
     id: 'who-ebola',
     label: 'WHO Ebola disease',
