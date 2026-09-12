@@ -264,7 +264,7 @@ describe('Virus Sim v4.6 filament, helical and special geometry rollout', () => 
     for (const virusId of VIEW_REPRESENTATIVES) {
       const scene = new THREE.Scene();
       const store = new ObservationStore(false, virusId);
-      expect(store.getSnapshot().version).toBe('virus-observation-v4.8.1');
+      expect(store.getSnapshot().version).toBe('virus-observation-v4.8.2');
       const view = new SpecimenView(scene, virusId, 'performance');
       for (const mode of ['surface', 'transparent', 'section', 'exploded'] as const) {
         store.setView(mode);

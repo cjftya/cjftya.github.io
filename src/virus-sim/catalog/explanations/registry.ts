@@ -1,7 +1,17 @@
-import { getCatalogEntry, isVirusId } from '../registry';
+import { getCatalogEntry, isVirusId, VIRUS_CATALOG } from '../registry';
+import { getStructureSource } from '../sources';
+import {
+  FULL_CATALOG_PROFILE_IDS,
+  FULL_CATALOG_STRUCTURE_EXPLANATIONS,
+  TARGETED_ENTRY_OVERRIDE_IDS,
+  TARGETED_ENTRY_STRUCTURE_EXPLANATIONS,
+} from './catalogEntries';
 import { createGenericExplanation } from './common';
 import { FAMILY_STRUCTURE_EXPLANATIONS } from './families';
-import { REPRESENTATIVE_STRUCTURE_EXPLANATIONS } from './representative';
+import {
+  REPRESENTATIVE_STRUCTURE_EXPLANATIONS,
+  REPRESENTATIVE_VIRUS_IDS,
+} from './representative';
 import type {
   StructureExplanation,
   StructureExplanationContent,
@@ -9,6 +19,7 @@ import type {
 } from './types';
 
 export { REPRESENTATIVE_VIRUS_IDS } from './representative';
+export { FULL_CATALOG_PROFILE_IDS } from './catalogEntries';
 export type {
   StructureExplanation,
   StructureExplanationEvidence,
@@ -18,8 +29,22 @@ export type {
 const entryExplanations = new Map<string, StructureExplanationContent>();
 const familyExplanations = new Map<string, StructureExplanationContent>();
 
-for (const registration of REPRESENTATIVE_STRUCTURE_EXPLANATIONS) {
+for (const registration of [
+  ...REPRESENTATIVE_STRUCTURE_EXPLANATIONS,
+  ...FULL_CATALOG_STRUCTURE_EXPLANATIONS,
+  ...TARGETED_ENTRY_STRUCTURE_EXPLANATIONS,
+]) {
+  if (!isVirusId(registration.virusId)) {
+    throw new Error(`Unknown virus explanation registration: ${registration.virusId}`);
+  }
+  const definition = getCatalogEntry(registration.virusId);
+  validateSources(registration.explanation, `entry:${registration.virusId}`);
   for (const target of registration.targets) {
+    if (!isAvailable(definition, target)) {
+      throw new Error(
+        `Orphan structure explanation: ${entryKey(registration.virusId, target)}`,
+      );
+    }
     addUnique(
       entryExplanations,
       entryKey(registration.virusId, target),
@@ -29,7 +54,18 @@ for (const registration of REPRESENTATIVE_STRUCTURE_EXPLANATIONS) {
 }
 
 for (const registration of FAMILY_STRUCTURE_EXPLANATIONS) {
+  validateSources(registration.explanation, `family:${registration.modelBuilder}`);
   for (const target of registration.targets) {
+    const hasCatalogTarget = VIRUS_CATALOG.some(
+      (definition) =>
+        definition.modelBuilder === registration.modelBuilder &&
+        isAvailable(definition, target),
+    );
+    if (!hasCatalogTarget) {
+      throw new Error(
+        `Orphan family structure explanation: ${familyKey(registration.modelBuilder, target)}`,
+      );
+    }
     addUnique(
       familyExplanations,
       familyKey(registration.modelBuilder, target),
@@ -41,6 +77,12 @@ for (const registration of FAMILY_STRUCTURE_EXPLANATIONS) {
 export const STRUCTURE_EXPLANATION_KEYS = [
   ...entryExplanations.keys(),
   ...familyExplanations.keys(),
+] as const;
+
+export const STRUCTURE_EXPLANATION_ENTRY_IDS = [
+  ...REPRESENTATIVE_VIRUS_IDS,
+  ...FULL_CATALOG_PROFILE_IDS,
+  ...TARGETED_ENTRY_OVERRIDE_IDS,
 ] as const;
 
 export function getStructureExplanation(
@@ -92,4 +134,18 @@ function addUnique(
 ): void {
   if (registry.has(key)) throw new Error(`Duplicate structure explanation: ${key}`);
   registry.set(key, explanation);
+}
+
+function validateSources(
+  explanation: StructureExplanationContent,
+  scope: string,
+): void {
+  if (explanation.sourceIds.length === 0) {
+    throw new Error(`Structure explanation has no source: ${scope}`);
+  }
+  for (const sourceId of explanation.sourceIds) {
+    if (!getStructureSource(sourceId)) {
+      throw new Error(`Unknown structure source ${sourceId}: ${scope}`);
+    }
+  }
 }

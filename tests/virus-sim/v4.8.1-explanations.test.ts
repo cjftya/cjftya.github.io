@@ -61,7 +61,7 @@ describe('Virus Sim v4.8.1 virus-specific structure explanations', () => {
       getStructureExplanation('sars-cov', { kind: 'part', id: 'spike' })?.scope,
     ).toBe('family');
     expect(getStructureExplanation('t7', { kind: 'part', id: 'capsid' })?.scope).toBe(
-      'generic',
+      'family',
     );
   });
 
@@ -83,7 +83,7 @@ describe('Virus Sim v4.8.1 virus-specific structure explanations', () => {
   it('renders the compact expandable explanation surface in the existing panel', () => {
     const root = { innerHTML: '' } as HTMLElement;
     renderAppLayout(root);
-    expect(root.innerHTML).toContain('<span class="eyebrow">v4.8.1</span>');
+    expect(root.innerHTML).toContain('<span class="eyebrow">v4.8.2</span>');
     expect(root.innerHTML).toContain('id="selection-details" hidden');
     expect(root.innerHTML).toContain('id="selection-model"');
     expect(root.innerHTML).toContain('관계·단순화·근거');
