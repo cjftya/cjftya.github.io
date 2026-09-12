@@ -474,7 +474,7 @@ export const EXPANDED_FAMILY_STRUCTURE_EXPLANATIONS: readonly FamilyExplanationR
       role: 'E1/E2 spike를 지지하고 내부 icosahedral nucleocapsid를 감싸요.',
       location: '입자의 바깥 막층',
       relationships: ['바깥 E1/E2 lattice와 안쪽 capsid-protein core 사이에 놓여요.'],
-      modelRepresentation: '정이십면체 성격이 드러나는 반투명 구형 막으로 표시해요.',
+      modelRepresentation: '매끈한 반투명 구형 막으로 표시해요.',
       simplification: '지질 분자와 membrane curvature의 미세 차이는 생략해요.',
       evidence: 'family-supported',
       sourceIds: ['ictv-togaviridae'],
@@ -488,7 +488,7 @@ export const EXPANDED_FAMILY_STRUCTURE_EXPLANATIONS: readonly FamilyExplanationR
       relationships: [
         'E1/E2가 외피를 관통하고 안쪽 capsid protein과 방사형으로 정렬돼요.',
       ],
-      modelRepresentation: '외피 표면의 조밀한 삼엽형 돌기로 반복해 표시해요.',
+      modelRepresentation: '외피 표면의 조밀한 원뿔형 절차적 돌기로 반복해 표시해요.',
       simplification:
         'E1/E2 heterodimer와 trimeric spike의 원자 구조는 한 돌기 모양으로 줄였어요.',
       evidence: 'family-supported',

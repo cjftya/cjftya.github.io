@@ -89,7 +89,11 @@ export const ENVELOPED_SIGNATURE_PROFILES: readonly EnvelopedSignatureProfile[] 
     layers: ['지질 외피', 'M 단백질층', '나선형 N-RNA 복합체'],
     genomeOrganization: 'helical-rnp',
     specialStructures: ['알파코로나바이러스 계열 공통 corona 돌기'],
-    evidence: evidence('family-supported', ['ictv-coronaviridae']),
+    evidence: evidence('family-supported', [
+      'ictv-coronaviridae',
+      'pdb-5n11',
+      'hku1-he-cryoem',
+    ]),
   },
   {
     id: 'coronavirus-beta-embeco',
@@ -158,7 +162,12 @@ export const ENVELOPED_SIGNATURE_PROFILES: readonly EnvelopedSignatureProfile[] 
     layers: ['지질 외피', 'matrix', '원뿔형 capsid'],
     genomeOrganization: 'paired-rna-in-core',
     specialStructures: ['비대칭 원뿔형 성숙 core'],
-    evidence: evidence('observed', ['hiv-particle-review', 'pdb-3j3q']),
+    evidence: evidence('observed', [
+      'hiv-particle-review',
+      'pdb-3j3q',
+      'ictv-retroviridae',
+      'hiv-env-diversity',
+    ]),
   },
   {
     id: 'lentivirus-hiv2-family',
@@ -170,7 +179,7 @@ export const ENVELOPED_SIGNATURE_PROFILES: readonly EnvelopedSignatureProfile[] 
     layers: ['지질 외피', 'matrix', '성숙 capsid 개념'],
     genomeOrganization: 'paired-rna-in-core',
     specialStructures: ['HIV 계열 성숙 core'],
-    evidence: evidence('family-supported', ['ictv-retroviridae', 'nih-hiv2']),
+    evidence: evidence('family-supported', ['ictv-retroviridae', 'emd-hiv2-capsid']),
   },
   {
     id: 'herpesvirus-hsv1',
@@ -221,7 +230,7 @@ export const ENVELOPED_SIGNATURE_PROFILES: readonly EnvelopedSignatureProfile[] 
     layers: ['정렬된 glycoprotein shell', '지질 외피', '정이십면체 nucleocapsid'],
     genomeOrganization: 'icosahedral-rna-core',
     specialStructures: ['외부 spike와 내부 core의 대칭 대응'],
-    evidence: evidence('observed', ['pdb-6imm']),
+    evidence: evidence('observed', ['pdb-6imm', 'ictv-togaviridae']),
   },
   {
     id: 'alphavirus-sfv',

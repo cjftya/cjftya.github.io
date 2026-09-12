@@ -89,7 +89,7 @@ describe('Virus Sim v4.8.2 full-catalog structure explanations', () => {
       const surface = getStructureExplanation(virusId, part('spike'));
       expect(surface?.scope).toBe('entry');
       expect(surface?.actualName).toContain('hemagglutinin-esterase (HE)');
-      expect(surface?.modelRepresentation).toContain('독립된 형상으로 구분하지 않아요');
+      expect(surface?.modelRepresentation).toContain('HE는 더 짧은 club형');
     }
 
     expect(getStructureExplanation('stiv', part('turret'))?.actualName).toContain(
@@ -112,10 +112,10 @@ describe('Virus Sim v4.8.2 full-catalog structure explanations', () => {
     ).toBeNull();
   });
 
-  it('shows the v4.8.2 label while retaining the compact explanation surface', () => {
+  it('shows the current label while retaining the compact explanation surface', () => {
     const root = { innerHTML: '' } as HTMLElement;
     renderAppLayout(root);
-    expect(root.innerHTML).toContain('<span class="eyebrow">v4.8.2</span>');
+    expect(root.innerHTML).toContain('<span class="eyebrow">v4.8.3</span>');
     expect(root.innerHTML).toContain('id="selection-details" hidden');
     expect(root.innerHTML).toContain('관계·단순화·근거');
   });

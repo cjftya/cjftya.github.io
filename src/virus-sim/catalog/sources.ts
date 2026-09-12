@@ -1,6 +1,6 @@
 import { V2_STRUCTURE_SOURCES, type StructureSource } from '../model/structureSources';
 
-const checkedOn = '2026-09-08';
+const checkedOn = '2026-09-12';
 
 function pdb(id: string, scope: string): StructureSource {
   const normalized = id.toUpperCase();
@@ -14,10 +14,11 @@ function pdb(id: string, scope: string): StructureSource {
 }
 
 function emdb(id: string, label: string, scope: string): StructureSource {
+  const accession = label.match(/EMD-\d+/i)?.[0]?.toUpperCase() ?? label;
   return {
     id,
     label,
-    url: `https://www.ebi.ac.uk/emdb/${label.split(' ')[1]}`,
+    url: `https://www.ebi.ac.uk/emdb/${accession}`,
     scope,
     checkedOn,
   };
@@ -156,6 +157,11 @@ const EXPANDED_STRUCTURE_SOURCES: readonly StructureSource[] = [
     checkedOn,
   },
   pdb('3J3Q', 'HIV-1 성숙 capsid의 원뿔형 구조 모델. 전체 외피 입자 좌표가 아님'),
+  emdb(
+    'emd-hiv2-capsid',
+    'EMD-29607',
+    'HIV-2 immature Gag capsid lattice. 성숙 입자의 원뿔형 core 전체 좌표가 아님',
+  ),
   {
     id: 'nih-hiv2',
     label: 'NIH HIV-2 guidance',
@@ -186,6 +192,14 @@ const EXPANDED_STRUCTURE_SOURCES: readonly StructureSource[] = [
   },
   pdb('7TOV', 'SARS-CoV-2 Delta spike 부분 구조. 전체 입자 좌표가 아님'),
   pdb('7T9J', 'SARS-CoV-2 Omicron spike 복합체. 실험 상태 차이에 주의'),
+  pdb('5N11', 'HCoV-OC43 hemagglutinin-esterase 구조'),
+  {
+    id: 'hku1-he-cryoem',
+    label: 'Hurdiss et al. 2020',
+    url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC7495468/',
+    scope: 'HCoV-HKU1 hemagglutinin-esterase cryo-EM 구조와 Embecovirus HE 맥락',
+    checkedOn,
+  },
   {
     id: 'ebola-makona-a82v',
     label: 'Marzi et al. 2018',

@@ -47,7 +47,7 @@ export const PHAGE_SIGNATURE_PROFILES: readonly PhageSignatureProfile[] = [
         receptor: { kind: 'tail-fiber', count: 6, reach: 1.62, segmented: true },
       },
     },
-    evidence: evidence('observed', ['pdb-7vs5', 'pdb-2bsg']),
+    evidence: evidence('observed', ['pdb-7vs5', 'pdb-2bsg', 'pdb-5iv5']),
   },
   {
     id: 'lambda-flexible-long-tail',

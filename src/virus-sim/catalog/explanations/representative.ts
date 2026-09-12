@@ -35,20 +35,24 @@ export const REPRESENTATIVE_STRUCTURE_EXPLANATIONS: readonly EntryExplanationReg
       modelRepresentation:
         '반투명한 구형 막으로 표시하고 M 단백질층과 분리해 볼 수 있어요.',
       simplification:
-        '개별 지질과 E 단백질은 현재 모델에서 별도 형상으로 분리하지 않아요.',
+        '개별 지질은 생략하며 E 단백질 표식의 수와 배치는 정량 재현하지 않아요.',
       evidence: 'family-supported',
       sourceIds: ['ictv-coronaviridae'],
     }),
     entry('sars-cov-2', [partTarget('spike'), layerTarget('surface-protein')], {
-      genericSummary: '외피 표면에서 수용체 결합과 막 융합을 담당하는 당단백질이에요.',
-      actualName: 'S glycoprotein',
-      role: 'S1 영역은 ACE2 결합에, S2 영역은 바이러스막과 세포막의 융합에 주로 관여해요.',
+      genericSummary:
+        'SARS-CoV-2 외피에는 기능과 양이 다른 S·M·E 구조 단백질이 있어요.',
+      actualName: 'S, M, and E envelope proteins',
+      role: 'S는 수용체 결합과 막 융합, M은 조립과 형태 유지, E는 이온통로와 입자 형성에 관여해요.',
       location: '지질 외피 표면',
-      relationships: ['외피에 박힌 삼량체이며 M 단백질층보다 바깥으로 돌출해요.'],
-      modelRepresentation: '외피 바깥의 왕관형 club-shaped 돌기로 반복해 표시해요.',
+      relationships: [
+        '세 단백질은 같은 외피에 박히며 M은 별도의 연속 matrix 선택 영역으로도 표현돼요.',
+      ],
+      modelRepresentation:
+        'S는 왕관형, M은 짧은 돌기, E는 드문 channel 표식으로 구분해 표시해요.',
       simplification:
-        'S 삼량체의 원자 구조, 유연성, 당쇄와 RBD 상태는 재현하지 않아요.',
-      evidence: 'observed',
+        'PDB 7TOV는 S 일부의 근거이며, 이 그룹은 원자 구조·당쇄·실제 조성비를 재현하지 않아요.',
+      evidence: 'family-supported',
       sourceIds: ['pdb-7tov', 'ictv-coronaviridae'],
     }),
     entry('sars-cov-2', [partTarget('matrix'), layerTarget('matrix')], {
@@ -165,7 +169,7 @@ export const REPRESENTATIVE_STRUCTURE_EXPLANATIONS: readonly EntryExplanationReg
       relationships: ['gp41이 외피에 고정되고 gp120이 바깥쪽 수용체 결합부를 이뤄요.'],
       modelRepresentation: '외피 표면에 드문 club-shaped 돌기로 표시해요.',
       simplification: 'Env 삼량체의 당쇄, 가변 부위와 형태 전환은 생략해요.',
-      evidence: 'observed',
+      evidence: 'family-supported',
       sourceIds: ['ictv-retroviridae', 'hiv-env-diversity'],
     }),
     entry('hiv-1', [partTarget('matrix'), layerTarget('matrix')], {
@@ -299,7 +303,7 @@ export const REPRESENTATIVE_STRUCTURE_EXPLANATIONS: readonly EntryExplanationReg
       modelRepresentation: '굽은 관 형태의 반투명 외곽 막으로 표시해요.',
       simplification:
         '다양한 실제 입자 길이와 굽힘 가운데 하나의 대표 형태만 보여줘요.',
-      evidence: 'observed',
+      evidence: 'family-supported',
       sourceIds: ['ictv-orthoebolavirus'],
     }),
     entry('ebola-virus', [partTarget('spike'), layerTarget('surface-protein')], {

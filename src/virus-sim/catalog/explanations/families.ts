@@ -27,13 +27,18 @@ export const FAMILY_STRUCTURE_EXPLANATIONS: readonly FamilyExplanationRegistrati
     sourceIds: ['ictv-coronaviridae'],
   }),
   family('coronavirus', [partTarget('spike'), layerTarget('surface-protein')], {
-    genericSummary: '외피 표면에서 숙주 세포와 처음 상호작용하는 당단백질이에요.',
-    actualName: 'Coronavirus spike glycoprotein',
-    role: '숙주 수용체 결합과 막 융합에 관여해요.',
+    genericSummary:
+      '코로나바이러스 외피에는 S·M·E 구조 단백질이 서로 다른 양과 형태로 있어요.',
+    actualName: 'Spike (S), membrane (M), and envelope (E) proteins',
+    role: 'S는 수용체 결합과 막 융합, M은 조립과 형태 유지, E는 이온통로와 입자 형성에 관여해요.',
     location: '지질 외피 바깥 표면',
-    relationships: ['외피에 박혀 있고 내부의 M 단백질층보다 바깥으로 돌출해요.'],
-    modelRepresentation: '외피 바깥에 반복되는 왕관형 돌기로 표시해요.',
-    simplification: '삼량체의 원자 구조와 당쇄는 재현하지 않아요.',
+    relationships: [
+      '세 단백질은 같은 외피에 박히며 M은 별도의 연속 matrix 선택 영역으로도 표현돼요.',
+    ],
+    modelRepresentation:
+      'S는 왕관형, M은 짧은 돌기, E는 드문 channel 표식으로 구분해 표시해요.',
+    simplification:
+      '세 성분을 한 선택 그룹으로 묶으며 원자 구조·당쇄·실제 조성비는 재현하지 않아요.',
     evidence: 'family-supported',
     sourceIds: ['ictv-coronaviridae'],
   }),
