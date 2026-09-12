@@ -443,17 +443,6 @@ export const REPRESENTATIVE_STRUCTURE_EXPLANATIONS: readonly EntryExplanationReg
         sourceIds: ['pdb-4v7q'],
       },
     ),
-    entry('rotavirus-rrv', [partTarget('capsomer')], {
-      genericSummary: '현재 모델의 outer capsid 표면을 읽기 위한 반복 단위예요.',
-      actualName: 'VP7 outer-layer surface units',
-      role: '실제 입자에서는 VP7 trimer가 바깥 shell의 격자를 만들어요.',
-      location: 'VP7 outer capsid 표면',
-      relationships: ['VP4 spike가 이 표면 단위 사이에서 바깥으로 돌출해요.'],
-      modelRepresentation: 'outer capsid 위의 줄인 수의 반복 capsomer 기하로 표시해요.',
-      simplification: '실제 VP7 trimer 수와 배열을 그대로 재현한 원자 모델은 아니에요.',
-      evidence: 'observed',
-      sourceIds: ['pdb-4v7q'],
-    }),
     entry('rotavirus-rrv', [partTarget('core-capsid'), layerTarget('core-capsid')], {
       genericSummary:
         '11개 dsRNA 분절과 전사 효소를 감싸는 가장 안쪽 단백질 shell이에요.',

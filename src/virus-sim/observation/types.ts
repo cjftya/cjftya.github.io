@@ -57,7 +57,7 @@ export interface DecorationState {
 }
 
 export interface ObservationState {
-  readonly version: 'virus-observation-v4.8.1';
+  readonly version: 'virus-observation-v4.8.2';
   readonly specimen: SpecimenObservationState;
   readonly scanner: ScannerState;
   readonly decoration: DecorationState;

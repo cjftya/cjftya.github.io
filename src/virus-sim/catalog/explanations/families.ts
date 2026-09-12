@@ -1,4 +1,5 @@
 import type { ModelBuilderId } from '../types';
+import { EXPANDED_FAMILY_STRUCTURE_EXPLANATIONS } from './expandedFamilies';
 import {
   layerTarget,
   partTarget,
@@ -47,28 +48,30 @@ export const FAMILY_STRUCTURE_EXPLANATIONS: readonly FamilyExplanationRegistrati
     evidence: 'family-supported',
     sourceIds: ['ictv-coronaviridae'],
   }),
-  family(
-    'coronavirus',
-    [
-      partTarget('nucleocapsid'),
-      layerTarget('nucleocapsid'),
-      partTarget('genome'),
-      layerTarget('genome'),
+  family('coronavirus', [partTarget('nucleocapsid'), layerTarget('nucleocapsid')], {
+    genericSummary: '양성가닥 RNA와 nucleocapsid 단백질이 이루는 내부 복합체예요.',
+    actualName: 'Coronavirus N protein–RNA nucleocapsid',
+    role: 'RNA 유전체를 포장하고 복제·전사에 필요한 형태로 유지해요.',
+    location: '외피와 M 단백질층 안쪽',
+    relationships: [
+      'RNA는 nucleocapsid 단백질과 결합한 상태로 입자 내부에 들어 있어요.',
     ],
-    {
-      genericSummary: '양성가닥 RNA와 nucleocapsid 단백질이 이루는 내부 복합체예요.',
-      actualName: 'Coronavirus RNA–nucleocapsid complex',
-      role: 'RNA 유전체를 포장하고 복제·전사에 필요한 형태로 유지해요.',
-      location: '외피와 M 단백질층 안쪽',
-      relationships: [
-        'RNA는 nucleocapsid 단백질과 결합한 상태로 입자 내부에 들어 있어요.',
-      ],
-      modelRepresentation: '내부의 굽은 보라색 RNP 가닥으로 함께 표시해요.',
-      simplification: 'RNA와 단백질을 별도 원자 구조로 나누지 않아요.',
-      evidence: 'family-supported',
-      sourceIds: ['ictv-coronaviridae'],
-    },
-  ),
+    modelRepresentation: '내부의 굽은 보라색 RNP 가닥으로 함께 표시해요.',
+    simplification: 'RNA와 단백질을 별도 원자 구조로 나누지 않아요.',
+    evidence: 'family-supported',
+    sourceIds: ['ictv-coronaviridae'],
+  }),
+  family('coronavirus', [partTarget('genome'), layerTarget('genome')], {
+    genericSummary: '코로나바이러스 입자 안에 포장되는 단일 양성가닥 RNA예요.',
+    actualName: 'Coronavirus positive-sense ssRNA genome',
+    role: '감염 뒤 번역과 복제·전사에 사용되는 바이러스 유전정보를 담아요.',
+    location: 'M 단백질층 안쪽에서 N 단백질과 결합한 상태',
+    relationships: ['맨 RNA가 아니라 N protein–RNA nucleocapsid의 일부로 존재해요.'],
+    modelRepresentation: 'nucleocapsid와 같은 내부 보라색 RNP 곡선으로 표시해요.',
+    simplification: 'RNA 서열·접힘과 N 단백질 결합 위치는 별도로 그리지 않아요.',
+    evidence: 'family-supported',
+    sourceIds: ['ictv-coronaviridae'],
+  }),
   family('filovirus', [partTarget('envelope'), layerTarget('envelope')], {
     genericSummary: '필라멘트 입자의 가장 바깥을 둘러싸는 숙주 유래 지질막이에요.',
     actualName: 'Filovirus lipid envelope',
@@ -102,28 +105,29 @@ export const FAMILY_STRUCTURE_EXPLANATIONS: readonly FamilyExplanationRegistrati
     evidence: 'family-supported',
     sourceIds: ['ictv-orthoebolavirus'],
   }),
-  family(
-    'filovirus',
-    [
-      partTarget('nucleocapsid'),
-      layerTarget('nucleocapsid'),
-      partTarget('genome'),
-      layerTarget('genome'),
-    ],
-    {
-      genericSummary: '음성가닥 RNA와 바이러스 단백질이 이루는 나선형 내부 복합체예요.',
-      actualName: 'Filovirus helical nucleocapsid',
-      role: 'RNA 유전체를 포장하고 복제·전사를 위한 ribonucleoprotein 틀을 만들어요.',
-      location: 'VP40 matrix 안쪽의 필라멘트 중심부',
-      relationships: [
-        'RNA는 nucleoprotein과 결합해 나선형 nucleocapsid의 일부가 돼요.',
-      ],
-      modelRepresentation: '몸체 중심선을 따라 감기는 단일 보라색 나선으로 표시해요.',
-      simplification: '구성 단백질과 RNA를 각각 분리하지 않은 계열 수준 표현이에요.',
-      evidence: 'family-supported',
-      sourceIds: ['ictv-orthoebolavirus'],
-    },
-  ),
+  family('filovirus', [partTarget('nucleocapsid'), layerTarget('nucleocapsid')], {
+    genericSummary: '음성가닥 RNA와 바이러스 단백질이 이루는 나선형 내부 복합체예요.',
+    actualName: 'Filovirus helical nucleocapsid',
+    role: 'RNA 유전체를 포장하고 복제·전사를 위한 ribonucleoprotein 틀을 만들어요.',
+    location: 'VP40 matrix 안쪽의 필라멘트 중심부',
+    relationships: ['RNA는 nucleoprotein과 결합해 나선형 nucleocapsid의 일부가 돼요.'],
+    modelRepresentation: '몸체 중심선을 따라 감기는 단일 보라색 나선으로 표시해요.',
+    simplification: '구성 단백질과 RNA를 각각 분리하지 않은 계열 수준 표현이에요.',
+    evidence: 'family-supported',
+    sourceIds: ['ictv-orthoebolavirus'],
+  }),
+  family('filovirus', [partTarget('genome'), layerTarget('genome')], {
+    genericSummary:
+      '필로바이러스 nucleoprotein에 감싸여 포장되는 비분절 음성가닥 RNA예요.',
+    actualName: 'Filovirus negative-sense ssRNA genome',
+    role: 'viral polymerase가 전사·복제할 유전정보 template을 제공해요.',
+    location: 'VP40 matrix 안쪽의 나선형 nucleocapsid 내부',
+    relationships: ['RNA는 NP에 결합하며 L·VP35 등과 기능적 RNP를 이뤄요.'],
+    modelRepresentation: 'nucleocapsid와 같은 중심 보라색 나선 경로로 표시해요.',
+    simplification: 'RNA와 NP·polymerase의 개별 구조는 하나의 나선으로 줄였어요.',
+    evidence: 'family-supported',
+    sourceIds: ['ictv-orthoebolavirus'],
+  }),
   family('lentivirus', [partTarget('envelope'), layerTarget('envelope')], {
     genericSummary: '숙주 세포막에서 유래해 성숙 입자를 둘러싸는 지질 외피예요.',
     actualName: 'Lentivirus lipid envelope',
@@ -184,4 +188,5 @@ export const FAMILY_STRUCTURE_EXPLANATIONS: readonly FamilyExplanationRegistrati
     evidence: 'family-supported',
     sourceIds: ['ictv-retroviridae'],
   }),
+  ...EXPANDED_FAMILY_STRUCTURE_EXPLANATIONS,
 ] as const;
