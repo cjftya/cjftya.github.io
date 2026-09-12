@@ -2,12 +2,14 @@ import { VIRUS_CATALOG } from '../registry';
 import { ANIMAL_HISTORY } from './animal';
 import { ARCHAEA_HISTORY } from './archaea';
 import { HUMAN_HISTORY } from './human';
+import { HUMAN_EXPANSION_HISTORY } from './humanExpansion';
 import { PHAGE_HISTORY } from './phage';
 import { PLANT_HISTORY } from './plant';
 import type { VirusHistoryImpact } from './types';
 
 export const VIRUS_HISTORY: readonly VirusHistoryImpact[] = [
   ...HUMAN_HISTORY,
+  ...HUMAN_EXPANSION_HISTORY,
   ...ANIMAL_HISTORY,
   ...PLANT_HISTORY,
   ...PHAGE_HISTORY,

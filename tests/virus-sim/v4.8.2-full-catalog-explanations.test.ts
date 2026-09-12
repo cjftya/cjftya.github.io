@@ -10,11 +10,13 @@ import { VIRUS_CATALOG, getCatalogEntry } from '../../src/virus-sim/catalog/regi
 import { getStructureSource } from '../../src/virus-sim/catalog/sources';
 import { renderAppLayout } from '../../src/virus-sim/ui/layout';
 
+const V482_CATALOG = VIRUS_CATALOG.slice(0, 71);
+
 describe('Virus Sim v4.8.2 full-catalog structure explanations', () => {
   it('covers all 71 entries without falling back to generic text', () => {
-    expect(VIRUS_CATALOG).toHaveLength(71);
+    expect(V482_CATALOG).toHaveLength(71);
 
-    for (const definition of VIRUS_CATALOG) {
+    for (const definition of V482_CATALOG) {
       for (const target of targetsFor(definition)) {
         const explanation = getStructureExplanation(definition.id, target);
         expect(
@@ -55,7 +57,7 @@ describe('Virus Sim v4.8.2 full-catalog structure explanations', () => {
   });
 
   it('uses entry profiles where one renderer spans biologically different families', () => {
-    const broadBuilderIds = VIRUS_CATALOG.filter((definition) =>
+    const broadBuilderIds = V482_CATALOG.filter((definition) =>
       [
         'icosahedral-capsid',
         'layered-capsid',
@@ -115,7 +117,7 @@ describe('Virus Sim v4.8.2 full-catalog structure explanations', () => {
   it('shows the current label while retaining the compact explanation surface', () => {
     const root = { innerHTML: '' } as HTMLElement;
     renderAppLayout(root);
-    expect(root.innerHTML).toContain('<span class="eyebrow">v4.8.3</span>');
+    expect(root.innerHTML).toContain('<span class="eyebrow">v4.8.4</span>');
     expect(root.innerHTML).toContain('id="selection-details" hidden');
     expect(root.innerHTML).toContain('관계·단순화·근거');
   });

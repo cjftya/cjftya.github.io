@@ -81,10 +81,7 @@ export class ManualCamera {
     );
     const fill = this.perspective.aspect < 0.72 ? 0.72 : 0.78;
     this.target.copy(sphere.center);
-    this.distance = Math.max(
-      1.2,
-      sphere.radius / (Math.sin(limitingHalfFov) * fill),
-    );
+    this.distance = Math.max(1.2, sphere.radius / (Math.sin(limitingHalfFov) * fill));
     this.syncCameras();
   }
 

@@ -85,6 +85,21 @@ const capsidSurface = surface(
 
 export const CAPSID_SIGNATURE_PROFILES: readonly CapsidSignatureProfile[] = [
   {
+    id: 'picornavirus-human-expansion',
+    family: 'icosahedral',
+    virusIds: ['poliovirus-1', 'hepatitis-a-virus'],
+    builder: 'icosahedral-capsid',
+    surfaceComponents: [capsidSurface],
+    layers: ['compact pseudo-T=3 capsid', 'ssRNA core'],
+    genomeOrganization: 'single-rna-core',
+    specialStructures: ['외피 없는 조밀한 picornavirus capsid'],
+    evidence: evidence('observed', ['pdb-1hxs', 'pdb-4qpi', 'ictv-picornaviridae']),
+    icosahedral: ico('compact-t3', 'family-fallback', {
+      faceting: 'smooth',
+      surfaceDomainScale: 0.7,
+    }),
+  },
+  {
     id: 'ms2-compact-t3',
     family: 'icosahedral',
     virusIds: ['ms2'],

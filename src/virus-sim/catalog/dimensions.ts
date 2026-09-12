@@ -1,4 +1,5 @@
 import type { PhysicalDimensions } from './types';
+import { HUMAN_EXPANSION_DIMENSIONS } from './humanExpansionDimensions';
 
 type DimensionInput = Omit<
   PhysicalDimensions,
@@ -499,4 +500,5 @@ export const PHYSICAL_DIMENSIONS: Readonly<Record<string, PhysicalDimensions>> =
     includesProjections: true,
     sourceIds: ['ictv-coronaviridae'],
   }),
+  ...HUMAN_EXPANSION_DIMENSIONS,
 };

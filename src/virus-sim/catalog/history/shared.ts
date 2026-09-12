@@ -1,6 +1,6 @@
 import type { VirusHistoryImpact, VirusImpactEvent } from './types';
 
-const verifiedAt = '2026-09-09';
+const verifiedAt = '2026-09-12';
 
 export interface HistorySeed {
   readonly virusId: string;

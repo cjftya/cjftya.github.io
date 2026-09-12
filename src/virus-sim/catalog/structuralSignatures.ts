@@ -3,6 +3,7 @@ import { CAPSID_SIGNATURE_PROFILES } from './capsidProfiles';
 import { SPECIAL_GEOMETRY_SIGNATURE_PROFILES } from './specialGeometryProfiles';
 import { PHAGE_SIGNATURE_PROFILES } from './phageProfiles';
 import type { StructuralSignature } from './structuralTypes';
+import { HUMAN_EXPANSION_STRUCTURAL_SIGNATURES } from './humanExpansionSignatures';
 
 export type {
   GenomeOrganization,
@@ -121,6 +122,7 @@ const ALL_STRUCTURAL_SIGNATURES: readonly StructuralSignature[] = [
   ...CAPSID_SIGNATURES,
   ...SPECIAL_GEOMETRY_SIGNATURES,
   ...PHAGE_SIGNATURES,
+  ...HUMAN_EXPANSION_STRUCTURAL_SIGNATURES,
 ];
 
 export const STRUCTURAL_SIGNATURES: readonly StructuralSignature[] = [

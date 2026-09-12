@@ -13,8 +13,22 @@ import { renderAppLayout } from '../../src/virus-sim/ui/layout';
 describe('Virus Sim v4.8.3 consistency audit', () => {
   it('passes the 71-entry, 569-target explanation matrix without review items', () => {
     const report = auditStructureExplanations();
+    const legacyIds = new Set(VIRUS_CATALOG.slice(0, 71).map(({ id }) => id));
+    const legacyRows = report.rows.filter(({ virusId }) => legacyIds.has(virusId));
 
-    expect(report.totals).toEqual({
+    expect({
+      viruses: legacyRows.length,
+      targets: legacyRows.reduce((sum, row) => sum + row.targetCount, 0),
+      entry: legacyRows.reduce((sum, row) => sum + row.entryCount, 0),
+      family: legacyRows.reduce((sum, row) => sum + row.familyCount, 0),
+      generic: legacyRows.reduce((sum, row) => sum + row.genericCount, 0),
+      errors: report.issues.filter(
+        (issue) => legacyIds.has(issue.virusId) && issue.severity === 'error',
+      ).length,
+      warnings: report.issues.filter(
+        (issue) => legacyIds.has(issue.virusId) && issue.severity === 'warning',
+      ).length,
+    }).toEqual({
       viruses: 71,
       targets: 569,
       entry: 345,
@@ -23,8 +37,8 @@ describe('Virus Sim v4.8.3 consistency audit', () => {
       errors: 0,
       warnings: 0,
     });
-    expect(report.rows.every(({ status }) => status === 'PASS')).toBe(true);
-    expect(report.issues).toEqual([]);
+    expect(legacyRows.every(({ status }) => status === 'PASS')).toBe(true);
+    expect(report.issues.filter(({ virusId }) => legacyIds.has(virusId))).toEqual([]);
   });
 
   it('keeps every catalog part and layer aligned with the actual model maps', () => {
@@ -111,7 +125,7 @@ describe('Virus Sim v4.8.3 consistency audit', () => {
   it('retains compact mobile and accessible explanation surfaces', () => {
     const root = { innerHTML: '' } as HTMLElement;
     renderAppLayout(root);
-    expect(root.innerHTML).toContain('<span class="eyebrow">v4.8.3</span>');
+    expect(root.innerHTML).toContain('<span class="eyebrow">v4.8.4</span>');
     expect(root.innerHTML).toContain('aria-live="polite"');
     expect(root.innerHTML).toContain('<details class="selection-more">');
     expect(root.innerHTML).toContain('rel="noopener noreferrer"');

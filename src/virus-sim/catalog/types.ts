@@ -30,7 +30,8 @@ export type ModelBuilderId =
   | 'plant-filament'
   | 'archaeal-rod'
   | 'spindle-virus'
-  | 'geminate-capsid';
+  | 'geminate-capsid'
+  | 'human-rnp';
 
 export type GeometryFamily =
   | 'icosahedral'

@@ -9,6 +9,10 @@ import {
 import { createGenericExplanation } from './common';
 import { FAMILY_STRUCTURE_EXPLANATIONS } from './families';
 import {
+  HUMAN_EXPANSION_EXPLANATION_IDS,
+  HUMAN_EXPANSION_STRUCTURE_EXPLANATIONS,
+} from './humanExpansion';
+import {
   REPRESENTATIVE_STRUCTURE_EXPLANATIONS,
   REPRESENTATIVE_VIRUS_IDS,
 } from './representative';
@@ -32,6 +36,7 @@ const familyExplanations = new Map<string, StructureExplanationContent>();
 for (const registration of [
   ...REPRESENTATIVE_STRUCTURE_EXPLANATIONS,
   ...FULL_CATALOG_STRUCTURE_EXPLANATIONS,
+  ...HUMAN_EXPANSION_STRUCTURE_EXPLANATIONS,
   ...TARGETED_ENTRY_STRUCTURE_EXPLANATIONS,
 ]) {
   if (!isVirusId(registration.virusId)) {
@@ -82,6 +87,7 @@ export const STRUCTURE_EXPLANATION_KEYS = [
 export const STRUCTURE_EXPLANATION_ENTRY_IDS = [
   ...REPRESENTATIVE_VIRUS_IDS,
   ...FULL_CATALOG_PROFILE_IDS,
+  ...HUMAN_EXPANSION_EXPLANATION_IDS,
   ...TARGETED_ENTRY_OVERRIDE_IDS,
 ] as const;
 

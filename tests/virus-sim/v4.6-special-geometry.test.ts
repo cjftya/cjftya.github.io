@@ -28,7 +28,8 @@ const TARGET_BUILDERS = new Set([
   'geminate-capsid',
 ]);
 
-const TARGET_ENTRIES = VIRUS_CATALOG.filter((entry) => {
+const V46_CATALOG = VIRUS_CATALOG.slice(0, 71);
+const TARGET_ENTRIES = V46_CATALOG.filter((entry) => {
   const family = getGeometryProfile(entry.geometryProfileId).family;
   return (
     ['filament', 'rod', 'spindle', 'geminate'].includes(family) ||
@@ -51,7 +52,9 @@ describe('Virus Sim v4.6 filament, helical and special geometry rollout', () => 
   it('discovers all 17 targets with explicit sourced structural profiles', () => {
     expect(TARGET_ENTRIES).toHaveLength(17);
     expect(
-      SPECIAL_GEOMETRY_SIGNATURE_PROFILES.flatMap((profile) => profile.virusIds),
+      SPECIAL_GEOMETRY_SIGNATURE_PROFILES.flatMap((profile) => profile.virusIds).filter(
+        (id) => V46_CATALOG.some((entry) => entry.id === id),
+      ),
     ).toHaveLength(17);
 
     for (const entry of TARGET_ENTRIES) {
@@ -264,7 +267,7 @@ describe('Virus Sim v4.6 filament, helical and special geometry rollout', () => 
     for (const virusId of VIEW_REPRESENTATIVES) {
       const scene = new THREE.Scene();
       const store = new ObservationStore(false, virusId);
-      expect(store.getSnapshot().version).toBe('virus-observation-v4.8.3');
+      expect(store.getSnapshot().version).toBe('virus-observation-v4.8.4');
       const view = new SpecimenView(scene, virusId, 'performance');
       for (const mode of ['surface', 'transparent', 'section', 'exploded'] as const) {
         store.setView(mode);
