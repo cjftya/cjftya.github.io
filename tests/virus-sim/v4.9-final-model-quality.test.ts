@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import * as THREE from 'three';
 import { describe, expect, it } from 'vitest';
 import { PHYSICAL_DIMENSIONS } from '../../src/virus-sim/catalog/dimensions';
@@ -31,6 +32,12 @@ const QUALITIES = ['high', 'low'] as const;
 const SCANNER_AXES: readonly ScannerAxis[] = ['x', 'y', 'z'];
 
 describe('Virus Sim v4.9 final model quality audit', () => {
+  it('publishes consistent v4.9 and 95-virus page metadata', () => {
+    const page = readFileSync('projects/virus-sim/index.html', 'utf8');
+    expect(page).toContain('<title>Virus Sim v4.9 · 3D Virus Structure Viewer</title>');
+    expect(page).toContain('content="95개 바이러스의 3D 구조');
+  });
+
   it('keeps exact catalog, builder, signature, dimension, history and source coverage', () => {
     const catalogIds = VIRUS_CATALOG.map(({ id }) => id);
     expect(catalogIds).toHaveLength(95);
