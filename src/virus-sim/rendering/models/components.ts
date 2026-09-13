@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import type { SurfaceComponentShape } from '../../catalog/structuralTypes';
 import type { InstanceExplosion } from './types';
+import { createBeveledRadialUnitGeometry } from './capsidComponents';
 import {
   COLORS,
   createRadialInstances,
@@ -11,6 +12,25 @@ import {
 } from './shared';
 
 type Quality = 'high' | 'low';
+
+export const SURFACE_COMPONENT_DETAIL = {
+  high: {
+    latheSegments: 12,
+    coneSegments: 12,
+    channelSegments: 10,
+    capSegments: 6,
+    radialSegments: 10,
+    capsomerHeightSegments: 2,
+  },
+  low: {
+    latheSegments: 7,
+    coneSegments: 7,
+    channelSegments: 6,
+    capSegments: 3,
+    radialSegments: 6,
+    capsomerHeightSegments: 1,
+  },
+} as const;
 
 export function createLipidEnvelope(
   radius: number,
@@ -49,6 +69,7 @@ export function createSurfaceProteinInstances(options: {
   readonly count: number;
   readonly shape: SurfaceComponentShape;
   readonly color: number;
+  readonly quality: Quality;
   readonly scale?: THREE.Vector3;
 }): Omit<InstanceExplosion, 'distance'> {
   const directions = fibonacciDirections(options.count);
@@ -67,9 +88,10 @@ export function createSurfaceProteinInstancesAtDirections(options: {
   readonly directions: readonly THREE.Vector3[];
   readonly shape: SurfaceComponentShape;
   readonly color: number;
+  readonly quality: Quality;
   readonly scale?: THREE.Vector3;
 }): Omit<InstanceExplosion, 'distance'> {
-  const geometry = surfaceGeometry(options.shape);
+  const geometry = surfaceGeometry(options.shape, options.quality);
   const result = createRadialInstances(
     geometry,
     standardMaterial(options.color),
@@ -96,11 +118,20 @@ export function createIcosahedralShell(
 export function createCapsomerInstances(
   radius: number,
   count: number,
+  quality: Quality,
   color: number = COLORS.capsomer,
 ): Omit<InstanceExplosion, 'distance'> {
+  const detail = SURFACE_COMPONENT_DETAIL[quality];
   const directions = fibonacciDirections(count);
   const result = createRadialInstances(
-    new THREE.CylinderGeometry(0.09, 0.14, 0.12, 6),
+    createBeveledRadialUnitGeometry(
+      0.09,
+      0.14,
+      0.12,
+      detail.radialSegments,
+      quality,
+      'beveled-common-capsomer',
+    ),
     standardMaterial(color),
     directions.map((direction) => direction.clone().multiplyScalar(radius)),
     directions,
@@ -163,7 +194,11 @@ export function createConicalCore(quality: Quality): THREE.Mesh {
   );
 }
 
-function surfaceGeometry(shape: SurfaceComponentShape): THREE.BufferGeometry {
+function surfaceGeometry(
+  shape: SurfaceComponentShape,
+  quality: Quality,
+): THREE.BufferGeometry {
+  const detail = SURFACE_COMPONENT_DETAIL[quality];
   if (shape === 'crown') {
     return new THREE.LatheGeometry(
       [
@@ -174,11 +209,33 @@ function surfaceGeometry(shape: SurfaceComponentShape): THREE.BufferGeometry {
         new THREE.Vector2(0.11, 0.29),
         new THREE.Vector2(0.045, 0.32),
       ],
-      7,
+      detail.latheSegments,
     );
   }
-  if (shape === 'cone') return new THREE.ConeGeometry(0.11, 0.48, 7);
-  if (shape === 'channel') return new THREE.CylinderGeometry(0.065, 0.085, 0.22, 6);
-  if (shape === 'knob') return new THREE.CapsuleGeometry(0.105, 0.22, 3, 6);
-  return new THREE.CapsuleGeometry(0.11, 0.4, 3, 7);
+  if (shape === 'cone') {
+    return new THREE.ConeGeometry(0.11, 0.48, detail.coneSegments);
+  }
+  if (shape === 'channel') {
+    return new THREE.CylinderGeometry(
+      0.065,
+      0.085,
+      0.22,
+      detail.channelSegments,
+      detail.capsomerHeightSegments,
+    );
+  }
+  if (shape === 'knob') {
+    return new THREE.CapsuleGeometry(
+      0.105,
+      0.22,
+      detail.capSegments,
+      detail.radialSegments,
+    );
+  }
+  return new THREE.CapsuleGeometry(
+    0.11,
+    0.4,
+    detail.capSegments,
+    detail.radialSegments,
+  );
 }

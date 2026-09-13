@@ -88,7 +88,12 @@ export function buildFilovirus(collector: ModelCollector, quality: Quality): voi
     spikeDirections.push(radial);
   }
   const spikes = createRadialInstances(
-    new THREE.CapsuleGeometry(0.045, 0.18, 2, 5),
+    new THREE.CapsuleGeometry(
+      0.045,
+      0.18,
+      quality === 'high' ? 6 : 2,
+      quality === 'high' ? 10 : 5,
+    ),
     standardMaterial(COLORS.spike),
     spikeOrigins,
     spikeDirections,
@@ -120,6 +125,7 @@ export function buildLentivirus(collector: ModelCollector, quality: Quality): vo
     count: quality === 'high' ? (sparseEnv ? 22 : 40) : sparseEnv ? 12 : 22,
     shape: 'club',
     color: COLORS.spike,
+    quality,
     scale: new THREE.Vector3(0.82, 1, 0.82),
   });
   collector.root.add(spikes.mesh);
@@ -174,6 +180,7 @@ export function buildCoronavirus(collector: ModelCollector, quality: Quality): v
       count: quality === 'high' ? component.highCount : component.lowCount,
       shape: component.shape,
       color: component.color,
+      quality,
       scale: component.shape === 'crown' ? new THREE.Vector3(1.08, 1, 1.08) : undefined,
     });
     collector.root.add(surface.mesh);

@@ -35,6 +35,7 @@ export function buildHBV(collector: ModelCollector, quality: Quality): void {
     count: quality === 'high' ? 34 : 18,
     shape: 'knob',
     color: COLORS.spike,
+    quality,
     scale: new THREE.Vector3(0.72, 0.55, 0.72),
   });
   collector.root.add(surface.mesh);
@@ -55,6 +56,7 @@ export function buildHBV(collector: ModelCollector, quality: Quality): void {
   const capsomers = createCapsomerInstances(
     profile.radius * 0.67,
     quality === 'high' ? 42 : 22,
+    quality,
   );
   collector.root.add(capsomers.mesh);
   register(collector, capsomers.mesh, 'capsomer', 'core-capsid', true);
@@ -84,6 +86,7 @@ export function buildAlphavirus(collector: ModelCollector, quality: Quality): vo
         : Math.ceil((profile.spikeCount ?? 52) * 0.5),
     shape: 'cone',
     color: COLORS.spike,
+    quality,
     scale: new THREE.Vector3(1.08, 0.88, 1.08),
   });
   collector.root.add(surface.mesh);
@@ -100,6 +103,7 @@ export function buildAlphavirus(collector: ModelCollector, quality: Quality): vo
   const capsomers = createCapsomerInstances(
     coreRadius * 1.03,
     quality === 'high' ? (profile.unitCount ?? 42) : 22,
+    quality,
   );
   collector.root.add(capsomers.mesh);
   register(collector, capsomers.mesh, 'capsomer', 'nucleocapsid', true);
@@ -126,6 +130,7 @@ export function buildCystovirus(collector: ModelCollector, quality: Quality): vo
     count: quality === 'high' ? (profile.spikeCount ?? 28) : 14,
     shape: 'club',
     color: COLORS.spike,
+    quality,
     scale: new THREE.Vector3(0.78, 0.84, 0.78),
   });
   collector.root.add(surface.mesh);

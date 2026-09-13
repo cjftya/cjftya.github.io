@@ -215,7 +215,7 @@ describe('Virus Sim v4.8 final catalog and lifecycle audit', () => {
     }
   });
 
-  it('sweeps every view, layer, part and scanner axis for all 71 entries', () => {
+  it('sweeps every view, layer, part and scanner axis for all 95 entries', () => {
     for (const entry of VIRUS_CATALOG) {
       const scene = new THREE.Scene();
       const store = new ObservationStore(false, entry.id);

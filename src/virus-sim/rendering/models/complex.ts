@@ -31,18 +31,19 @@ export function buildVaccinia(
   const ridgeMaterial = new THREE.LineBasicMaterial({
     color: 0xe2a9cb,
     transparent: true,
-    opacity: 0.38,
+    opacity: quality === 'high' ? 0.26 : 0.38,
   });
   const ridges = new THREE.LineSegments(
-    new THREE.EdgesGeometry(outerGeometry, 22),
+    new THREE.EdgesGeometry(outerGeometry, quality === 'high' ? 32 : 22),
     ridgeMaterial,
   );
+  ridges.name = 'vaccinia-membrane-ridges';
   membrane.add(ridges);
   collector.root.add(membrane);
   register(collector, membrane, 'envelope', 'membrane', true);
   addObjectExplosion(collector, membrane, new THREE.Vector3(0.55, 0.25, 0.38), 0.78);
 
-  const coreProfile = [
+  const coreControlPoints = [
     new THREE.Vector2(0.3, -1.7),
     new THREE.Vector2(0.92, -1.48),
     new THREE.Vector2(1.03, -1.05),
@@ -53,8 +54,12 @@ export function buildVaccinia(
     new THREE.Vector2(0.92, 1.48),
     new THREE.Vector2(0.3, 1.7),
   ];
+  const coreProfile =
+    quality === 'high'
+      ? new THREE.SplineCurve(coreControlPoints).getPoints(28)
+      : coreControlPoints;
   const core = new THREE.Mesh(
-    new THREE.LatheGeometry(coreProfile, quality === 'high' ? 36 : 20),
+    new THREE.LatheGeometry(coreProfile, quality === 'high' ? 48 : 20),
     physicalMaterial(COLORS.layerGold, 0.88, false),
   );
   core.name = 'vaccinia-dumbbell-core-wall';
@@ -72,8 +77,8 @@ export function buildVaccinia(
       new THREE.CapsuleGeometry(
         0.42,
         1.65,
-        quality === 'high' ? 8 : 5,
-        quality === 'high' ? 16 : 10,
+        quality === 'high' ? 10 : 5,
+        quality === 'high' ? 24 : 10,
       ),
       lateralMaterial,
     );
@@ -106,7 +111,7 @@ function createRoundedBrickGeometry(
   roundness: number,
   quality: 'high' | 'low',
 ): THREE.BoxGeometry {
-  const segments = quality === 'high' ? 8 : 4;
+  const segments = quality === 'high' ? 12 : 4;
   const geometry = new THREE.BoxGeometry(
     width,
     height,

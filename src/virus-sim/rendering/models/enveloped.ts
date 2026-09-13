@@ -19,6 +19,7 @@ import {
   createSegmentedRnp,
   createSurfaceProteinInstances,
 } from './components';
+import { createBeveledRadialUnitGeometry } from './capsidComponents';
 
 export function buildHSV(collector: ModelCollector, quality: 'high' | 'low'): void {
   collector.root.userData.envelopedFamily = 'herpesvirus';
@@ -42,7 +43,7 @@ export function buildHSV(collector: ModelCollector, quality: 'high' | 'low'): vo
     },
   ];
   surfaceProfiles.forEach((profile, index) => {
-    const surface = createSurfaceProteinInstances(profile);
+    const surface = createSurfaceProteinInstances({ ...profile, quality });
     collector.root.add(surface.mesh);
     register(collector, surface.mesh, 'spike', 'surface-protein', true);
     collector.instanceExplosions.push({ ...surface, distance: 0.78 + index * 0.05 });
@@ -64,7 +65,7 @@ export function buildHSV(collector: ModelCollector, quality: 'high' | 'low'): vo
   collector.instanceExplosions.push({ ...tegument, distance: 0.72 });
 
   const capsid = new THREE.Mesh(
-    new THREE.IcosahedronGeometry(1.28, 1),
+    new THREE.IcosahedronGeometry(1.28, quality === 'high' ? 2 : 1),
     physicalMaterial(COLORS.capsid, 0.88, true),
   );
   capsid.name = 'hsv-icosahedral-capsid';
@@ -74,7 +75,7 @@ export function buildHSV(collector: ModelCollector, quality: 'high' | 'low'): vo
 
   const unitsDirections = fibonacciDirections(quality === 'high' ? 38 : 20);
   const units = createRadialInstances(
-    new THREE.CylinderGeometry(0.11, 0.16, 0.11, 6),
+    createBeveledRadialUnitGeometry(0.11, 0.16, 0.11, 6, quality),
     standardMaterial(COLORS.capsomer),
     unitsDirections.map((direction) => direction.clone().multiplyScalar(1.32)),
     unitsDirections,
@@ -123,6 +124,7 @@ export function buildInfluenza(
     const surface = createSurfaceProteinInstances({
       id: ['ha', 'na', 'm2'][index],
       ...component,
+      quality,
     });
     collector.root.add(surface.mesh);
     register(collector, surface.mesh, 'spike', 'surface-protein', true);
@@ -145,9 +147,9 @@ export function buildInfluenza(
 
 export function buildVSV(collector: ModelCollector, quality: 'high' | 'low'): void {
   collector.root.userData.envelopedFamily = 'rhabdovirus';
-  const profile = bulletProfile(1);
+  const profile = bulletProfile(1, quality);
   const envelope = new THREE.Mesh(
-    new THREE.LatheGeometry(profile, quality === 'high' ? 48 : 24),
+    new THREE.LatheGeometry(profile, quality === 'high' ? 56 : 24),
     physicalMaterial(0xbd6f9d, 0.82, false),
   );
   envelope.name = 'vsv-bullet-envelope';
@@ -161,7 +163,7 @@ export function buildVSV(collector: ModelCollector, quality: 'high' | 'low'): vo
   collector.instanceExplosions.push({ ...spikes, distance: 0.72 });
 
   const matrix = new THREE.Mesh(
-    new THREE.LatheGeometry(bulletProfile(0.84), quality === 'high' ? 40 : 20),
+    new THREE.LatheGeometry(bulletProfile(0.84, quality), quality === 'high' ? 48 : 20),
     physicalMaterial(COLORS.matrix, 0.5, false),
   );
   matrix.name = 'vsv-bullet-matrix';
@@ -219,8 +221,8 @@ function addSphericalEnvelope(
   return envelope;
 }
 
-function bulletProfile(scale: number): THREE.Vector2[] {
-  return [
+function bulletProfile(scale: number, quality: 'high' | 'low'): THREE.Vector2[] {
+  const controlPoints = [
     new THREE.Vector2(0.08 * scale, -2.45),
     new THREE.Vector2(1.42 * scale, -2.42),
     new THREE.Vector2(1.5 * scale, -2.25),
@@ -231,6 +233,10 @@ function bulletProfile(scale: number): THREE.Vector2[] {
     new THREE.Vector2(0.25 * scale, 2.42),
     new THREE.Vector2(0.05 * scale, 2.45),
   ];
+  if (quality === 'low') return controlPoints;
+  return new THREE.SplineCurve(controlPoints)
+    .getPoints(24)
+    .map((point) => new THREE.Vector2(Math.max(0.035 * scale, point.x), point.y));
 }
 
 function createBulletSpikes(quality: 'high' | 'low') {
@@ -255,7 +261,7 @@ function createBulletSpikes(quality: 'high' | 'low') {
     directions.push(direction);
   }
   const result = createRadialInstances(
-    new THREE.ConeGeometry(0.11, 0.38, 6),
+    new THREE.ConeGeometry(0.11, 0.38, quality === 'high' ? 10 : 6),
     standardMaterial(COLORS.spike),
     origins,
     directions,

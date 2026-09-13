@@ -3,7 +3,10 @@ import type {
   HelicalSignature,
   SpecialGeometrySignature,
 } from '../../catalog/structuralTypes';
-import { getIcosahedralDirections } from './capsidComponents';
+import {
+  createFivefoldCapsomerGeometry,
+  getIcosahedralDirections,
+} from './capsidComponents';
 import {
   createBodyCenterline,
   createGenomeAlongPath,
@@ -125,6 +128,7 @@ export function buildArchaealRod(collector: ModelCollector, quality: Quality): v
     path,
     signatures: signature.terminalStructures ?? [],
     bodyRadius: signature.body.radius,
+    attachmentRadiusScale: 0.06,
     quality,
     name: 'sirv2-three-fibers-each-end',
   });
@@ -225,7 +229,7 @@ export function buildGeminateCapsid(collector: ModelCollector, quality: Quality)
     }
   }
   const capsomers = createRadialInstances(
-    new THREE.CylinderGeometry(0.1, isMsv ? 0.16 : 0.145, 0.13, 5),
+    createFivefoldCapsomerGeometry(0.1, isMsv ? 0.16 : 0.145, 0.13, quality),
     standardMaterial(COLORS.capsomer),
     origins,
     outward,
@@ -240,7 +244,7 @@ export function buildGeminateCapsid(collector: ModelCollector, quality: Quality)
       0.62,
       0.62,
       spacing * 0.62,
-      quality === 'high' ? 16 : 10,
+      quality === 'high' ? 20 : 10,
     ),
     standardMaterial(COLORS.capsidDark),
   );
@@ -270,7 +274,7 @@ function createSpindleBody(
   opacity: number,
 ): THREE.Mesh {
   const half = signature.body.length * 0.5;
-  const segments = quality === 'high' ? 18 : 10;
+  const segments = quality === 'high' ? 30 : 10;
   const profile = Array.from({ length: segments + 1 }, (_, index) => {
     const t = index / segments;
     const axial = (t - 0.5) * signature.body.length;
@@ -283,7 +287,7 @@ function createSpindleBody(
     );
   });
   return new THREE.Mesh(
-    new THREE.LatheGeometry(profile, quality === 'high' ? 32 : 18),
+    new THREE.LatheGeometry(profile, quality === 'high' ? 48 : 18),
     physicalMaterial(color, opacity),
   );
 }
