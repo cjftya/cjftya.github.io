@@ -387,7 +387,21 @@ export const GEOMETRY_PROFILES: Readonly<Record<string, ProfileInput>> = {
     protrusion: 0.08,
     layers: 2,
   }),
-  'paramyxovirus-pleomorphic-rnp': profile('enveloped', {
+  'henipavirus-nipah-pleomorphic-rnp': profile('enveloped', {
+    radius: 2.18,
+    unitCount: 44,
+    spikeCount: 64,
+    protrusion: 0.3,
+    layers: 2,
+  }),
+  'morbillivirus-measles-pleomorphic-rnp': profile('enveloped', {
+    radius: 2.18,
+    unitCount: 44,
+    spikeCount: 64,
+    protrusion: 0.3,
+    layers: 2,
+  }),
+  'orthorubulavirus-mumps-pleomorphic-rnp': profile('enveloped', {
     radius: 2.18,
     unitCount: 44,
     spikeCount: 64,
@@ -408,7 +422,14 @@ export const GEOMETRY_PROFILES: Readonly<Record<string, ProfileInput>> = {
     protrusion: 0.28,
     layers: 2,
   }),
-  'bunyavirales-trisegmented': profile('enveloped', {
+  'nairovirus-cchf-trisegmented': profile('enveloped', {
+    radius: 2.04,
+    unitCount: 46,
+    spikeCount: 46,
+    protrusion: 0.25,
+    layers: 2,
+  }),
+  'hantavirus-hantaan-trisegmented': profile('enveloped', {
     radius: 2.04,
     unitCount: 46,
     spikeCount: 46,

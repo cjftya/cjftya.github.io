@@ -140,7 +140,7 @@ describe('Virus Sim v4.8.4 human-virus catalog expansion', () => {
   it('renders one compact 95-option native select with every new ID', () => {
     const root = { innerHTML: '' } as HTMLElement;
     renderAppLayout(root);
-    expect(root.innerHTML).toContain('<span class="eyebrow">v4.8.4</span>');
+    expect(root.innerHTML).toContain('<span class="eyebrow">v4.8.5</span>');
     expect(root.innerHTML.match(/<select id="virus-select">/g)).toHaveLength(1);
     const virusSelect =
       root.innerHTML.match(/<select id="virus-select">([\s\S]*?)<\/select>/)?.[1] ?? '';

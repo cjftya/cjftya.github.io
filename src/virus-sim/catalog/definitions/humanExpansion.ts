@@ -37,10 +37,14 @@ function humanRnp(
     sourceIds,
     modelBuilder: 'human-rnp',
     geometryProfileId: profileId,
-    representation: 'family-concept-procedural',
+    representation:
+      input.evidenceStatus === 'observed'
+        ? 'source-informed-procedural'
+        : 'family-concept-procedural',
     simplifications: [
       '계열 구조를 절차 기하로 단순화하며 원자 배열과 실제 조성비는 재현하지 않아요.',
       '종별 구조 차이가 확인되지 않은 부분은 같은 profile을 공유해요.',
+      '화면의 표면 단백질 반복 수는 실제 화학량론을 뜻하지 않아요.',
     ],
     displayLength: 4.9,
     sectionRadius: 2.35,
@@ -222,12 +226,13 @@ const HUMAN_EXPANSION_ENTRIES = [
       particleState: '성숙 매끈한 외피 입자',
       category: 'Flavivirus · 모기 매개',
       genomeLabel: 'ssRNA(+)',
-      description: '매끈한 E/M 단백질 표면과 안쪽 RNA-capsid 영역을 관찰해요.',
+      description:
+        '관측된 E/M 표면 shell과 정이십면체로 단정하지 않는 내부 capsid-RNA 개념 영역을 구분해요.',
       feature: '조밀한 E/M 표면 배열',
       morphologyTags: ['animal', 'enveloped', 'icosahedral'],
     },
     'flavivirus-smooth-envelope',
-    ['ictv-flaviviridae', 'pdb-3j27'],
+    ['ictv-flaviviridae', 'pdb-3j27', 'flavivirus-imperfect-symmetry'],
     false,
   ),
   humanRnp(
@@ -241,17 +246,18 @@ const HUMAN_EXPANSION_ENTRIES = [
       particleState: '성숙 외피 입자',
       category: 'Flavivirus · 모기 매개',
       genomeLabel: 'ssRNA(+)',
-      description: 'flavivirus 공통 E/M 표면과 내부 RNA-capsid 관계를 관찰해요.',
+      description:
+        '관측된 E/M 표면 shell과 대칭이 불확실한 내부 capsid-RNA 개념 영역을 구분해요.',
       feature: '조밀한 E 단백질 표면',
       morphologyTags: ['animal', 'enveloped', 'icosahedral'],
     },
     'flavivirus-smooth-envelope',
-    ['ictv-flaviviridae', 'pdb-5ire'],
+    ['ictv-flaviviridae', 'pdb-5ire', 'flavivirus-imperfect-symmetry'],
     false,
   ),
   humanRnp(
     {
-      evidenceStatus: 'observed',
+      evidenceStatus: 'conceptual',
       id: 'yellow-fever-virus',
       name: '황열 바이러스',
       shortName: 'YFV',
@@ -260,12 +266,13 @@ const HUMAN_EXPANSION_ENTRIES = [
       particleState: '성숙 외피 입자',
       category: 'Flavivirus · 모기 매개',
       genomeLabel: 'ssRNA(+)',
-      description: '황열바이러스의 외피 단백질층과 RNA-capsid 영역을 관찰해요.',
+      description:
+        '계열 공통 E/M 표면 shell과 내부 capsid-RNA 개념 영역을 구분하며, 부분 E 단백질 구조만 참고해요.',
       feature: 'flavivirus형 매끈한 외피',
       morphologyTags: ['animal', 'enveloped', 'icosahedral'],
     },
     'flavivirus-smooth-envelope',
-    ['ictv-flaviviridae', 'pdb-6iw4'],
+    ['ictv-flaviviridae', 'pdb-6iw4', 'flavivirus-imperfect-symmetry'],
     false,
   ),
   humanRnp(
@@ -279,12 +286,13 @@ const HUMAN_EXPANSION_ENTRIES = [
       particleState: '성숙 계열 표본',
       category: 'Flavivirus · 조류-모기 매개',
       genomeLabel: 'ssRNA(+)',
-      description: 'West Nile virus를 flavivirus 계열 공통 외피 구조로 표시해요.',
+      description:
+        'West Nile virus를 계열 공통 E/M shell과 비정이십면체 내부 개념 구조로 표시해요.',
       feature: '조밀한 E/M 표면',
       morphologyTags: ['animal', 'enveloped', 'icosahedral'],
     },
     'flavivirus-smooth-envelope',
-    ['ictv-flaviviridae'],
+    ['ictv-flaviviridae', 'flavivirus-imperfect-symmetry'],
     false,
   ),
   humanRnp(
@@ -302,7 +310,7 @@ const HUMAN_EXPANSION_ENTRIES = [
       feature: '다형성 외피와 나선형 RNP',
       morphologyTags: ['animal', 'enveloped', 'helical'],
     },
-    'paramyxovirus-pleomorphic-rnp',
+    'henipavirus-nipah-pleomorphic-rnp',
     ['ictv-paramyxoviridae'],
   ),
   humanRnp(
@@ -339,7 +347,7 @@ const HUMAN_EXPANSION_ENTRIES = [
       feature: '3분절 RNA-RNP',
       morphologyTags: ['animal', 'enveloped'],
     },
-    'bunyavirales-trisegmented',
+    'nairovirus-cchf-trisegmented',
     ['ictv-nairoviridae'],
   ),
   humanRnp(
@@ -357,12 +365,12 @@ const HUMAN_EXPANSION_ENTRIES = [
       feature: '다형성 외피와 나선형 RNP',
       morphologyTags: ['animal', 'enveloped', 'helical'],
     },
-    'paramyxovirus-pleomorphic-rnp',
+    'morbillivirus-measles-pleomorphic-rnp',
     ['ictv-paramyxoviridae'],
   ),
   humanRnp(
     {
-      evidenceStatus: 'conceptual',
+      evidenceStatus: 'observed',
       id: 'rsv',
       name: '호흡기세포융합바이러스(RSV)',
       shortName: 'RSV',
@@ -389,12 +397,13 @@ const HUMAN_EXPANSION_ENTRIES = [
       particleState: '성숙 외피 입자 표본',
       category: 'Orthohantavirus · 설치류 매개',
       genomeLabel: '3분절 ssRNA(-)',
-      description: 'Gn/Gc 외피와 세 RNP 분절을 hantavirus 계열 수준으로 관찰해요.',
+      description:
+        '관측된 Hantaan 외피·Gn/Gc 표면 격자와 세 RNP 분절의 계열 배치를 구분해요.',
       feature: '3분절 RNA-RNP',
       morphologyTags: ['animal', 'enveloped'],
     },
-    'bunyavirales-trisegmented',
-    ['ictv-hantaviridae'],
+    'hantavirus-hantaan-trisegmented',
+    ['ictv-hantaviridae', 'hantaan-cryo-et'],
   ),
   humanRnp(
     {
@@ -408,12 +417,12 @@ const HUMAN_EXPANSION_ENTRIES = [
       category: 'Hepacivirus · 혈액 매개',
       genomeLabel: 'ssRNA(+)',
       description:
-        '근거가 제한적인 HCV 입자를 E1/E2 외피와 내부 RNA 영역으로 보수적으로 표시해요.',
+        '이질적인 lipoviroparticle을 불규칙 E1/E2·lipoprotein patch와 개념 수준 내부 RNA 영역으로 표시해요.',
       feature: '이질적인 lipoviroparticle',
       morphologyTags: ['animal', 'enveloped'],
     },
     'hepacivirus-lipoviroparticle',
-    ['ictv-flaviviridae', 'hcv-particle-review'],
+    ['ictv-flaviviridae', 'hcv-particle-review', 'hcv-ultrastructure'],
     false,
   ),
   humanRnp(
@@ -432,7 +441,7 @@ const HUMAN_EXPANSION_ENTRIES = [
       feature: '다형성 외피와 나선형 RNP',
       morphologyTags: ['animal', 'enveloped', 'helical'],
     },
-    'paramyxovirus-pleomorphic-rnp',
+    'orthorubulavirus-mumps-pleomorphic-rnp',
     ['ictv-paramyxoviridae'],
   ),
   humanRnp(
@@ -443,15 +452,16 @@ const HUMAN_EXPANSION_ENTRIES = [
       shortName: 'RuV',
       nameEn: 'Rubella virus',
       taxonomyName: 'Rubivirus rubellae',
-      particleState: '성숙 외피 입자 계열 표본',
+      particleState: '다형성·관형 입자를 포함한 관측 표본',
       category: 'Rubivirus · 호흡기 전파',
       genomeLabel: 'ssRNA(+)',
-      description: 'E1/E2 외피 spike와 내부 capsid-RNA 관계를 관찰해요.',
-      feature: 'E1/E2 외피와 RNA core',
-      morphologyTags: ['animal', 'enveloped', 'icosahedral'],
+      description:
+        'E1/E2의 표면 row와 정이십면체가 아닌 grid-like capsid-RNA 조직을 관찰해요.',
+      feature: 'E1/E2 row와 비정이십면체 RNA core',
+      morphologyTags: ['animal', 'enveloped'],
     },
     'rubivirus-envelope-core',
-    ['ictv-matonaviridae'],
+    ['ictv-matonaviridae', 'rubella-cryo-et', 'rubella-helical-structure'],
     false,
   ),
   reused({
@@ -659,6 +669,6 @@ const HUMAN_EXPANSION_ENTRIES = [
 
 export const HUMAN_EXPANSION_CATALOG = HUMAN_EXPANSION_IDS.map((id) => {
   const entry = HUMAN_EXPANSION_ENTRIES.find((candidate) => candidate.id === id);
-  if (!entry) throw new Error(`Missing v4.8.4 human catalog entry: ${id}`);
+  if (!entry) throw new Error(`Missing v4.8.5 human catalog entry: ${id}`);
   return entry;
 });

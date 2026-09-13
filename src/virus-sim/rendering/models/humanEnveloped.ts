@@ -1,5 +1,8 @@
 import * as THREE from 'three';
-import { getHumanRnpProfile } from '../../catalog/humanExpansionProfiles';
+import {
+  getHumanRnpEvidence,
+  getHumanRnpProfile,
+} from '../../catalog/humanExpansionProfiles';
 import type { ModelCollector } from './shared';
 import {
   COLORS,
@@ -15,8 +18,14 @@ import {
   createLipidEnvelope,
   createMatrixShell,
   createSegmentedRnp,
-  createSurfaceProteinInstances,
 } from './components';
+import {
+  createGridLikeRnpCore,
+  createIrregularRnpCore,
+  createLipoproteinPatches,
+  createOrganizedSurfaceInstances,
+  createPleomorphicEnvelope,
+} from './humanRnpGeometry';
 
 type Quality = 'high' | 'low';
 
@@ -24,8 +33,22 @@ export function buildHumanRnpVirus(collector: ModelCollector, quality: Quality):
   const profile = getHumanRnpProfile(collector.definition.id);
   collector.root.userData.envelopedFamily = profile.family;
   collector.root.userData.humanRnpProfileId = profile.id;
+  collector.root.userData.surfaceOrganization = profile.surfaceOrganization;
+  collector.root.userData.coreOrganization = profile.core;
+  collector.root.userData.componentEvidence = getHumanRnpEvidence(
+    profile,
+    collector.definition.id,
+  );
 
-  const envelope = createLipidEnvelope(profile.envelopeRadius, quality, 0xb96898, 0.72);
+  const envelope = profile.envelopeDeformation
+    ? createPleomorphicEnvelope(
+        profile.envelopeRadius,
+        quality,
+        0xb96898,
+        0.72,
+        profile.envelopeDeformation,
+      )
+    : createLipidEnvelope(profile.envelopeRadius, quality, 0xb96898, 0.72);
   envelope.name = `${profile.family}-envelope`;
   envelope.scale.set(...profile.envelopeScale);
   collector.root.add(envelope);
@@ -33,17 +56,28 @@ export function buildHumanRnpVirus(collector: ModelCollector, quality: Quality):
   addObjectExplosion(collector, envelope, new THREE.Vector3(0.52, 0.2, 0.42), 0.76);
 
   profile.surfaces.forEach((component, index) => {
-    const surface = createSurfaceProteinInstances({
-      id: component.id,
+    const surface = createOrganizedSurfaceInstances({
+      component,
+      organization: profile.surfaceOrganization,
       radius: profile.envelopeRadius + component.radiusOffset,
-      count: quality === 'high' ? component.highCount : component.lowCount,
-      shape: component.shape,
-      color: component.color,
+      envelopeScale: profile.envelopeScale,
+      quality,
     });
     collector.root.add(surface.mesh);
     register(collector, surface.mesh, 'spike', 'surface-protein', true);
     collector.instanceExplosions.push({ ...surface, distance: 0.8 + index * 0.04 });
   });
+
+  if (profile.surfaceOrganization === 'irregular-patches') {
+    const patches = createLipoproteinPatches(
+      profile.envelopeRadius,
+      quality,
+      profile.envelopeScale,
+    );
+    collector.root.add(patches);
+    register(collector, patches, 'spike', 'surface-protein', true);
+    addObjectExplosion(collector, patches, new THREE.Vector3(0.42, 0.44, -0.3), 0.78);
+  }
 
   if (profile.matrix) {
     const matrix = createMatrixShell(profile.envelopeRadius * 0.84, quality, 0.5);
@@ -70,6 +104,28 @@ export function buildHumanRnpVirus(collector: ModelCollector, quality: Quality):
       0.038,
       quality,
       1.18,
+    );
+    genome.name = `${profile.family}-positive-rna`;
+    addGenome(collector, genome, new THREE.Vector3(0.45, -0.34, -0.4), 0.56);
+    return;
+  }
+
+  if (profile.core === 'irregular-rnp' || profile.core === 'grid-like-rnp') {
+    const core =
+      profile.core === 'grid-like-rnp'
+        ? createGridLikeRnpCore(profile.envelopeRadius * 0.64, quality)
+        : createIrregularRnpCore(profile.envelopeRadius * 0.64, quality);
+    core.name = `${profile.family}-${profile.core}`;
+    collector.root.add(core);
+    register(collector, core, 'nucleocapsid', 'nucleocapsid');
+    addObjectExplosion(collector, core, new THREE.Vector3(-0.48, 0.3, 0.36), 0.62);
+
+    const genome = createGenomeCoil(
+      profile.envelopeRadius * 0.3,
+      profile.core === 'grid-like-rnp' ? 9 : 7,
+      0.038,
+      quality,
+      1.08,
     );
     genome.name = `${profile.family}-positive-rna`;
     addGenome(collector, genome, new THREE.Vector3(0.45, -0.34, -0.4), 0.56);

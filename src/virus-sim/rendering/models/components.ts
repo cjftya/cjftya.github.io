@@ -52,12 +52,29 @@ export function createSurfaceProteinInstances(options: {
   readonly scale?: THREE.Vector3;
 }): Omit<InstanceExplosion, 'distance'> {
   const directions = fibonacciDirections(options.count);
+  return createSurfaceProteinInstancesAtDirections({
+    ...options,
+    origins: directions.map((direction) =>
+      direction.clone().multiplyScalar(options.radius),
+    ),
+    directions,
+  });
+}
+
+export function createSurfaceProteinInstancesAtDirections(options: {
+  readonly id?: string;
+  readonly origins: readonly THREE.Vector3[];
+  readonly directions: readonly THREE.Vector3[];
+  readonly shape: SurfaceComponentShape;
+  readonly color: number;
+  readonly scale?: THREE.Vector3;
+}): Omit<InstanceExplosion, 'distance'> {
   const geometry = surfaceGeometry(options.shape);
   const result = createRadialInstances(
     geometry,
     standardMaterial(options.color),
-    directions.map((direction) => direction.clone().multiplyScalar(options.radius)),
-    directions,
+    options.origins,
+    options.directions,
     options.scale,
   );
   result.mesh.name = options.id ? `surface-${options.id}` : 'surface-protein';

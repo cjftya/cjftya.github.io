@@ -1,4 +1,5 @@
 import { HUMAN_EXPANSION_CATALOG } from '../definitions/humanExpansion';
+import { getHumanRnpEvidence, getHumanRnpProfile } from '../humanExpansionProfiles';
 import type { ObservationLayerId, ObservationPartId, VirusId } from '../types';
 import {
   layerTarget,
@@ -120,14 +121,15 @@ function targetsFor(
 function copyFor(target: StructureExplanationTarget): Copy {
   const copy = target.kind === 'part' ? PART_COPY[target.id] : LAYER_COPY[target.id];
   if (!copy)
-    throw new Error(`Missing v4.8.4 explanation copy: ${target.kind}:${target.id}`);
+    throw new Error(`Missing v4.8.5 explanation copy: ${target.kind}:${target.id}`);
   return copy;
 }
 
 function renderDescription(
-  builder: (typeof HUMAN_EXPANSION_CATALOG)[number]['modelBuilder'],
+  definition: (typeof HUMAN_EXPANSION_CATALOG)[number],
   target: StructureExplanationTarget,
 ): string {
+  const builder = definition.modelBuilder;
   const id = target.id;
   if (builder === 'filovirus')
     return `${id}를 굽은 필라멘트 중심선을 따르는 관형 기하로 표시해요.`;
@@ -143,6 +145,7 @@ function renderDescription(
     return `${id}를 방사형 spike와 정이십면체 core의 대응 기하로 표시해요.`;
   if (builder === 'icosahedral-capsid')
     return `${id}를 조밀한 정이십면체 shell과 내부 RNA 기하로 표시해요.`;
+  if (builder === 'human-rnp') return renderHumanRnpDescription(definition.id, target);
   return `${id}를 profile에 정의된 외피·표면·RNP 절차 기하로 표시해요.`;
 }
 
@@ -150,19 +153,133 @@ function explanationFor(
   definition: (typeof HUMAN_EXPANSION_CATALOG)[number],
   target: StructureExplanationTarget,
 ): StructureExplanationContent {
-  const copy = copyFor(target);
+  const copy = humanRnpCopy(definition, target) ?? copyFor(target);
+  const componentEvidence = humanRnpComponentEvidence(definition, target);
   return {
     genericSummary: copy.summary,
     actualName: copy.name,
     role: copy.role,
     location: copy.location,
     relationships: ['바깥 구조와 안쪽 유전체 사이의 실제 층 관계를 따라 배치돼요.'],
-    modelRepresentation: renderDescription(definition.modelBuilder, target),
+    modelRepresentation: renderDescription(definition, target),
     simplification:
-      '원자 배열과 실제 단백질 수는 생략하고 관찰 가능한 층 관계만 나타내요.',
-    evidence: 'family-supported',
-    sourceIds: definition.sourceIds,
+      '원자 배열은 생략하며 화면 반복 수는 실제 화학량론이 아니에요. 확인되지 않은 내부 구조는 개념 표현으로 제한해요.',
+    evidence: componentEvidence?.level ?? 'family-supported',
+    sourceIds: componentEvidence?.sourceIds ?? definition.sourceIds,
   };
+}
+
+function renderHumanRnpDescription(
+  virusId: string,
+  target: StructureExplanationTarget,
+): string {
+  const profile = getHumanRnpProfile(virusId);
+  const prefix =
+    getHumanRnpEvidence(profile, virusId).find(
+      ({ componentId }) => componentId === 'particle',
+    )?.level === 'observed'
+      ? '관측 구조 기반 절차 모델'
+      : '계열 공통 절차 모델';
+  const isSurface = target.id === 'spike' || target.id === 'surface-protein';
+  const isInner = target.id === 'nucleocapsid' || target.id === 'genome';
+
+  if (virusId === 'rubella-virus') {
+    if (isSurface) return `${prefix}에서 E1/E2를 연속적인 표면 row·band로 배치해요.`;
+    if (isInner)
+      return `${prefix}에서 정이십면체 shell 대신 grid-like capsid–RNA 조직으로 표시해요.`;
+    return `${prefix}에서 약한 비대칭의 다형성 외피를 표시해요.`;
+  }
+  if (
+    ['dengue-virus', 'zika-virus', 'yellow-fever-virus', 'west-nile-virus'].includes(
+      virusId,
+    )
+  ) {
+    if (isSurface)
+      return `${prefix}에서 정렬된 E/M raft shell을 내부 capsid–RNA 영역과 분리해요.`;
+    if (isInner)
+      return `${prefix}에서 내부 구조는 정이십면체 capsid로 단정하지 않는 불규칙 RNP 개념 표현이에요.`;
+    if (virusId === 'yellow-fever-virus')
+      return `${prefix}이며 PDB 6IW4는 부분 E 단백질 구조만 참고해요.`;
+  }
+  if (virusId === 'hepatitis-c-virus') {
+    if (isSurface)
+      return `${prefix}에서 sparse E1/E2와 lipoprotein-associated patch를 불규칙하게 표시해요.`;
+    if (isInner)
+      return `${prefix}에서 내부 capsid–RNA는 정이십면체 shell이 아닌 개념 수준의 불규칙 RNP예요.`;
+    return `${prefix}에서 크기·형태가 이질적인 lipoviroparticle 대표 표본을 표시해요.`;
+  }
+  return `${prefix}에서 ${target.id}를 profile의 외피·표면·RNP 층 관계에 맞춰 표시해요.`;
+}
+
+function humanRnpCopy(
+  definition: (typeof HUMAN_EXPANSION_CATALOG)[number],
+  target: StructureExplanationTarget,
+): Copy | undefined {
+  if (definition.modelBuilder !== 'human-rnp') return undefined;
+  const profile = getHumanRnpProfile(definition.id);
+  const isSurface = target.id === 'spike' || target.id === 'surface-protein';
+  if (isSurface) {
+    const labels = profile.surfaces.map(({ label }) => label).join(' · ');
+    return {
+      name: labels,
+      summary: `${labels}을 profile의 실제 단백질 정체성과 표면 조직에 맞춰 구분해요.`,
+      role: '수용체 결합 또는 막 융합의 초기 단계를 담당해요.',
+      location: '지질 외피의 바깥 표면',
+    };
+  }
+  if (
+    (target.id === 'nucleocapsid' || target.id === 'genome') &&
+    profile.core === 'grid-like-rnp'
+  ) {
+    return {
+      name:
+        target.id === 'genome'
+          ? 'Rubella ssRNA(+) 유전체'
+          : '비정이십면체 capsid–RNA 조직',
+      summary:
+        'Capsid와 RNA가 정이십면체 shell을 만들지 않는 grid-like 내부 조직이에요.',
+      role:
+        target.id === 'genome'
+          ? '바이러스 유전 정보를 전달해요.'
+          : 'RNA를 외피 안쪽에 조직해요.',
+      location: '다형성 외피 바로 안쪽',
+    };
+  }
+  if (
+    (target.id === 'nucleocapsid' || target.id === 'genome') &&
+    profile.core === 'irregular-rnp'
+  ) {
+    return {
+      name: target.id === 'genome' ? 'ssRNA(+) 유전체' : '불규칙 capsid–RNA 영역',
+      summary:
+        '관측 한계를 넘는 정이십면체 대칭을 가정하지 않은 내부 RNP 개념 영역이에요.',
+      role:
+        target.id === 'genome'
+          ? '바이러스 유전 정보를 전달해요.'
+          : 'RNA와 capsid 단백질의 내부 관계를 나타내요.',
+      location: '지질 외피 안쪽',
+    };
+  }
+  return undefined;
+}
+
+function humanRnpComponentEvidence(
+  definition: (typeof HUMAN_EXPANSION_CATALOG)[number],
+  target: StructureExplanationTarget,
+) {
+  if (definition.modelBuilder !== 'human-rnp') return undefined;
+  const profile = getHumanRnpProfile(definition.id);
+  const componentId =
+    target.id === 'spike' || target.id === 'surface-protein'
+      ? 'surface-shell'
+      : target.id === 'nucleocapsid' || target.id === 'genome'
+        ? 'inner-core'
+        : 'particle';
+  const evidence = getHumanRnpEvidence(profile, definition.id);
+  return (
+    evidence.find((entry) => entry.componentId === componentId) ??
+    evidence.find((entry) => entry.componentId === 'particle')
+  );
 }
 
 export const HUMAN_EXPANSION_EXPLANATION_IDS = HUMAN_EXPANSION_CATALOG.map(
