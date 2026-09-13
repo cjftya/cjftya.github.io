@@ -191,6 +191,7 @@ export function createTerminalStructures(options: {
   path: CenterlinePath;
   signatures: readonly TerminalStructureSignature[];
   bodyRadius: number;
+  attachmentRadiusScale?: number;
   quality: Quality;
   name: string;
 }): THREE.Group {
@@ -212,7 +213,10 @@ export function createTerminalStructures(options: {
             .addScaledVector(frame.binormal, Math.sin(angle));
           const start = frame.point
             .clone()
-            .addScaledVector(radial, options.bodyRadius * 0.28);
+            .addScaledVector(
+              radial,
+              options.bodyRadius * (options.attachmentRadiusScale ?? 0.28),
+            );
           const endPoint = start
             .clone()
             .addScaledVector(outward, signature.relativeLength)
@@ -222,7 +226,7 @@ export function createTerminalStructures(options: {
             endPoint,
             Math.max(0.025, options.bodyRadius * 0.045),
             material,
-            options.quality === 'high' ? 7 : 5,
+            options.quality === 'high' ? 10 : 5,
           );
           fiber.userData.endpointTangent = outward.toArray();
           group.add(fiber);
@@ -235,12 +239,12 @@ export function createTerminalStructures(options: {
           ? new THREE.ConeGeometry(
               options.bodyRadius * 0.18,
               length,
-              options.quality === 'high' ? 10 : 6,
+              options.quality === 'high' ? 12 : 6,
             )
           : new THREE.SphereGeometry(
               options.bodyRadius * (signature.kind === 'protein-cluster' ? 0.72 : 0.58),
-              options.quality === 'high' ? 14 : 8,
-              options.quality === 'high' ? 10 : 6,
+              options.quality === 'high' ? 18 : 8,
+              options.quality === 'high' ? 12 : 6,
             );
       const object = new THREE.Mesh(geometry, material);
       object.position.copy(frame.point).addScaledVector(outward, length * 0.48);

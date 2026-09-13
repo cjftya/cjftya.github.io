@@ -16,6 +16,58 @@ import {
 type Quality = 'high' | 'low';
 type RadialInstances = Omit<InstanceExplosion, 'distance'>;
 
+interface CapsidGeometryDetail {
+  readonly strongShellSubdivision: number;
+  readonly moderateShellSubdivision: number;
+  readonly smoothShellWidthSegments: number;
+  readonly smoothShellHeightSegments: number;
+  readonly capsomerRadialSegments: number;
+  readonly capsomerHeightSegments: number;
+  readonly roundedUnitCapSegments: number;
+  readonly roundedUnitRadialSegments: number;
+  readonly roundedUnitSphereWidthSegments: number;
+  readonly roundedUnitSphereHeightSegments: number;
+  readonly torusRadialSegments: number;
+  readonly torusTubularSegments: number;
+  readonly vertexRadialSegments: number;
+  readonly turretRadialSegments: number;
+}
+
+export const CAPSID_GEOMETRY_DETAIL: Readonly<Record<Quality, CapsidGeometryDetail>> = {
+  high: {
+    strongShellSubdivision: 2,
+    moderateShellSubdivision: 3,
+    smoothShellWidthSegments: 54,
+    smoothShellHeightSegments: 36,
+    capsomerRadialSegments: 10,
+    capsomerHeightSegments: 2,
+    roundedUnitCapSegments: 6,
+    roundedUnitRadialSegments: 10,
+    roundedUnitSphereWidthSegments: 12,
+    roundedUnitSphereHeightSegments: 9,
+    torusRadialSegments: 10,
+    torusTubularSegments: 20,
+    vertexRadialSegments: 12,
+    turretRadialSegments: 14,
+  },
+  low: {
+    strongShellSubdivision: 0,
+    moderateShellSubdivision: 1,
+    smoothShellWidthSegments: 22,
+    smoothShellHeightSegments: 14,
+    capsomerRadialSegments: 6,
+    capsomerHeightSegments: 1,
+    roundedUnitCapSegments: 2,
+    roundedUnitRadialSegments: 5,
+    roundedUnitSphereWidthSegments: 6,
+    roundedUnitSphereHeightSegments: 5,
+    torusRadialSegments: 5,
+    torusTubularSegments: 9,
+    vertexRadialSegments: 6,
+    turretRadialSegments: 6,
+  },
+} as const;
+
 const DIRECTION_CACHE = new Map<number, readonly THREE.Vector3[]>();
 
 export function getIcosahedronVertices(): THREE.Vector3[] {
@@ -56,19 +108,20 @@ export function createFacetedShell(options: {
   readonly color?: number;
   readonly opacity?: number;
 }): THREE.Mesh {
+  const geometryDetail = CAPSID_GEOMETRY_DETAIL[options.quality];
   const detail = shellDetail(options.faceting, options.quality);
   const shell = new THREE.Mesh(
     options.faceting === 'smooth'
       ? new THREE.SphereGeometry(
           options.radius,
-          options.quality === 'high' ? 42 : 22,
-          options.quality === 'high' ? 28 : 14,
+          geometryDetail.smoothShellWidthSegments,
+          geometryDetail.smoothShellHeightSegments,
         )
       : new THREE.IcosahedronGeometry(options.radius, detail),
     physicalMaterial(
       options.color ?? COLORS.capsid,
       options.opacity ?? 0.8,
-      options.faceting !== 'smooth',
+      options.faceting === 'strong',
     ),
   );
   shell.name = `capsid-shell-${options.faceting}`;
@@ -116,12 +169,13 @@ export function createDimpleInstances(options: {
   readonly scale: number;
   readonly channelled?: boolean;
 }): RadialInstances {
+  const geometryDetail = CAPSID_GEOMETRY_DETAIL[options.quality];
   const directions = getIcosahedralDirections(options.quality, options.count);
   const geometry = new THREE.TorusGeometry(
     0.115 * options.scale,
     options.channelled ? 0.032 : 0.024,
-    options.quality === 'high' ? 7 : 5,
-    options.quality === 'high' ? 14 : 9,
+    geometryDetail.torusRadialSegments,
+    geometryDetail.torusTubularSegments,
   );
   geometry.rotateX(Math.PI / 2);
   const result = createRadialInstances(
@@ -142,6 +196,7 @@ export function createVertexFeatureInstances(options: {
   readonly feature: VertexFeatureSignature;
   readonly color?: number;
 }): readonly RadialInstances[] {
+  const geometryDetail = CAPSID_GEOMETRY_DETAIL[options.quality];
   const directions = getIcosahedronVertices().slice(0, options.feature.count);
   const length = Math.max(0.18, options.radius * options.feature.relativeLength);
   const isTurret = options.feature.kind === 'turret';
@@ -150,14 +205,14 @@ export function createVertexFeatureInstances(options: {
         length * 0.14,
         length * 0.25,
         length,
-        options.quality === 'high' ? 10 : 6,
-        1,
+        geometryDetail.turretRadialSegments,
+        geometryDetail.capsomerHeightSegments,
         Boolean(options.feature.opening),
       )
     : new THREE.ConeGeometry(
         length * (options.feature.kind === 'penton-fiber' ? 0.07 : 0.2),
         length,
-        options.quality === 'high' ? 9 : 6,
+        geometryDetail.vertexRadialSegments,
       );
   const body = createRadialInstances(
     bodyGeometry,
@@ -173,8 +228,8 @@ export function createVertexFeatureInstances(options: {
   const rimGeometry = new THREE.TorusGeometry(
     length * 0.135,
     length * 0.035,
-    options.quality === 'high' ? 7 : 5,
-    options.quality === 'high' ? 14 : 8,
+    geometryDetail.torusRadialSegments,
+    geometryDetail.torusTubularSegments,
   );
   rimGeometry.rotateX(Math.PI / 2);
   const rim = createRadialInstances(
@@ -239,8 +294,9 @@ function cachedSubdivisionDirections(detail: number): readonly THREE.Vector3[] {
 }
 
 function shellDetail(faceting: CapsidFaceting, quality: Quality): number {
-  if (faceting === 'strong') return quality === 'high' ? 1 : 0;
-  return quality === 'high' ? 2 : 1;
+  const detail = CAPSID_GEOMETRY_DETAIL[quality];
+  if (faceting === 'strong') return detail.strongShellSubdivision;
+  return detail.moderateShellSubdivision;
 }
 
 function surfaceUnitGeometry(
@@ -249,8 +305,9 @@ function surfaceUnitGeometry(
   protrusion: number,
   quality: Quality,
 ): THREE.BufferGeometry {
+  const geometryDetail = CAPSID_GEOMETRY_DETAIL[quality];
   if (pattern === 'pentameric') {
-    return new THREE.CylinderGeometry(scale * 0.72, scale, scale * 0.64, 5);
+    return createFivefoldCapsomerGeometry(scale * 0.72, scale, scale * 0.64, quality);
   }
   if (
     pattern === 'protruding-domain' ||
@@ -260,8 +317,8 @@ function surfaceUnitGeometry(
     return new THREE.CapsuleGeometry(
       scale * 0.58,
       Math.max(scale * 0.42, protrusion),
-      quality === 'high' ? 4 : 2,
-      quality === 'high' ? 7 : 5,
+      geometryDetail.roundedUnitCapSegments,
+      geometryDetail.roundedUnitRadialSegments,
     );
   }
   if (
@@ -271,8 +328,8 @@ function surfaceUnitGeometry(
   ) {
     return new THREE.SphereGeometry(
       scale * 0.74,
-      quality === 'high' ? 9 : 6,
-      quality === 'high' ? 7 : 5,
+      geometryDetail.roundedUnitSphereWidthSegments,
+      geometryDetail.roundedUnitSphereHeightSegments,
     );
   }
   if (pattern === 'channelled') {
@@ -280,12 +337,61 @@ function surfaceUnitGeometry(
       scale * 0.55,
       scale * 0.8,
       scale * 0.8,
-      5,
-      1,
+      quality === 'high' ? 10 : 5,
+      geometryDetail.capsomerHeightSegments,
       true,
     );
   }
-  return new THREE.CylinderGeometry(scale * 0.68, scale, scale * 0.58, 6);
+  return new THREE.CylinderGeometry(
+    scale * 0.68,
+    scale,
+    scale * 0.58,
+    geometryDetail.capsomerRadialSegments,
+    geometryDetail.capsomerHeightSegments,
+  );
+}
+
+export function createFivefoldCapsomerGeometry(
+  topRadius: number,
+  bottomRadius: number,
+  height: number,
+  quality: Quality,
+): THREE.BufferGeometry {
+  return createBeveledRadialUnitGeometry(
+    topRadius,
+    bottomRadius,
+    height,
+    5,
+    quality,
+    'fivefold-beveled-capsomer',
+  );
+}
+
+export function createBeveledRadialUnitGeometry(
+  topRadius: number,
+  bottomRadius: number,
+  height: number,
+  radialSegments: number,
+  quality: Quality,
+  name = 'beveled-radial-unit',
+): THREE.BufferGeometry {
+  if (quality === 'low') {
+    return new THREE.CylinderGeometry(topRadius, bottomRadius, height, radialSegments);
+  }
+
+  const halfHeight = height * 0.5;
+  const bevelHeight = Math.min(height * 0.18, Math.min(topRadius, bottomRadius) * 0.3);
+  const profile = [
+    new THREE.Vector2(0, -halfHeight),
+    new THREE.Vector2(bottomRadius * 0.82, -halfHeight),
+    new THREE.Vector2(bottomRadius, -halfHeight + bevelHeight),
+    new THREE.Vector2(topRadius, halfHeight - bevelHeight),
+    new THREE.Vector2(topRadius * 0.82, halfHeight),
+    new THREE.Vector2(0, halfHeight),
+  ];
+  const geometry = new THREE.LatheGeometry(profile, radialSegments);
+  geometry.name = name;
+  return geometry;
 }
 
 function surfaceOffsetFactor(pattern: IcosahedralSurfacePattern): number {

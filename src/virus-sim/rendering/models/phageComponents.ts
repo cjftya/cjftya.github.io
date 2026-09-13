@@ -6,7 +6,11 @@ import type {
   PhageStructuralSignature,
 } from '../../catalog/structuralTypes';
 import type { ObservationPartId } from '../../observation/types';
-import { createFacetedShell, getIcosahedralDirections } from './capsidComponents';
+import {
+  createBeveledRadialUnitGeometry,
+  createFacetedShell,
+  getIcosahedralDirections,
+} from './capsidComponents';
 import {
   createBodyCenterline,
   sampleCenterlineFrames,
@@ -119,7 +123,7 @@ export function addPhageConnector(
         0.32 * signature.portal.scale,
         0.45 * signature.portal.scale,
         0.28,
-        quality === 'high' ? 12 : 8,
+        quality === 'high' ? 14 : 8,
       ),
       standardMaterial(0xc0e0ee),
     );
@@ -148,8 +152,8 @@ export function addPhageConnector(
       new THREE.TorusGeometry(
         radius,
         0.065,
-        quality === 'high' ? 8 : 5,
-        quality === 'high' ? 18 : 10,
+        quality === 'high' ? 10 : 5,
+        quality === 'high' ? 20 : 10,
       ),
       material,
     );
@@ -175,8 +179,8 @@ export function addContractileTail(
   const ringGeometry = new THREE.TorusGeometry(
     signature.tail.radius,
     signature.tail.radius * 0.28,
-    quality === 'high' ? 8 : 5,
-    quality === 'high' ? 22 : 12,
+    quality === 'high' ? 10 : 5,
+    quality === 'high' ? 24 : 12,
   );
   ringGeometry.rotateX(Math.PI / 2);
   const sheath = new THREE.InstancedMesh(
@@ -225,7 +229,7 @@ export function addContractileTail(
         signature.tail.radius * 0.28,
         signature.tail.radius * 0.28,
         signature.tail.length * 1.03,
-        quality === 'high' ? 12 : 7,
+        quality === 'high' ? 14 : 7,
       ),
       standardMaterial(0xe4f8ff),
     );
@@ -298,7 +302,7 @@ export function addShortTail(
       signature.tail.radius * 0.68,
       signature.tail.radius,
       signature.tail.length,
-      quality === 'high' ? 12 : 7,
+      quality === 'high' ? 14 : 7,
     ),
     standardMaterial(COLORS.tail),
   );
@@ -358,17 +362,19 @@ function createHeadUnitGeometry(
     const geometry = new THREE.TorusGeometry(
       scale * 0.62,
       scale * 0.16,
-      quality === 'high' ? 7 : 5,
-      quality === 'high' ? 14 : 8,
+      quality === 'high' ? 10 : 5,
+      quality === 'high' ? 20 : 8,
     );
     geometry.rotateX(Math.PI / 2);
     return geometry;
   }
-  return new THREE.CylinderGeometry(
+  return createBeveledRadialUnitGeometry(
     scale * 0.7,
     scale,
     pattern === 'prolate-lattice' ? scale * 0.9 : scale * 0.72,
     pattern === 'prolate-lattice' ? 6 : 5,
+    quality,
+    `phage-beveled-head-unit-${pattern}`,
   );
 }
 
@@ -382,15 +388,24 @@ function createBaseplateGeometry(
   const radius =
     style === 'contractile-complex' ? 0.62 : style === 'hexagonal' ? 0.46 : 0.3;
   const material = standardMaterial(COLORS.receptor);
-  const plate = new THREE.Mesh(
-    new THREE.CylinderGeometry(
-      radius,
-      radius * 0.78,
-      0.2,
-      style === 'simple-hub' ? 8 : 6,
-    ),
-    material,
-  );
+  const plateGeometry =
+    style === 'simple-hub'
+      ? new THREE.CylinderGeometry(
+          radius,
+          radius * 0.78,
+          0.2,
+          quality === 'high' ? 12 : 8,
+        )
+      : createBeveledRadialUnitGeometry(
+          radius,
+          radius * 0.78,
+          0.2,
+          6,
+          quality,
+          'phage-beveled-hexagonal-baseplate',
+        );
+  const plate = new THREE.Mesh(plateGeometry, material);
+  plate.name = `phage-baseplate-plate-${style}`;
   plate.position.copy(center);
   group.add(plate);
   if (style === 'simple-hub') return group;
@@ -407,6 +422,7 @@ function createBaseplateGeometry(
           .add(new THREE.Vector3(0, -0.24, 0)),
         quality === 'high' ? 0.045 : 0.052,
         material,
+        quality === 'high' ? 10 : 7,
       ),
     );
   }
@@ -438,7 +454,7 @@ function createReceptorGeometry(
         end,
         quality === 'high' ? 0.095 : 0.11,
         material,
-        6,
+        quality === 'high' ? 10 : 6,
       );
       spike.scale.y = 1.08;
       group.add(spike);
@@ -454,10 +470,18 @@ function createReceptorGeometry(
       .addScaledVector(radial, signature.reach)
       .add(new THREE.Vector3(0, -signature.reach * 0.36, 0));
     group.add(
-      createCylinderBetween(start, signature.segmented ? elbow : tip, 0.032, material),
+      createCylinderBetween(
+        start,
+        signature.segmented ? elbow : tip,
+        0.032,
+        material,
+        quality === 'high' ? 10 : 7,
+      ),
     );
     if (signature.segmented) {
-      group.add(createCylinderBetween(elbow, tip, 0.024, material));
+      group.add(
+        createCylinderBetween(elbow, tip, 0.024, material, quality === 'high' ? 10 : 7),
+      );
     }
   }
   return group;

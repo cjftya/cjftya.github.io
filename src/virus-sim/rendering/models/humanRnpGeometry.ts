@@ -70,6 +70,7 @@ export function createOrganizedSurfaceInstances(options: {
       options.radius,
       count,
       options.envelopeScale,
+      options.quality,
     );
   }
   if (options.organization === 'icosahedral-raft') {
@@ -78,6 +79,7 @@ export function createOrganizedSurfaceInstances(options: {
       options.radius,
       count,
       options.envelopeScale,
+      options.quality,
     );
   }
   if (options.organization === 'irregular-patches') {
@@ -86,6 +88,7 @@ export function createOrganizedSurfaceInstances(options: {
       options.radius,
       count,
       options.envelopeScale,
+      options.quality,
     );
   }
   if (options.envelopeScale.every((value) => value === 1)) {
@@ -95,6 +98,7 @@ export function createOrganizedSurfaceInstances(options: {
       count,
       shape: options.component.shape,
       color: options.component.color,
+      quality: options.quality,
     });
   }
   const directions = fibonacciDirections(count);
@@ -104,6 +108,7 @@ export function createOrganizedSurfaceInstances(options: {
     options.radius,
     options.envelopeScale,
     `surface-${options.organization}-${options.component.id}`,
+    options.quality,
   );
 }
 
@@ -196,6 +201,7 @@ function createSurfaceRows(
   radius: number,
   count: number,
   envelopeScale: readonly [number, number, number],
+  quality: Quality,
 ): SurfaceInstances {
   const rowCount = count >= 40 ? 4 : 3;
   const directions: THREE.Vector3[] = [];
@@ -217,6 +223,7 @@ function createSurfaceRows(
     radius,
     envelopeScale,
     `surface-row-${component.id}`,
+    quality,
   );
 }
 
@@ -225,6 +232,7 @@ function createSurfaceRafts(
   radius: number,
   count: number,
   envelopeScale: readonly [number, number, number],
+  quality: Quality,
 ): SurfaceInstances {
   const clusterSize = 3;
   const centers = fibonacciDirections(Math.ceil(count / clusterSize));
@@ -257,6 +265,7 @@ function createSurfaceRafts(
     radius,
     envelopeScale,
     `surface-raft-${component.id}`,
+    quality,
   );
 }
 
@@ -265,6 +274,7 @@ function createPatchSurface(
   radius: number,
   count: number,
   envelopeScale: readonly [number, number, number],
+  quality: Quality,
 ): SurfaceInstances {
   const centers = [
     new THREE.Vector3(0.8, 0.38, 0.46),
@@ -293,6 +303,7 @@ function createPatchSurface(
     radius,
     envelopeScale,
     `surface-patch-${component.id}`,
+    quality,
   );
 }
 
@@ -302,6 +313,7 @@ function createAtDirections(
   radius: number,
   envelopeScale: readonly [number, number, number],
   name: string,
+  quality: Quality,
 ): SurfaceInstances {
   const origins = directions.map((direction) =>
     scaleDirection(direction, envelopeScale).multiplyScalar(radius),
@@ -313,6 +325,7 @@ function createAtDirections(
     directions: normals,
     shape: component.shape,
     color: component.color,
+    quality,
   });
   result.mesh.name = name;
   return result;

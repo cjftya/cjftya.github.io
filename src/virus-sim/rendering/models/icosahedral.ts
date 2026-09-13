@@ -1,6 +1,12 @@
 import * as THREE from 'three';
 import { getCapsidSignatureProfile } from '../../catalog/capsidProfiles';
-import { getIcosahedralDirections, getIcosahedronVertices } from './capsidComponents';
+import {
+  CAPSID_GEOMETRY_DETAIL,
+  createFacetedShell,
+  createFivefoldCapsomerGeometry,
+  getIcosahedralDirections,
+  getIcosahedronVertices,
+} from './capsidComponents';
 import { buildLayeredCapsid } from './layeredCapsids';
 import type { ModelCollector } from './shared';
 import {
@@ -10,7 +16,6 @@ import {
   createCylinderBetween,
   createGenomeCoil,
   createRadialInstances,
-  physicalMaterial,
   register,
   standardMaterial,
 } from './shared';
@@ -18,10 +23,13 @@ import {
 export function buildMS2(collector: ModelCollector, quality: 'high' | 'low'): void {
   collector.root.userData.capsidProfileId = getCapsidSignatureProfile('ms2')?.id;
   collector.root.userData.surfacePattern = 'compact-t3';
-  const shell = new THREE.Mesh(
-    new THREE.IcosahedronGeometry(1.95, quality === 'high' ? 2 : 1),
-    physicalMaterial(COLORS.capsid, 0.82, true),
-  );
+  const shell = createFacetedShell({
+    radius: 1.95,
+    quality,
+    faceting: 'moderate',
+    color: COLORS.capsid,
+    opacity: 0.82,
+  });
   shell.name = 'ms2-compact-t3-shell';
   collector.root.add(shell);
   register(collector, shell, 'capsid', 'capsid', true);
@@ -34,10 +42,22 @@ export function buildMS2(collector: ModelCollector, quality: 'high' | 'low'): vo
   const maturation = new THREE.Group();
   maturation.name = 'ms2-asymmetric-maturation-protein';
   const material = standardMaterial(COLORS.receptor);
-  const body = new THREE.Mesh(new THREE.CapsuleGeometry(0.18, 0.35, 5, 10), material);
+  const detail = CAPSID_GEOMETRY_DETAIL[quality];
+  const body = new THREE.Mesh(
+    new THREE.CapsuleGeometry(
+      0.18,
+      0.35,
+      detail.roundedUnitCapSegments,
+      detail.roundedUnitRadialSegments,
+    ),
+    material,
+  );
   body.rotation.z = Math.PI / 2;
   body.position.x = 1.94;
-  const tip = new THREE.Mesh(new THREE.ConeGeometry(0.16, 0.4, 8), material);
+  const tip = new THREE.Mesh(
+    new THREE.ConeGeometry(0.16, 0.4, detail.vertexRadialSegments),
+    material,
+  );
   tip.rotation.z = -Math.PI / 2;
   tip.position.x = 2.3;
   maturation.add(body, tip);
@@ -53,10 +73,13 @@ export function buildAdenovirus(
   collector.root.userData.capsidProfileId =
     getCapsidSignatureProfile('adenovirus-5')?.id;
   collector.root.userData.surfacePattern = 'vertex-spiked';
-  const shell = new THREE.Mesh(
-    new THREE.IcosahedronGeometry(1.9, 1),
-    physicalMaterial(0x4fcac5, 0.84, true),
-  );
+  const shell = createFacetedShell({
+    radius: 1.9,
+    quality,
+    faceting: 'strong',
+    color: 0x4fcac5,
+    opacity: 0.84,
+  });
   shell.name = 'adenovirus-faceted-capsid';
   collector.root.add(shell);
   register(collector, shell, 'capsid', 'capsid', true);
@@ -67,7 +90,7 @@ export function buildAdenovirus(
     vertex.multiplyScalar(1.98),
   );
   const pentonUnits = createRadialInstances(
-    new THREE.CylinderGeometry(0.2, 0.27, 0.18, 5),
+    createFivefoldCapsomerGeometry(0.2, 0.27, 0.18, quality),
     standardMaterial(COLORS.layerGold),
     vertices,
     vertices.map((point) => point.clone().normalize()),
@@ -83,8 +106,23 @@ export function buildAdenovirus(
   for (const vertex of vertices) {
     const direction = vertex.clone().normalize();
     const end = vertex.clone().addScaledVector(direction, 1.35);
-    fibers.add(createCylinderBetween(vertex, end, 0.035, fiberMaterial, 6));
-    const knob = new THREE.Mesh(new THREE.SphereGeometry(0.13, 9, 7), fiberMaterial);
+    fibers.add(
+      createCylinderBetween(
+        vertex,
+        end,
+        0.035,
+        fiberMaterial,
+        quality === 'high' ? 10 : 6,
+      ),
+    );
+    const knob = new THREE.Mesh(
+      new THREE.SphereGeometry(
+        0.13,
+        quality === 'high' ? 12 : 9,
+        quality === 'high' ? 9 : 7,
+      ),
+      fiberMaterial,
+    );
     knob.position.copy(end);
     fibers.add(knob);
   }
@@ -114,9 +152,16 @@ function addCapsomers(
   radius: number,
   partId: 'capsomer',
 ): void {
+  const detail = CAPSID_GEOMETRY_DETAIL[quality];
   const directions = getIcosahedralDirections(quality, count);
   const units = createRadialInstances(
-    new THREE.CylinderGeometry(0.16, 0.22, 0.15, 6),
+    new THREE.CylinderGeometry(
+      0.16,
+      0.22,
+      0.15,
+      detail.capsomerRadialSegments,
+      detail.capsomerHeightSegments,
+    ),
     standardMaterial(COLORS.capsomer),
     directions.map((direction) => direction.clone().multiplyScalar(radius)),
     directions,

@@ -7,6 +7,7 @@ import type {
 } from '../../catalog/structuralTypes';
 import type { ObservationLayerId } from '../../observation/types';
 import {
+  CAPSID_GEOMETRY_DETAIL,
   createLayerShell,
   createOrderedCapsomerInstances,
   createVertexFeatureInstances,
@@ -161,17 +162,18 @@ function createProjectionInstances(
   quality: Quality,
   shape: 'cone' | 'knob',
 ) {
+  const geometryDetail = CAPSID_GEOMETRY_DETAIL[quality];
   const directions =
     count === 12 ? getIcosahedronVertices() : getIcosahedralDirections(quality, count);
   const length = Math.max(0.22, protrusion * 2.4);
   const geometry =
     shape === 'cone'
-      ? new THREE.ConeGeometry(0.105, length, quality === 'high' ? 8 : 6)
+      ? new THREE.ConeGeometry(0.105, length, geometryDetail.vertexRadialSegments)
       : new THREE.CapsuleGeometry(
           0.1,
           length * 0.55,
-          quality === 'high' ? 4 : 2,
-          quality === 'high' ? 7 : 5,
+          geometryDetail.roundedUnitCapSegments,
+          geometryDetail.roundedUnitRadialSegments,
         );
   const result = createRadialInstances(
     geometry,
