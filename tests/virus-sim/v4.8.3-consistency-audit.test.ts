@@ -125,7 +125,7 @@ describe('Virus Sim v4.8.3 consistency audit', () => {
   it('retains compact mobile and accessible explanation surfaces', () => {
     const root = { innerHTML: '' } as HTMLElement;
     renderAppLayout(root);
-    expect(root.innerHTML).toContain('<span class="eyebrow">v4.8.4</span>');
+    expect(root.innerHTML).toContain('<span class="eyebrow">v4.8.5</span>');
     expect(root.innerHTML).toContain('aria-live="polite"');
     expect(root.innerHTML).toContain('<details class="selection-more">');
     expect(root.innerHTML).toContain('rel="noopener noreferrer"');

@@ -1,4 +1,4 @@
-import { HUMAN_RNP_PROFILES } from './humanExpansionProfiles';
+import { HUMAN_RNP_PROFILES, getHumanRnpEvidence } from './humanExpansionProfiles';
 import type { StructuralSignature } from './structuralTypes';
 
 export const HUMAN_EXPANSION_STRUCTURAL_SIGNATURES: readonly StructuralSignature[] =
@@ -30,12 +30,6 @@ export const HUMAN_EXPANSION_STRUCTURAL_SIGNATURES: readonly StructuralSignature
           ? `${profile.segmentCount ?? 3}개 RNA-RNP 분절`
           : `${profile.core} RNA core`,
       ],
-      evidence: [
-        {
-          componentId: 'particle',
-          level: profile.evidence,
-          sourceIds: profile.sourceIds,
-        },
-      ],
+      evidence: getHumanRnpEvidence(profile, virusId),
     })),
   );

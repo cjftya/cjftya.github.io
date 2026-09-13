@@ -117,7 +117,7 @@ describe('Virus Sim v4.8.2 full-catalog structure explanations', () => {
   it('shows the current label while retaining the compact explanation surface', () => {
     const root = { innerHTML: '' } as HTMLElement;
     renderAppLayout(root);
-    expect(root.innerHTML).toContain('<span class="eyebrow">v4.8.4</span>');
+    expect(root.innerHTML).toContain('<span class="eyebrow">v4.8.5</span>');
     expect(root.innerHTML).toContain('id="selection-details" hidden');
     expect(root.innerHTML).toContain('관계·단순화·근거');
   });
