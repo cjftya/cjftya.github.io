@@ -54,7 +54,8 @@ pixel density 자체로 가장자리 품질을 유지해 모바일 fill-rate 비
 
 Perspective camera와 `OrbitControls`를 함께 소유합니다. 기본 target은 태양이며,
 pan은 끄고 damping과 최소·최대 거리를 설정합니다. OrbitControls가 마우스, 터치,
-휠과 핀치 입력을 처리합니다.
+휠과 핀치 입력을 처리합니다. 전체 행성계를 보는 상태에서는 세로형 모바일 화면에서도
+바깥 궤도까지 충분히 축소해 볼 수 있도록 최대 거리를 넓게 허용합니다.
 
 행성 선택 시 `focusOn()`이 현재 카메라 위치와 행성 위치 사이를 0.75초 동안
 ease-out 보간합니다. 이동 중에는 controls 입력을 잠시 막고 완료 후 선택 행성을
