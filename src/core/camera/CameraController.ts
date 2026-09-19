@@ -16,7 +16,8 @@ interface CameraTransition {
 
 const TRANSITION_DURATION_SECONDS = 0.75;
 const HOME_MIN_DISTANCE = 5;
-const HOME_MAX_DISTANCE = 24;
+const HOME_MAX_DISTANCE = 72;
+const CAMERA_FAR_PLANE = 180;
 
 export class CameraController {
   readonly camera: PerspectiveCamera;
@@ -35,7 +36,7 @@ export class CameraController {
   private transition: CameraTransition | undefined;
 
   constructor(canvas: HTMLCanvasElement, aspect: number) {
-    this.camera = new PerspectiveCamera(48, aspect, 0.1, 100);
+    this.camera = new PerspectiveCamera(48, aspect, 0.1, CAMERA_FAR_PLANE);
     this.camera.position.copy(this.homePosition);
 
     this.controls = new OrbitControls(this.camera, canvas);
