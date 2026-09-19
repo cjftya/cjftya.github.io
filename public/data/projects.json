@@ -318,6 +318,52 @@
       }
     },
     {
+      "id": "lite-computer-use",
+      "galaxyId": "jelly-garden",
+      "name": "Lite Computer Use",
+      "summary": "AI 에이전트가 Windows 앱과 파일, 웹 화면을 빠르고 정확하게 조작하도록 돕는 경량 스킬이에요.",
+      "status": "active",
+      "featured": true,
+      "order": 70,
+      "tags": ["AI 에이전트", "Windows 자동화", "GUI 제어"],
+      "links": {
+        "github": "https://github.com/cjftya/lite-computer-use"
+      },
+      "details": {
+        "category": "Windows AI 에이전트 도구",
+        "description": "AI가 작업을 계획하고 Python 도구가 앱·파일·창·마우스·키보드·스크린샷 조작을 한 번씩 결정적으로 실행해요. 구조화된 JSON 응답과 화면 좌표 매핑, 일괄 실행으로 반복 캡처와 불필요한 재시도를 줄여요.",
+        "techStack": ["Python", "PyAutoGUI", "pywin32", "Pillow", "PyYAML"]
+      },
+      "planet": {
+        "seed": 2707,
+        "orbit": {
+          "radius": 13.9,
+          "speed": 0.03,
+          "startAngle": 28,
+          "inclination": 5
+        },
+        "rotation": {
+          "speed": 0.15,
+          "direction": "clockwise",
+          "axisTilt": -15
+        },
+        "shape": {
+          "radius": 0.74,
+          "roughness": 0.06,
+          "frequency": 3.7
+        },
+        "surface": {
+          "baseColor": "#f2bd68"
+        },
+        "ring": {
+          "enabled": true,
+          "color": "#ffe2a8",
+          "width": 0.15,
+          "tilt": 21
+        }
+      }
+    },
+    {
       "id": "viola",
       "galaxyId": "pages-archive",
       "name": "Viola",
