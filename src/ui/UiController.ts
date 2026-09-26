@@ -1,11 +1,6 @@
-import type { Galaxy, Project, ProjectStatus } from '../data/Project';
-import { getProjectDetailActions } from './projectActionPolicy';
-
-const PROJECT_STATUS_LABELS: Record<ProjectStatus, string> = {
-  active: '진행 중',
-  legacy: '이전 작업',
-  archived: '보관됨',
-};
+import type { Galaxy, Project } from '../data/Project';
+import { PlanetLabels } from './PlanetLabels';
+import { ProjectPanel } from './ProjectPanel';
 
 interface UiCallbacks {
   onCloseSelection: () => void;
@@ -14,35 +9,17 @@ interface UiCallbacks {
   onHoverProject: (projectId: string | null) => void;
 }
 
-interface PlanetLabelRenderState {
-  visible: boolean;
-  x: number;
-  y: number;
-}
-
 export class UiController {
   readonly viewport: HTMLElement;
   readonly canvas: HTMLCanvasElement;
 
   private readonly loading: HTMLElement;
   private readonly message: HTMLElement;
-  private readonly labelLayer: HTMLElement;
+  private readonly planetLabels: PlanetLabels;
   private readonly galaxySwitcher: HTMLElement;
   private readonly galaxyDescription: HTMLElement;
-  private readonly selectionPanel: HTMLElement;
-  private readonly projectStatus: HTMLElement;
-  private readonly projectCategory: HTMLElement;
-  private readonly projectName: HTMLElement;
-  private readonly projectSummary: HTMLElement;
-  private readonly projectDescription: HTMLElement;
-  private readonly projectTechStack: HTMLElement;
-  private readonly projectPageLink: HTMLAnchorElement;
-  private readonly projectGithubLink: HTMLAnchorElement;
-  private readonly projectActions: HTMLElement;
-  private readonly closeButton: HTMLButtonElement;
+  private readonly projectPanel: ProjectPanel;
   private readonly galaxyButtons = new Map<string, HTMLButtonElement>();
-  private readonly planetLabels = new Map<string, HTMLButtonElement>();
-  private readonly planetLabelRenderStates = new Map<string, PlanetLabelRenderState>();
   private readyTimer: number | undefined;
   private travelTimer: number | undefined;
   private galaxyTravelTimer: number | undefined;
@@ -127,33 +104,20 @@ export class UiController {
     this.canvas = this.requireElement(root, '.scene-canvas', HTMLCanvasElement);
     this.loading = this.requireElement(root, '.loading-screen');
     this.message = this.requireElement(root, '.status-message');
-    this.labelLayer = this.requireElement(root, '.planet-label-layer');
+    this.planetLabels = new PlanetLabels(
+      this.requireElement(root, '.planet-label-layer'),
+      callbacks.onSelectProject,
+      callbacks.onHoverProject,
+    );
     this.galaxySwitcher = this.requireElement(root, '.galaxy-switcher');
     this.galaxyDescription = this.requireElement(root, '.galaxy-description');
-    this.selectionPanel = this.requireElement(root, '.project-panel');
-    this.projectStatus = this.requireElement(root, '.project-status');
-    this.projectCategory = this.requireElement(root, '.project-category');
-    this.projectName = this.requireElement(root, '.project-panel h2');
-    this.projectSummary = this.requireElement(root, '.project-summary');
-    this.projectDescription = this.requireElement(root, '.project-description');
-    this.projectTechStack = this.requireElement(root, '.project-tech-stack');
-    this.projectPageLink = this.requireElement(
+    this.projectPanel = new ProjectPanel(
       root,
-      '.project-page-link',
-      HTMLAnchorElement,
+      this.viewport,
+      callbacks.onCloseSelection,
+      () => this.playTravelEffect(),
     );
-    this.projectGithubLink = this.requireElement(
-      root,
-      '.project-github-link',
-      HTMLAnchorElement,
-    );
-    this.projectActions = this.requireElement(root, '.project-actions');
-    this.closeButton = this.requireElement(root, '.panel-close', HTMLButtonElement);
-    this.closeButton.addEventListener('click', this.handleClose);
     this.galaxySwitcher.addEventListener('click', this.handleGalaxyClick);
-    this.labelLayer.addEventListener('click', this.handleLabelClick);
-    this.labelLayer.addEventListener('pointerover', this.handleLabelPointerOver);
-    this.labelLayer.addEventListener('pointerout', this.handleLabelPointerOut);
     document.addEventListener('keydown', this.handleKeyDown);
   }
 
@@ -174,67 +138,12 @@ export class UiController {
   }
 
   showSelection(project: Project | null): void {
-    this.selectionPanel.hidden = project === null;
-    this.planetLabels.forEach((label, projectId) => {
-      const selected = projectId === project?.id;
-      label.classList.toggle('is-selected', selected);
-      label.setAttribute('aria-pressed', String(selected));
-    });
-
-    if (project === null) {
-      this.viewport.style.removeProperty('--project-color');
-      return;
-    }
-
-    this.viewport.style.setProperty(
-      '--project-color',
-      project.planet.surface.baseColor,
-    );
-    this.projectName.textContent = project.name;
-    this.projectStatus.textContent = PROJECT_STATUS_LABELS[project.status];
-    this.projectStatus.dataset.status = project.status;
-    this.projectCategory.textContent = project.details.category;
-    this.projectSummary.textContent =
-      project.summary || '이 프로젝트에는 아직 소개가 등록되지 않았어요.';
-    this.projectDescription.textContent = project.details.description;
-    const detailActions = getProjectDetailActions(project);
-    this.projectPageLink.textContent = `${project.name} 보기`;
-    this.showLink(this.projectPageLink, detailActions.page);
-    this.showLink(this.projectGithubLink, detailActions.github);
-    this.projectActions.hidden =
-      detailActions.page === null && detailActions.github === null;
-    this.playTravelEffect();
-    this.projectTechStack.replaceChildren(
-      ...project.details.techStack.map((technology) => {
-        const item = document.createElement('li');
-        item.textContent = technology;
-        return item;
-      }),
-    );
+    this.planetLabels.setSelected(project?.id ?? null);
+    this.projectPanel.show(project);
   }
 
   showProjects(projects: Project[]): void {
-    this.planetLabels.clear();
-    this.planetLabelRenderStates.clear();
-    const labels = projects.map((project) => {
-      const label = document.createElement('button');
-      label.className = 'planet-label';
-      label.type = 'button';
-      label.dataset.projectId = project.id;
-      label.style.setProperty('--planet-color', project.planet.surface.baseColor);
-      label.textContent = project.name;
-      label.setAttribute('aria-label', `${project.name} 프로젝트 보기`);
-      label.setAttribute('aria-pressed', 'false');
-      this.planetLabels.set(project.id, label);
-      this.planetLabelRenderStates.set(project.id, {
-        visible: false,
-        x: Number.NaN,
-        y: Number.NaN,
-      });
-      return label;
-    });
-
-    this.labelLayer.replaceChildren(...labels);
+    this.planetLabels.show(projects);
   }
 
   showGalaxies(galaxies: Galaxy[]): void {
@@ -276,35 +185,12 @@ export class UiController {
   }
 
   updatePlanetLabel(projectId: string, x: number, y: number, visible: boolean): void {
-    const label = this.planetLabels.get(projectId);
-    const renderState = this.planetLabelRenderStates.get(projectId);
-
-    if (label === undefined || renderState === undefined) {
-      return;
-    }
-
-    if (renderState.visible !== visible) {
-      label.hidden = !visible;
-      renderState.visible = visible;
-    }
-
-    if (visible) {
-      const roundedX = Math.round(x * 4) / 4;
-      const roundedY = Math.round(y * 4) / 4;
-
-      if (renderState.x !== roundedX || renderState.y !== roundedY) {
-        label.style.transform = `translate3d(${roundedX}px, ${roundedY}px, 0) translate(-50%, calc(-100% - 0.35rem))`;
-        renderState.x = roundedX;
-        renderState.y = roundedY;
-      }
-    }
+    this.planetLabels.update(projectId, x, y, visible);
   }
 
   setHoveredProject(projectId: string | null): void {
     this.canvas.classList.toggle('is-hovering-planet', projectId !== null);
-    this.planetLabels.forEach((label, labelProjectId) => {
-      label.classList.toggle('is-hovered', labelProjectId === projectId);
-    });
+    this.planetLabels.setHovered(projectId);
   }
 
   dispose(): void {
@@ -323,17 +209,11 @@ export class UiController {
     if (this.galaxyTravelFrame !== undefined) {
       window.cancelAnimationFrame(this.galaxyTravelFrame);
     }
-    this.closeButton.removeEventListener('click', this.handleClose);
+    this.projectPanel.dispose();
     this.galaxySwitcher.removeEventListener('click', this.handleGalaxyClick);
-    this.labelLayer.removeEventListener('click', this.handleLabelClick);
-    this.labelLayer.removeEventListener('pointerover', this.handleLabelPointerOver);
-    this.labelLayer.removeEventListener('pointerout', this.handleLabelPointerOut);
+    this.planetLabels.dispose();
     document.removeEventListener('keydown', this.handleKeyDown);
   }
-
-  private readonly handleClose = (): void => {
-    this.callbacks.onCloseSelection();
-  };
 
   private readonly handleGalaxyClick = (event: Event): void => {
     const button =
@@ -348,46 +228,10 @@ export class UiController {
   };
 
   private readonly handleKeyDown = (event: KeyboardEvent): void => {
-    if (event.key === 'Escape' && !this.selectionPanel.hidden) {
+    if (event.key === 'Escape' && !this.projectPanel.hidden) {
       this.callbacks.onCloseSelection();
     }
   };
-
-  private readonly handleLabelClick = (event: Event): void => {
-    const label = this.findLabel(event.target);
-    const projectId = label?.dataset.projectId;
-
-    if (projectId !== undefined) {
-      this.callbacks.onSelectProject(projectId);
-    }
-  };
-
-  private readonly handleLabelPointerOver = (event: PointerEvent): void => {
-    const label = this.findLabel(event.target);
-
-    if (label !== null && !label.contains(event.relatedTarget as Node | null)) {
-      this.callbacks.onHoverProject(label.dataset.projectId ?? null);
-    }
-  };
-
-  private readonly handleLabelPointerOut = (event: PointerEvent): void => {
-    const label = this.findLabel(event.target);
-
-    if (label !== null && !label.contains(event.relatedTarget as Node | null)) {
-      this.callbacks.onHoverProject(null);
-    }
-  };
-
-  private showLink(link: HTMLAnchorElement, href: string | null): void {
-    link.hidden = href === null;
-
-    if (href === null) {
-      link.removeAttribute('href');
-      return;
-    }
-
-    link.href = href;
-  }
 
   private playTravelEffect(): void {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -433,12 +277,6 @@ export class UiController {
     });
   }
 
-  private findLabel(target: EventTarget | null): HTMLButtonElement | null {
-    return target instanceof Element
-      ? target.closest<HTMLButtonElement>('.planet-label')
-      : null;
-  }
-
   private requireElement<T extends Element>(
     root: ParentNode,
     selector: string,
@@ -455,71 +293,4 @@ export class UiController {
 
     return element as T;
   }
-}
-
-export function renderWebGlFallback(
-  root: HTMLElement,
-  galaxies: Galaxy[],
-  projects: Project[],
-): void {
-  root.innerHTML = `
-    <main class="fallback-view">
-      <section class="fallback-card">
-        <p class="eyebrow">Cosmic project garden</p>
-        <h1>Jelly Plants</h1>
-        <p class="fallback-message">
-          이 브라우저에서는 3D 행성계를 표시할 수 없어요. 프로젝트 목록은 아래에서
-          계속 둘러볼 수 있어요.
-        </p>
-        <div class="fallback-galaxies"></div>
-      </section>
-    </main>
-  `;
-
-  const container = root.querySelector<HTMLElement>('.fallback-galaxies');
-
-  if (container === null) {
-    return;
-  }
-
-  const sections = galaxies.map((galaxy) => {
-    const section = document.createElement('section');
-    const heading = document.createElement('h2');
-    const description = document.createElement('p');
-    const list = document.createElement('ul');
-    heading.textContent = galaxy.name;
-    description.textContent = galaxy.description;
-    list.className = 'fallback-projects';
-
-    const items = projects
-      .filter((project) => project.galaxyId === galaxy.id)
-      .map((project) => {
-        const item = document.createElement('li');
-        const destination = project.links.page ?? project.links.github;
-        const name =
-          destination === null
-            ? document.createElement('strong')
-            : document.createElement('a');
-        const summary = document.createElement('span');
-
-        name.textContent = project.name;
-        if (name instanceof HTMLAnchorElement && destination !== null) {
-          name.href = destination;
-
-          if (project.links.page === undefined) {
-            name.target = '_blank';
-            name.rel = 'noreferrer';
-          }
-        }
-        summary.textContent = project.summary;
-        item.append(name, summary);
-        return item;
-      });
-
-    list.replaceChildren(...items);
-    section.append(heading, description, list);
-    return section;
-  });
-
-  container.replaceChildren(...sections);
 }
