@@ -9,7 +9,9 @@ export class PlanetPicker {
   private readonly raycaster = new Raycaster();
   private readonly pointer = new Vector2();
   private readonly pointerStart = new Vector2();
+  private readonly activePointers = new Set<number>();
   private pointerId: number | undefined;
+  private multiPointerGesture = false;
   private hoveredProjectId: string | null = null;
 
   constructor(
@@ -35,16 +37,31 @@ export class PlanetPicker {
   }
 
   private readonly handlePointerDown = (event: PointerEvent): void => {
+    this.activePointers.add(event.pointerId);
+    if (this.activePointers.size > 1) {
+      this.multiPointerGesture = true;
+      return;
+    }
+
     this.pointerId = event.pointerId;
     this.pointerStart.set(event.clientX, event.clientY);
   };
 
   private readonly handlePointerUp = (event: PointerEvent): void => {
+    this.activePointers.delete(event.pointerId);
+    const multiPointerGesture = this.multiPointerGesture;
+    if (this.activePointers.size === 0) {
+      this.multiPointerGesture = false;
+    }
+
     if (this.pointerId !== event.pointerId) {
       return;
     }
 
     this.pointerId = undefined;
+    if (multiPointerGesture) {
+      return;
+    }
     const movedDistance = this.pointerStart.distanceTo(
       this.pointer.set(event.clientX, event.clientY),
     );
@@ -56,8 +73,14 @@ export class PlanetPicker {
     this.onSelection(this.pickProject(event.clientX, event.clientY));
   };
 
-  private readonly handlePointerCancel = (): void => {
-    this.pointerId = undefined;
+  private readonly handlePointerCancel = (event: PointerEvent): void => {
+    this.activePointers.delete(event.pointerId);
+    if (this.pointerId === event.pointerId) {
+      this.pointerId = undefined;
+    }
+    if (this.activePointers.size === 0) {
+      this.multiPointerGesture = false;
+    }
   };
 
   private readonly handlePointerMove = (event: PointerEvent): void => {
