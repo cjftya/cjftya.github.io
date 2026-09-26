@@ -2,7 +2,7 @@ import { App } from './app/App';
 import { handlePageHide, handlePageShow } from './app/pageLifecycle';
 import { JsonProjectRepository } from './data/JsonProjectRepository';
 import './styles/main.css';
-import { renderWebGlFallback } from './ui/UiController';
+import { renderWebGlFallback } from './ui/renderWebGlFallback';
 
 const root = document.querySelector<HTMLElement>('#app');
 

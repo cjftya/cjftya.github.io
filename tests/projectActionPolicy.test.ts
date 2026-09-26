@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { Project } from '../src/data/Project';
 import { getProjectDetailActions } from '../src/ui/projectActionPolicy';
+import { getFallbackDestination } from '../src/ui/renderWebGlFallback';
 import { createValidProjectCollection } from './fixtures';
 
 function createProject(galaxyId: string): Project {
@@ -35,6 +36,15 @@ describe('project detail action policy', () => {
     expect(getProjectDetailActions(project)).toEqual({
       github: null,
       page: null,
+    });
+    expect(getFallbackDestination(project)).toEqual({ href: null, external: false });
+  });
+
+  it('uses only the allowed GitHub link in the fallback list', () => {
+    const project = createProject('jelly-garden');
+    expect(getFallbackDestination(project)).toEqual({
+      href: 'https://github.com/cjftya/sample-project',
+      external: true,
     });
   });
 
