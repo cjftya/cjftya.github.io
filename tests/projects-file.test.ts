@@ -24,8 +24,9 @@ describe('public/data/projects.json', () => {
       'wedding-card',
       'uriel',
       'virus-sim',
+      'jelly-oasis',
     ]);
-    expect(collection.projects).toHaveLength(10);
+    expect(collection.projects).toHaveLength(11);
     expect(
       collection.galaxies.every(
         (galaxy) =>
@@ -48,7 +49,7 @@ describe('public/data/projects.json', () => {
     ).toHaveLength(6);
     expect(
       collection.projects.filter((project) => project.galaxyId === 'pages-archive'),
-    ).toHaveLength(4);
+    ).toHaveLength(5);
     expect(
       collection.projects
         .filter((project) => project.galaxyId === 'jelly-garden')
@@ -61,7 +62,7 @@ describe('public/data/projects.json', () => {
     expect(
       collection.projects
         .filter((project) => project.galaxyId === 'pages-archive')
-        .filter((project) => project.id !== 'virus-sim')
+        .filter((project) => !['virus-sim', 'jelly-oasis'].includes(project.id))
         .every((project) => project.links.github === null),
     ).toBe(true);
     expect(
@@ -87,6 +88,16 @@ describe('public/data/projects.json', () => {
     ).toEqual({
       github: 'https://github.com/cjftya/cjftya.github.io/tree/master/src/virus-sim',
       page: '/projects/virus-sim/',
+    });
+    expect(
+      collection.projects.find((project) => project.id === 'jelly-oasis'),
+    ).toMatchObject({
+      galaxyId: 'pages-archive',
+      links: {
+        github:
+          'https://github.com/cjftya/cjftya.github.io/tree/master/src/jelly-oasis',
+        page: '/projects/jelly-oasis/',
+      },
     });
     expect(
       collection.projects.every(
