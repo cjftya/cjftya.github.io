@@ -1,11 +1,4 @@
-import {
-  Color,
-  DirectionalLight,
-  HemisphereLight,
-  PerspectiveCamera,
-  Scene,
-  Vector3,
-} from 'three';
+import { PerspectiveCamera, Scene, Vector3 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { RendererManager } from '../core/renderer/RendererManager';
 import {
@@ -14,15 +7,15 @@ import {
   DEFAULT_TERRAIN_CONFIG,
   sampleTerrainHeight,
 } from './terrain/createTerrain';
+import { EnvironmentController } from './environment/EnvironmentController';
+import { createEnvironmentDebug } from './environment/debugPanel';
 import './styles.css';
 
 function start(canvas: HTMLCanvasElement): void {
   const config = DEFAULT_TERRAIN_CONFIG;
   const scene = new Scene();
-  scene.background = new Color('#e9ebe1');
   const manager = new RendererManager(canvas);
   const renderer = manager.renderer;
-  // No shadow pass is needed until shadow-casting environment objects exist.
   const camera = new PerspectiveCamera(42, 1, 0.5, 1800);
   const controls = new OrbitControls(camera, canvas);
   controls.enableDamping = true;
@@ -34,20 +27,37 @@ function start(canvas: HTMLCanvasElement): void {
   controls.maxPolarAngle = Math.PI * 0.445;
   controls.maxTargetRadius = config.size * 0.36;
   controls.zoomSpeed = 0.8;
-  const hemi = new HemisphereLight('#f4f4dc', '#67715c', 1.8);
-  const sunlight = new DirectionalLight('#fff0d0', 2.5);
-  sunlight.position.set(-120, 150, 40);
-  sunlight.shadow.mapSize.set(1024, 1024);
-  scene.add(hemi, sunlight);
+  const mobile =
+    matchMedia('(pointer: coarse)').matches ||
+    (navigator.hardwareConcurrency ?? 8) <= 4;
+  const motionPreference = matchMedia('(prefers-reduced-motion: reduce)');
+  const environment = new EnvironmentController(
+    scene,
+    mobile,
+    motionPreference.matches,
+  );
   const terrain = createTerrain(config);
   const edge = createTerrainEdge(config);
   scene.add(terrain, edge);
-  const debug = document.querySelector<HTMLOutputElement>('#terrain-debug')!;
   const debugEnabled =
     import.meta.env.DEV || new URLSearchParams(location.search).has('debug');
-  debug.hidden = !debugEnabled;
   let dirty = true;
   let disposed = false;
+  let contextLost = false;
+  let lastTick = 0;
+  let lastRender = 0;
+  let lastDebug = 0;
+  let frameMs = 0;
+  function setShadows(enabled: boolean): void {
+    renderer.shadowMap.enabled = enabled;
+    environment.sun.castShadow = enabled;
+    terrain.castShadow = enabled;
+    terrain.material.needsUpdate = true;
+    edge.material.needsUpdate = true;
+    environment.clouds.mesh.material.needsUpdate = true;
+    dirty = true;
+  }
+  setShadows(!mobile);
   const previousTarget = new Vector3();
   const resetButton = document.querySelector<HTMLButtonElement>('#reset-view')!;
 
@@ -79,9 +89,19 @@ function start(canvas: HTMLCanvasElement): void {
     dirty = true;
   };
   controls.addEventListener('change', invalidate);
+  const debugPanel = debugEnabled
+    ? createEnvironmentDebug(environment, renderer, invalidate, setShadows)
+    : null;
+  function motionChanged(): void {
+    if (motionPreference.matches) environment.setPlaying(false);
+    dirty = true;
+  }
+  motionPreference.addEventListener('change', motionChanged);
   function keydown(event: KeyboardEvent): void {
     if (
       !debugEnabled ||
+      (event.target instanceof HTMLElement &&
+        /INPUT|SELECT|TEXTAREA/.test(event.target.tagName)) ||
       event.code !== 'KeyW' ||
       event.ctrlKey ||
       event.metaKey ||
@@ -93,8 +113,12 @@ function start(canvas: HTMLCanvasElement): void {
   }
   window.addEventListener('keydown', keydown);
 
-  function frame(): void {
-    if (document.hidden || disposed) return;
+  function frame(now: number): void {
+    if (document.hidden || disposed || contextLost) return;
+    const budget = mobile || motionPreference.matches ? 1000 / 30 : 1000 / 60;
+    if (lastTick && now - lastTick < budget - 1) return;
+    const seconds = lastTick ? Math.min(0.1, (now - lastTick) / 1000) : 0;
+    lastTick = now;
     previousTarget.copy(controls.target);
     controls.update();
     // Follow the terrain while panning; preserve camera offset above the target.
@@ -117,15 +141,36 @@ function start(canvas: HTMLCanvasElement): void {
       }
     }
     if (!previousTarget.equals(controls.target)) dirty = true;
+    if (
+      environment.update(
+        seconds,
+        camera,
+        camera.position.distanceTo(controls.target),
+        renderer.getPixelRatio(),
+      )
+    )
+      dirty = true;
     if (!dirty) return;
     renderer.render(scene, camera);
+    if (lastRender) frameMs = frameMs * 0.85 + (now - lastRender) * 0.15;
+    lastRender = now;
     dirty = false;
-    if (debugEnabled) {
-      debug.value = `Terrain 12,800 tris · total ${renderer.info.render.triangles.toLocaleString()}\nDraw calls ${renderer.info.render.calls} · textures ${renderer.info.memory.textures} · DPR ${renderer.getPixelRatio().toFixed(2)}\nW · wireframe ${terrain.material.wireframe ? 'on' : 'off'}`;
+    if (debugPanel && (now - lastDebug > 250 || !environment.animated)) {
+      debugPanel.refresh(frameMs);
+      lastDebug = now;
     }
+    document.documentElement.classList.toggle(
+      'oasis-night',
+      environment.state.timeOfDay >= 19.5 || environment.state.timeOfDay < 6,
+    );
   }
+
   function visibility(): void {
-    renderer.setAnimationLoop(document.hidden ? null : frame);
+    lastTick = 0;
+    lastRender = 0;
+    renderer.setAnimationLoop(
+      document.hidden || contextLost || disposed ? null : frame,
+    );
     dirty = true;
   }
   document.addEventListener('visibilitychange', visibility);
@@ -140,6 +185,9 @@ function start(canvas: HTMLCanvasElement): void {
     terrain.material.dispose();
     edge.geometry.dispose();
     edge.material.dispose();
+    environment.dispose();
+    debugPanel?.dispose();
+    motionPreference.removeEventListener('change', motionChanged);
     manager.dispose();
     resetButton.removeEventListener('click', resetView);
     window.removeEventListener('keydown', keydown);
@@ -157,9 +205,12 @@ function start(canvas: HTMLCanvasElement): void {
   window.addEventListener('pageshow', pageshow);
   canvas.addEventListener('webglcontextlost', (event) => {
     event.preventDefault();
+    contextLost = true;
     renderer.setAnimationLoop(null);
   });
   canvas.addEventListener('webglcontextrestored', () => {
+    contextLost = false;
+    environment.invalidate();
     dirty = true;
     visibility();
   });
