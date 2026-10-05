@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#e9ebe1" />
+    <meta name="description" content="Jelly Oasis — 넓은 초원과 완만한 능선, 작은 분지로 시작하는 판타지 자연 공간" />
+    <title>Jelly Oasis</title>
+  </head>
+  <body>
+    <main class="oasis-shell">
+      <canvas id="oasis-canvas" class="oasis-canvas" aria-label="Jelly Oasis 지형. 드래그로 회전하고 두 손가락으로 이동하거나 확대해 보세요."></canvas>
+      <header class="terrain-title"><span>JELLY OASIS</span><h1>시작의 땅</h1><p>넓은 초원, 완만한 능선, 그리고 작은 분지.</p></header>
+      <button id="reset-view" type="button">전체 보기 <span aria-hidden="true">↗</span></button>
+      <footer class="terrain-help"><span class="desktop-help">드래그 · 회전 &nbsp; 우클릭 · 이동 &nbsp; 스크롤 · 확대</span><span class="touch-help">한 손가락 · 회전 &nbsp; 두 손가락 · 이동 / 확대</span></footer>
+      <output id="terrain-debug" hidden></output>
+      <p id="terrain-error" role="alert" hidden>3D 화면을 시작하지 못했어요. WebGL을 지원하는 브라우저에서 다시 열어 주세요.</p>
+    </main>
+    <script type="module" src="/src/jelly-oasis/main.ts"></script>
+  </body>
+</html>
