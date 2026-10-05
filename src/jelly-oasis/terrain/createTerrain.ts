@@ -13,11 +13,13 @@ import {
   validateTerrainConfig,
 } from './heightfield';
 import type { TerrainConfig } from './heightfield';
+import { createTerrainSurface } from './terrainSurface';
 export { DEFAULT_TERRAIN_CONFIG, sampleTerrainHeight } from './heightfield';
 export type { TerrainConfig } from './heightfield';
 
 export function createTerrain(
   config: TerrainConfig = DEFAULT_TERRAIN_CONFIG,
+  material?: MeshStandardMaterial,
 ): Mesh<PlaneGeometry, MeshStandardMaterial> {
   validateTerrainConfig(config);
   const geometry = new PlaneGeometry(
@@ -50,7 +52,7 @@ export function createTerrain(
   geometry.computeBoundingSphere();
   const terrain = new Mesh(
     geometry,
-    new MeshStandardMaterial({ vertexColors: true, roughness: 1, flatShading: true }),
+    material ?? createTerrainSurface(config.maxHeight).material,
   );
   terrain.name = 'JellyOasisTerrain';
   terrain.receiveShadow = true;
