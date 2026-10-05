@@ -5,7 +5,7 @@ const repositoryRoot = resolve(import.meta.dirname, '..');
 const outputRoot = resolve(repositoryRoot, 'dist');
 const legacyDirectories = ['projects', 'shared'];
 const builtProjectDirectories = new Set(
-  ['viola', 'uriel', 'virus-sim'].map((project) =>
+  ['viola', 'uriel', 'virus-sim', 'jelly-oasis'].map((project) =>
     resolve(repositoryRoot, 'projects', project),
   ),
 );

@@ -1,0 +1,135 @@
+:root {
+  font-family:
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    sans-serif;
+  color: #344a3e;
+  background: #e9ebe1;
+  font-synthesis: none;
+}
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+.oasis-shell {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  height: 100dvh;
+}
+.oasis-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+}
+.terrain-title {
+  position: absolute;
+  top: max(32px, env(safe-area-inset-top));
+  left: max(36px, env(safe-area-inset-left));
+  pointer-events: none;
+}
+.terrain-title > span {
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: 0.24em;
+}
+h1 {
+  margin: 12px 0 8px;
+  font-size: clamp(24px, 3vw, 36px);
+  font-weight: 500;
+  letter-spacing: -0.05em;
+}
+.terrain-title p {
+  margin: 0;
+  font-size: 12px;
+  color: #617568;
+}
+#reset-view {
+  position: absolute;
+  right: max(32px, env(safe-area-inset-right));
+  top: max(32px, env(safe-area-inset-top));
+  padding: 12px 17px;
+  border: 1px solid #344a3e26;
+  border-radius: 24px;
+  background: #f9faf1c9;
+  color: inherit;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+#reset-view span {
+  margin-left: 12px;
+}
+#reset-view:hover {
+  background: #fffef3;
+}
+#reset-view:focus-visible {
+  outline: 2px solid #476d55;
+  outline-offset: 4px;
+}
+.terrain-help {
+  position: absolute;
+  bottom: max(24px, env(safe-area-inset-bottom));
+  width: 100%;
+  text-align: center;
+  color: #617568;
+  font-size: 11px;
+  pointer-events: none;
+}
+.touch-help {
+  display: none;
+}
+#terrain-debug {
+  position: absolute;
+  bottom: 54px;
+  left: 16px;
+  padding: 10px;
+  background: #fffdf0e8;
+  font: 11px/1.6 monospace;
+  white-space: pre-line;
+}
+#terrain-error {
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  top: 45%;
+  padding: 24px;
+  background: #fffdf0;
+  text-align: center;
+}
+[hidden] {
+  display: none !important;
+}
+@media (pointer: coarse) {
+  .desktop-help {
+    display: none;
+  }
+  .touch-help {
+    display: inline;
+  }
+}
+@media (max-width: 640px) {
+  .terrain-title {
+    left: 20px;
+    top: max(24px, env(safe-area-inset-top));
+  }
+  .terrain-title p {
+    max-width: 190px;
+    line-height: 1.7;
+  }
+  #reset-view {
+    right: 16px;
+    top: max(24px, env(safe-area-inset-top));
+    padding: 10px 13px;
+  }
+}
