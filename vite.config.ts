@@ -27,6 +27,7 @@ export default defineConfig({
         viola: resolve(import.meta.dirname, 'projects/viola/index.html'),
         uriel: resolve(import.meta.dirname, 'projects/uriel/index.html'),
         virusSim: resolve(import.meta.dirname, 'projects/virus-sim/index.html'),
+        jellyOasis: resolve(import.meta.dirname, 'projects/jelly-oasis/index.html'),
       },
     },
   },
