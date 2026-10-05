@@ -550,6 +550,53 @@
           "tilt": -9
         }
       }
+    },
+    {
+      "id": "jelly-oasis",
+      "galaxyId": "pages-archive",
+      "name": "Jelly Oasis",
+      "summary": "낮과 밤, 구름과 날씨가 천천히 변하는 저폴리곤 판타지 자연 공간이에요.",
+      "status": "active",
+      "featured": true,
+      "order": 50,
+      "tags": ["판타지 자연", "낮과 밤", "날씨"],
+      "links": {
+        "github": "https://github.com/cjftya/cjftya.github.io/tree/master/src/jelly-oasis",
+        "page": "/projects/jelly-oasis/"
+      },
+      "details": {
+        "category": "인터랙티브 자연 공간",
+        "description": "넓은 초원과 완만한 능선, 작은 분지를 자유롭게 둘러보며 시간에 따라 변하는 하늘과 빛을 감상해요. 구름과 별, 안개와 비를 가볍게 표현한 Three.js 기반의 자연 공간을 만들어 가고 있어요.",
+        "techStack": ["TypeScript", "Three.js", "WebGL", "Vite"]
+      },
+      "planet": {
+        "seed": 3514,
+        "orbit": {
+          "radius": 16.3,
+          "speed": 0.027,
+          "startAngle": 265,
+          "inclination": 6
+        },
+        "rotation": {
+          "speed": 0.11,
+          "direction": "counterclockwise",
+          "axisTilt": 12
+        },
+        "shape": {
+          "radius": 0.8,
+          "roughness": 0.055,
+          "frequency": 2.6
+        },
+        "surface": {
+          "baseColor": "#9bc783"
+        },
+        "ring": {
+          "enabled": false,
+          "color": "#d9e9bd",
+          "width": 0.14,
+          "tilt": 18
+        }
+      }
     }
   ]
 }
