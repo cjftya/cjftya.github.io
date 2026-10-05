@@ -9,6 +9,8 @@ import {
 } from './terrain/createTerrain';
 import { EnvironmentController } from './environment/EnvironmentController';
 import { createEnvironmentDebug } from './environment/debugPanel';
+import { createTerrainSurface } from './terrain/terrainSurface';
+import { createSurfaceDebug } from './terrain/debugSurface';
 import './styles.css';
 
 function start(canvas: HTMLCanvasElement): void {
@@ -36,7 +38,8 @@ function start(canvas: HTMLCanvasElement): void {
     mobile,
     motionPreference.matches,
   );
-  const terrain = createTerrain(config);
+  const surface = createTerrainSurface(config.maxHeight);
+  const terrain = createTerrain(config, surface.material);
   const edge = createTerrainEdge(config);
   scene.add(terrain, edge);
   const debugEnabled =
@@ -91,6 +94,9 @@ function start(canvas: HTMLCanvasElement): void {
   controls.addEventListener('change', invalidate);
   const debugPanel = debugEnabled
     ? createEnvironmentDebug(environment, renderer, invalidate, setShadows)
+    : null;
+  const surfaceDebug = debugEnabled
+    ? createSurfaceDebug(terrain, surface, invalidate)
     : null;
   function motionChanged(): void {
     if (motionPreference.matches) environment.setPlaying(false);
@@ -182,7 +188,8 @@ function start(canvas: HTMLCanvasElement): void {
     observer.disconnect();
     controls.dispose();
     terrain.geometry.dispose();
-    terrain.material.dispose();
+    surface.material.dispose();
+    surfaceDebug?.dispose();
     edge.geometry.dispose();
     edge.material.dispose();
     environment.dispose();
