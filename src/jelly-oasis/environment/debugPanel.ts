@@ -3,21 +3,22 @@ import type { EnvironmentController } from './EnvironmentController';
 import { WEATHER_LABELS, WEATHER_PRESETS } from './weather';
 import type { WeatherPreset } from './weather';
 
-export function createEnvironmentDebug(
+export function createEnvironmentPanel(
   environment: EnvironmentController,
   renderer: WebGLRenderer,
   invalidate: () => void,
   setShadows: (value: boolean) => void,
+  debugEnabled = false,
 ) {
   const panel = document.createElement('details');
   panel.id = 'environment-debug';
-  panel.open = true;
-  panel.innerHTML = `<summary>환경 검수</summary>
+  panel.open = false;
+  panel.innerHTML = `<summary aria-expanded="false">Environment · 환경</summary>
     <label>시간 <output id="environment-time-label"></output><input id="environment-time" aria-label="시간" type="range" min="0" max="23.99" step="0.01"></label>
     <div class="debug-row"><button type="button" id="environment-play"></button><label>속도 <select id="environment-speed" aria-label="시간 속도"><option value="0.25">0.25×</option><option value="1" selected>1×</option><option value="4">4×</option><option value="12">12×</option></select></label></div>
     <label>날씨 <select id="environment-weather" aria-label="날씨">${WEATHER_PRESETS.map((p) => `<option value="${p}">${WEATHER_LABELS[p]}</option>`).join('')}</select></label>
-    <div class="debug-row"><label><input id="environment-clouds" type="checkbox" checked> 구름</label><label><input id="environment-fog" type="checkbox" checked> 안개</label><label><input id="environment-shadows" type="checkbox"> 그림자</label></div>
-    <output id="environment-stats"></output>`;
+    <div class="debug-row" ${debugEnabled ? '' : 'hidden'}><label><input id="environment-clouds" type="checkbox" checked> 구름</label><label><input id="environment-fog" type="checkbox" checked> 안개</label><label><input id="environment-shadows" type="checkbox"> 그림자</label></div>
+    <output id="environment-stats" ${debugEnabled ? '' : 'hidden'}></output>`;
   document.querySelector('.oasis-shell')!.append(panel);
   const time = panel.querySelector<HTMLInputElement>('#environment-time')!;
   const timeLabel = panel.querySelector<HTMLOutputElement>('#environment-time-label')!;
@@ -27,6 +28,14 @@ export function createEnvironmentDebug(
   shadows.checked = renderer.shadowMap.enabled;
   const events = new AbortController();
   const options = { signal: events.signal };
+  panel.addEventListener(
+    'toggle',
+    () => {
+      panel.querySelector('summary')!.setAttribute('aria-expanded', String(panel.open));
+      refresh(0);
+    },
+    options,
+  );
   time.addEventListener(
     'input',
     () => {

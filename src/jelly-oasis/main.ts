@@ -8,7 +8,7 @@ import {
   sampleTerrainHeight,
 } from './terrain/createTerrain';
 import { EnvironmentController } from './environment/EnvironmentController';
-import { createEnvironmentDebug } from './environment/debugPanel';
+import { createEnvironmentPanel } from './environment/debugPanel';
 import { createTerrainSurface } from './terrain/terrainSurface';
 import { createSurfaceDebug } from './terrain/debugSurface';
 import { createOvergrownRuin } from './landmark/createOvergrownRuin';
@@ -106,9 +106,13 @@ function start(canvas: HTMLCanvasElement): void {
     dirty = true;
   };
   controls.addEventListener('change', invalidate);
-  const debugPanel = debugEnabled
-    ? createEnvironmentDebug(environment, renderer, invalidate, setShadows)
-    : null;
+  const debugPanel = createEnvironmentPanel(
+    environment,
+    renderer,
+    invalidate,
+    setShadows,
+    debugEnabled,
+  );
   const surfaceDebug = debugEnabled
     ? createSurfaceDebug(terrain, surface, invalidate)
     : null;
@@ -128,7 +132,10 @@ function start(canvas: HTMLCanvasElement): void {
   landmarkStatus.role = 'status';
   landmarkStatus.textContent = '랜드마크 불러오는 중…';
   document.querySelector('.oasis-shell')!.append(landmarkStatus);
-  void createOvergrownRuin(config)
+  const cliffDetail = !(
+    debugEnabled && new URLSearchParams(location.search).get('cliff') === 'blockout'
+  );
+  void createOvergrownRuin(config, cliffDetail)
     .then((loaded) => {
       if (disposed) {
         loaded.dispose();
@@ -145,6 +152,20 @@ function start(canvas: HTMLCanvasElement): void {
             audit: () => auditLandmark(loaded),
             snapshot: () => ({
               modules: loaded.assets.modules.size,
+              cliffDetail,
+              contact: loaded.contact,
+              shadow: {
+                bias: environment.sun.shadow.bias,
+                normalBias: environment.sun.shadow.normalBias,
+                mapSize: environment.sun.shadow.mapSize.toArray(),
+                allocated: Boolean(environment.sun.shadow.map),
+                bounds: [
+                  environment.sun.shadow.camera.left,
+                  environment.sun.shadow.camera.right,
+                  environment.sun.shadow.camera.near,
+                  environment.sun.shadow.camera.far,
+                ],
+              },
               assetTriangles: loaded.assetTriangles,
               loadMs: loaded.assets.loadMs,
               timings: loaded.assets.timings,
@@ -226,6 +247,10 @@ function start(canvas: HTMLCanvasElement): void {
       }
     }
     if (!previousTarget.equals(controls.target)) dirty = true;
+    environment.focusShadow(
+      controls.target,
+      camera.position.distanceTo(controls.target),
+    );
     if (
       environment.update(
         seconds,

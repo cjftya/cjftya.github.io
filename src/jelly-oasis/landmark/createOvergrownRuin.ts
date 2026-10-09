@@ -29,8 +29,8 @@ export function guideGeometry(guide: LayoutGuide): BufferGeometry {
   return geometry;
 }
 
-export async function createOvergrownRuin(terrain: TerrainConfig) {
-  const assets = await loadLandmarkAssets();
+export async function createOvergrownRuin(terrain: TerrainConfig, cliffDetail = true) {
+  const assets = await loadLandmarkAssets(cliffDetail);
   const root = new Group();
   root.name = 'OvergrownOasisRuin';
   const content = new Group();

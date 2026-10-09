@@ -5,6 +5,7 @@ import {
   Group,
   HemisphereLight,
   SRGBColorSpace,
+  Vector3,
 } from 'three';
 import type { PerspectiveCamera, Scene } from 'three';
 import { createClouds } from './createClouds';
@@ -39,6 +40,7 @@ export class EnvironmentController {
   private readonly cloudDay = new Color('#fff3de');
   private readonly cloudNight = new Color('#818cab');
   private readonly cloudStorm = new Color('#727f8d');
+  private readonly shadowFocus = new Vector3();
   private elapsed = 0;
   private cloudAge = Infinity;
   private changed = true;
@@ -78,11 +80,26 @@ export class EnvironmentController {
       far: 700,
     });
     this.sun.shadow.camera.updateProjectionMatrix();
-    this.sun.shadow.normalBias = 0.4;
-    this.sun.shadow.bias = -0.0002;
+    this.sun.shadow.normalBias = 0.12;
+    this.sun.shadow.bias = -0.0001;
     this.moon.position.set(100, 180, 80);
     scene.add(this.root);
     scene.fog = this.fog;
+  }
+  /** Fit the existing directional shadow to the orbit view, retaining distant casters. */
+  focusShadow(target: Vector3, distance: number): void {
+    const span = Math.max(45, Math.min(230, distance * 0.8));
+    const texel = (span * 2) / this.sun.shadow.mapSize.x;
+    const x = Math.round(target.x / texel) * texel;
+    const z = Math.round(target.z / texel) * texel;
+    const camera = this.sun.shadow.camera;
+    if (camera.right === span && this.shadowFocus.x === x && this.shadowFocus.z === z)
+      return;
+    this.shadowFocus.set(x, 0, z);
+    this.sun.target.position.copy(this.shadowFocus);
+    Object.assign(camera, { left: -span, right: span, top: span, bottom: -span });
+    camera.updateProjectionMatrix();
+    this.changed = true;
   }
   setTime(hour: number): void {
     this.state.timeOfDay = wrapTime(hour);
@@ -171,6 +188,7 @@ export class EnvironmentController {
       )
       .multiplyScalar(300);
     u.sunDirection!.value.copy(this.sun.position).normalize();
+    this.sun.position.add(this.shadowFocus);
     u.sunStrength!.value = (frame.sunlight / 2.5) * weather.sunlightMultiplier;
     this.sun.color.copy(u.sunColor!.value);
     this.sun.intensity = frame.sunlight * weather.sunlightMultiplier;

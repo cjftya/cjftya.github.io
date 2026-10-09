@@ -1,0 +1,38 @@
+{
+  "before_triangles": 2196,
+  "after_triangles": 3238,
+  "before_dimensions": [
+    21.327320098876953,
+    11.773849487304688,
+    17.0
+  ],
+  "after_dimensions": [
+    21.102867126464844,
+    11.390993118286133,
+    17.0
+  ],
+  "origin_difference": [
+    0.0,
+    0.0,
+    0.0
+  ],
+  "scale": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "nonmanifold_edges": 0,
+  "loose_vertices": 0,
+  "signed_volume": 2002.340198113789,
+  "duplicate_vertices": 0,
+  "materials": [
+    "JO_Rock_GrayBrown",
+    "JO_Rock_LightPlane",
+    "JO_Rock_DarkPlane"
+  ],
+  "image_textures": 0,
+  "export_path": "C:\\Users\\cjfty\\Documents\\dev\\cjftya.github.io\\public\\assets\\jelly-oasis\\landmarks\\overgrown-ruin\\Cliff_Waterfall_A_Detail_v1.glb",
+  "connected_components": 1,
+  "zero_area_faces": 0,
+  "inconsistent_winding_edges": 0
+}
