@@ -82,10 +82,10 @@ describe('landmark integration against real exported GLBs', () => {
     expect(load.mock.calls.slice(0, 3).map((c) => c[0].split('/').at(-1))).toEqual([
       'Rock_Large_A.glb',
       'Ruin_Arch_A.glb',
-      'Cliff_Waterfall_A.glb',
+      'Cliff_Waterfall_A_Detail_v1.glb',
     ]);
     expect(landmark.assets.modules.size).toBe(16);
-    expect(landmark.assetTriangles).toBe(8002);
+    expect(landmark.assetTriangles).toBe(9044);
     const audit = auditLandmark(landmark);
     for (const result of [audit.loop, audit.clearing, audit.approach, audit.passage])
       expect(result.intersections).toEqual({});

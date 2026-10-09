@@ -288,3 +288,32 @@ h1 {
     max-height: calc(45dvh - 70px);
   }
 }
+
+/* Keep the public environment disclosure small until opened. */
+#environment-debug {
+  left: max(16px, env(safe-area-inset-left));
+  bottom: max(50px, calc(env(safe-area-inset-bottom) + 16px));
+}
+#environment-debug:not([open]) {
+  width: max-content;
+  max-width: calc(100% - 32px);
+}
+#environment-debug summary:focus-visible {
+  outline: 2px solid #476d55;
+  outline-offset: 4px;
+}
+@media (max-width: 720px) {
+  #landmark-debug[open] {
+    bottom: 104px;
+  }
+  .oasis-shell:has(#environment-debug[open]) #landmark-debug:not([open]) {
+    bottom: auto;
+    top: max(150px, env(safe-area-inset-top));
+  }
+}
+@media (max-height: 500px) {
+  #environment-debug {
+    left: max(16px, env(safe-area-inset-left));
+    right: auto;
+  }
+}

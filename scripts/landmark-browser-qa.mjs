@@ -60,10 +60,11 @@ async function environment(time, weather) {
 try {
   await page.goto(`${base}/projects/jelly-oasis/?debug`);
   await page.waitForFunction(() => window.__oasisLandmark);
+  await panels(true);
   await environment(12, 'CLEAR');
   results.initial = await snapshot();
   assert.equal(results.initial.modules, 16);
-  assert.equal(results.initial.assetTriangles, 8002);
+  assert.equal(results.initial.assetTriangles, 9044);
   for (const name of ['Rock_Large_A', 'Ruin_Arch_A', 'Cliff_Waterfall_A']) {
     await page.locator('#landmark-isolate').selectOption(name);
     await capture(`asset-${name}`);

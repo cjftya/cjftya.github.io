@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { Mesh, PerspectiveCamera, Scene } from 'three';
+import { Mesh, PerspectiveCamera, Scene, Vector3 } from 'three';
 import { EnvironmentController } from '../src/jelly-oasis/environment/EnvironmentController';
 import {
   advanceTime,
@@ -62,6 +62,29 @@ describe('environment time', () => {
 });
 
 describe('weather transitions and scene budgets', () => {
+  it('refocuses shadows without changing the sun direction or allocating a larger map', () => {
+    const environment = new EnvironmentController(new Scene(), false, true);
+    step(environment, 0);
+    const direction = environment.sun.position.clone().normalize();
+    environment.focusShadow(new Vector3(70, -6, 58), 104);
+    expect(step(environment, 0)).toBe(true);
+    expect(environment.sun.shadow.camera.right).toBeCloseTo(83.2);
+    expect(environment.sun.shadow.mapSize.toArray()).toEqual([1024, 1024]);
+    const focusedDirection = environment.sun.position
+      .clone()
+      .sub(environment.sun.target.position)
+      .normalize();
+    expect(focusedDirection.distanceTo(direction)).toBeLessThan(1e-10);
+    expect(step(environment, 0)).toBe(false);
+    environment.focusShadow(new Vector3(70, -6, 58), 104);
+    expect(step(environment, 0)).toBe(false);
+    environment.focusShadow(new Vector3(), 1000);
+    expect(step(environment, 0)).toBe(true);
+    expect(environment.sun.shadow.camera.right).toBe(230);
+    environment.focusShadow(new Vector3(), 5);
+    expect(environment.sun.shadow.camera.right).toBe(45);
+    environment.dispose();
+  });
   it('bounds all profiles and interpolation, including invalid blend inputs', () => {
     for (const preset of WEATHER_PRESETS)
       for (const value of Object.values(WEATHER_PROFILES[preset])) {

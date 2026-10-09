@@ -40,7 +40,7 @@ async function load(file: string): Promise<Group> {
 }
 export const loadLandmarkReference = () => load(LANDMARK_REFERENCE_FILE);
 
-export async function loadLandmarkAssets() {
+export async function loadLandmarkAssets(cliffDetail = true) {
   const started = performance.now();
   const response = await fetch(`${LANDMARK_ASSET_PATH}layout.json`);
   if (!response.ok) throw new Error(`Landmark layout failed: HTTP ${response.status}`);
@@ -51,7 +51,11 @@ export async function loadLandmarkAssets() {
   const timings: Record<string, number> = {};
   async function importModule(name: string) {
     const before = performance.now();
-    const object = await load(`${name}.glb`);
+    const file =
+      cliffDetail && name === 'Cliff_Waterfall_A'
+        ? 'Cliff_Waterfall_A_Detail_v1.glb'
+        : `${name}.glb`;
+    const object = await load(file);
     object.name = name;
     modules.set(name, object);
     timings[name] = performance.now() - before;

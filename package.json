@@ -14,6 +14,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "qa:landmark": "node scripts/landmark-browser-qa.mjs",
+    "qa:cliff": "node scripts/cliff-detail-browser-qa.mjs",
     "data:update": "node scripts/update-uriel-data.mjs",
     "data:check": "node scripts/update-uriel-data.mjs --check",
     "research:shape": "node scripts/shape7x7-study.mjs",

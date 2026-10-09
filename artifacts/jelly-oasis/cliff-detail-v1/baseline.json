@@ -1,0 +1,53 @@
+{
+  "modules": 16,
+  "assetTriangles": 8002,
+  "loadMs": 733,
+  "timings": {
+    "Rock_Large_A": 17.59999990463257,
+    "Ruin_Arch_A": 8.600000143051147,
+    "Cliff_Waterfall_A": 11.599999904632568,
+    "Rock_Large_C": 38.799999952316284,
+    "Rock_Large_B": 41.09999990463257,
+    "Rock_Large_D": 40.90000009536743,
+    "Rock_Large_E": 41,
+    "Ruin_Wall_A": 41.200000047683716,
+    "Ruin_BrokenWall_A": 41.40000009536743,
+    "Root_Large_A": 46.90000009536743,
+    "Tree_Landmark_Blockout": 49.09999990463257,
+    "Root_Tree_Base_Blockout": 48,
+    "PondEdge_Blockout": 48,
+    "Crystal_Blockout_B": 47.09999990463257,
+    "Crystal_Blockout_A": 48.30000019073486,
+    "Crystal_Blockout_C": 47
+  },
+  "placement": {
+    "id": "basin",
+    "label": "동쪽 분지",
+    "position": {
+      "x": 70,
+      "z": 58
+    },
+    "rotationY": 0.5235987755982988,
+    "scale": 1
+  },
+  "calls": 73,
+  "triangles": 45076,
+  "textures": 4,
+  "geometries": 40,
+  "shadows": true,
+  "timeOfDay": 12,
+  "weather": "CLEAR",
+  "weatherBlend": 1,
+  "rainVisible": false,
+  "visible": true,
+  "camera": [
+    125,
+    41.7633241867194,
+    135.99999999999997
+  ],
+  "target": [
+    70,
+    0.763324186719405,
+    57.99999999999999
+  ]
+}
