@@ -1,0 +1,72 @@
+[
+  {
+    "file": "Cliff_Waterfall_A.glb",
+    "bytes": 159956,
+    "meshes": 1,
+    "triangles": 2136,
+    "passed": true
+  },
+  {
+    "file": "Crystal_Blockout_A.glb",
+    "bytes": 5484,
+    "meshes": 1,
+    "triangles": 66,
+    "passed": true
+  },
+  {
+    "file": "Overgrown_Oasis_Ruin_Blockout_v1.glb",
+    "bytes": 609448,
+    "meshes": 16,
+    "triangles": 7942,
+    "passed": true
+  },
+  {
+    "file": "PondEdge_Blockout.glb",
+    "bytes": 12024,
+    "meshes": 1,
+    "triangles": 192,
+    "passed": true
+  },
+  {
+    "file": "Rock_Large_A.glb",
+    "bytes": 35244,
+    "meshes": 1,
+    "triangles": 436,
+    "passed": true
+  },
+  {
+    "file": "Root_Large_A.glb",
+    "bytes": 20216,
+    "meshes": 1,
+    "triangles": 356,
+    "passed": true
+  },
+  {
+    "file": "Ruin_Arch_A.glb",
+    "bytes": 57148,
+    "meshes": 1,
+    "triangles": 924,
+    "passed": true
+  },
+  {
+    "file": "Ruin_BrokenWall_A.glb",
+    "bytes": 25496,
+    "meshes": 1,
+    "triangles": 396,
+    "passed": true
+  },
+  {
+    "file": "Ruin_Wall_A.glb",
+    "bytes": 28048,
+    "meshes": 1,
+    "triangles": 440,
+    "passed": true
+  },
+  {
+    "file": "Tree_Landmark_Blockout.glb",
+    "bytes": 187560,
+    "meshes": 1,
+    "triangles": 1908,
+    "passed": true
+  }
+]

@@ -1,0 +1,766 @@
+{
+  "blender_version": "5.2.2 LTS",
+  "scene": "JellyOasis_OvergrownRuin_v1",
+  "preserved_scene": "Scene",
+  "footprint_m": [
+    80,
+    76
+  ],
+  "unit_scale": 1,
+  "axis": "Blender Z up; glTF Y up via exporter",
+  "assets": [
+    {
+      "name": "Ground_Presentation_ONLY",
+      "collection": "BLOCKOUT",
+      "dimensions_m": [
+        80.0,
+        76.0,
+        0.0
+      ],
+      "location_blender_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 64,
+      "vertices": 65,
+      "boundary_edges": 64,
+      "nonmanifold_nonboundary_edges": 0,
+      "loose_vertices": 0,
+      "materials": [
+        "JO_Ground_PresentationOnly"
+      ],
+      "origin_rule": "local placement anchor",
+      "export_asset": false
+    },
+    {
+      "name": "Pond_Blockout",
+      "collection": "BLOCKOUT",
+      "dimensions_m": [
+        24.3064,
+        20.2152,
+        0.0
+      ],
+      "location_blender_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 48,
+      "vertices": 49,
+      "boundary_edges": 48,
+      "nonmanifold_nonboundary_edges": 0,
+      "loose_vertices": 0,
+      "materials": [
+        "JO_Pond_BlueFootprint_ONLY"
+      ],
+      "origin_rule": "local placement anchor",
+      "export_asset": false
+    },
+    {
+      "name": "CreaturePaths_Loop_6m",
+      "collection": "CompositionGuides",
+      "dimensions_m": [
+        74.0,
+        70.0,
+        0.0
+      ],
+      "location_blender_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 256,
+      "vertices": 256,
+      "boundary_edges": 256,
+      "nonmanifold_nonboundary_edges": 0,
+      "loose_vertices": 0,
+      "materials": [
+        "JO_Debug_PathGreen"
+      ],
+      "origin_rule": "local placement anchor",
+      "export_asset": false
+    },
+    {
+      "name": "CreatureClearing_Diameter16m",
+      "collection": "CompositionGuides",
+      "dimensions_m": [
+        16.0,
+        16.0,
+        0.0
+      ],
+      "location_blender_m": [
+        0.0,
+        -2.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 48,
+      "vertices": 49,
+      "boundary_edges": 48,
+      "nonmanifold_nonboundary_edges": 0,
+      "loose_vertices": 0,
+      "materials": [
+        "JO_Debug_ClearanceYellow"
+      ],
+      "origin_rule": "local placement anchor",
+      "export_asset": false
+    },
+    {
+      "name": "CreaturePaths_ArchApproach_6m",
+      "collection": "CompositionGuides",
+      "dimensions_m": [
+        6.0,
+        26.0,
+        0.0
+      ],
+      "location_blender_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 8,
+      "vertices": 10,
+      "boundary_edges": 10,
+      "nonmanifold_nonboundary_edges": 0,
+      "loose_vertices": 0,
+      "materials": [
+        "JO_Debug_PathGreen"
+      ],
+      "origin_rule": "local placement anchor",
+      "export_asset": false
+    },
+    {
+      "name": "Waterfall_Drop_Guide_L",
+      "collection": "CompositionGuides",
+      "dimensions_m": [
+        0.14,
+        9.0278,
+        16.4471
+      ],
+      "location_blender_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 36,
+      "vertices": 20,
+      "boundary_edges": 0,
+      "nonmanifold_nonboundary_edges": 0,
+      "loose_vertices": 0,
+      "materials": [
+        "JO_Debug_WaterfallCyan"
+      ],
+      "origin_rule": "local placement anchor",
+      "export_asset": false
+    },
+    {
+      "name": "Waterfall_Drop_Guide_R",
+      "collection": "CompositionGuides",
+      "dimensions_m": [
+        0.14,
+        9.0278,
+        16.4471
+      ],
+      "location_blender_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 36,
+      "vertices": 20,
+      "boundary_edges": 0,
+      "nonmanifold_nonboundary_edges": 0,
+      "loose_vertices": 0,
+      "materials": [
+        "JO_Debug_WaterfallCyan"
+      ],
+      "origin_rule": "local placement anchor",
+      "export_asset": false
+    },
+    {
+      "name": "Cliff_Waterfall_A",
+      "collection": "CLIFF",
+      "dimensions_m": [
+        21.3273,
+        11.7738,
+        17.0
+      ],
+      "location_blender_m": [
+        0.0149,
+        12.5868,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 2136,
+      "vertices": 1080,
+      "boundary_edges": 0,
+      "nonmanifold_nonboundary_edges": 0,
+      "loose_vertices": 0,
+      "materials": [
+        "JO_Rock_GrayBrown",
+        "JO_Rock_LightPlane",
+        "JO_Rock_DarkPlane"
+      ],
+      "origin_rule": "placement base center",
+      "export_asset": true
+    },
+    {
+      "name": "Rock_Large_A",
+      "collection": "CLIFF",
+      "dimensions_m": [
+        7.6529,
+        5.652,
+        5.5
+      ],
+      "location_blender_m": [
+        -20.1022,
+        -6.0328,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 436,
+      "vertices": 220,
+      "boundary_edges": 0,
+      "nonmanifold_nonboundary_edges": 0,
+      "loose_vertices": 0,
+      "materials": [
+        "JO_Rock_GrayBrown",
+        "JO_Rock_LightPlane",
+        "JO_Rock_DarkPlane"
+      ],
+      "origin_rule": "bottom center",
+      "export_asset": true
+    },
+    {
+      "name": "Rock_Large_B",
+      "collection": "CLIFF",
+      "dimensions_m": [
+        5.3738,
+        4.4419,
+        4.0
+      ],
+      "location_blender_m": [
+        -22.3676,
+        11.8865,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 220,
+      "vertices": 112,
+      "boundary_edges": 0,
+      "nonmanifold_nonboundary_edges": 0,
+      "loose_vertices": 0,
+      "materials": [
+        "JO_Rock_GrayBrown",
+        "JO_Rock_LightPlane",
+        "JO_Rock_DarkPlane"
+      ],
+      "origin_rule": "local placement anchor",
+      "export_asset": true
+    },
+    {
+      "name": "Rock_Large_C",
+      "collection": "CLIFF",
+      "dimensions_m": [
+        4.5199,
+        3.6771,
+        3.5
+      ],
+      "location_blender_m": [
+        24.8452,
+        -7.9923,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 220,
+      "vertices": 112,
+      "boundary_edges": 0,
+      "nonmanifold_nonboundary_edges": 0,
+      "loose_vertices": 0,
+      "materials": [
+        "JO_Rock_GrayBrown",
+        "JO_Rock_LightPlane",
+        "JO_Rock_DarkPlane"
+      ],
+      "origin_rule": "local placement anchor",
+      "export_asset": true
+    },
+    {
+      "name": "Rock_Large_D",
+      "collection": "CLIFF",
+      "dimensions_m": [
+        6.3199,
+        4.6637,
+        4.2
+      ],
+      "location_blender_m": [
+        -15.1516,
+        -17.9912,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 220,
+      "vertices": 112,
+      "boundary_edges": 0,
+      "nonmanifold_nonboundary_edges": 0,
+      "loose_vertices": 0,
+      "materials": [
+        "JO_Rock_GrayBrown",
+        "JO_Rock_LightPlane",
+        "JO_Rock_DarkPlane"
+      ],
+      "origin_rule": "local placement anchor",
+      "export_asset": true
+    },
+    {
+      "name": "Rock_Large_E",
+      "collection": "CLIFF",
+      "dimensions_m": [
+        4.5174,
+        4.5327,
+        3.0
+      ],
+      "location_blender_m": [
+        21.9834,
+        14.8738,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 220,
+      "vertices": 112,
+      "boundary_edges": 0,
+      "nonmanifold_nonboundary_edges": 0,
+      "loose_vertices": 0,
+      "materials": [
+        "JO_Rock_GrayBrown",
+        "JO_Rock_LightPlane",
+        "JO_Rock_DarkPlane"
+      ],
+      "origin_rule": "local placement anchor",
+      "export_asset": true
+    },
+    {
+      "name": "Ruin_Arch_A",
+      "collection": "RUIN",
+      "dimensions_m": [
+        8.77,
+        2.35,
+        9.4954
+      ],
+      "location_blender_m": [
+        15.0,
+        6.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 924,
+      "vertices": 504,
+      "boundary_edges": 0,
+      "nonmanifold_nonboundary_edges": 0,
+      "loose_vertices": 0,
+      "materials": [
+        "JO_Ruin_WarmGray",
+        "JO_Ruin_LightStone",
+        "JO_Ruin_ShadowStone"
+      ],
+      "origin_rule": "passage center at ground",
+      "export_asset": true
+    },
+    {
+      "name": "Ruin_Wall_A",
+      "collection": "RUIN",
+      "dimensions_m": [
+        8.2,
+        1.48,
+        5.3
+      ],
+      "location_blender_m": [
+        -14.0,
+        2.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 440,
+      "vertices": 240,
+      "boundary_edges": 0,
+      "nonmanifold_nonboundary_edges": 0,
+      "loose_vertices": 0,
+      "materials": [
+        "JO_Ruin_WarmGray",
+        "JO_Ruin_LightStone",
+        "JO_Ruin_ShadowStone"
+      ],
+      "origin_rule": "bottom center",
+      "export_asset": true
+    },
+    {
+      "name": "Ruin_BrokenWall_A",
+      "collection": "RUIN",
+      "dimensions_m": [
+        7.6697,
+        4.4556,
+        5.983
+      ],
+      "location_blender_m": [
+        18.0,
+        17.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 396,
+      "vertices": 216,
+      "boundary_edges": 0,
+      "nonmanifold_nonboundary_edges": 0,
+      "loose_vertices": 0,
+      "materials": [
+        "JO_Ruin_WarmGray",
+        "JO_Ruin_LightStone",
+        "JO_Ruin_ShadowStone"
+      ],
+      "origin_rule": "bottom center",
+      "export_asset": true
+    },
+    {
+      "name": "Tree_Landmark_Blockout",
+      "collection": "TREE",
+      "dimensions_m": [
+        25.0,
+        20.0,
+        28.0
+      ],
+      "location_blender_m": [
+        -12.0,
+        18.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 1908,
+      "vertices": 972,
+      "boundary_edges": 0,
+      "nonmanifold_nonboundary_edges": 0,
+      "loose_vertices": 0,
+      "materials": [
+        "JO_Tree_DarkBrown",
+        "JO_Canopy_Sage",
+        "JO_Canopy_Light",
+        "JO_Canopy_Shadow"
+      ],
+      "origin_rule": "trunk ground center",
+      "export_asset": true
+    },
+    {
+      "name": "Root_Large_A",
+      "collection": "TREE",
+      "dimensions_m": [
+        4.932,
+        12.5807,
+        6.1971
+      ],
+      "location_blender_m": [
+        -12.0,
+        10.0,
+        1.3
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 356,
+      "vertices": 180,
+      "boundary_edges": 0,
+      "nonmanifold_nonboundary_edges": 0,
+      "loose_vertices": 0,
+      "materials": [
+        "JO_Tree_DarkBrown"
+      ],
+      "origin_rule": "connection start, ground reference",
+      "export_asset": true
+    },
+    {
+      "name": "Root_Tree_Base_Blockout",
+      "collection": "TREE",
+      "dimensions_m": [
+        3.0716,
+        9.0064,
+        2.7091
+      ],
+      "location_blender_m": [
+        -12.0,
+        18.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 76,
+      "vertices": 40,
+      "boundary_edges": 0,
+      "nonmanifold_nonboundary_edges": 0,
+      "loose_vertices": 0,
+      "materials": [
+        "JO_Tree_DarkBrown"
+      ],
+      "origin_rule": "local placement anchor",
+      "export_asset": true
+    },
+    {
+      "name": "PondEdge_Blockout",
+      "collection": "POND",
+      "dimensions_m": [
+        27.9524,
+        23.2474,
+        0.325
+      ],
+      "location_blender_m": [
+        0.0,
+        -7.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 192,
+      "vertices": 144,
+      "boundary_edges": 96,
+      "nonmanifold_nonboundary_edges": 0,
+      "loose_vertices": 0,
+      "materials": [
+        "JO_PondEdge_Earth"
+      ],
+      "origin_rule": "local placement anchor",
+      "export_asset": true
+    },
+    {
+      "name": "Crystal_Blockout_A",
+      "collection": "ACCENT",
+      "dimensions_m": [
+        2.6,
+        1.6093,
+        3.4
+      ],
+      "location_blender_m": [
+        15.0,
+        -19.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 66,
+      "vertices": 39,
+      "boundary_edges": 0,
+      "nonmanifold_nonboundary_edges": 0,
+      "loose_vertices": 0,
+      "materials": [
+        "JO_Crystal_VioletPlaceholder"
+      ],
+      "origin_rule": "local placement anchor",
+      "export_asset": true
+    },
+    {
+      "name": "Crystal_Blockout_B",
+      "collection": "ACCENT",
+      "dimensions_m": [
+        2.6,
+        1.6093,
+        3.4
+      ],
+      "location_blender_m": [
+        -15.0,
+        -12.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 66,
+      "vertices": 39,
+      "boundary_edges": 0,
+      "nonmanifold_nonboundary_edges": 0,
+      "loose_vertices": 0,
+      "materials": [
+        "JO_Crystal_VioletPlaceholder"
+      ],
+      "origin_rule": "local placement anchor",
+      "export_asset": true
+    },
+    {
+      "name": "Crystal_Blockout_C",
+      "collection": "ACCENT",
+      "dimensions_m": [
+        2.6,
+        1.6093,
+        3.4
+      ],
+      "location_blender_m": [
+        9.0,
+        20.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 66,
+      "vertices": 39,
+      "boundary_edges": 0,
+      "nonmanifold_nonboundary_edges": 0,
+      "loose_vertices": 0,
+      "materials": [
+        "JO_Crystal_VioletPlaceholder"
+      ],
+      "origin_rule": "local placement anchor",
+      "export_asset": true
+    }
+  ],
+  "exported_asset_count": 16,
+  "total_exported_triangles": 7942,
+  "modules": [
+    "Cliff_Waterfall_A",
+    "Ruin_Arch_A",
+    "Ruin_Wall_A",
+    "Ruin_BrokenWall_A",
+    "Rock_Large_A",
+    "Tree_Landmark_Blockout",
+    "Root_Large_A",
+    "PondEdge_Blockout",
+    "Crystal_Blockout_A"
+  ],
+  "roundtrip": [
+    {
+      "asset": "Cliff_Waterfall_A",
+      "passed": true,
+      "dimension_max_error_m": 0.0,
+      "origin_error_m": 0.0,
+      "triangles": 2136,
+      "material_slot_count": 3
+    },
+    {
+      "asset": "Ruin_Arch_A",
+      "passed": true,
+      "dimension_max_error_m": 0.0,
+      "origin_error_m": 0.0,
+      "triangles": 924,
+      "material_slot_count": 3
+    },
+    {
+      "asset": "Rock_Large_A",
+      "passed": true,
+      "dimension_max_error_m": 0.0,
+      "origin_error_m": 0.0,
+      "triangles": 436,
+      "material_slot_count": 3
+    }
+  ],
+  "movement": {
+    "loop_width_m": 6,
+    "loop_sample_count": 5040,
+    "loop_intersections": {},
+    "clearing_diameter_m": 16,
+    "clearing_sample_count": 3209,
+    "clearing_intersections": {},
+    "approach_sample_count": 4212,
+    "approach_intersections": {},
+    "arch_nominal_passage_width_m": 4.8,
+    "method": "Projected triangles clipped to 0.08..3 m, plus pond footprint. Loop: 720 x 7 samples; clearing: 0.25 m grid; approach: 81 x 13 samples per segment. Not continuous collision proof or NavMesh.",
+    "arch_minimum_jamb_clearance_m": 4.63,
+    "reserved_space_grid_m": 0.5,
+    "reserved_space_union_m2": 1912.5,
+    "reserved_space_percent": 40.02
+  },
+  "textures": 0,
+  "collections": [
+    "BLOCKOUT",
+    "CLIFF",
+    "RUIN",
+    "TREE",
+    "POND",
+    "ACCENT",
+    "REVIEW"
+  ]
+}

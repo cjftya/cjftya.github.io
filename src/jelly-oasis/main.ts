@@ -11,6 +11,12 @@ import { EnvironmentController } from './environment/EnvironmentController';
 import { createEnvironmentDebug } from './environment/debugPanel';
 import { createTerrainSurface } from './terrain/terrainSurface';
 import { createSurfaceDebug } from './terrain/debugSurface';
+import { createOvergrownRuin } from './landmark/createOvergrownRuin';
+import type { OvergrownRuin } from './landmark/createOvergrownRuin';
+import { createLandmarkDebug } from './landmark/landmarkDebug';
+import { frameLandmark } from './landmark/landmarkCamera';
+import type { LandmarkCamera } from './landmark/landmarkConfig';
+import { auditLandmark } from './landmark/landmarkAudit';
 import './styles.css';
 
 function start(canvas: HTMLCanvasElement): void {
@@ -51,6 +57,10 @@ function start(canvas: HTMLCanvasElement): void {
   let lastRender = 0;
   let lastDebug = 0;
   let frameMs = 0;
+  let landmark: OvergrownRuin | null = null;
+  let landmarkDebug: ReturnType<typeof createLandmarkDebug> | null = null;
+  let reviewCamera = false;
+  let groundCamera = false;
   function setShadows(enabled: boolean): void {
     renderer.shadowMap.enabled = enabled;
     environment.sun.castShadow = enabled;
@@ -58,6 +68,7 @@ function start(canvas: HTMLCanvasElement): void {
     terrain.material.needsUpdate = true;
     edge.material.needsUpdate = true;
     environment.clouds.mesh.material.needsUpdate = true;
+    landmark?.refreshMaterials();
     dirty = true;
   }
   setShadows(!mobile);
@@ -65,6 +76,9 @@ function start(canvas: HTMLCanvasElement): void {
   const resetButton = document.querySelector<HTMLButtonElement>('#reset-view')!;
 
   function resetView(): void {
+    reviewCamera = groundCamera = false;
+    controls.minDistance = 35;
+    controls.maxPolarAngle = Math.PI * 0.445;
     // Flush residual damping so reset also works during an active gesture.
     controls.enableDamping = false;
     controls.update();
@@ -98,6 +112,70 @@ function start(canvas: HTMLCanvasElement): void {
   const surfaceDebug = debugEnabled
     ? createSurfaceDebug(terrain, surface, invalidate)
     : null;
+  function landmarkView(view: LandmarkCamera): void {
+    if (view === 'overview') {
+      resetView();
+      return;
+    }
+    if (!landmark) return;
+    reviewCamera = true;
+    groundCamera = view === 'ground';
+    frameLandmark(view, landmark, camera, controls);
+    invalidate();
+  }
+  const landmarkStatus = document.createElement('p');
+  landmarkStatus.id = 'landmark-status';
+  landmarkStatus.role = 'status';
+  landmarkStatus.textContent = '랜드마크 불러오는 중…';
+  document.querySelector('.oasis-shell')!.append(landmarkStatus);
+  void createOvergrownRuin(config)
+    .then((loaded) => {
+      if (disposed) {
+        loaded.dispose();
+        return;
+      }
+      landmark = loaded;
+      scene.add(loaded.root);
+      landmarkStatus.hidden = true;
+      if (debugEnabled) {
+        landmarkDebug = createLandmarkDebug(loaded, invalidate, landmarkView);
+        // Opt-in inspection API for repeatable browser QA; no production global.
+        Object.assign(window, {
+          __oasisLandmark: {
+            audit: () => auditLandmark(loaded),
+            snapshot: () => ({
+              modules: loaded.assets.modules.size,
+              assetTriangles: loaded.assetTriangles,
+              loadMs: loaded.assets.loadMs,
+              timings: loaded.assets.timings,
+              placement: loaded.placement,
+              calls: renderer.info.render.calls,
+              triangles: renderer.info.render.triangles,
+              textures: renderer.info.memory.textures,
+              geometries: renderer.info.memory.geometries,
+              shadows: renderer.shadowMap.enabled,
+              timeOfDay: environment.state.timeOfDay,
+              weather: environment.state.weather,
+              weatherBlend: environment.state.weatherBlend,
+              rainVisible: environment.rain.mesh.visible,
+              visible: loaded.root.visible,
+              camera: camera.position.toArray(),
+              target: controls.target.toArray(),
+            }),
+          },
+        });
+      }
+      invalidate();
+    })
+    .catch((error: unknown) => {
+      if (disposed) return;
+      landmarkStatus.hidden = false;
+      landmarkStatus.textContent =
+        '랜드마크를 불러오지 못했습니다. 페이지를 새로고침해 주세요.';
+      landmarkStatus.role = 'alert';
+      console.error('Jelly Oasis landmark load failed:', error);
+      invalidate();
+    });
   function motionChanged(): void {
     if (motionPreference.matches) environment.setPlaying(false);
     dirty = true;
@@ -130,7 +208,7 @@ function start(canvas: HTMLCanvasElement): void {
     // Follow the terrain while panning; preserve camera offset above the target.
     const ground = sampleTerrainHeight(controls.target.x, controls.target.z, config);
     const delta = ground - controls.target.y;
-    if (Math.abs(delta) > 0.001) {
+    if (!reviewCamera && Math.abs(delta) > 0.001) {
       controls.target.y = ground;
       camera.position.y += delta;
       dirty = true;
@@ -140,7 +218,8 @@ function start(canvas: HTMLCanvasElement): void {
       Math.abs(camera.position.z) <= config.size / 2
     ) {
       const minimumY =
-        sampleTerrainHeight(camera.position.x, camera.position.z, config) + 6;
+        sampleTerrainHeight(camera.position.x, camera.position.z, config) +
+        (groundCamera ? 1.7 : 6);
       if (camera.position.y < minimumY) {
         camera.position.y = minimumY;
         dirty = true;
@@ -185,6 +264,10 @@ function start(canvas: HTMLCanvasElement): void {
     renderer.setAnimationLoop(null);
     if (event.persisted) return;
     disposed = true;
+    landmarkDebug?.dispose();
+    landmark?.dispose();
+    landmarkStatus.remove();
+    Reflect.deleteProperty(window, '__oasisLandmark');
     observer.disconnect();
     controls.dispose();
     terrain.geometry.dispose();
