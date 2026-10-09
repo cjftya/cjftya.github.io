@@ -1,0 +1,168 @@
+{
+  "preserved": {
+    "Ruin_Arch_A.glb": "035888f032597fab11a56be9f015a177dd27cdde2402be1b4620bd7db0cc8e8c",
+    "Ruin_Wall_A.glb": "0dd09ae734403670b2b3b58970fade951bb6f86d54cff30605c6e5ade17ba2f0",
+    "Ruin_BrokenWall_A.glb": "833bfd9ccacc93ba1a71e2fa0080e892543cb7e29552a56dc1c9d1ecd935f724",
+    "Root_Large_A.glb": "4bed3d87209c6b8c81b3633a3c4d513ccc4f400de236ad609b5ebfff1ab7b186",
+    "Root_Tree_Base_Blockout.glb": "7e72d9f9d94723911747d8943ee83c0b1f22eccddb12a9c316c5b5715728bd46",
+    "layout.json": "a4f079f6a6390b7fcce36db21f79d501d530ffb24727758557d209525748119d",
+    "Cliff_Waterfall_A_Detail_v1.glb": "a7e78320840c0d0b39ebf535da507638562ba2f75d1254acfebcc9a9972ded53"
+  },
+  "modules": {
+    "Ruin_Arch_A": {
+      "bytes": 62584,
+      "triangles": 1046,
+      "primitives": 3,
+      "materials": 3,
+      "textures": 0,
+      "bounds": {
+        "min": [
+          -4.4419121742248535,
+          0.019999999552965164,
+          -1.2371920347213745
+        ],
+        "max": [
+          4.474281311035156,
+          9.51540470123291,
+          1.2483946084976196
+        ]
+      },
+      "dimensions": [
+        8.91619348526001,
+        9.495404701679945,
+        2.485586643218994
+      ],
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "Ruin_Arch_A_Detail_v1"
+        }
+      ],
+      "sha256": "e0957ece91c0ed103b6c5e9b846810c72e1601ac18544fee4a32383296490737"
+    },
+    "Ruin_Wall_A": {
+      "bytes": 34736,
+      "triangles": 500,
+      "primitives": 2,
+      "materials": 2,
+      "textures": 0,
+      "bounds": {
+        "min": [
+          -4.099999904632568,
+          0,
+          -1.0775638818740845
+        ],
+        "max": [
+          4.099999904632568,
+          4.9871087074279785,
+          0.9237360954284668
+        ]
+      },
+      "dimensions": [
+        8.199999809265137,
+        4.9871087074279785,
+        2.0012999773025513
+      ],
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "Ruin_Wall_A_Detail_v1"
+        }
+      ],
+      "sha256": "6ca3501de74d1c055ef9a4fec53039509d6bf789255f55aa96f81626a0ca06da"
+    },
+    "Ruin_BrokenWall_A": {
+      "bytes": 37376,
+      "triangles": 450,
+      "primitives": 2,
+      "materials": 2,
+      "textures": 0,
+      "bounds": {
+        "min": [
+          -3.8722150325775146,
+          0,
+          -2.264697790145874
+        ],
+        "max": [
+          3.8431334495544434,
+          5.610586166381836,
+          2.2657546997070312
+        ]
+      },
+      "dimensions": [
+        7.715348482131958,
+        5.610586166381836,
+        4.530452489852905
+      ],
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "Ruin_BrokenWall_A_Detail_v1"
+        }
+      ],
+      "sha256": "101c21ad988811827305aa09a85508c2af8b58c123afa0b0e8c8f7af455484a6"
+    },
+    "Root_Large_A": {
+      "bytes": 62264,
+      "triangles": 740,
+      "primitives": 1,
+      "materials": 1,
+      "textures": 0,
+      "bounds": {
+        "min": [
+          -3.4696006774902344,
+          -1.4853633642196655,
+          -0.4916706085205078
+        ],
+        "max": [
+          1.8829069137573242,
+          4.488834381103516,
+          11.730391502380371
+        ]
+      },
+      "dimensions": [
+        5.352507591247559,
+        5.974197745323181,
+        12.222062110900879
+      ],
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "Root_Large_A_Detail_v1"
+        }
+      ],
+      "sha256": "472bd407499d7440c6a029425ce834b5bb39f8dc061aa2cf79f9fab212391fe1"
+    },
+    "Root_Tree_Base_Blockout": {
+      "bytes": 58768,
+      "triangles": 256,
+      "primitives": 1,
+      "materials": 1,
+      "textures": 0,
+      "bounds": {
+        "min": [
+          -2.3054046630859375,
+          -0.2744911313056946,
+          -0.5745811462402344
+        ],
+        "max": [
+          1.1776466369628906,
+          2.2156176567077637,
+          8.63657283782959
+        ]
+      },
+      "dimensions": [
+        3.483051300048828,
+        2.4901087880134583,
+        9.211153984069824
+      ],
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "Root_Tree_Base_Blockout_Detail_v1"
+        }
+      ],
+      "sha256": "62087eed9fe46c5c82eaf15a7e3ad6be8b6f35200c8858637c889c5a983dbb9a"
+    }
+  }
+}

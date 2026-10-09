@@ -1,0 +1,244 @@
+{
+  "Ruin_Arch_A": {
+    "before_triangles": 924,
+    "triangles": 1046,
+    "before_dimensions": [
+      8.770000457763672,
+      2.3499999046325684,
+      9.495404243469238
+    ],
+    "dimensions": [
+      8.916193008422852,
+      2.485586643218994,
+      9.495404243469238
+    ],
+    "origin": [
+      15.0,
+      6.0,
+      0.0
+    ],
+    "origin_delta": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "scale": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "nonmanifold_edges": 0,
+    "loose_vertices": 0,
+    "zero_area_faces": 0,
+    "inconsistent_winding": 0,
+    "duplicates": 0,
+    "signed_volume": 77.36414922498352,
+    "materials": [
+      "JO_Ruin_WarmGray",
+      "JO_Ruin_LightStone",
+      "JO_Ruin_ShadowStone"
+    ],
+    "textures": 0,
+    "bytes": 62584,
+    "reimport_triangles": 1046,
+    "reimport_dimensions": [
+      8.916193008422852,
+      2.485586643218994,
+      9.495404243469238
+    ]
+  },
+  "Ruin_Wall_A": {
+    "before_triangles": 440,
+    "triangles": 500,
+    "before_dimensions": [
+      8.199999809265137,
+      1.4800000190734863,
+      5.300000190734863
+    ],
+    "dimensions": [
+      8.199999809265137,
+      2.0012998580932617,
+      4.9871087074279785
+    ],
+    "origin": [
+      -14.0,
+      2.0,
+      0.0
+    ],
+    "origin_delta": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "scale": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "nonmanifold_edges": 0,
+    "loose_vertices": 0,
+    "zero_area_faces": 0,
+    "inconsistent_winding": 0,
+    "duplicates": 0,
+    "signed_volume": 50.31776282432448,
+    "materials": [
+      "JO_Ruin_WarmGray",
+      "JO_Ruin_LightStone",
+      "JO_Ruin_ShadowStone"
+    ],
+    "textures": 0,
+    "bytes": 34736,
+    "reimport_triangles": 500,
+    "reimport_dimensions": [
+      8.199999809265137,
+      2.0012998580932617,
+      4.9871087074279785
+    ]
+  },
+  "Ruin_BrokenWall_A": {
+    "before_triangles": 396,
+    "triangles": 450,
+    "before_dimensions": [
+      7.669721603393555,
+      4.455604076385498,
+      5.983003616333008
+    ],
+    "dimensions": [
+      7.715348243713379,
+      4.530452728271484,
+      5.610586166381836
+    ],
+    "origin": [
+      18.0,
+      17.0,
+      0.0
+    ],
+    "origin_delta": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "scale": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "nonmanifold_edges": 0,
+    "loose_vertices": 0,
+    "zero_area_faces": 0,
+    "inconsistent_winding": 0,
+    "duplicates": 0,
+    "signed_volume": 39.26029768241382,
+    "materials": [
+      "JO_Ruin_WarmGray",
+      "JO_Ruin_LightStone",
+      "JO_Ruin_ShadowStone"
+    ],
+    "textures": 0,
+    "bytes": 37376,
+    "reimport_triangles": 450,
+    "reimport_dimensions": [
+      7.715348243713379,
+      4.530452728271484,
+      5.610586166381836
+    ]
+  },
+  "Root_Large_A": {
+    "before_triangles": 356,
+    "triangles": 740,
+    "before_dimensions": [
+      4.931971549987793,
+      12.580663681030273,
+      6.1970534324646
+    ],
+    "dimensions": [
+      5.352507591247559,
+      12.222062110900879,
+      5.974197864532471
+    ],
+    "origin": [
+      -12.0,
+      10.0,
+      1.2999999523162842
+    ],
+    "origin_delta": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "scale": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "nonmanifold_edges": 0,
+    "loose_vertices": 0,
+    "zero_area_faces": 0,
+    "inconsistent_winding": 0,
+    "duplicates": 0,
+    "signed_volume": 23.102994654938872,
+    "materials": [
+      "JO_Tree_DarkBrown"
+    ],
+    "textures": 0,
+    "bytes": 62264,
+    "reimport_triangles": 740,
+    "reimport_dimensions": [
+      5.352507591247559,
+      12.222062110900879,
+      5.974197864532471
+    ]
+  },
+  "Root_Tree_Base_Blockout": {
+    "before_triangles": 76,
+    "triangles": 256,
+    "before_dimensions": [
+      3.071566343307495,
+      9.006401062011719,
+      2.709111213684082
+    ],
+    "dimensions": [
+      3.483051300048828,
+      9.211153984069824,
+      2.4901087284088135
+    ],
+    "origin": [
+      -12.0,
+      18.0,
+      0.0
+    ],
+    "origin_delta": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "scale": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "nonmanifold_edges": 0,
+    "loose_vertices": 0,
+    "zero_area_faces": 0,
+    "inconsistent_winding": 0,
+    "duplicates": 0,
+    "signed_volume": 24.530104016151693,
+    "materials": [
+      "JO_Tree_DarkBrown"
+    ],
+    "textures": 0,
+    "bytes": 58768,
+    "reimport_triangles": 256,
+    "reimport_dimensions": [
+      3.483051300048828,
+      9.211153984069824,
+      2.4901087284088135
+    ]
+  },
+  "notes": [
+    "Runtime broken wall offset remains X+4/Z+11; not baked into GLB.",
+    "No new modules. Closed separate stones retain internal mating faces for reuse; no destructive union.",
+    "Arch intrados and ground footprint preserved. Root ground fitting verified separately in runtime."
+  ],
+  "verification": "Final GLBs reimported in separate background Blender 5.2.2; live MCP timed out during its redundant final audit."
+}
