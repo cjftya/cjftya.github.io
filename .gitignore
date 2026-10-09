@@ -24,3 +24,10 @@ coverage
 *.njsproj
 *.sln
 *.sw?
+
+# Local Blender backups, Python caches, and browser test output
+*.blend[0-9]*
+__pycache__/
+*.py[cod]
+playwright-report/
+test-results/

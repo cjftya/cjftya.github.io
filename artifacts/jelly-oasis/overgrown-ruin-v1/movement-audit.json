@@ -1,0 +1,16 @@
+{
+  "loop_width_m": 6,
+  "loop_sample_count": 5040,
+  "loop_intersections": {},
+  "clearing_diameter_m": 16,
+  "clearing_sample_count": 3209,
+  "clearing_intersections": {},
+  "approach_sample_count": 4212,
+  "approach_intersections": {},
+  "arch_nominal_passage_width_m": 4.8,
+  "method": "Projected triangles clipped to 0.08..3 m, plus pond footprint. Loop: 720 x 7 samples; clearing: 0.25 m grid; approach: 81 x 13 samples per segment. Not continuous collision proof or NavMesh.",
+  "arch_minimum_jamb_clearance_m": 4.63,
+  "reserved_space_grid_m": 0.5,
+  "reserved_space_union_m2": 1912.5,
+  "reserved_space_percent": 40.02
+}

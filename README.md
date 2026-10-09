@@ -126,6 +126,15 @@ deploy GitHub Pages → Run workflow**에서 `master`와 `update_data`를 선택
 `npm run build`가 Vite 결과를 만든 뒤 `projects/`와 `shared/`를 원래 경로 그대로
 `dist/`에 복사합니다. 따라서 기존 상대 경로와 공개 URL이 유지됩니다.
 
+## Jelly Oasis
+
+`/projects/jelly-oasis/`에서 지형, 낮·밤·날씨와 Overgrown Oasis Ruin 랜드마크를
+확인할 수 있습니다. `?debug`를 붙이면 후보 위치, 방향, 동선과 검수 카메라를 비교합니다.
+
+- [랜드마크 통합 보고서와 스크린샷](docs/jelly-oasis-landmark-integration-v1.md)
+- [Blender blockout 원본과 재현 방법](docs/jelly-oasis-overgrown-ruin-blockout-v1.md)
+- 로컬 서버 실행 후 `npm run qa:landmark`로 브라우저 검수를 재실행합니다(Microsoft Edge 필요).
+
 ## 기술 스택
 
 - Vite 8

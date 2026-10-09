@@ -13,6 +13,7 @@
     "format:check": "prettier --check .",
     "test": "vitest run",
     "test:watch": "vitest",
+    "qa:landmark": "node scripts/landmark-browser-qa.mjs",
     "data:update": "node scripts/update-uriel-data.mjs",
     "data:check": "node scripts/update-uriel-data.mjs --check",
     "research:shape": "node scripts/shape7x7-study.mjs",
@@ -28,6 +29,7 @@
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
+    "@playwright/test": "^1.64.0",
     "@types/node": "26.1.2",
     "@types/react": "^19.1.10",
     "@types/react-dom": "^19.1.7",
