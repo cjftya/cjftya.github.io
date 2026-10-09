@@ -4,7 +4,9 @@ import { resolve } from 'node:path';
 import { chromium } from '@playwright/test';
 
 const base = process.env.CLIFF_QA_URL ?? 'http://127.0.0.1:4175';
-const output = resolve('artifacts/jelly-oasis/cliff-detail-v1');
+const output = resolve(
+  process.env.CLIFF_QA_OUTPUT ?? 'artifacts/jelly-oasis/cliff-detail-v1',
+);
 await mkdir(output, { recursive: true });
 const browser = await chromium.launch({
   executablePath:
@@ -51,7 +53,7 @@ async function environment(time, weather) {
 }
 async function load(detail) {
   await page.goto(
-    `${base}/projects/jelly-oasis/?debug${detail ? '' : '&cliff=blockout'}`,
+    `${base}/projects/jelly-oasis/?debug&ruin=blockout${detail ? '' : '&cliff=blockout'}`,
   );
   await page.waitForFunction(() => window.__oasisLandmark);
   assert.equal(await page.locator('#environment-debug').evaluate((e) => e.open), false);
