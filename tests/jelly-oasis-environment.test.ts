@@ -209,7 +209,7 @@ describe('weather transitions and scene budgets', () => {
     expect(environment.state.speed).toBe(1);
     environment.setTime(Infinity);
     expect(environment.state.timeOfDay).toBe(12);
-    expect(ENVIRONMENT_CONFIG.cycleSeconds).toBe(480);
+    expect(ENVIRONMENT_CONFIG.cycleSeconds).toBe(960);
     environment.dispose();
   });
 });

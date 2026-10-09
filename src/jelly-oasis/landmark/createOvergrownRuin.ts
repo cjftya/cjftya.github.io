@@ -6,9 +6,11 @@ import {
   Group,
   Mesh,
   MeshStandardMaterial,
+  MathUtils,
   Vector3,
 } from 'three';
 import type { TerrainConfig } from '../terrain/heightfield';
+import type { Matrix4 } from 'three';
 import { OVERGROWN_RUIN_CONFIG, LANDMARK_MODULE_OFFSETS } from './landmarkConfig';
 import type { LandmarkPlacement, LayoutGuide } from './landmarkConfig';
 import { landmarkWorldPoint, sampleGround } from './landmarkPlacement';
@@ -29,8 +31,12 @@ export function guideGeometry(guide: LayoutGuide): BufferGeometry {
   return geometry;
 }
 
-export async function createOvergrownRuin(terrain: TerrainConfig, cliffDetail = true) {
-  const assets = await loadLandmarkAssets(cliffDetail);
+export async function createOvergrownRuin(
+  terrain: TerrainConfig,
+  cliffDetail = true,
+  ruinDetail = true,
+) {
+  const assets = await loadLandmarkAssets(cliffDetail, ruinDetail);
   const root = new Group();
   root.name = 'OvergrownOasisRuin';
   const content = new Group();
@@ -64,6 +70,10 @@ export async function createOvergrownRuin(terrain: TerrainConfig, cliffDetail = 
   content.add(pond);
   let pondHeight = 0;
   const bankVertices = new Map<Mesh, Float32Array>();
+  const rootVertices = new Map<
+    Mesh,
+    { name: string; points: Vector3[]; toMesh: Matrix4 }
+  >();
   let assetTriangles = 0;
   for (const [name, object] of assets.modules) {
     content.add(object);
@@ -83,6 +93,20 @@ export async function createOvergrownRuin(terrain: TerrainConfig, cliffDetail = 
         : [child.material];
       if (materials.every((m) => m.name.includes('Canopy'))) child.castShadow = false;
       const vertices = child.geometry.attributes.position!;
+      if (
+        ruinDetail &&
+        (name === 'Root_Large_A' || name === 'Root_Tree_Base_Blockout')
+      ) {
+        rootVertices.set(child, {
+          name,
+          points: Array.from({ length: vertices.count }, (_, i) =>
+            new Vector3()
+              .fromBufferAttribute(vertices, i)
+              .applyMatrix4(child.matrixWorld),
+          ),
+          toMesh: child.matrixWorld.clone().invert(),
+        });
+      }
       if (name === 'PondEdge_Blockout')
         bankVertices.set(child, Float32Array.from(vertices.array));
       for (let i = 0; i < vertices.count; i++) {
@@ -139,6 +163,39 @@ export async function createOvergrownRuin(terrain: TerrainConfig, cliffDetail = 
         supportCount: points.length,
         y: root.position.y + y * placement.scale,
       };
+    }
+    // Preserve each original module anchor. Only the root surface bends between
+    // the tree foundation, shared connector, wall coping and grounded root tip.
+    // Recompute from immutable vertices, so moving the landmark never accumulates drift.
+    const treeY = assets.modules.get('Tree_Landmark_Blockout')!.position.y;
+    const wallY = assets.modules.get('Ruin_Wall_A')!.position.y;
+    const connectorY = localGround(-12, -10) - 0.4;
+    const tipY = assets.modules.get('Root_Large_A')!.position.y - 1.3;
+    for (const [mesh, data] of rootVertices) {
+      const object = assets.modules.get(data.name)!;
+      const large = data.name === 'Root_Large_A';
+      const attribute = mesh.geometry.attributes.position!;
+      const point = new Vector3();
+      data.points.forEach((original, i) => {
+        const z = object.position.z + original.z;
+        let foundation = large
+          ? MathUtils.lerp(connectorY, wallY, MathUtils.smoothstep(z, -10, -4))
+          : MathUtils.lerp(treeY, connectorY, MathUtils.smoothstep(z, -16, -10));
+        if (large)
+          foundation = MathUtils.lerp(
+            foundation,
+            tipY,
+            MathUtils.smoothstep(z, -0.4, 1.4),
+          );
+        point.copy(original);
+        point.y += (large ? 1.3 : 0) + foundation - object.position.y;
+        point.applyMatrix4(data.toMesh);
+        attribute.setXYZ(i, point.x, point.y, point.z);
+      });
+      attribute.needsUpdate = true;
+      mesh.geometry.computeVertexNormals();
+      mesh.geometry.computeBoundingBox();
+      mesh.geometry.computeBoundingSphere();
     }
     // A level inspection surface in the existing basin; terrain is never edited.
     const shore = pondGuide.positions.slice(1).map((p) => localGround(p[0]!, p[2]!));

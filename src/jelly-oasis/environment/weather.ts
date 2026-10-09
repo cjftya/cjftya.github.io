@@ -86,7 +86,9 @@ export interface EnvironmentState {
   speed: number;
 }
 export const ENVIRONMENT_CONFIG = {
-  cycleSeconds: 480,
+  cycleSeconds: 960,
+  autoWeatherMinSeconds: 120,
+  autoWeatherMaxSeconds: 240,
   transitionSeconds: 5,
   desktopRainCount: 420,
   mobileRainCount: 180,
