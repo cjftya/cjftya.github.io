@@ -4,6 +4,7 @@ import {
   Fog,
   Group,
   HemisphereLight,
+  MathUtils,
   SRGBColorSpace,
   Vector3,
 } from 'three';
@@ -11,6 +12,7 @@ import type { PerspectiveCamera, Scene } from 'three';
 import { createClouds } from './createClouds';
 import { createRain } from './createRain';
 import { createSky } from './createSky';
+import { AutoWeather } from './autoWeather';
 import { advanceTime, createTimeFrame, sampleTime, wrapTime } from './timeOfDay';
 import { blendWeather, ENVIRONMENT_CONFIG, WEATHER_PROFILES } from './weather';
 import type { EnvironmentState, WeatherPreset, WeatherProfile } from './weather';
@@ -27,6 +29,9 @@ export class EnvironmentController {
   readonly fog = new Fog('#dce7d6', 250, 900);
   readonly profile: WeatherProfile = { ...WEATHER_PROFILES.CLEAR };
   readonly config = { ...ENVIRONMENT_CONFIG };
+  readonly autoWeather: AutoWeather;
+  private shadowsEnabled = false;
+  private shadowCaster: 'sun' | 'moon' = 'sun';
   fogEnabled = true;
   cloudsEnabled = true;
   private readonly from: WeatherProfile = { ...WEATHER_PROFILES.CLEAR };
@@ -47,9 +52,11 @@ export class EnvironmentController {
 
   constructor(
     private readonly scene: Scene,
-    mobile: boolean,
+    private readonly mobile: boolean,
     reducedMotion: boolean,
+    weatherSeed?: number,
   ) {
+    this.autoWeather = new AutoWeather(weatherSeed, !reducedMotion);
     this.state = {
       timeOfDay: 10,
       weather: 'CLEAR',
@@ -68,6 +75,7 @@ export class EnvironmentController {
       this.sun,
       this.sun.target,
       this.moon,
+      this.moon.target,
       this.ambient,
     );
     this.sun.shadow.mapSize.set(1024, 1024);
@@ -82,7 +90,7 @@ export class EnvironmentController {
     this.sun.shadow.camera.updateProjectionMatrix();
     this.sun.shadow.normalBias = 0.12;
     this.sun.shadow.bias = -0.0001;
-    this.moon.position.set(100, 180, 80);
+    this.moon.shadow.copy(this.sun.shadow);
     scene.add(this.root);
     scene.fog = this.fog;
   }
@@ -96,9 +104,49 @@ export class EnvironmentController {
     if (camera.right === span && this.shadowFocus.x === x && this.shadowFocus.z === z)
       return;
     this.shadowFocus.set(x, 0, z);
-    this.sun.target.position.copy(this.shadowFocus);
-    Object.assign(camera, { left: -span, right: span, top: span, bottom: -span });
-    camera.updateProjectionMatrix();
+    for (const light of [this.sun, this.moon]) {
+      light.target.position.copy(this.shadowFocus);
+      Object.assign(light.shadow.camera, {
+        left: -span,
+        right: span,
+        top: span,
+        bottom: -span,
+      });
+      light.shadow.camera.updateProjectionMatrix();
+    }
+    this.changed = true;
+  }
+  setShadows(enabled: boolean): void {
+    this.shadowsEnabled = enabled && !this.mobile;
+    this.updateShadowCaster();
+    this.changed = true;
+  }
+  private updateShadowCaster(): void {
+    // Hysteresis acts only while both lights are weak around the horizon.
+    if (
+      this.shadowCaster === 'sun' &&
+      this.sun.intensity < 0.035 &&
+      this.moon.intensity > 0.055
+    )
+      this.shadowCaster = 'moon';
+    else if (
+      this.shadowCaster === 'moon' &&
+      this.moon.intensity < 0.035 &&
+      this.sun.intensity > 0.055
+    )
+      this.shadowCaster = 'sun';
+    for (const name of ['sun', 'moon'] as const) {
+      const light = this[name];
+      light.castShadow =
+        this.shadowsEnabled && name === this.shadowCaster && light.visible;
+      if (!light.castShadow && light.shadow.map) {
+        light.shadow.map.dispose();
+        light.shadow.map = null;
+      }
+    }
+  }
+  setAutoWeather(enabled: boolean): void {
+    this.autoWeather.setEnabled(enabled);
     this.changed = true;
   }
   setTime(hour: number): void {
@@ -113,6 +161,11 @@ export class EnvironmentController {
     this.state.speed = Number.isFinite(value) ? Math.max(0, Math.min(20, value)) : 1;
   }
   setWeather(weather: WeatherPreset): void {
+    if (!(weather in WEATHER_PROFILES)) return;
+    this.setAutoWeather(false);
+    this.transitionWeather(weather);
+  }
+  private transitionWeather(weather: WeatherPreset): void {
     if (!(weather in WEATHER_PROFILES) || weather === this.state.weather) return;
     Object.assign(this.from, this.profile);
     this.state.weather = weather;
@@ -120,7 +173,9 @@ export class EnvironmentController {
     this.changed = true;
   }
   get animated(): boolean {
-    return this.state.playing || this.state.weatherBlend < 1;
+    return (
+      this.state.playing || this.autoWeather.enabled || this.state.weatherBlend < 1
+    );
   }
   invalidate(): void {
     this.changed = true;
@@ -133,6 +188,8 @@ export class EnvironmentController {
     pixelRatio: number,
   ): boolean {
     const dt = Number.isFinite(seconds) ? Math.min(0.1, Math.max(0, seconds)) : 0;
+    const nextWeather = this.autoWeather.update(dt, this.state.weather);
+    if (nextWeather) this.transitionWeather(nextWeather);
     const advancing = this.state.playing && dt > 0;
     const transitioning = this.state.weatherBlend < 1;
     if (advancing) {
@@ -196,7 +253,18 @@ export class EnvironmentController {
     this.ambient.color.copy(this.dayAmbient).lerp(this.nightAmbient, night);
     this.ambient.groundColor.copy(this.dayGround).lerp(this.nightGround, night);
     this.ambient.intensity = frame.ambient * weather.ambientMultiplier;
-    this.moon.intensity = night * 0.55 * weather.sunlightMultiplier;
+    // One direction drives both the rendered disc and directional light.
+    const moonDirection = u.moonDirection!.value as Vector3;
+    moonDirection.copy(u.sunDirection!.value).negate();
+    this.moon.position.copy(moonDirection).multiplyScalar(300).add(this.shadowFocus);
+    const moonRise = MathUtils.smoothstep(moonDirection.y, 0, 0.22);
+    const moonVisibility =
+      night * moonRise * weather.sunlightMultiplier * (1 - weather.cloudDarkness * 0.7);
+    u.moonVisibility!.value = moonVisibility;
+    u.moonMist!.value = weather.fogStrength;
+    this.moon.intensity = moonVisibility * 0.65;
+    this.moon.visible = this.moon.intensity > 0.005;
+    this.updateShadowCaster();
     this.fog.color.copy(u.horizon!.value);
     this.sky.starMaterial.uniforms.brightness!.value =
       night * (1 - weather.cloudDarkness) * 0.88;

@@ -9,6 +9,7 @@ export function createEnvironmentPanel(
   invalidate: () => void,
   setShadows: (value: boolean) => void,
   debugEnabled = false,
+  viewSky?: () => void,
 ) {
   const panel = document.createElement('details');
   panel.id = 'environment-debug';
@@ -17,6 +18,8 @@ export function createEnvironmentPanel(
     <label>시간 <output id="environment-time-label"></output><input id="environment-time" aria-label="시간" type="range" min="0" max="23.99" step="0.01"></label>
     <div class="debug-row"><button type="button" id="environment-play"></button><label>속도 <select id="environment-speed" aria-label="시간 속도"><option value="0.25">0.25×</option><option value="1" selected>1×</option><option value="4">4×</option><option value="12">12×</option></select></label></div>
     <label>날씨 <select id="environment-weather" aria-label="날씨">${WEATHER_PRESETS.map((p) => `<option value="${p}">${WEATHER_LABELS[p]}</option>`).join('')}</select></label>
+    <label><input id="environment-auto-weather" type="checkbox"> 자동 날씨 · 시간 정지 중에도 진행</label>
+    <button type="button" id="environment-sky" ${viewSky ? '' : 'hidden'}>하늘 보기</button>
     <div class="debug-row" ${debugEnabled ? '' : 'hidden'}><label><input id="environment-clouds" type="checkbox" checked> 구름</label><label><input id="environment-fog" type="checkbox" checked> 안개</label><label><input id="environment-shadows" type="checkbox"> 그림자</label></div>
     <output id="environment-stats" ${debugEnabled ? '' : 'hidden'}></output>`;
   document.querySelector('.oasis-shell')!.append(panel);
@@ -26,8 +29,23 @@ export function createEnvironmentPanel(
   const stats = panel.querySelector<HTMLOutputElement>('#environment-stats')!;
   const shadows = panel.querySelector<HTMLInputElement>('#environment-shadows')!;
   shadows.checked = renderer.shadowMap.enabled;
+  const autoWeather = panel.querySelector<HTMLInputElement>(
+    '#environment-auto-weather',
+  )!;
+  const weather = panel.querySelector<HTMLSelectElement>('#environment-weather')!;
   const events = new AbortController();
   const options = { signal: events.signal };
+  panel
+    .querySelector('#environment-sky')!
+    .addEventListener('click', () => viewSky?.(), options);
+  autoWeather.addEventListener(
+    'change',
+    () => {
+      environment.setAutoWeather(autoWeather.checked);
+      invalidate();
+    },
+    options,
+  );
   panel.addEventListener(
     'toggle',
     () => {
@@ -102,6 +120,9 @@ export function createEnvironmentPanel(
     if (document.activeElement !== time) time.value = String(hour);
     timeLabel.value = `${String(Math.floor(hour)).padStart(2, '0')}:${String(Math.floor((hour % 1) * 60)).padStart(2, '0')}`;
     play.textContent = environment.state.playing ? '일시정지' : '재생';
+    autoWeather.checked = environment.autoWeather.enabled;
+    weather.value = environment.state.weather;
+    shadows.checked = renderer.shadowMap.enabled;
     const info = renderer.info;
     stats.value = `${frameMs.toFixed(1)} ms / rendered frame\nDraw calls ${info.render.calls} · triangles ${info.render.triangles.toLocaleString()}\nTextures ${info.memory.textures} · DPR ${renderer.getPixelRatio().toFixed(2)}\nCloud puffs ${environment.cloudsEnabled ? environment.clouds.count : 0} · rain ${environment.rain.mesh.visible ? environment.rain.count : 0}\nWeather blend ${(environment.state.weatherBlend * 100).toFixed(0)}% · W: wireframe`;
   }

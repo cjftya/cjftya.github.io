@@ -40,6 +40,40 @@ afterEach(() => {
 });
 
 describe('landmark integration against real exported GLBs', () => {
+  it('keeps detail roots joined after grounding, preserves clearance and reapplies placement without drift', async () => {
+    await useLocalAssets();
+    const landmark = await createOvergrownRuin(DEFAULT_TERRAIN_CONFIG, true, true);
+    expect(landmark.assetTriangles).toBe(9844);
+    const audit = auditLandmark(landmark);
+    for (const result of [audit.loop, audit.clearing, audit.approach, audit.passage])
+      expect(result.intersections).toEqual({});
+    expect(audit.passage.measuredJambWidth).toBeGreaterThanOrEqual(4.6);
+    const vertices = (name: string) => {
+      const points: Vector3[] = [];
+      landmark.assets.modules.get(name)!.traverse((object) => {
+        if (!(object instanceof Mesh)) return;
+        const attribute = object.geometry.attributes.position!;
+        for (let i = 0; i < attribute.count; i++)
+          points.push(
+            new Vector3()
+              .fromBufferAttribute(attribute, i)
+              .applyMatrix4(object.matrixWorld),
+          );
+      });
+      return points;
+    };
+    const root = vertices('Root_Large_A');
+    const base = vertices('Root_Tree_Base_Blockout');
+    const seamDistance = Math.min(
+      ...root.map((a) => Math.min(...base.map((b) => a.distanceTo(b)))),
+    );
+    expect(seamDistance).toBeLessThan(0.35);
+    landmark.place(LANDMARK_CANDIDATES[1]);
+    landmark.place(OVERGROWN_RUIN_CONFIG);
+    expect(vertices('Root_Large_A')).toEqual(root);
+    expect(vertices('Root_Tree_Base_Blockout')).toEqual(base);
+    landmark.dispose();
+  });
   it('samples the rendered triangles, including both halves of a grid cell', () => {
     const terrain = createTerrain();
     terrain.updateMatrixWorld();
@@ -78,7 +112,7 @@ describe('landmark integration against real exported GLBs', () => {
   });
   it('loads each module at metre scale, keeps routes clear and disposes resources exactly once', async () => {
     const load = await useLocalAssets();
-    const landmark = await createOvergrownRuin(DEFAULT_TERRAIN_CONFIG);
+    const landmark = await createOvergrownRuin(DEFAULT_TERRAIN_CONFIG, true, false);
     expect(load.mock.calls.slice(0, 3).map((c) => c[0].split('/').at(-1))).toEqual([
       'Rock_Large_A.glb',
       'Ruin_Arch_A.glb',

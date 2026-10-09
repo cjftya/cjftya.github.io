@@ -62,8 +62,9 @@ function start(canvas: HTMLCanvasElement): void {
   let reviewCamera = false;
   let groundCamera = false;
   function setShadows(enabled: boolean): void {
+    enabled = enabled && !mobile;
     renderer.shadowMap.enabled = enabled;
-    environment.sun.castShadow = enabled;
+    environment.setShadows(enabled);
     terrain.castShadow = enabled;
     terrain.material.needsUpdate = true;
     edge.material.needsUpdate = true;
@@ -79,6 +80,7 @@ function start(canvas: HTMLCanvasElement): void {
     reviewCamera = groundCamera = false;
     controls.minDistance = 35;
     controls.maxPolarAngle = Math.PI * 0.445;
+    controls.maxTargetRadius = config.size * 0.36;
     // Flush residual damping so reset also works during an active gesture.
     controls.enableDamping = false;
     controls.update();
@@ -112,6 +114,25 @@ function start(canvas: HTMLCanvasElement): void {
     invalidate,
     setShadows,
     debugEnabled,
+    () => {
+      // A high moon is outside the terrain-facing orbit's field of view.
+      // The existing reset button returns this deliberate sky view to the land.
+      reviewCamera = true;
+      groundCamera = false;
+      controls.enableDamping = false;
+      controls.update();
+      controls.minDistance = 1;
+      controls.maxPolarAngle = Math.PI;
+      controls.maxTargetRadius = Infinity;
+      const uniforms = environment.sky.material.uniforms;
+      const direction = uniforms[
+        environment.moon.visible ? 'moonDirection' : 'sunDirection'
+      ]!.value as Vector3;
+      controls.target.copy(camera.position).addScaledVector(direction, 80);
+      controls.update();
+      controls.enableDamping = true;
+      invalidate();
+    },
   );
   const surfaceDebug = debugEnabled
     ? createSurfaceDebug(terrain, surface, invalidate)
@@ -124,6 +145,7 @@ function start(canvas: HTMLCanvasElement): void {
     if (!landmark) return;
     reviewCamera = true;
     groundCamera = view === 'ground';
+    controls.maxTargetRadius = config.size * 0.36;
     frameLandmark(view, landmark, camera, controls);
     invalidate();
   }
@@ -135,7 +157,10 @@ function start(canvas: HTMLCanvasElement): void {
   const cliffDetail = !(
     debugEnabled && new URLSearchParams(location.search).get('cliff') === 'blockout'
   );
-  void createOvergrownRuin(config, cliffDetail)
+  const ruinDetail = !(
+    debugEnabled && new URLSearchParams(location.search).get('ruin') === 'blockout'
+  );
+  void createOvergrownRuin(config, cliffDetail, ruinDetail)
     .then((loaded) => {
       if (disposed) {
         loaded.dispose();
@@ -150,9 +175,39 @@ function start(canvas: HTMLCanvasElement): void {
         Object.assign(window, {
           __oasisLandmark: {
             audit: () => auditLandmark(loaded),
+            reviewCamera: (position: number[], target: number[]) => {
+              reviewCamera = groundCamera = true;
+              controls.enableDamping = false;
+              controls.update();
+              controls.minDistance = 1;
+              controls.maxPolarAngle = Math.PI;
+              camera.position.fromArray(position);
+              controls.target.fromArray(target);
+              controls.update();
+              controls.enableDamping = true;
+              invalidate();
+            },
             snapshot: () => ({
               modules: loaded.assets.modules.size,
               cliffDetail,
+              ruinDetail,
+              autoWeather: {
+                enabled: environment.autoWeather.enabled,
+                secondsUntilNext: environment.autoWeather.secondsUntilNext,
+                seed: environment.autoWeather.seed,
+              },
+              moon: {
+                direction:
+                  environment.sky.material.uniforms.moonDirection!.value.toArray(),
+                visibility: environment.sky.material.uniforms.moonVisibility!.value,
+                intensity: environment.moon.intensity,
+                castShadow: environment.moon.castShadow,
+                allocated: Boolean(environment.moon.shadow.map),
+              },
+              sun: {
+                intensity: environment.sun.intensity,
+                castShadow: environment.sun.castShadow,
+              },
               contact: loaded.contact,
               shadow: {
                 bias: environment.sun.shadow.bias,
@@ -198,7 +253,10 @@ function start(canvas: HTMLCanvasElement): void {
       invalidate();
     });
   function motionChanged(): void {
-    if (motionPreference.matches) environment.setPlaying(false);
+    if (motionPreference.matches) {
+      environment.setPlaying(false);
+      environment.setAutoWeather(false);
+    }
     dirty = true;
   }
   motionPreference.addEventListener('change', motionChanged);

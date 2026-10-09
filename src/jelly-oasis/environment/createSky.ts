@@ -25,12 +25,16 @@ export function createSky() {
       sunColor: { value: new Color() },
       sunDirection: { value: new Vector3() },
       sunStrength: { value: 1 },
+      moonDirection: { value: new Vector3() },
+      moonVisibility: { value: 0 },
+      moonMist: { value: 0 },
     },
     vertexShader: `varying vec3 direction;
       void main() { direction = position; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
     fragmentShader: `varying vec3 direction;
       uniform vec3 zenith, horizon, sunColor, sunDirection;
-      uniform float sunStrength;
+      uniform vec3 moonDirection;
+      uniform float sunStrength, moonVisibility, moonMist;
       void main() {
         vec3 ray = normalize(direction);
         float heightBlend = smoothstep(-0.55, 0.85, ray.y);
@@ -39,6 +43,10 @@ export function createSky() {
         float glow = pow(sunDot, 24.0) * 0.12;
         float disc = smoothstep(0.9992, 0.9997, sunDot);
         color += sunColor * (glow + disc * 0.8) * sunStrength;
+        float moonDot = max(0.0, dot(ray, moonDirection));
+        float moonDisc = smoothstep(0.99968, 0.99978, moonDot);
+        float moonHalo = pow(moonDot, mix(1100.0, 240.0, moonMist)) * 0.065;
+        color += vec3(0.73, 0.84, 1.0) * (moonDisc * 1.4 + moonHalo) * moonVisibility;
         gl_FragColor = vec4(color, 1.0);
         #include <tonemapping_fragment>
         #include <colorspace_fragment>
