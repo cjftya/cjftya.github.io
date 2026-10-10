@@ -254,8 +254,8 @@ try {
   await normal.goto(`${base}/projects/jelly-oasis/`);
   await normal.waitForFunction(() => document.querySelector('#landmark-status').hidden);
   results.defaultFiles = defaultFiles;
-  assert.ok(defaultFiles.some((url) => url.endsWith('/Tree_Landmark_Blockout.glb')));
-  assert.ok(!defaultFiles.some((url) => url.endsWith('/Tree_Landmark_Detail_v1.glb')));
+  assert.ok(defaultFiles.some((url) => url.endsWith('/Tree_Landmark_Detail_v1.glb')));
+  assert.ok(!defaultFiles.some((url) => url.endsWith('/Tree_Landmark_Blockout.glb')));
   for (const name of [
     'Ruin_Arch_A',
     'Ruin_Wall_A',

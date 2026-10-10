@@ -43,7 +43,7 @@ export const loadLandmarkReference = () => load(LANDMARK_REFERENCE_FILE);
 export async function loadLandmarkAssets(
   cliffDetail = true,
   ruinDetail = true,
-  treeDetail = false,
+  treeDetail = true,
 ) {
   const started = performance.now();
   const response = await fetch(`${LANDMARK_ASSET_PATH}layout.json`);
