@@ -1,0 +1,22 @@
+{
+  "waterSource": "createOvergrownRuin.ts guideGeometry(layout.guides.Pond_Blockout)",
+  "v1Cause": {
+    "waterBoundary": "fixed oval layout guide",
+    "shore": "48-sample oval ribbon with local width only",
+    "camera": "same QA cameras show defect; not camera cause",
+    "terrain": "water > nearby ground by up to .742m encourages raised rim"
+  },
+  "change": "candidate GLB extras carry triangulated water guide from same author contour as shoreline; original guide used solely for fixed-level calculation; integrated broad ramps via UV.x and source heights",
+  "files": [
+    "createOvergrownRuin.ts",
+    "loadLandmarkAssets.ts",
+    "main.ts",
+    "pond-contour-v2.json"
+  ],
+  "risks": [
+    "concave contour requires polygon triangulation, not center fan",
+    "shore UV water/ground endpoints must remain connected",
+    "shore footprint may approach protected routes: audit real triangles",
+    "material primitive splits must share rigid support"
+  ]
+}

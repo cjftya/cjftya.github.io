@@ -90,9 +90,10 @@ export function auditLandmark(landmark: OvergrownRuin) {
     });
   add(
     'Pond exclusion',
-    assets.layout.guides
-      .Pond_Blockout!.positions.slice(1)
-      .map((p) => ({ ...landmarkWorldPoint(p[0]!, p[2]!, placement), h: 0 })),
+    (
+      assets.pondGuide?.positions ??
+      assets.layout.guides.Pond_Blockout!.positions.slice(1)
+    ).map((p) => ({ ...landmarkWorldPoint(p[0]!, p[2]!, placement), h: 0 })),
   );
   function hits(x: number, z: number) {
     const p = landmarkWorldPoint(x, z, placement);

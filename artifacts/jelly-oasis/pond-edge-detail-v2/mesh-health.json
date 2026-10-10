@@ -1,0 +1,63 @@
+{
+  "Rocks_v2_0": {
+    "loose_vertices": 0,
+    "zero_area_faces": 0,
+    "boundary_edges": 0,
+    "nonmanifold_interior_edges": 0
+  },
+  "Rocks_v2_1": {
+    "loose_vertices": 0,
+    "zero_area_faces": 0,
+    "boundary_edges": 0,
+    "nonmanifold_interior_edges": 0
+  },
+  "Rocks_v2_2": {
+    "loose_vertices": 0,
+    "zero_area_faces": 0,
+    "boundary_edges": 0,
+    "nonmanifold_interior_edges": 0
+  },
+  "Rocks_v2_3": {
+    "loose_vertices": 0,
+    "zero_area_faces": 0,
+    "boundary_edges": 0,
+    "nonmanifold_interior_edges": 0
+  },
+  "Rocks_v2_4": {
+    "loose_vertices": 0,
+    "zero_area_faces": 0,
+    "boundary_edges": 0,
+    "nonmanifold_interior_edges": 0
+  },
+  "Rocks_v2_5": {
+    "loose_vertices": 0,
+    "zero_area_faces": 0,
+    "boundary_edges": 0,
+    "nonmanifold_interior_edges": 0
+  },
+  "Rocks_v2_6": {
+    "loose_vertices": 0,
+    "zero_area_faces": 0,
+    "boundary_edges": 0,
+    "nonmanifold_interior_edges": 0
+  },
+  "Rocks_v2_7": {
+    "loose_vertices": 0,
+    "zero_area_faces": 0,
+    "boundary_edges": 0,
+    "nonmanifold_interior_edges": 0
+  },
+  "Rocks_v2_8": {
+    "loose_vertices": 0,
+    "zero_area_faces": 0,
+    "boundary_edges": 0,
+    "nonmanifold_interior_edges": 0
+  },
+  "Shore_Base_Bank_Upper_v2": {
+    "loose_vertices": 0,
+    "zero_area_faces": 0,
+    "boundary_edges": 114,
+    "nonmanifold_interior_edges": 0,
+    "minimum_upward_normal": 0.3945799767971039
+  }
+}
