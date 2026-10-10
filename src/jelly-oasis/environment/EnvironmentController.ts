@@ -52,7 +52,7 @@ export class EnvironmentController {
 
   constructor(
     private readonly scene: Scene,
-    private readonly mobile: boolean,
+    mobile: boolean,
     reducedMotion: boolean,
     weatherSeed?: number,
   ) {
@@ -78,7 +78,8 @@ export class EnvironmentController {
       this.moon.target,
       this.ambient,
     );
-    this.sun.shadow.mapSize.set(1024, 1024);
+    const shadowSize = mobile ? 512 : 1024;
+    this.sun.shadow.mapSize.set(shadowSize, shadowSize);
     Object.assign(this.sun.shadow.camera, {
       left: -180,
       right: 180,
@@ -117,7 +118,7 @@ export class EnvironmentController {
     this.changed = true;
   }
   setShadows(enabled: boolean): void {
-    this.shadowsEnabled = enabled && !this.mobile;
+    this.shadowsEnabled = enabled;
     this.updateShadowCaster();
     this.changed = true;
   }

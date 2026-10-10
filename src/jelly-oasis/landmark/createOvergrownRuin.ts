@@ -23,6 +23,8 @@ import {
   loadLandmarkReference,
 } from './loadLandmarkAssets';
 import type { AestheticVariants } from './loadLandmarkAssets';
+import { createWaterEffects } from './water/createWaterEffects';
+import type { WaterOptions } from './water/createWaterEffects';
 
 export function guideGeometry(guide: LayoutGuide): BufferGeometry {
   const geometry = new BufferGeometry();
@@ -43,6 +45,7 @@ export async function createOvergrownRuin(
   pondDetail: boolean | 'v2' = false,
   crystalDetail = false,
   aesthetic: AestheticVariants = {},
+  waterOptions: WaterOptions = { water: false, waterfall: false },
 ) {
   const assets = await loadLandmarkAssets(
     cliffDetail,
@@ -91,6 +94,7 @@ export async function createOvergrownRuin(
   pond.receiveShadow = true;
   content.add(pond);
   let pondHeight = 0;
+  let waterEffects: ReturnType<typeof createWaterEffects> | undefined;
   const bankVertices = new Map<Mesh, Float32Array>();
   const detailBankVertices = new Map<
     Mesh,
@@ -395,8 +399,20 @@ export async function createOvergrownRuin(
     bank.userData.maxBankLift = maxBankLift;
     bank.userData.maxBankDisplacement = maxBankDisplacement;
     root.updateMatrixWorld(true);
+    waterEffects?.rebuild();
   }
   place(placement);
+  if (waterOptions.water || waterOptions.waterfall)
+    waterEffects = createWaterEffects(
+      root,
+      content,
+      pond,
+      assets.modules.get('Cliff_Waterfall_A')!,
+      pondGuide,
+      () => pondHeight,
+      localGround,
+      waterOptions,
+    );
 
   async function showReference(visible: boolean) {
     referenceVisible = visible;
@@ -445,6 +461,7 @@ export async function createOvergrownRuin(
     contact,
     terrain,
     pond,
+    waterEffects,
     localGround,
     place,
     showReference,
@@ -455,6 +472,7 @@ export async function createOvergrownRuin(
       for (const [key, object] of assets.modules)
         object.visible = !name || key === name;
       pond.visible = !name;
+      if (waterEffects) waterEffects.group.visible = !name;
     },
     refreshMaterials() {
       content.traverse((object) => {
