@@ -1,0 +1,36 @@
+{
+  "baseHead": "4cba76981f6e9bcf662cbcd798c2a8f45de1549a",
+  "productionDefault": "PondEdge_Blockout_Detail_v2.glb",
+  "debugVariants": [
+    "blockout",
+    "detail",
+    "detail-v2"
+  ],
+  "checks": {
+    "lint": 0,
+    "build": 0,
+    "test": 0,
+    "landmarkQA": 0,
+    "pondQA": 0
+  },
+  "tests": 289,
+  "productionAssets": [
+    "http://127.0.0.1:5176/assets/jelly-oasis/landmarks/overgrown-ruin/Rock_Large_A.glb",
+    "http://127.0.0.1:5176/assets/jelly-oasis/landmarks/overgrown-ruin/Ruin_Arch_A_Detail_v1.glb",
+    "http://127.0.0.1:5176/assets/jelly-oasis/landmarks/overgrown-ruin/Cliff_Waterfall_A_Detail_v1.glb",
+    "http://127.0.0.1:5176/assets/jelly-oasis/landmarks/overgrown-ruin/Rock_Large_B.glb",
+    "http://127.0.0.1:5176/assets/jelly-oasis/landmarks/overgrown-ruin/Rock_Large_C.glb",
+    "http://127.0.0.1:5176/assets/jelly-oasis/landmarks/overgrown-ruin/Rock_Large_D.glb",
+    "http://127.0.0.1:5176/assets/jelly-oasis/landmarks/overgrown-ruin/Rock_Large_E.glb",
+    "http://127.0.0.1:5176/assets/jelly-oasis/landmarks/overgrown-ruin/Ruin_Wall_A_Detail_v1.glb",
+    "http://127.0.0.1:5176/assets/jelly-oasis/landmarks/overgrown-ruin/Ruin_BrokenWall_A_Detail_v1.glb",
+    "http://127.0.0.1:5176/assets/jelly-oasis/landmarks/overgrown-ruin/Tree_Landmark_Detail_v1.glb",
+    "http://127.0.0.1:5176/assets/jelly-oasis/landmarks/overgrown-ruin/Root_Large_A_Detail_v1.glb",
+    "http://127.0.0.1:5176/assets/jelly-oasis/landmarks/overgrown-ruin/Root_Tree_Base_Blockout_Detail_v1.glb",
+    "http://127.0.0.1:5176/assets/jelly-oasis/landmarks/overgrown-ruin/PondEdge_Blockout_Detail_v2.glb",
+    "http://127.0.0.1:5176/assets/jelly-oasis/landmarks/overgrown-ruin/Crystal_Blockout_A.glb",
+    "http://127.0.0.1:5176/assets/jelly-oasis/landmarks/overgrown-ruin/Crystal_Blockout_B.glb",
+    "http://127.0.0.1:5176/assets/jelly-oasis/landmarks/overgrown-ruin/Crystal_Blockout_C.glb"
+  ],
+  "pondHeight": -5.389069482748612
+}

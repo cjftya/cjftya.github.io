@@ -166,7 +166,8 @@ function start(canvas: HTMLCanvasElement): void {
   const pondQuery = debugEnabled
     ? new URLSearchParams(location.search).get('pond')
     : null;
-  const pondDetail = pondQuery === 'detail-v2' ? 'v2' : pondQuery === 'detail';
+  const pondDetail =
+    pondQuery === 'blockout' ? false : pondQuery === 'detail' ? true : 'v2';
   void createOvergrownRuin(config, cliffDetail, ruinDetail, treeDetail, pondDetail)
     .then((loaded) => {
       if (disposed) {

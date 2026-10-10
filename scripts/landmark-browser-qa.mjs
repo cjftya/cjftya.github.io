@@ -71,7 +71,8 @@ try {
   await environment(12, 'CLEAR');
   results.initial = await snapshot();
   assert.equal(results.initial.modules, 16);
-  assert.equal(results.initial.assetTriangles, 19802);
+  assert.equal(results.initial.assetTriangles, 20786);
+  assert.equal(results.initial.pondVariant, 'detail-v2');
   for (const name of ['Rock_Large_A', 'Ruin_Arch_A', 'Cliff_Waterfall_A']) {
     await page.locator('#landmark-isolate').selectOption(name);
     await capture(`asset-${name}`);
