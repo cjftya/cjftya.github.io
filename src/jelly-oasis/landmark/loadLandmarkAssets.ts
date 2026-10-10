@@ -1,4 +1,4 @@
-import { Mesh, Texture } from 'three';
+import { InstancedMesh, Mesh, Texture } from 'three';
 import type { Object3D, Material, BufferGeometry, Group } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import {
@@ -23,6 +23,7 @@ export function disposeLandmarkResources(roots: Iterable<Object3D>): void {
   for (const root of roots)
     root.traverse((object) => {
       if (!(object instanceof Mesh)) return;
+      if (object instanceof InstancedMesh) object.dispose();
       geometries.add(object.geometry);
       for (const material of Array.isArray(object.material)
         ? object.material

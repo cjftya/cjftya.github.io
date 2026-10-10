@@ -217,7 +217,8 @@ function start(canvas: HTMLCanvasElement): void {
     aesthetic,
     {
       water: debugEnabled && waterQuery === 'v1',
-      waterfall: debugEnabled && candidateQuery.get('waterfall') === 'v1',
+      waterfall:
+        debugEnabled && ['v1', 'v2'].includes(candidateQuery.get('waterfall') ?? ''),
     },
   )
     .then((loaded) => {

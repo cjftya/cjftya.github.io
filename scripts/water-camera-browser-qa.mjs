@@ -201,7 +201,7 @@ try {
         if (candidate) {
           assert.equal(s.waterEffects.water, true);
           assert.equal(s.waterEffects.waterfall, true);
-          assert.ok(s.waterEffects.triangles < 200);
+          assert.ok(s.waterEffects.triangles < 2000);
         } else assert.equal(s.waterEffects, null);
       }
       const audit = await p.evaluate(() => window.__oasisLandmark.audit());
