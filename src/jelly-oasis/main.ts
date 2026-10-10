@@ -73,6 +73,7 @@ function start(canvas: HTMLCanvasElement): void {
     edge.material.needsUpdate = true;
     environment.clouds.mesh.material.needsUpdate = true;
     landmark?.refreshMaterials();
+    landmark?.waterEffects?.invalidate();
     dirty = true;
   }
   setShadows(true);
@@ -216,9 +217,17 @@ function start(canvas: HTMLCanvasElement): void {
     crystalDetail,
     aesthetic,
     {
-      water: debugEnabled && waterQuery === 'v1',
+      water:
+        debugEnabled &&
+        (['v1', 'v2'].includes(waterQuery ?? '') ||
+          candidateQuery.get('waterfall') === 'v3'),
+      realistic:
+        debugEnabled &&
+        (waterQuery === 'v2' || candidateQuery.get('waterfall') === 'v3'),
+      mobile,
       waterfall:
-        debugEnabled && ['v1', 'v2'].includes(candidateQuery.get('waterfall') ?? ''),
+        debugEnabled &&
+        ['v1', 'v2', 'v3'].includes(candidateQuery.get('waterfall') ?? ''),
     },
   )
     .then((loaded) => {
@@ -423,6 +432,7 @@ function start(canvas: HTMLCanvasElement): void {
         seconds,
         environment.state.timeOfDay,
         motionPreference.matches,
+        `${environment.state.weather}:${environment.state.weatherBlend.toFixed(2)}`,
       )
     )
       dirty = true;
@@ -501,6 +511,7 @@ function start(canvas: HTMLCanvasElement): void {
     environment.invalidate();
     renderer.shadowMap.needsUpdate = true;
     landmark?.refreshMaterials();
+    landmark?.waterEffects?.invalidate();
     dirty = true;
     visibility();
   });
