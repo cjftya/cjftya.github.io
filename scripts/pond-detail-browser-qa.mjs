@@ -5,7 +5,10 @@ import { chromium } from '@playwright/test';
 const base = process.env.LANDMARK_QA_URL ?? 'http://127.0.0.1:5175';
 const v2 = process.env.POND_QA_VERSION === 'v2';
 const variants = v2 ? ['detail', 'detail-v2'] : ['blockout', 'detail'];
-const output = resolve('artifacts/jelly-oasis/pond-edge-detail-' + (v2 ? 'v2' : 'v1'));
+const output = resolve(
+  process.env.POND_QA_OUTPUT ??
+    'artifacts/jelly-oasis/pond-edge-detail-' + (v2 ? 'v2' : 'v1'),
+);
 await mkdir(output, { recursive: true });
 const baseline = JSON.parse(
   await readFile(
@@ -143,8 +146,16 @@ try {
   await p2.locator('#landmark-status').waitFor({ state: 'hidden' });
   assert.equal(await p2.evaluate(() => '__oasisLandmark' in window), false);
   await p2.waitForTimeout(750);
-  assert.ok(productionAssets.some((u) => u.endsWith('/PondEdge_Blockout.glb')));
-  assert.ok(productionAssets.every((u) => !u.includes('PondEdge_Blockout_Detail')));
+  assert.ok(
+    productionAssets.some((u) => u.endsWith('/PondEdge_Blockout_Detail_v2.glb')),
+  );
+  assert.ok(
+    productionAssets.every(
+      (u) =>
+        !u.endsWith('/PondEdge_Blockout.glb') &&
+        !u.endsWith('/PondEdge_Blockout_Detail_v1.glb'),
+    ),
+  );
   result.productionAssets = [...productionAssets];
   productionAssets.length = 0;
   await p2.goto(
@@ -154,9 +165,18 @@ try {
   await p2.locator('#landmark-status').waitFor({ state: 'hidden' });
   await p2.waitForTimeout(750);
   assert.equal(await p2.evaluate(() => '__oasisLandmark' in window), false);
-  assert.ok(productionAssets.some((u) => u.endsWith('/PondEdge_Blockout.glb')));
-  assert.ok(productionAssets.every((u) => !u.includes('PondEdge_Blockout_Detail')));
+  assert.ok(
+    productionAssets.some((u) => u.endsWith('/PondEdge_Blockout_Detail_v2.glb')),
+  );
+  assert.ok(
+    productionAssets.every(
+      (u) =>
+        !u.endsWith('/PondEdge_Blockout.glb') &&
+        !u.endsWith('/PondEdge_Blockout_Detail_v1.glb'),
+    ),
+  );
   result.generalProductionAssets = [...productionAssets];
+  await p2.screenshot({ path: resolve(output, 'production-default.png') });
   await p2.close();
   assert.deepEqual(errors, []);
   assert.ok(responses.every((r) => r.status === 200));
