@@ -103,8 +103,8 @@ try {
       await page.evaluate(() => window.__oasisLandmark.snapshot().waterEffects.elapsed),
       paused,
     );
-    await page.goto(base);
-    await page.waitForFunction(() => window.__oasisLandmark?.snapshot().calls > 10);
+    await page.goto(`${base}?debug`);
+    await page.waitForFunction(() => window.__oasisLandmark?.snapshot().waterEffects === null);
     assert.equal(
       await page.evaluate(() => window.__oasisLandmark.snapshot().waterEffects),
       null,
