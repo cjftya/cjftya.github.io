@@ -160,8 +160,9 @@ function start(canvas: HTMLCanvasElement): void {
   const ruinDetail = !(
     debugEnabled && new URLSearchParams(location.search).get('ruin') === 'blockout'
   );
-  const treeDetail =
-    debugEnabled && new URLSearchParams(location.search).get('tree') === 'detail';
+  const treeDetail = !(
+    debugEnabled && new URLSearchParams(location.search).get('tree') === 'blockout'
+  );
   void createOvergrownRuin(config, cliffDetail, ruinDetail, treeDetail)
     .then((loaded) => {
       if (disposed) {

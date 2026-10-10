@@ -1,13 +1,13 @@
 # Jelly Oasis — Landmark Tree Detail v1
 
 2026-10-10. 기준: master / 04e2551 (Ruin + Root 완료 결과). 시작 시 작업 트리는 clean.
-초기 브랜치 생성은 .git 쓰기 권한으로 실패했다. 이후 사용자가 완료 후 master push를 명시적으로 요청했으며, 검증 완료 후 master에 커밋·push한다. production 기본 나무는 blockout을 유지한다. master push는 기존 GitHub Pages 배포 workflow를 실행한다.
+상세 모델은 master의 5d7a22c에서 배포했다. 이후 사용자가 기본 모델 전환을 승인하여 production 기본 나무를 Tree_Landmark_Detail_v1.glb로 전환한다. master push는 기존 GitHub Pages 배포 workflow를 실행한다.
 
 ## 열어 보기
 
 - 후보: http://127.0.0.1:4176/projects/jelly-oasis/?debug&tree=detail
 - 기존: http://127.0.0.1:4176/projects/jelly-oasis/?debug&tree=blockout
-- 일반 URL은 기존 Tree_Landmark_Blockout.glb를 사용한다.
+- 일반 URL은 Tree_Landmark_Detail_v1.glb를 사용한다. 기존 모델은 `?debug&tree=blockout`에서 비교할 수 있다.
 - 두 URL의 동일한 카메라 preset 및 reviewCamera를 사용해 비교했다.
 
 ## 파일과 제작
@@ -98,3 +98,7 @@ Blender 비교 12장은 blender-before/after-{tree-front,tree-left,tree-right,tr
 최종 정리 모델의 [단독 정면](../artifacts/jelly-oasis/landmark-tree-detail-v1/blender-after-tree-isolated.png)과 [잎을 숨긴 가지 구조](../artifacts/jelly-oasis/landmark-tree-detail-v1/blender-after-tree-skeleton.png)도 별도 Blender scene에서 렌더했다. 전체 landmark 비교 렌더는 외형에 영향을 주지 않는 내부 중복 면 정리 전이며, 웹 비교·단독 렌더·GLB 수치는 최종 정리 후 결과다.
 
 라이브 Blender의 이전 전체 씬 export 호출은 응답 제한을 초과해 정상 복귀를 확인하지 못했다. 최종 저장 파일은 background Blender에서 독립적으로 읽고 내보내기·재임포트를 검증했다.
+
+## 기본 모델 전환 검증 (2026-10-10)
+
+사용자 승인 후 상세 나무를 기본값으로 전환했다. lint와 production build 통과. 빌드 결과의 일반 URL에서 데스크톱·모바일 모두 Tree_Landmark_Detail_v1.glb HTTP 200, debug tree=blockout에서는 기존 모델 HTTP 200, 콘솔·페이지 오류 0을 확인했다. 기존 QA 기록의 production blockout 검사는 전환 전 결과이며, QA 스크립트의 기본 모델 기대값도 상세 모델로 갱신했다.

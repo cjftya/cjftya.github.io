@@ -35,7 +35,7 @@ export async function createOvergrownRuin(
   terrain: TerrainConfig,
   cliffDetail = true,
   ruinDetail = true,
-  treeDetail = false,
+  treeDetail = true,
 ) {
   const assets = await loadLandmarkAssets(cliffDetail, ruinDetail, treeDetail);
   const root = new Group();
