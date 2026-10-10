@@ -1,0 +1,12 @@
+2026-10-11 Jelly Oasis Water/Waterfall/mobile shadows/camera validation
+npm run lint: PASS
+npm test -- --maxWorkers=2: PASS (52 test files, 294 tests)
+Production Vite build + tsc: PASS
+water-camera-browser-qa.mjs: PASS, 41 states, 256 GLB responses 200, errors=[]
+water-camera-interaction-qa.mjs: PASS, errors=[]
+landmark-browser-qa.mjs: PASS
+pond-detail-browser-qa.mjs: PASS (POND_QA_VERSION=v2)
+ruin-night-browser-qa.mjs: PASS
+See regression/*/execution.txt for actual command output.
+Browser: Chromium Headless Shell 141 via LANDMARK_QA_BROWSER; repository Playwright unchanged.
+No physical mobile FPS or GPU-time claim. No Blender operations or source asset mutations.

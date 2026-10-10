@@ -100,7 +100,7 @@ try {
       assert.equal(s.modules, 16);
       assert.equal(s.assetTriangles, 20786);
       assert.equal(s.crystalDetail, false);
-      if (mobile) assert.equal(s.shadows, false);
+      if (mobile) assert.equal(s.shadows, true);
       else {
         await env(page, 12, 'CLEAR');
         await page.locator('#environment-debug').evaluate((e) => (e.open = true));

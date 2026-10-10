@@ -66,7 +66,7 @@ try {
     assert.equal(state.modules, 16);
     assert.equal(state.assetTriangles, 20786);
     assert.equal(state.crystalDetail, false);
-    if (width < 900) assert.equal(state.shadows, false);
+    if (width < 900) assert.equal(state.shadows, true);
     result.states[prefix + '-audit'] = await page.evaluate(() =>
       window.__oasisLandmark.audit(),
     );

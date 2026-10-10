@@ -155,7 +155,7 @@ try {
     await environment(touch, 12);
     await medium(touch);
     results.mobile[variant] = await capture(touch, variant + '-mobile');
-    assert.equal(results.mobile[variant].shadows, false);
+    assert.equal(results.mobile[variant].shadows, true);
   }
   await mobile.close();
   // Production query without debug must never opt into candidates.
