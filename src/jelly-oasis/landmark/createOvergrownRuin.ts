@@ -486,6 +486,7 @@ export async function createOvergrownRuin(
     dispose() {
       if (disposed) return;
       disposed = true;
+      waterEffects?.dispose();
       root.removeFromParent();
       disposeLandmarkResources([root]);
       root.clear();
