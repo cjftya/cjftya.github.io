@@ -102,3 +102,5 @@ Blender 비교 12장은 blender-before/after-{tree-front,tree-left,tree-right,tr
 ## 기본 모델 전환 검증 (2026-10-10)
 
 사용자 승인 후 상세 나무를 기본값으로 전환했다. lint와 production build 통과. 빌드 결과의 일반 URL에서 데스크톱·모바일 모두 Tree_Landmark_Detail_v1.glb HTTP 200, debug tree=blockout에서는 기존 모델 HTTP 200, 콘솔·페이지 오류 0을 확인했다. 기존 QA 기록의 production blockout 검사는 전환 전 결과이며, QA 스크립트의 기본 모델 기대값도 상세 모델로 갱신했다.
+
+기본 모델 전환 후 integration test의 비교 기준과 triangle 기대값을 갱신했다. 전체 52개 파일·287개 테스트 통과(maxWorkers=2), lint 통과. 기본 병렬 실행에서 발생한 다른 프로젝트 검사 timeout은 동시 실행 수를 줄여 해소했다.
