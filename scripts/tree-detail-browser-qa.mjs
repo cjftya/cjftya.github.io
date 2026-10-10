@@ -293,9 +293,11 @@ try {
   await load(mobile);
   await environment(mobile, 0);
   results.mobile = await snapshot(mobile);
-  assert.equal(results.mobile.moon.allocated, false);
+  assert.equal(results.mobile.moon.allocated, true);
+  assert.equal(results.mobile.moon.castShadow, true);
+  assert.deepEqual(results.mobile.shadow.mapSize, [512, 512]);
   assert.equal(results.mobile.shadow.allocated, false);
-  assert.equal(results.mobile.shadows, false);
+  assert.equal(results.mobile.shadows, true);
   assert.ok(results.mobile.moon.visibility > 0);
   await capture(mobile, 'mobile-night');
   await mobile.locator('#environment-sky').scrollIntoViewIfNeeded();

@@ -103,7 +103,7 @@ describe('moon and single shadow caster', () => {
     expect(e.sun.castShadow || e.moon.castShadow).toBe(false);
     e.dispose();
   });
-  it('never enables mobile shadow maps; weather attenuates disc and directional light', () => {
+  it('enables a single mobile caster at 512px; weather attenuates disc and light', () => {
     const e = new EnvironmentController(new Scene(), true, true);
     e.setShadows(true);
     e.setTime(0);
@@ -113,13 +113,15 @@ describe('moon and single shadow caster', () => {
       e.setWeather(weather);
       run(e, 5);
       expect(e.moon.intensity).toBeLessThan(clear);
-      expect(e.moon.castShadow || e.sun.castShadow).toBe(false);
+      expect(e.moon.castShadow).toBe(true);
+      expect(e.sun.castShadow).toBe(false);
+      expect(e.moon.shadow.mapSize.toArray()).toEqual([512, 512]);
       expect(e.moon.shadow.map).toBeNull();
     }
     e.dispose();
   });
-  it('does not flicker or enable two casters through dusk and dawn', () => {
-    const e = new EnvironmentController(new Scene(), false, true);
+  it.each([false, true])('does not flicker through dusk/dawn (mobile=%s)', (mobile) => {
+    const e = new EnvironmentController(new Scene(), mobile, true);
     e.setShadows(true);
     for (const [start, end] of [
       [18.5, 20.5],
