@@ -53,7 +53,7 @@ try {
         (detail ? 'after' : 'before') + (mobile ? '-mobile-medium' : '-tree-ground');
       await page.screenshot({ path: out + name + '.png' });
       results[name] = await page.evaluate(() => window.__oasisLandmark.snapshot());
-      if (mobile) assert.equal(results[name].shadows, false);
+      if (mobile) assert.equal(results[name].shadows, true);
     }
     await context.close();
   }

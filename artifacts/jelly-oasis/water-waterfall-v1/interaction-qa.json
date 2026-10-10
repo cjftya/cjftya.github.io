@@ -1,0 +1,17 @@
+{
+  "errors": [],
+  "zoom": {
+    "100000": 1049.9999999999998,
+    "pinch": {
+      "before": 942.6911873047075,
+      "after": 626.4558186812767
+    },
+    "-100000": 35
+  },
+  "production": {
+    "ignoredQueries": true,
+    "inputChangesView": true,
+    "resetPreserved": true
+  },
+  "hiddenEffects": 5.932799999999996
+}

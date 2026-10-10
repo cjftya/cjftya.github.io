@@ -37,6 +37,7 @@ try {
       reducedMotion: 'reduce',
     });
     const page = await context.newPage();
+    page.setDefaultTimeout(Number(process.env.LANDMARK_QA_TIMEOUT_MS ?? 30000));
     page.on('pageerror', (e) => errors.push(String(e)));
     page.on('console', (m) => {
       if (m.type() === 'error') errors.push(m.text());
@@ -131,7 +132,10 @@ try {
   await p.goto(base + '/projects/jelly-oasis/?debug&pond=' + variants[1]);
   await p.waitForFunction(() => window.__oasisLandmark?.snapshot().calls > 10);
   result.touch = await p.evaluate(() => window.__oasisLandmark.snapshot());
-  assert.equal(result.touch.shadows, false);
+  assert.equal(result.touch.shadows, true);
+  assert.equal(result.touch.sun.castShadow, true);
+  assert.equal(result.touch.sun.allocated, true);
+  assert.deepEqual(result.touch.shadow.mapSize, [512, 512]);
   await context.close();
   const p2 = await browser.newPage();
   const productionAssets = [];

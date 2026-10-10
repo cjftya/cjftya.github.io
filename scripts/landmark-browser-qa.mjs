@@ -20,6 +20,7 @@ const context = await browser.newContext({
   reducedMotion: 'reduce',
 });
 const page = await context.newPage();
+page.setDefaultTimeout(Number(process.env.LANDMARK_QA_TIMEOUT_MS ?? 30000));
 const errors = [],
   responses = [],
   results = {
@@ -145,7 +146,7 @@ try {
   assert.ok(responses.every((response) => response.status === 200));
   results.assetResponses = responses;
 
-  // A real narrow touch viewport uses the existing shadows-off policy.
+  // A narrow touch viewport uses the new default 512px shadow policy.
   const mobile = await browser.newContext({
     viewport: { width: 390, height: 844 },
     isMobile: true,
@@ -159,7 +160,10 @@ try {
   // The loading promise can settle before the first frame containing the GLBs.
   await touch.waitForFunction(() => window.__oasisLandmark.snapshot().calls > 10);
   results.mobile = await touch.evaluate(() => window.__oasisLandmark.snapshot());
-  assert.equal(results.mobile.shadows, false);
+  assert.equal(results.mobile.shadows, true);
+  assert.equal(results.mobile.sun.castShadow, true);
+  assert.equal(results.mobile.sun.allocated, true);
+  assert.deepEqual(results.mobile.shadow.mapSize, [512, 512]);
   for (const id of ['environment-debug', 'landmark-debug']) {
     if (await touch.locator(`#${id}`).evaluate((element) => element.open))
       await touch.locator(`#${id} > summary`).click();
