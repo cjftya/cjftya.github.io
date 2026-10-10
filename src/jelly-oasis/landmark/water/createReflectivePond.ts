@@ -11,6 +11,7 @@ import type {
   ShaderMaterial,
   Mesh,
   MeshStandardMaterial,
+  Vector2,
 } from 'three';
 import { Reflector } from 'three/examples/jsm/objects/Reflector.js';
 import { Refractor } from 'three/examples/jsm/objects/Refractor.js';
@@ -44,7 +45,8 @@ export function createReflectivePond(
   const transform = new Matrix4(),
     inverse = new Matrix4();
   const time = { value: 0 },
-    captured = { value: 0 };
+    captured = { value: 0 },
+    impact = { value: new Vector3(0, 0, 0) };
   let captures = 0,
     lastBucket = -1,
     environmentRevision = 0,
@@ -66,6 +68,7 @@ export function createReflectivePond(
       waterReflectionMatrix: { value: reflectionMatrix },
       waterRefractionMatrix: { value: refractionMatrix },
       waterNormalMatrix: { value: normalMatrix },
+      waterImpact: impact,
     });
     shader.vertexShader = shader.vertexShader
       .replace(
@@ -90,14 +93,18 @@ export function createReflectivePond(
         '#include <common>',
         `#include <common>
       uniform float waterTime, waterCaptured;
+      uniform vec3 waterImpact;
       uniform sampler2D waterReflection, waterRefraction;
       uniform mat3 waterNormalMatrix;
       varying vec3 waterPosition;
       varying float waterThickness;
       varying vec4 waterReflectCoord, waterRefractCoord;
       float waterHeight(vec2 p) {
+        float radius = length((p - waterImpact.xy) * vec2(1.0, 0.89));
         p += vec2(sin(p.y * 0.31), cos(p.x * 0.27)) * 0.45;
-        return sin(dot(p, vec2(1.2, 0.8)) - waterTime * 0.65) * 0.055
+        float wake = sin(radius * 8.0 - waterTime * 5.2 + sin(p.x * 1.3) * 0.15)
+          * exp(-radius * 0.5) * smoothstep(0.08, 0.6, radius) * waterImpact.z * 0.12;
+        return wake + sin(dot(p, vec2(1.2, 0.8)) - waterTime * 0.65) * 0.029
           + sin(dot(p, vec2(-2.1, 2.7)) - waterTime * 0.93) * 0.018
           + sin(dot(p, vec2(5.9, 4.3)) + waterTime * 1.14) * 0.006
           + sin(dot(p, vec2(-11.1, 8.5)) - waterTime * 1.72) * 0.002;
@@ -132,7 +139,7 @@ export function createReflectivePond(
         #include <opaque_fragment>`,
       );
   };
-  material.customProgramCacheKey = () => 'oasis-reflective-pond-v2';
+  material.customProgramCacheKey = () => 'oasis-reflective-pond-v3';
   material.needsUpdate = true;
   function rebuild() {
     const positions = pond.geometry.attributes.position!;
@@ -219,10 +226,19 @@ export function createReflectivePond(
   return {
     time,
     rebuild,
+    setImpact(point: Vector2 | null, strength = 0) {
+      impact.value.set(point?.x ?? 0, point?.y ?? 0, point ? strength : 0);
+    },
     invalidate() {
       environmentRevision++;
     },
-    snapshot: () => ({ size, captures, passes: 2, captured: captured.value === 1 }),
+    snapshot: () => ({
+      size,
+      captures,
+      passes: 2,
+      captured: captured.value === 1,
+      impact: impact.value.toArray(),
+    }),
     dispose() {
       pond.onBeforeRender = () => {};
       reflector.dispose();

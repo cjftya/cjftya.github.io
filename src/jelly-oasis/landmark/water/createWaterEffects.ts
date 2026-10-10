@@ -26,6 +26,7 @@ export interface WaterOptions {
   realistic?: boolean;
   mobile?: boolean;
   freeFall?: boolean;
+  interaction?: boolean;
 }
 
 // Keep standard lighting, fog and receiving shadows. Only the diffuse colour
@@ -35,6 +36,7 @@ function flowingMaterial(
   waterfall: boolean,
   realistic = false,
   freeFall = false,
+  interaction = false,
 ) {
   const time = { value: 0 };
   material.onBeforeCompile = (shader) => {
@@ -120,7 +122,9 @@ return mix(mix(flowHash(i), flowHash(i+vec2(1.0,0.0)), f.x), mix(flowHash(i+vec2
     waterfall
       ? realistic
         ? freeFall
-          ? 'oasis-waterfall-v4'
+          ? interaction
+            ? 'oasis-waterfall-v5'
+            : 'oasis-waterfall-v4'
           : 'oasis-waterfall-v3'
         : 'oasis-waterfall-v2'
       : 'oasis-water-v1';
@@ -223,6 +227,7 @@ export function createWaterEffects(
     rockClearance = Infinity;
     path.length = 0;
     reflectivePond?.rebuild();
+    reflectivePond?.setImpact(null);
     if (!options.waterfall) return;
     root.updateMatrixWorld(true);
     const direction = new Vector3(0, 0, -1).transformDirection(root.matrixWorld);
@@ -292,7 +297,11 @@ export function createWaterEffects(
     const flightTimes: number[] = [];
     if (options.freeFall) {
       let launch: Vector3[] | undefined;
-      for (let lip = 0; lip < Math.min(12, tracedPath.length - 8); lip++) {
+      for (
+        let lip = options.interaction ? 5 : 0;
+        lip < Math.min(12, tracedPath.length - 8);
+        lip++
+      ) {
         const source = tracedPath[lip]!;
         const duration = Math.sqrt((2 * (source.y - landing.y)) / 9.8);
         const velocity = landing.clone().sub(source).divideScalar(duration);
@@ -422,7 +431,15 @@ export function createWaterEffects(
           flatShading: false,
         });
     material.userData.flightDuration = flightDuration || 1;
-    clocks.push(flowingMaterial(material, true, options.realistic, options.freeFall));
+    clocks.push(
+      flowingMaterial(
+        material,
+        true,
+        options.realistic,
+        options.freeFall,
+        options.interaction,
+      ),
+    );
     const flow = new Mesh(geometry, material);
     flow.name = 'WaterfallVolume';
     flow.receiveShadow = true;
@@ -438,7 +455,15 @@ export function createWaterEffects(
         side: DoubleSide,
       });
       veilMaterial.userData.flightDuration = flightDuration || 1;
-      clocks.push(flowingMaterial(veilMaterial, true, true, options.freeFall));
+      clocks.push(
+        flowingMaterial(
+          veilMaterial,
+          true,
+          true,
+          options.freeFall,
+          options.interaction,
+        ),
+      );
       const originalCompile = veilMaterial.onBeforeCompile;
       veilMaterial.onBeforeCompile = (shader, renderer) => {
         originalCompile(shader, renderer);
@@ -450,7 +475,9 @@ export function createWaterEffects(
       };
       veilMaterial.customProgramCacheKey = () =>
         options.freeFall
-          ? 'oasis-waterfall-foam-veil-v4'
+          ? options.interaction
+            ? 'oasis-waterfall-foam-veil-v5'
+            : 'oasis-waterfall-foam-veil-v4'
           : 'oasis-waterfall-foam-veil-v3';
       const veil = new Mesh(geometry, veilMaterial);
       veil.name = 'WaterfallAerationVeil';
@@ -463,8 +490,10 @@ export function createWaterEffects(
     // A scalloped foam patch follows the actual outlet into the shared pond.
     // Horizontal effects sit just above that same surface, never a new basin.
     splashOrigin = landing.clone();
-    splashOrigin.z += 0.22;
+    if (!options.interaction) splashOrigin.z += 0.22;
     splashOrigin.y = pondY() + 0.065;
+    if (options.interaction)
+      reflectivePond?.setImpact(new Vector2(landing.x, landing.z), 0.85);
     const foamMaterial = () =>
       new MeshStandardMaterial({
         color: '#d4e8da',
@@ -475,7 +504,7 @@ export function createWaterEffects(
         depthWrite: false,
         side: DoubleSide,
       });
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < (options.interaction ? 2 : 5); i++) {
       const foam = new Mesh(
         new CircleGeometry(options.realistic ? 0.7 : 0.45, options.realistic ? 32 : 7),
         foamMaterial(),
@@ -483,15 +512,21 @@ export function createWaterEffects(
       foam.name = 'WaterfallFoam';
       foam.rotation.x = -Math.PI / 2;
       foam.position.copy(splashOrigin);
-      foam.position.x += (i - 2) * 0.38;
-      foam.position.z += Math.sin(i * 2.1) * 0.18;
+      foam.position.x += options.interaction ? (i - 0.5) * 0.34 : (i - 2) * 0.38;
+      foam.position.z += options.interaction
+        ? Math.sin(i * 2.1) * 0.12
+        : Math.sin(i * 2.1) * 0.18;
       foam.position.y += i * 0.002;
-      foam.scale.set(1.3, 0.8, 1);
+      foam.scale.set(
+        options.interaction ? 1.15 : 1.3,
+        options.interaction ? 0.62 : 0.8,
+        1,
+      );
       foam.receiveShadow = true;
       waterfall.add(foam);
       triangles += options.realistic ? 32 : 7;
     }
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < (options.interaction ? 0 : 3); i++) {
       const ripple = new Mesh(
         new RingGeometry(options.realistic ? 0.985 : 0.96, 1, 32),
         foamMaterial(),
@@ -568,10 +603,17 @@ export function createWaterEffects(
       ...options,
       elapsed,
       triangles,
-      version: options.freeFall ? 4 : options.realistic ? 3 : 2,
+      version: options.interaction
+        ? 5
+        : options.freeFall
+          ? 4
+          : options.realistic
+            ? 3
+            : 2,
       flightDuration,
       flightStartIndex,
       rockClearance: Number.isFinite(rockClearance) ? rockClearance : null,
+      impact: options.interaction ? [splashOrigin.x, splashOrigin.z] : null,
       reflection: reflectivePond?.snapshot() ?? null,
       droplets: droplets?.count ?? 0,
       ripples: ripples.length,
