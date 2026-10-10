@@ -61,12 +61,13 @@ async function load(detail) {
   await environment(12, 'CLEAR');
 }
 try {
-  // Unchanged blockout isolates the shadow change from the mesh change.
+  // Compare cliff blockout against the latest detail, keeping the current tree
+  // and pond and the explicit ruin blockout identical in both views.
   await load(false);
   await page.locator('[data-view=medium]').click();
   await capture('shadow-after-medium-noon');
   results.blockout = await snapshot();
-  assert.equal(results.blockout.assetTriangles, 8002);
+  assert.equal(results.blockout.assetTriangles, 18944);
   await page.locator('[data-view=ground]').click();
   await capture('shadow-after-ground-noon');
   await page.locator('[data-view=medium]').click();
@@ -96,7 +97,7 @@ try {
   for (const route of ['loop', 'clearing', 'approach', 'passage'])
     assert.equal(results.audit[route].clear, true, route);
   results.withShadows = await snapshot();
-  assert.equal(results.withShadows.assetTriangles, 9044);
+  assert.equal(results.withShadows.assetTriangles, 19986);
   assert.deepEqual(results.withShadows.placement, results.blockout.placement);
   assert.equal(
     results.withShadows.contact.Cliff_Waterfall_A.y,
@@ -126,7 +127,11 @@ try {
   assert.equal(await panel.evaluate((e) => e.open), false);
   assert.equal(await normal.evaluate(() => '__oasisLandmark' in window), false);
   assert.equal(await normal.locator('#landmark-debug').count(), 0);
-  assert.ok(files.some((f) => f.url.endsWith('/Cliff_Waterfall_A_Detail_v1.glb')));
+  assert.ok(
+    files.some((f) =>
+      f.url.endsWith('/aesthetic-improvement-v1/Cliff_Waterfall_A_Refined_v1.glb'),
+    ),
+  );
   assert.ok(!files.some((f) => f.url.endsWith('/Cliff_Waterfall_A.glb')));
   assert.ok(files.every((f) => f.status === 200));
   await normal.screenshot({ path: resolve(output, 'panel-desktop-collapsed.png') });
@@ -168,7 +173,7 @@ try {
   await normal.reload();
   assert.equal(await panel.evaluate((e) => e.open), false);
   results.publicPanel =
-    'Keyboard toggle, hidden-control focus, time, play/pause, speed, weather, reload reset passed; no production inspector/API; Detail v1 is the default GLB.';
+    'Keyboard toggle, hidden-control focus, time, play/pause, speed, weather, reload reset passed; no production inspector/API; Refined v1 is the default GLB.';
 
   const mobile = await browser.newContext({
     viewport: { width: 390, height: 844 },
@@ -219,7 +224,7 @@ try {
 
   const glb = await readFile(
     resolve(
-      'public/assets/jelly-oasis/landmarks/overgrown-ruin/Cliff_Waterfall_A_Detail_v1.glb',
+      'public/assets/jelly-oasis/landmarks/overgrown-ruin/aesthetic-improvement-v1/Cliff_Waterfall_A_Refined_v1.glb',
     ),
   );
   const gltf = JSON.parse(glb.subarray(20, 20 + glb.readUInt32LE(12)).toString());

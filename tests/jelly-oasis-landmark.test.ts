@@ -1,7 +1,9 @@
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { Box3, Mesh, Raycaster, Vector3 } from 'three';
+import { Box3, Mesh, PerspectiveCamera, Raycaster, Vector3 } from 'three';
+import type { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { frameLandmark } from '../src/jelly-oasis/landmark/landmarkCamera';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { createTerrain } from '../src/jelly-oasis/terrain/createTerrain';
 import { DEFAULT_TERRAIN_CONFIG } from '../src/jelly-oasis/terrain/heightfield';
@@ -43,6 +45,74 @@ afterEach(() => {
 });
 
 describe('landmark integration against real exported GLBs', () => {
+  it('preserves contact, shared water guide and routes for aesthetic candidates', async () => {
+    await useLocalAssets();
+    const before = await createOvergrownRuin(
+      DEFAULT_TERRAIN_CONFIG,
+      true,
+      true,
+      true,
+      'v2',
+    );
+    const after = await createOvergrownRuin(
+      DEFAULT_TERRAIN_CONFIG,
+      true,
+      true,
+      true,
+      'v2',
+      false,
+      { tree: true, pond: true, cliff: true, water: 'soft' },
+    );
+    expect(after.contact).toEqual(before.contact);
+    expect(after.placement).toEqual(before.placement);
+    expect(after.assetTriangles).toBe(before.assetTriangles);
+    expect(after.assets.pondGuide).toEqual(before.assets.pondGuide);
+    expect(after.pondHeight).toBe(before.pondHeight);
+    const audit = auditLandmark(after);
+    for (const route of ['loop', 'clearing', 'approach', 'passage'] as const)
+      expect(audit[route].clear).toBe(true);
+    before.dispose();
+    after.dispose();
+  });
+
+  it('fits portrait medium bounds without changing the desktop medium direction', async () => {
+    await useLocalAssets();
+    const landmark = await createOvergrownRuin(
+      DEFAULT_TERRAIN_CONFIG,
+      true,
+      true,
+      true,
+      'v2',
+    );
+    let desktopDirection: Vector3 | undefined;
+    for (const aspect of [1440 / 900, 390 / 844, 360 / 780]) {
+      const camera = new PerspectiveCamera(42, aspect, 0.5, 1800);
+      const target = new Vector3();
+      const controls = {
+        target,
+        update: () => {
+          camera.lookAt(target);
+          camera.updateMatrixWorld();
+        },
+      } as unknown as OrbitControls;
+      frameLandmark('medium', landmark, camera, controls);
+      const direction = camera.position.clone().sub(target).normalize();
+      desktopDirection ??= direction;
+      expect(direction.distanceTo(desktopDirection)).toBeLessThan(1e-8);
+      if (aspect >= 1) continue;
+      for (const object of landmark.assets.modules.values()) {
+        const box = new Box3().setFromObject(object);
+        for (const x of [box.min.x, box.max.x])
+          for (const y of [box.min.y, box.max.y])
+            for (const z of [box.min.z, box.max.z]) {
+              const projected = new Vector3(x, y, z).project(camera);
+              expect(Math.abs(projected.x)).toBeLessThanOrEqual(0.900001);
+              expect(Math.abs(projected.y)).toBeLessThanOrEqual(0.800001);
+            }
+      }
+    }
+    landmark.dispose();
+  });
   it('keeps crystal candidates opt-in, flat and grounded without changing other modules or routes', async () => {
     const load = await useLocalAssets();
     const before = await createOvergrownRuin(

@@ -22,6 +22,7 @@ import {
   loadLandmarkAssets,
   loadLandmarkReference,
 } from './loadLandmarkAssets';
+import type { AestheticVariants } from './loadLandmarkAssets';
 
 export function guideGeometry(guide: LayoutGuide): BufferGeometry {
   const geometry = new BufferGeometry();
@@ -41,6 +42,7 @@ export async function createOvergrownRuin(
   treeDetail = true,
   pondDetail: boolean | 'v2' = false,
   crystalDetail = false,
+  aesthetic: AestheticVariants = {},
 ) {
   const assets = await loadLandmarkAssets(
     cliffDetail,
@@ -48,6 +50,7 @@ export async function createOvergrownRuin(
     treeDetail,
     pondDetail,
     crystalDetail,
+    aesthetic,
   );
   const root = new Group();
   root.name = 'OvergrownOasisRuin';
@@ -70,9 +73,15 @@ export async function createOvergrownRuin(
   const pond = new Mesh(
     guideGeometry(pondGuide),
     new MeshStandardMaterial({
-      color: '#639b9c',
+      color:
+        aesthetic.water === 'deep'
+          ? '#477f89'
+          : aesthetic.water === 'soft'
+            ? '#568f96'
+            : '#639b9c',
       transparent: true,
-      opacity: 0.65,
+      opacity:
+        aesthetic.water === 'deep' ? 0.83 : aesthetic.water === 'soft' ? 0.76 : 0.65,
       roughness: 0.85,
       side: DoubleSide,
       depthWrite: false,

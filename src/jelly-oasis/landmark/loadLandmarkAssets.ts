@@ -10,6 +10,12 @@ import type { LandmarkLayout, LayoutGuide } from './landmarkConfig';
 
 // One loader for modules and the optional reference. Each result has one owner.
 const loader = new GLTFLoader();
+export interface AestheticVariants {
+  tree?: boolean;
+  pond?: boolean;
+  cliff?: boolean;
+  water?: 'deep' | 'soft';
+}
 export function disposeLandmarkResources(roots: Iterable<Object3D>): void {
   const geometries = new Set<BufferGeometry>(),
     materials = new Set<Material>(),
@@ -46,6 +52,7 @@ export async function loadLandmarkAssets(
   treeDetail = true,
   pondDetail: boolean | 'v2' = false,
   crystalDetail = false,
+  aesthetic: AestheticVariants = {},
 ) {
   const started = performance.now();
   const response = await fetch(`${LANDMARK_ASSET_PATH}layout.json`);
@@ -67,8 +74,13 @@ export async function loadLandmarkAssets(
         'Root_Large_A',
         'Root_Tree_Base_Blockout',
       ].includes(name);
-    const file =
-      crystalDetail && /^Crystal_Blockout_[ABC]$/.test(name)
+    const refined =
+      (aesthetic.tree && treeDetail && name === 'Tree_Landmark_Blockout') ||
+      (aesthetic.pond && pondDetail === 'v2' && name === 'PondEdge_Blockout') ||
+      (aesthetic.cliff && cliffDetail && name === 'Cliff_Waterfall_A');
+    const file = refined
+      ? `aesthetic-improvement-v1/${name}_Refined_v1.glb`
+      : crystalDetail && /^Crystal_Blockout_[ABC]$/.test(name)
         ? `crystal-accent-detail-v1/${name}_Detail_v1.glb`
         : pondDetail && name === 'PondEdge_Blockout'
           ? pondDetail === 'v2'

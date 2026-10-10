@@ -147,7 +147,9 @@ try {
   assert.equal(await p2.evaluate(() => '__oasisLandmark' in window), false);
   await p2.waitForTimeout(750);
   assert.ok(
-    productionAssets.some((u) => u.endsWith('/PondEdge_Blockout_Detail_v2.glb')),
+    productionAssets.some((u) =>
+      u.endsWith('/aesthetic-improvement-v1/PondEdge_Blockout_Refined_v1.glb'),
+    ),
   );
   assert.ok(
     productionAssets.every(
@@ -166,7 +168,9 @@ try {
   await p2.waitForTimeout(750);
   assert.equal(await p2.evaluate(() => '__oasisLandmark' in window), false);
   assert.ok(
-    productionAssets.some((u) => u.endsWith('/PondEdge_Blockout_Detail_v2.glb')),
+    productionAssets.some((u) =>
+      u.endsWith('/aesthetic-improvement-v1/PondEdge_Blockout_Refined_v1.glb'),
+    ),
   );
   assert.ok(
     productionAssets.every(

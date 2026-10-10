@@ -1,3 +1,4 @@
+import { Box3, Vector3 } from 'three';
 import type { PerspectiveCamera } from 'three';
 import type { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import type { OvergrownRuin } from './createOvergrownRuin';
@@ -35,6 +36,34 @@ export function frameLandmark(
       : landmark.root.position.y + (isolated ? 23 : 48),
     eye.z,
   );
+  if (!ground && camera.aspect < 1) {
+    // Keep the desktop view direction, then fit the actual module bounds to
+    // the narrower horizontal field of view rather than using a device multiplier.
+    landmark.root.updateMatrixWorld(true);
+    const outward = camera.position.clone().sub(controls.target).normalize();
+    const right = new Vector3().crossVectors(camera.up, outward).normalize();
+    const up = new Vector3().crossVectors(outward, right).normalize();
+    const verticalTangent = Math.tan((camera.fov * Math.PI) / 360);
+    const horizontalTangent = verticalTangent * camera.aspect;
+    let distance = camera.position.distanceTo(controls.target);
+    for (const object of visible) {
+      const bounds = new Box3().setFromObject(object);
+      if (bounds.isEmpty()) continue;
+      for (const x of [bounds.min.x, bounds.max.x])
+        for (const y of [bounds.min.y, bounds.max.y])
+          for (const z of [bounds.min.z, bounds.max.z]) {
+            const relative = new Vector3(x, y, z).sub(controls.target);
+            distance = Math.max(
+              distance,
+              relative.dot(outward) +
+                Math.abs(relative.dot(right)) / (horizontalTangent * 0.9),
+              relative.dot(outward) +
+                Math.abs(relative.dot(up)) / (verticalTangent * 0.8),
+            );
+          }
+    }
+    camera.position.copy(controls.target).addScaledVector(outward, distance);
+  }
   controls.update();
   controls.enableDamping = true;
 }
