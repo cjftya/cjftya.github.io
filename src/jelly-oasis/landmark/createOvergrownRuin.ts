@@ -40,12 +40,14 @@ export async function createOvergrownRuin(
   ruinDetail = true,
   treeDetail = true,
   pondDetail: boolean | 'v2' = false,
+  crystalDetail = false,
 ) {
   const assets = await loadLandmarkAssets(
     cliffDetail,
     ruinDetail,
     treeDetail,
     pondDetail,
+    crystalDetail,
   );
   const root = new Group();
   root.name = 'OvergrownOasisRuin';

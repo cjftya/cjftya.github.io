@@ -1,0 +1,975 @@
+{
+  "filepath": "C:\\Users\\cjfty\\Documents\\dev\\cjftya.github.io\\artifacts\\jelly-oasis\\pond-edge-detail-v2\\jelly-oasis-pond-edge-detail-v2.blend",
+  "dirty": false,
+  "objects": [
+    {
+      "name": "Bank_Upper_20",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "dimensions": [
+        3.246185302734375,
+        1.5235753059387207,
+        1.5504693984985352
+      ],
+      "hidden": true,
+      "polygons": 80,
+      "smoothFaces": 0,
+      "modifiers": []
+    },
+    {
+      "name": "Bank_Upper_30",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "dimensions": [
+        3.703627109527588,
+        1.2684040069580078,
+        1.027155876159668
+      ],
+      "hidden": true,
+      "polygons": 80,
+      "smoothFaces": 0,
+      "modifiers": []
+    },
+    {
+      "name": "Bank_Upper_42",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "dimensions": [
+        3.1503095626831055,
+        1.301945686340332,
+        1.384378433227539
+      ],
+      "hidden": true,
+      "polygons": 80,
+      "smoothFaces": 0,
+      "modifiers": []
+    },
+    {
+      "name": "Bank_Upper_6",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "dimensions": [
+        4.26850700378418,
+        1.3981175422668457,
+        1.170613169670105
+      ],
+      "hidden": true,
+      "polygons": 80,
+      "smoothFaces": 0,
+      "modifiers": []
+    },
+    {
+      "name": "Canopy_Clusters",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "dimensions": [
+        25.0,
+        20.0,
+        10.629060745239258
+      ],
+      "hidden": false,
+      "polygons": 7680,
+      "smoothFaces": 0,
+      "modifiers": []
+    },
+    {
+      "name": "Cliff_Waterfall_A",
+      "location": [
+        0.01491403579711914,
+        12.586786270141602,
+        0.0
+      ],
+      "dimensions": [
+        21.327320098876953,
+        11.773849487304688,
+        17.0
+      ],
+      "hidden": true,
+      "polygons": 1958,
+      "smoothFaces": 0,
+      "modifiers": []
+    },
+    {
+      "name": "Cliff_Waterfall_A_Detail_v1",
+      "location": [
+        0.01491403579711914,
+        12.586786270141602,
+        0.0
+      ],
+      "dimensions": [
+        21.102867126464844,
+        11.390993118286133,
+        17.0
+      ],
+      "hidden": false,
+      "polygons": 3238,
+      "smoothFaces": 0,
+      "modifiers": []
+    },
+    {
+      "name": "CreatureClearing_Diameter16m",
+      "location": [
+        0.0,
+        -2.0,
+        0.0
+      ],
+      "dimensions": [
+        16.0,
+        16.0,
+        0.0
+      ],
+      "hidden": true,
+      "polygons": 48,
+      "smoothFaces": 0,
+      "modifiers": []
+    },
+    {
+      "name": "CreaturePaths_ArchApproach_6m",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "dimensions": [
+        10.941741943359375,
+        30.960453033447266,
+        0.0
+      ],
+      "hidden": true,
+      "polygons": 4,
+      "smoothFaces": 0,
+      "modifiers": []
+    },
+    {
+      "name": "CreaturePaths_Loop_6m",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "dimensions": [
+        74.0,
+        70.0,
+        0.0
+      ],
+      "hidden": true,
+      "polygons": 128,
+      "smoothFaces": 0,
+      "modifiers": []
+    },
+    {
+      "name": "Crystal_Blockout_A",
+      "location": [
+        15.0,
+        -19.0,
+        0.0
+      ],
+      "dimensions": [
+        2.5999999046325684,
+        1.609326720237732,
+        3.4000000953674316
+      ],
+      "hidden": false,
+      "polygons": 39,
+      "smoothFaces": 0,
+      "modifiers": []
+    },
+    {
+      "name": "Crystal_Blockout_B",
+      "location": [
+        -15.0,
+        -12.0,
+        0.0
+      ],
+      "dimensions": [
+        2.5999999046325684,
+        1.609326720237732,
+        3.4000000953674316
+      ],
+      "hidden": false,
+      "polygons": 39,
+      "smoothFaces": 0,
+      "modifiers": []
+    },
+    {
+      "name": "Crystal_Blockout_C",
+      "location": [
+        9.0,
+        20.0,
+        0.0
+      ],
+      "dimensions": [
+        2.5999999046325684,
+        1.609326720237732,
+        3.4000000953674316
+      ],
+      "hidden": false,
+      "polygons": 39,
+      "smoothFaces": 0,
+      "modifiers": []
+    },
+    {
+      "name": "Cube",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "dimensions": [
+        2.0,
+        2.0,
+        2.0
+      ],
+      "hidden": false,
+      "polygons": 6,
+      "smoothFaces": 0,
+      "modifiers": []
+    },
+    {
+      "name": "Ground_Presentation_ONLY",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "dimensions": [
+        80.0,
+        76.0,
+        0.0
+      ],
+      "hidden": false,
+      "polygons": 64,
+      "smoothFaces": 0,
+      "modifiers": []
+    },
+    {
+      "name": "Pond_Blockout",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "dimensions": [
+        24.30644416809082,
+        20.215171813964844,
+        0.0
+      ],
+      "hidden": true,
+      "polygons": 48,
+      "smoothFaces": 0,
+      "modifiers": []
+    },
+    {
+      "name": "PondEdge_Blockout",
+      "location": [
+        0.0,
+        -7.0,
+        0.0
+      ],
+      "dimensions": [
+        27.952411651611328,
+        23.247447967529297,
+        0.32499998807907104
+      ],
+      "hidden": true,
+      "polygons": 96,
+      "smoothFaces": 0,
+      "modifiers": []
+    },
+    {
+      "name": "PondWaterBoundary_Guide_v2",
+      "location": [
+        0.0,
+        0.0,
+        0.014999999664723873
+      ],
+      "dimensions": [
+        23.711111068725586,
+        20.259258270263672,
+        0.0
+      ],
+      "hidden": false,
+      "polygons": 1,
+      "smoothFaces": 0,
+      "modifiers": []
+    },
+    {
+      "name": "Rock_Large_A",
+      "location": [
+        -20.102170944213867,
+        -6.032805442810059,
+        0.0
+      ],
+      "dimensions": [
+        7.652920246124268,
+        5.652027606964111,
+        5.5
+      ],
+      "hidden": false,
+      "polygons": 398,
+      "smoothFaces": 0,
+      "modifiers": []
+    },
+    {
+      "name": "Rock_Large_B",
+      "location": [
+        -22.367612838745117,
+        11.886499404907227,
+        0.0
+      ],
+      "dimensions": [
+        5.373750686645508,
+        4.441883563995361,
+        4.0
+      ],
+      "hidden": false,
+      "polygons": 194,
+      "smoothFaces": 0,
+      "modifiers": []
+    },
+    {
+      "name": "Rock_Large_C",
+      "location": [
+        24.845170974731445,
+        -7.992313385009766,
+        0.0
+      ],
+      "dimensions": [
+        4.519880294799805,
+        3.677119016647339,
+        3.5
+      ],
+      "hidden": false,
+      "polygons": 194,
+      "smoothFaces": 0,
+      "modifiers": []
+    },
+    {
+      "name": "Rock_Large_D",
+      "location": [
+        -15.151616096496582,
+        -17.991193771362305,
+        0.0
+      ],
+      "dimensions": [
+        6.319927215576172,
+        4.663687705993652,
+        4.199999809265137
+      ],
+      "hidden": false,
+      "polygons": 194,
+      "smoothFaces": 0,
+      "modifiers": []
+    },
+    {
+      "name": "Rock_Large_E",
+      "location": [
+        21.983375549316406,
+        14.873836517333984,
+        0.0
+      ],
+      "dimensions": [
+        4.517394065856934,
+        4.532651901245117,
+        3.0
+      ],
+      "hidden": false,
+      "polygons": 194,
+      "smoothFaces": 0,
+      "modifiers": []
+    },
+    {
+      "name": "Rocks_A_0",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "dimensions": [
+        1.5480046272277832,
+        1.3196415901184082,
+        0.980686366558075
+      ],
+      "hidden": true,
+      "polygons": 80,
+      "smoothFaces": 0,
+      "modifiers": []
+    },
+    {
+      "name": "Rocks_A_1",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "dimensions": [
+        2.2947864532470703,
+        1.483473300933838,
+        1.431898593902588
+      ],
+      "hidden": true,
+      "polygons": 80,
+      "smoothFaces": 0,
+      "modifiers": []
+    },
+    {
+      "name": "Rocks_A_2",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "dimensions": [
+        1.306513786315918,
+        1.0474576950073242,
+        0.820354163646698
+      ],
+      "hidden": true,
+      "polygons": 80,
+      "smoothFaces": 0,
+      "modifiers": []
+    },
+    {
+      "name": "Rocks_A_3",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "dimensions": [
+        1.5250377655029297,
+        1.2325596809387207,
+        0.9653721451759338
+      ],
+      "hidden": true,
+      "polygons": 80,
+      "smoothFaces": 0,
+      "modifiers": []
+    },
+    {
+      "name": "Rocks_A_4",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "dimensions": [
+        1.9777007102966309,
+        1.2407379150390625,
+        1.056343674659729
+      ],
+      "hidden": true,
+      "polygons": 80,
+      "smoothFaces": 0,
+      "modifiers": []
+    },
+    {
+      "name": "Rocks_A_5",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "dimensions": [
+        2.649312973022461,
+        1.712458610534668,
+        1.6814217567443848
+      ],
+      "hidden": true,
+      "polygons": 80,
+      "smoothFaces": 0,
+      "modifiers": []
+    },
+    {
+      "name": "Rocks_A_6",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "dimensions": [
+        1.635102391242981,
+        1.1816034317016602,
+        0.8988916873931885
+      ],
+      "hidden": true,
+      "polygons": 80,
+      "smoothFaces": 0,
+      "modifiers": []
+    },
+    {
+      "name": "Rocks_A_7",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "dimensions": [
+        1.0612642765045166,
+        0.8808631896972656,
+        0.6093147993087769
+      ],
+      "hidden": true,
+      "polygons": 80,
+      "smoothFaces": 0,
+      "modifiers": []
+    },
+    {
+      "name": "Rocks_A_8",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "dimensions": [
+        1.3432002067565918,
+        0.9985065460205078,
+        0.7568146586418152
+      ],
+      "hidden": true,
+      "polygons": 80,
+      "smoothFaces": 0,
+      "modifiers": []
+    },
+    {
+      "name": "Rocks_v2_0",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "dimensions": [
+        2.3742446899414062,
+        1.6515021324157715,
+        1.4067641496658325
+      ],
+      "hidden": false,
+      "polygons": 80,
+      "smoothFaces": 0,
+      "modifiers": []
+    },
+    {
+      "name": "Rocks_v2_1",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "dimensions": [
+        1.3864002227783203,
+        1.17930269241333,
+        0.9402180910110474
+      ],
+      "hidden": false,
+      "polygons": 80,
+      "smoothFaces": 0,
+      "modifiers": []
+    },
+    {
+      "name": "Rocks_v2_2",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "dimensions": [
+        0.9119987487792969,
+        0.7825305461883545,
+        0.649476170539856
+      ],
+      "hidden": false,
+      "polygons": 80,
+      "smoothFaces": 0,
+      "modifiers": []
+    },
+    {
+      "name": "Rocks_v2_3",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "dimensions": [
+        1.0701141357421875,
+        0.8990726470947266,
+        0.7685917019844055
+      ],
+      "hidden": false,
+      "polygons": 80,
+      "smoothFaces": 0,
+      "modifiers": []
+    },
+    {
+      "name": "Rocks_v2_4",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "dimensions": [
+        2.8655624389648438,
+        1.9644827842712402,
+        1.8220250606536865
+      ],
+      "hidden": false,
+      "polygons": 80,
+      "smoothFaces": 0,
+      "modifiers": []
+    },
+    {
+      "name": "Rocks_v2_5",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "dimensions": [
+        1.7886714935302734,
+        1.2988595962524414,
+        1.116819143295288
+      ],
+      "hidden": false,
+      "polygons": 80,
+      "smoothFaces": 0,
+      "modifiers": []
+    },
+    {
+      "name": "Rocks_v2_6",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "dimensions": [
+        1.0077409744262695,
+        0.934809684753418,
+        0.6453012824058533
+      ],
+      "hidden": false,
+      "polygons": 80,
+      "smoothFaces": 0,
+      "modifiers": []
+    },
+    {
+      "name": "Rocks_v2_7",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "dimensions": [
+        1.2647409439086914,
+        1.0451810359954834,
+        0.8431062698364258
+      ],
+      "hidden": false,
+      "polygons": 80,
+      "smoothFaces": 0,
+      "modifiers": []
+    },
+    {
+      "name": "Rocks_v2_8",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "dimensions": [
+        0.8101949691772461,
+        0.6052243709564209,
+        0.5660966634750366
+      ],
+      "hidden": false,
+      "polygons": 80,
+      "smoothFaces": 0,
+      "modifiers": []
+    },
+    {
+      "name": "Root_Large_A",
+      "location": [
+        -12.0,
+        10.0,
+        1.2999999523162842
+      ],
+      "dimensions": [
+        4.931971549987793,
+        12.580663681030273,
+        6.1970534324646
+      ],
+      "hidden": true,
+      "polygons": 164,
+      "smoothFaces": 0,
+      "modifiers": []
+    },
+    {
+      "name": "Root_Large_A_Detail_v1",
+      "location": [
+        -12.0,
+        10.0,
+        1.2999999523162842
+      ],
+      "dimensions": [
+        5.352507591247559,
+        12.222062110900879,
+        5.974197864532471
+      ],
+      "hidden": false,
+      "polygons": 362,
+      "smoothFaces": 0,
+      "modifiers": []
+    },
+    {
+      "name": "Root_Tree_Base_Blockout",
+      "location": [
+        -12.0,
+        18.0,
+        0.0
+      ],
+      "dimensions": [
+        3.071566343307495,
+        9.006401062011719,
+        2.709111213684082
+      ],
+      "hidden": true,
+      "polygons": 32,
+      "smoothFaces": 0,
+      "modifiers": []
+    },
+    {
+      "name": "Root_Tree_Base_Blockout_Detail_v1",
+      "location": [
+        -12.0,
+        18.0,
+        0.0
+      ],
+      "dimensions": [
+        3.483051300048828,
+        9.211153984069824,
+        2.4901087284088135
+      ],
+      "hidden": false,
+      "polygons": 122,
+      "smoothFaces": 0,
+      "modifiers": []
+    },
+    {
+      "name": "Ruin_Arch_A",
+      "location": [
+        15.0,
+        6.0,
+        0.0
+      ],
+      "dimensions": [
+        8.770000457763672,
+        2.3499999046325684,
+        9.495404243469238
+      ],
+      "hidden": true,
+      "polygons": 546,
+      "smoothFaces": 0,
+      "modifiers": []
+    },
+    {
+      "name": "Ruin_Arch_A_Detail_v1",
+      "location": [
+        15.0,
+        6.0,
+        0.0
+      ],
+      "dimensions": [
+        8.916193008422852,
+        2.485586643218994,
+        9.495404243469238
+      ],
+      "hidden": false,
+      "polygons": 537,
+      "smoothFaces": 0,
+      "modifiers": []
+    },
+    {
+      "name": "Ruin_BrokenWall_A",
+      "location": [
+        18.0,
+        17.0,
+        0.0
+      ],
+      "dimensions": [
+        7.669721603393555,
+        4.455604076385498,
+        5.983003616333008
+      ],
+      "hidden": true,
+      "polygons": 234,
+      "smoothFaces": 0,
+      "modifiers": []
+    },
+    {
+      "name": "Ruin_BrokenWall_A_Detail_v1",
+      "location": [
+        18.0,
+        17.0,
+        0.0
+      ],
+      "dimensions": [
+        7.715348243713379,
+        4.530452728271484,
+        5.610586166381836
+      ],
+      "hidden": false,
+      "polygons": 233,
+      "smoothFaces": 0,
+      "modifiers": []
+    },
+    {
+      "name": "Ruin_Wall_A",
+      "location": [
+        -14.0,
+        2.0,
+        0.0
+      ],
+      "dimensions": [
+        8.199999809265137,
+        1.4800000190734863,
+        5.300000190734863
+      ],
+      "hidden": true,
+      "polygons": 260,
+      "smoothFaces": 0,
+      "modifiers": []
+    },
+    {
+      "name": "Ruin_Wall_A_Detail_v1",
+      "location": [
+        -14.0,
+        2.0,
+        0.0
+      ],
+      "dimensions": [
+        8.199999809265137,
+        2.0012998580932617,
+        4.9871087074279785
+      ],
+      "hidden": false,
+      "polygons": 259,
+      "smoothFaces": 0,
+      "modifiers": []
+    },
+    {
+      "name": "Shore_Base",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "dimensions": [
+        26.91465187072754,
+        22.597949981689453,
+        0.1599999964237213
+      ],
+      "hidden": true,
+      "polygons": 96,
+      "smoothFaces": 0,
+      "modifiers": []
+    },
+    {
+      "name": "Shore_Base_Bank_Upper_v2",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "dimensions": [
+        25.802383422851562,
+        21.605812072753906,
+        0.4300000071525574
+      ],
+      "hidden": false,
+      "polygons": 228,
+      "smoothFaces": 228,
+      "modifiers": []
+    },
+    {
+      "name": "Tree_Landmark_Blockout",
+      "location": [
+        -12.0,
+        18.0,
+        0.0
+      ],
+      "dimensions": [
+        25.0,
+        20.0,
+        28.0
+      ],
+      "hidden": true,
+      "polygons": 1728,
+      "smoothFaces": 0,
+      "modifiers": []
+    },
+    {
+      "name": "Trunk_and_Branches",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "dimensions": [
+        18.559778213500977,
+        12.686607360839844,
+        25.96267318725586
+      ],
+      "hidden": false,
+      "polygons": 4186,
+      "smoothFaces": 4186,
+      "modifiers": []
+    },
+    {
+      "name": "Waterfall_Drop_Guide_L",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "dimensions": [
+        0.1400001049041748,
+        9.02782154083252,
+        16.44705581665039
+      ],
+      "hidden": true,
+      "polygons": 17,
+      "smoothFaces": 0,
+      "modifiers": []
+    },
+    {
+      "name": "Waterfall_Drop_Guide_R",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "dimensions": [
+        0.1400001049041748,
+        9.02782154083252,
+        16.44705581665039
+      ],
+      "hidden": true,
+      "polygons": 17,
+      "smoothFaces": 0,
+      "modifiers": []
+    }
+  ]
+}

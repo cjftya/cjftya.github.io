@@ -1,0 +1,437 @@
+{
+  "preserved": {
+    "public/assets/jelly-oasis/landmarks/overgrown-ruin/Cliff_Waterfall_A.glb": "e2b01672913632c4957078916c0242765a40d8cf844af27d3d4e09df89ca216c",
+    "public/assets/jelly-oasis/landmarks/overgrown-ruin/Cliff_Waterfall_A_Detail_v1.glb": "a7e78320840c0d0b39ebf535da507638562ba2f75d1254acfebcc9a9972ded53",
+    "public/assets/jelly-oasis/landmarks/overgrown-ruin/Crystal_Blockout_A.glb": "907527669a85fea4c0e8633bb1ad9bbe28a38d69d3f97554bc48720d250797ce",
+    "public/assets/jelly-oasis/landmarks/overgrown-ruin/Crystal_Blockout_B.glb": "7d81b07dda5b631998575816d4060030b3ed7480f914ba2fa41d450930b4ab5c",
+    "public/assets/jelly-oasis/landmarks/overgrown-ruin/Crystal_Blockout_C.glb": "4c6e102789aa65ac76bec7746fb7d411b99b9df88798a438a196184f5ed95b89",
+    "public/assets/jelly-oasis/landmarks/overgrown-ruin/Overgrown_Oasis_Ruin_Blockout_v1.glb": "0557248028f750d0b1b478abc5f843204755d93c3bce752aa58e0ffea9e4a465",
+    "public/assets/jelly-oasis/landmarks/overgrown-ruin/PondEdge_Blockout.glb": "c66e5f89411d2f2974503b997d672d8e346b16a434b5dbda3c0eb352ba5c6cf0",
+    "public/assets/jelly-oasis/landmarks/overgrown-ruin/PondEdge_Blockout_Detail_v1.glb": "cdf0a76798e7d25d877f4a3065533b4f1b5181dc9fb0a6793e761b6d521157f0",
+    "public/assets/jelly-oasis/landmarks/overgrown-ruin/PondEdge_Blockout_Detail_v2.glb": "795a1cccaa7c7aea3f3599eb0ed010af30df30305256bde1bde5270e51646e6e",
+    "public/assets/jelly-oasis/landmarks/overgrown-ruin/README.md": "7c2ae0e42957347f854e9320d84bda0d47f8e239624b6307ade1e7447b1d3fa1",
+    "public/assets/jelly-oasis/landmarks/overgrown-ruin/Rock_Large_A.glb": "7691a0f1788b6a3258e180627a0c88f0fe3c76b0069134c2d477baa380c12f44",
+    "public/assets/jelly-oasis/landmarks/overgrown-ruin/Rock_Large_B.glb": "738648a0403b46bfad5676cd43b41538abda64213702b863446bf40cf5136697",
+    "public/assets/jelly-oasis/landmarks/overgrown-ruin/Rock_Large_C.glb": "51abe046434b45e6988f49e374150f40e800896b0342420f1dbc7ada34d65376",
+    "public/assets/jelly-oasis/landmarks/overgrown-ruin/Rock_Large_D.glb": "4c72463ea44e4ef156cf21b6401e4b3aaa8a78e87387aaa115e59e85cf8c9d9a",
+    "public/assets/jelly-oasis/landmarks/overgrown-ruin/Rock_Large_E.glb": "470f5169117cade45427ab655b66c19b6cc1855c2eedb0de256f1e2d9d0db198",
+    "public/assets/jelly-oasis/landmarks/overgrown-ruin/Root_Large_A.glb": "4bed3d87209c6b8c81b3633a3c4d513ccc4f400de236ad609b5ebfff1ab7b186",
+    "public/assets/jelly-oasis/landmarks/overgrown-ruin/Root_Large_A_Detail_v1.glb": "472bd407499d7440c6a029425ce834b5bb39f8dc061aa2cf79f9fab212391fe1",
+    "public/assets/jelly-oasis/landmarks/overgrown-ruin/Root_Tree_Base_Blockout.glb": "7e72d9f9d94723911747d8943ee83c0b1f22eccddb12a9c316c5b5715728bd46",
+    "public/assets/jelly-oasis/landmarks/overgrown-ruin/Root_Tree_Base_Blockout_Detail_v1.glb": "62087eed9fe46c5c82eaf15a7e3ad6be8b6f35200c8858637c889c5a983dbb9a",
+    "public/assets/jelly-oasis/landmarks/overgrown-ruin/Ruin_Arch_A.glb": "035888f032597fab11a56be9f015a177dd27cdde2402be1b4620bd7db0cc8e8c",
+    "public/assets/jelly-oasis/landmarks/overgrown-ruin/Ruin_Arch_A_Detail_v1.glb": "e0957ece91c0ed103b6c5e9b846810c72e1601ac18544fee4a32383296490737",
+    "public/assets/jelly-oasis/landmarks/overgrown-ruin/Ruin_BrokenWall_A.glb": "833bfd9ccacc93ba1a71e2fa0080e892543cb7e29552a56dc1c9d1ecd935f724",
+    "public/assets/jelly-oasis/landmarks/overgrown-ruin/Ruin_BrokenWall_A_Detail_v1.glb": "101c21ad988811827305aa09a85508c2af8b58c123afa0b0e8c8f7af455484a6",
+    "public/assets/jelly-oasis/landmarks/overgrown-ruin/Ruin_Wall_A.glb": "0dd09ae734403670b2b3b58970fade951bb6f86d54cff30605c6e5ade17ba2f0",
+    "public/assets/jelly-oasis/landmarks/overgrown-ruin/Ruin_Wall_A_Detail_v1.glb": "6ca3501de74d1c055ef9a4fec53039509d6bf789255f55aa96f81626a0ca06da",
+    "public/assets/jelly-oasis/landmarks/overgrown-ruin/Tree_Landmark_Blockout.glb": "085724b2081bf0139b5554dda1d3079377ba7aebba896131a0edb4221b116177",
+    "public/assets/jelly-oasis/landmarks/overgrown-ruin/Tree_Landmark_Detail_v1.glb": "cdc45eed0972a2f69c4cb6ee3314aca4cf207d9fee50af4c277049551de95dee",
+    "public/assets/jelly-oasis/landmarks/overgrown-ruin/layout.json": "a4f079f6a6390b7fcce36db21f79d501d530ffb24727758557d209525748119d"
+  },
+  "variants": {
+    "Crystal_Blockout_A.glb": {
+      "bytes": 5144,
+      "sha256": "907527669a85fea4c0e8633bb1ad9bbe28a38d69d3f97554bc48720d250797ce",
+      "triangles": 66,
+      "boundsGltf": [
+        [
+          -1.100000023841858,
+          0,
+          -1.0464102029800415
+        ],
+        [
+          1.5,
+          3.4000000953674316,
+          0.5629165172576904
+        ]
+      ],
+      "scenes": 5,
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "Crystal_Blockout_A.001"
+        }
+      ],
+      "materials": [
+        {
+          "doubleSided": true,
+          "emissiveFactor": [
+            0.09450000214576715,
+            0.024499999687075613,
+            0.1679999933838845
+          ],
+          "name": "JO_Crystal_VioletPlaceholder",
+          "pbrMetallicRoughness": {
+            "baseColorFactor": [
+              0.4300000071525574,
+              0.23000000417232513,
+              0.6499999761581421,
+              1
+            ],
+            "metallicFactor": 0,
+            "roughnessFactor": 0.8500000238418579
+          }
+        }
+      ],
+      "emissiveTriangles": 66
+    },
+    "crystal-accent-detail-v1/Crystal_Blockout_A_Detail_v1.glb": {
+      "bytes": 11128,
+      "sha256": "1cb6a8644c1ff62c83a937082fb169e143ac8936087a09bbceff1f469337a3ac",
+      "triangles": 102,
+      "boundsGltf": [
+        [
+          -1.1168192625045776,
+          0,
+          -1.0998917818069458
+        ],
+        [
+          1.5472781658172607,
+          3.25,
+          0.6138818264007568
+        ]
+      ],
+      "scenes": 1,
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "Crystal_Blockout_A_Detail_v1.001"
+        }
+      ],
+      "materials": [
+        {
+          "doubleSided": true,
+          "name": "JO_Crystal_DeepIndigo",
+          "pbrMetallicRoughness": {
+            "baseColorFactor": [
+              0.08500000089406967,
+              0.054999999701976776,
+              0.18000000715255737,
+              1
+            ],
+            "metallicFactor": 0.03999999910593033,
+            "roughnessFactor": 0.6100000143051147
+          }
+        },
+        {
+          "doubleSided": true,
+          "name": "JO_Crystal_BlueViolet",
+          "pbrMetallicRoughness": {
+            "baseColorFactor": [
+              0.18000000715255737,
+              0.10499999672174454,
+              0.3400000035762787,
+              1
+            ],
+            "metallicFactor": 0.03999999910593033,
+            "roughnessFactor": 0.6100000143051147
+          }
+        },
+        {
+          "doubleSided": true,
+          "name": "JO_Crystal_CoolFacet",
+          "pbrMetallicRoughness": {
+            "baseColorFactor": [
+              0.1599999964237213,
+              0.23999999463558197,
+              0.3799999952316284,
+              1
+            ],
+            "metallicFactor": 0.03999999910593033,
+            "roughnessFactor": 0.6100000143051147
+          }
+        },
+        {
+          "doubleSided": true,
+          "emissiveFactor": [
+            0.01800000098347665,
+            0.027000002145767255,
+            0.07560000064373007
+          ],
+          "name": "JO_Crystal_QuietGlint",
+          "pbrMetallicRoughness": {
+            "baseColorFactor": [
+              0.25999999046325684,
+              0.3100000023841858,
+              0.46000000834465027,
+              1
+            ],
+            "metallicFactor": 0.03999999910593033,
+            "roughnessFactor": 0.6100000143051147
+          }
+        }
+      ],
+      "emissiveTriangles": 3
+    },
+    "Crystal_Blockout_B.glb": {
+      "bytes": 5144,
+      "sha256": "7d81b07dda5b631998575816d4060030b3ed7480f914ba2fa41d450930b4ab5c",
+      "triangles": 66,
+      "boundsGltf": [
+        [
+          -1.100000023841858,
+          0,
+          -1.0464102029800415
+        ],
+        [
+          1.5,
+          3.4000000953674316,
+          0.5629165172576904
+        ]
+      ],
+      "scenes": 5,
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "Crystal_Blockout_B.001"
+        }
+      ],
+      "materials": [
+        {
+          "doubleSided": true,
+          "emissiveFactor": [
+            0.09450000214576715,
+            0.024499999687075613,
+            0.1679999933838845
+          ],
+          "name": "JO_Crystal_VioletPlaceholder",
+          "pbrMetallicRoughness": {
+            "baseColorFactor": [
+              0.4300000071525574,
+              0.23000000417232513,
+              0.6499999761581421,
+              1
+            ],
+            "metallicFactor": 0,
+            "roughnessFactor": 0.8500000238418579
+          }
+        }
+      ],
+      "emissiveTriangles": 66
+    },
+    "crystal-accent-detail-v1/Crystal_Blockout_B_Detail_v1.glb": {
+      "bytes": 11168,
+      "sha256": "6214838f4cd9cad43352b065086516f3f3cbd57a4999c468e26a9c9a2e240355",
+      "triangles": 102,
+      "boundsGltf": [
+        [
+          -1.100000023841858,
+          0,
+          -1.0926551818847656
+        ],
+        [
+          1.5175446271896362,
+          3.450000047683716,
+          0.593923032283783
+        ]
+      ],
+      "scenes": 1,
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "Crystal_Blockout_B_Detail_v1.001"
+        }
+      ],
+      "materials": [
+        {
+          "doubleSided": true,
+          "name": "JO_Crystal_DeepIndigo",
+          "pbrMetallicRoughness": {
+            "baseColorFactor": [
+              0.08500000089406967,
+              0.054999999701976776,
+              0.18000000715255737,
+              1
+            ],
+            "metallicFactor": 0.03999999910593033,
+            "roughnessFactor": 0.6100000143051147
+          }
+        },
+        {
+          "doubleSided": true,
+          "name": "JO_Crystal_BlueViolet",
+          "pbrMetallicRoughness": {
+            "baseColorFactor": [
+              0.18000000715255737,
+              0.10499999672174454,
+              0.3400000035762787,
+              1
+            ],
+            "metallicFactor": 0.03999999910593033,
+            "roughnessFactor": 0.6100000143051147
+          }
+        },
+        {
+          "doubleSided": true,
+          "name": "JO_Crystal_CoolFacet",
+          "pbrMetallicRoughness": {
+            "baseColorFactor": [
+              0.1599999964237213,
+              0.23999999463558197,
+              0.3799999952316284,
+              1
+            ],
+            "metallicFactor": 0.03999999910593033,
+            "roughnessFactor": 0.6100000143051147
+          }
+        },
+        {
+          "doubleSided": true,
+          "emissiveFactor": [
+            0.01800000098347665,
+            0.027000002145767255,
+            0.07560000064373007
+          ],
+          "name": "JO_Crystal_QuietGlint",
+          "pbrMetallicRoughness": {
+            "baseColorFactor": [
+              0.25999999046325684,
+              0.3100000023841858,
+              0.46000000834465027,
+              1
+            ],
+            "metallicFactor": 0.03999999910593033,
+            "roughnessFactor": 0.6100000143051147
+          }
+        }
+      ],
+      "emissiveTriangles": 3
+    },
+    "Crystal_Blockout_C.glb": {
+      "bytes": 5144,
+      "sha256": "4c6e102789aa65ac76bec7746fb7d411b99b9df88798a438a196184f5ed95b89",
+      "triangles": 66,
+      "boundsGltf": [
+        [
+          -1.100000023841858,
+          0,
+          -1.0464102029800415
+        ],
+        [
+          1.5,
+          3.4000000953674316,
+          0.5629165172576904
+        ]
+      ],
+      "scenes": 5,
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "Crystal_Blockout_C.001"
+        }
+      ],
+      "materials": [
+        {
+          "doubleSided": true,
+          "emissiveFactor": [
+            0.09450000214576715,
+            0.024499999687075613,
+            0.1679999933838845
+          ],
+          "name": "JO_Crystal_VioletPlaceholder",
+          "pbrMetallicRoughness": {
+            "baseColorFactor": [
+              0.4300000071525574,
+              0.23000000417232513,
+              0.6499999761581421,
+              1
+            ],
+            "metallicFactor": 0,
+            "roughnessFactor": 0.8500000238418579
+          }
+        }
+      ],
+      "emissiveTriangles": 66
+    },
+    "crystal-accent-detail-v1/Crystal_Blockout_C_Detail_v1.glb": {
+      "bytes": 11144,
+      "sha256": "35e253d34d250dc604e482156f6e336a6b59f355392f0a60690d675c124bd5d5",
+      "triangles": 102,
+      "boundsGltf": [
+        [
+          -1.1682735681533813,
+          0,
+          -1.0621367692947388
+        ],
+        [
+          1.5,
+          3.0999999046325684,
+          0.5827078223228455
+        ]
+      ],
+      "scenes": 1,
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "Crystal_Blockout_C_Detail_v1.001"
+        }
+      ],
+      "materials": [
+        {
+          "doubleSided": true,
+          "name": "JO_Crystal_DeepIndigo",
+          "pbrMetallicRoughness": {
+            "baseColorFactor": [
+              0.08500000089406967,
+              0.054999999701976776,
+              0.18000000715255737,
+              1
+            ],
+            "metallicFactor": 0.03999999910593033,
+            "roughnessFactor": 0.6100000143051147
+          }
+        },
+        {
+          "doubleSided": true,
+          "name": "JO_Crystal_BlueViolet",
+          "pbrMetallicRoughness": {
+            "baseColorFactor": [
+              0.18000000715255737,
+              0.10499999672174454,
+              0.3400000035762787,
+              1
+            ],
+            "metallicFactor": 0.03999999910593033,
+            "roughnessFactor": 0.6100000143051147
+          }
+        },
+        {
+          "doubleSided": true,
+          "name": "JO_Crystal_CoolFacet",
+          "pbrMetallicRoughness": {
+            "baseColorFactor": [
+              0.1599999964237213,
+              0.23999999463558197,
+              0.3799999952316284,
+              1
+            ],
+            "metallicFactor": 0.03999999910593033,
+            "roughnessFactor": 0.6100000143051147
+          }
+        },
+        {
+          "doubleSided": true,
+          "emissiveFactor": [
+            0.01800000098347665,
+            0.027000002145767255,
+            0.07560000064373007
+          ],
+          "name": "JO_Crystal_QuietGlint",
+          "pbrMetallicRoughness": {
+            "baseColorFactor": [
+              0.25999999046325684,
+              0.3100000023841858,
+              0.46000000834465027,
+              1
+            ],
+            "metallicFactor": 0.03999999910593033,
+            "roughnessFactor": 0.6100000143051147
+          }
+        }
+      ],
+      "emissiveTriangles": 3
+    }
+  },
+  "sourceBlendPreserved": true
+}

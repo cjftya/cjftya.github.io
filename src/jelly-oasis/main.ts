@@ -168,7 +168,16 @@ function start(canvas: HTMLCanvasElement): void {
     : null;
   const pondDetail =
     pondQuery === 'blockout' ? false : pondQuery === 'detail' ? true : 'v2';
-  void createOvergrownRuin(config, cliffDetail, ruinDetail, treeDetail, pondDetail)
+  const crystalDetail =
+    debugEnabled && new URLSearchParams(location.search).get('crystal') === 'detail';
+  void createOvergrownRuin(
+    config,
+    cliffDetail,
+    ruinDetail,
+    treeDetail,
+    pondDetail,
+    crystalDetail,
+  )
     .then((loaded) => {
       if (disposed) {
         loaded.dispose();
@@ -201,6 +210,7 @@ function start(canvas: HTMLCanvasElement): void {
               ruinDetail,
               treeDetail,
               pondDetail,
+              crystalDetail,
               pondVariant:
                 pondDetail === 'v2' ? 'detail-v2' : pondDetail ? 'detail' : 'blockout',
               pondHeight: loaded.pondHeight,
