@@ -23,7 +23,7 @@ export function frameLandmark(
   controls.enableDamping = false;
   controls.update();
   controls.minDistance = ground ? 1 : 15;
-  controls.maxPolarAngle = ground ? Math.PI * 0.53 : Math.PI * 0.49;
+  controls.maxPolarAngle = Math.PI - 0.01;
   controls.target.set(
     target.x,
     sampleGround(target.x, target.z, landmark.terrain) + (ground ? 1.7 : 7),
