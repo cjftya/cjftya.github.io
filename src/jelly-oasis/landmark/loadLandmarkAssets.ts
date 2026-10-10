@@ -40,7 +40,11 @@ async function load(file: string): Promise<Group> {
 }
 export const loadLandmarkReference = () => load(LANDMARK_REFERENCE_FILE);
 
-export async function loadLandmarkAssets(cliffDetail = true, ruinDetail = true) {
+export async function loadLandmarkAssets(
+  cliffDetail = true,
+  ruinDetail = true,
+  treeDetail = false,
+) {
   const started = performance.now();
   const response = await fetch(`${LANDMARK_ASSET_PATH}layout.json`);
   if (!response.ok) throw new Error(`Landmark layout failed: HTTP ${response.status}`);
@@ -60,11 +64,14 @@ export async function loadLandmarkAssets(cliffDetail = true, ruinDetail = true) 
         'Root_Large_A',
         'Root_Tree_Base_Blockout',
       ].includes(name);
-    const file = detailedRuin
-      ? `${name}_Detail_v1.glb`
-      : cliffDetail && name === 'Cliff_Waterfall_A'
-        ? 'Cliff_Waterfall_A_Detail_v1.glb'
-        : `${name}.glb`;
+    const file =
+      treeDetail && name === 'Tree_Landmark_Blockout'
+        ? 'Tree_Landmark_Detail_v1.glb'
+        : detailedRuin
+          ? `${name}_Detail_v1.glb`
+          : cliffDetail && name === 'Cliff_Waterfall_A'
+            ? 'Cliff_Waterfall_A_Detail_v1.glb'
+            : `${name}.glb`;
     const object = await load(file);
     object.name = name;
     modules.set(name, object);

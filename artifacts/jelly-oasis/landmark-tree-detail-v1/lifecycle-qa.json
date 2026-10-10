@@ -1,0 +1,6 @@
+{
+  "failureText": "랜드마크를 불러오지 못했습니다. 페이지를 새로고침해 주세요.",
+  "disposed": true,
+  "lateLoadAfterPagehide": true,
+  "errors": []
+}

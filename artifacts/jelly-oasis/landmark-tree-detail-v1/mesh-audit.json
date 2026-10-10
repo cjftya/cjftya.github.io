@@ -1,0 +1,96 @@
+{
+  "source_file": "C:\\Users\\cjfty\\Documents\\dev\\cjftya.github.io\\artifacts\\jelly-oasis\\ruin-root-night-v1\\jelly-oasis-ruin-root-detail-v1.blend",
+  "parts": {
+    "Tree_Landmark_Blockout": {
+      "triangles": 1908,
+      "dimensions": [
+        25.0,
+        20.0,
+        28.0
+      ],
+      "nonmanifold": 0,
+      "loose": 0,
+      "zero_area": 0,
+      "winding": 0,
+      "duplicates": 0,
+      "materials": [
+        "JO_Tree_DarkBrown",
+        "JO_Canopy_Sage",
+        "JO_Canopy_Light",
+        "JO_Canopy_Shadow"
+      ]
+    },
+    "Canopy_Clusters": {
+      "triangles": 7680,
+      "dimensions": [
+        25.0,
+        20.0,
+        10.629060745239258
+      ],
+      "nonmanifold": 0,
+      "loose": 0,
+      "zero_area": 0,
+      "winding": 0,
+      "duplicates": 0,
+      "materials": [
+        "JO_Canopy_Sage",
+        "JO_Canopy_Light",
+        "JO_Canopy_Shadow"
+      ]
+    },
+    "Trunk_and_Branches": {
+      "triangles": 4186,
+      "dimensions": [
+        18.559778213500977,
+        12.686607360839844,
+        25.96267318725586
+      ],
+      "nonmanifold": 0,
+      "loose": 0,
+      "zero_area": 0,
+      "winding": 0,
+      "duplicates": 0,
+      "materials": [
+        "JO_Tree_DarkBrown"
+      ]
+    }
+  },
+  "origin": [
+    -12.0,
+    18.0,
+    0.0
+  ],
+  "scale": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "support_identical": true,
+  "triangles": 11866,
+  "bounds": [
+    [
+      -12.5,
+      -10.0,
+      0.0
+    ],
+    [
+      12.5,
+      10.0,
+      28.0
+    ]
+  ],
+  "reimport_triangles": 11866,
+  "reimport_bounds": [
+    [
+      -12.5,
+      -10.0,
+      0.0
+    ],
+    [
+      12.5,
+      10.0,
+      28.0
+    ]
+  ],
+  "bytes": 677916
+}

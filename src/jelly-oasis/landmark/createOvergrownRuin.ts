@@ -35,8 +35,9 @@ export async function createOvergrownRuin(
   terrain: TerrainConfig,
   cliffDetail = true,
   ruinDetail = true,
+  treeDetail = false,
 ) {
-  const assets = await loadLandmarkAssets(cliffDetail, ruinDetail);
+  const assets = await loadLandmarkAssets(cliffDetail, ruinDetail, treeDetail);
   const root = new Group();
   root.name = 'OvergrownOasisRuin';
   const content = new Group();
@@ -87,7 +88,7 @@ export async function createOvergrownRuin(
         (child.geometry.index?.count ?? child.geometry.attributes.position!.count) / 3;
       child.castShadow = name !== 'PondEdge_Blockout';
       child.receiveShadow = true;
-      // The canopy remains a low-poly blob; exclude it from shadow rendering.
+      // Keep foliage out of shadow passes for both blockout and detail variants.
       const materials = Array.isArray(child.material)
         ? child.material
         : [child.material];

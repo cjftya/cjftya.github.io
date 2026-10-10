@@ -1,0 +1,69 @@
+{
+  "baseline": "04e2551",
+  "preserved": {
+    "Cliff_Waterfall_A.glb": "e2b01672913632c4957078916c0242765a40d8cf844af27d3d4e09df89ca216c",
+    "Cliff_Waterfall_A_Detail_v1.glb": "a7e78320840c0d0b39ebf535da507638562ba2f75d1254acfebcc9a9972ded53",
+    "Crystal_Blockout_A.glb": "907527669a85fea4c0e8633bb1ad9bbe28a38d69d3f97554bc48720d250797ce",
+    "Crystal_Blockout_B.glb": "7d81b07dda5b631998575816d4060030b3ed7480f914ba2fa41d450930b4ab5c",
+    "Crystal_Blockout_C.glb": "4c6e102789aa65ac76bec7746fb7d411b99b9df88798a438a196184f5ed95b89",
+    "Overgrown_Oasis_Ruin_Blockout_v1.glb": "0557248028f750d0b1b478abc5f843204755d93c3bce752aa58e0ffea9e4a465",
+    "PondEdge_Blockout.glb": "c66e5f89411d2f2974503b997d672d8e346b16a434b5dbda3c0eb352ba5c6cf0",
+    "Rock_Large_A.glb": "7691a0f1788b6a3258e180627a0c88f0fe3c76b0069134c2d477baa380c12f44",
+    "Rock_Large_B.glb": "738648a0403b46bfad5676cd43b41538abda64213702b863446bf40cf5136697",
+    "Rock_Large_C.glb": "51abe046434b45e6988f49e374150f40e800896b0342420f1dbc7ada34d65376",
+    "Rock_Large_D.glb": "4c72463ea44e4ef156cf21b6401e4b3aaa8a78e87387aaa115e59e85cf8c9d9a",
+    "Rock_Large_E.glb": "470f5169117cade45427ab655b66c19b6cc1855c2eedb0de256f1e2d9d0db198",
+    "Root_Large_A.glb": "4bed3d87209c6b8c81b3633a3c4d513ccc4f400de236ad609b5ebfff1ab7b186",
+    "Root_Large_A_Detail_v1.glb": "472bd407499d7440c6a029425ce834b5bb39f8dc061aa2cf79f9fab212391fe1",
+    "Root_Tree_Base_Blockout.glb": "7e72d9f9d94723911747d8943ee83c0b1f22eccddb12a9c316c5b5715728bd46",
+    "Root_Tree_Base_Blockout_Detail_v1.glb": "62087eed9fe46c5c82eaf15a7e3ad6be8b6f35200c8858637c889c5a983dbb9a",
+    "Ruin_Arch_A.glb": "035888f032597fab11a56be9f015a177dd27cdde2402be1b4620bd7db0cc8e8c",
+    "Ruin_Arch_A_Detail_v1.glb": "e0957ece91c0ed103b6c5e9b846810c72e1601ac18544fee4a32383296490737",
+    "Ruin_BrokenWall_A.glb": "833bfd9ccacc93ba1a71e2fa0080e892543cb7e29552a56dc1c9d1ecd935f724",
+    "Ruin_BrokenWall_A_Detail_v1.glb": "101c21ad988811827305aa09a85508c2af8b58c123afa0b0e8c8f7af455484a6",
+    "Ruin_Wall_A.glb": "0dd09ae734403670b2b3b58970fade951bb6f86d54cff30605c6e5ade17ba2f0",
+    "Ruin_Wall_A_Detail_v1.glb": "6ca3501de74d1c055ef9a4fec53039509d6bf789255f55aa96f81626a0ca06da",
+    "Tree_Landmark_Blockout.glb": "085724b2081bf0139b5554dda1d3079377ba7aebba896131a0edb4221b116177"
+  },
+  "variants": {
+    "Tree_Landmark_Blockout": {
+      "bytes": 187124,
+      "triangles": 1908,
+      "meshes": 1,
+      "primitives": 4,
+      "materials": 4,
+      "textures": 0,
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "Tree_Landmark_Blockout.001"
+        }
+      ]
+    },
+    "Tree_Landmark_Detail_v1": {
+      "bytes": 677916,
+      "triangles": 11866,
+      "meshes": 2,
+      "primitives": 4,
+      "materials": 4,
+      "textures": 0,
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "Canopy_Clusters"
+        },
+        {
+          "mesh": 1,
+          "name": "Trunk_and_Branches"
+        },
+        {
+          "children": [
+            0,
+            1
+          ],
+          "name": "Tree_Landmark_Detail_v1"
+        }
+      ]
+    }
+  }
+}
