@@ -1,0 +1,59 @@
+{
+  "Ruin_Arch_A_Detail_v1": {
+    "changes": [],
+    "change_kind": "outer corner vertices",
+    "triangles": 1046,
+    "health": {
+      "nonmanifold": 0,
+      "winding": 0,
+      "zero_area": 0,
+      "loose": 0
+    },
+    "foot_preserved": true,
+    "origin": [
+      15.0,
+      6.0,
+      0.0
+    ],
+    "scale": [
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
+  "Ruin_Wall_A_Detail_v1": {
+    "changes": [
+      85,
+      93,
+      94,
+      95,
+      86,
+      84,
+      156,
+      165,
+      166,
+      167,
+      157,
+      158
+    ],
+    "change_kind": "outer corner vertices",
+    "triangles": 500,
+    "health": {
+      "nonmanifold": 0,
+      "winding": 0,
+      "zero_area": 0,
+      "loose": 0
+    },
+    "foot_preserved": true,
+    "origin": [
+      -14.0,
+      2.0,
+      0.0
+    ],
+    "scale": [
+      1.0,
+      1.0,
+      1.0
+    ]
+  }
+}

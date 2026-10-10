@@ -1,0 +1,104 @@
+[
+  {
+    "reason": "Obsolete automatic backup; primary .blend preserved",
+    "sha256": "25D506A0EC0B3CB394E2E94D87CA376779B8DB95261B68AE35D1695076D8241E",
+    "path": "artifacts\\jelly-oasis\\aesthetic-improvement-v1\\baseline-source.blend1",
+    "bytes": 348424
+  },
+  {
+    "reason": "Obsolete automatic backup; primary .blend preserved",
+    "sha256": "91E50B8DA5E392026F266E4D8E04D997E99E6B96B69AD9A843B9C0EBDCBD2069",
+    "path": "artifacts\\jelly-oasis\\aesthetic-improvement-v1\\jelly-oasis-aesthetic-candidate-v1.blend1",
+    "bytes": 644282
+  },
+  {
+    "reason": "Obsolete automatic backup; primary .blend preserved",
+    "sha256": "CFC779084746E4AF6B80A3D8D89F4F502A17A292C43295A14F0A81B0EB023068",
+    "path": "artifacts\\jelly-oasis\\crystal-accent-detail-v1\\jelly-oasis-crystal-accent-detail-v1.blend1",
+    "bytes": 3278042
+  },
+  {
+    "reason": "Obsolete automatic backup; primary .blend preserved",
+    "sha256": "016E472CED5551616D80A737AB3869F17644DDF7ED9A90942274287B9C8AA541",
+    "path": "artifacts\\jelly-oasis\\crystal-accent-detail-v1\\verified\\jelly-oasis-crystal-accent-detail-v1.blend1",
+    "bytes": 339240
+  },
+  {
+    "reason": "Obsolete automatic backup; primary .blend preserved",
+    "sha256": "75BCDE8A5D4D58329F4C43382EB4CAFCC57018C125F33F32CA88805EC8DB542A",
+    "path": "artifacts\\jelly-oasis\\landmark-tree-detail-v1\\jelly-oasis-landmark-tree-detail-v1.blend1",
+    "bytes": 1946782
+  },
+  {
+    "reason": "Obsolete automatic backup; primary .blend preserved",
+    "sha256": "CB5E80F564F76C2958152E6F435EEF6F1B8FE1D9BF762BEBB7E5289D96D4EBCE",
+    "path": "artifacts\\jelly-oasis\\pond-edge-detail-v1\\jelly-oasis-pond-edge-detail-v1.blend1",
+    "bytes": 3309851
+  },
+  {
+    "reason": "Obsolete automatic backup; primary .blend preserved",
+    "sha256": "3D18AF419B11892BF1E16C1C0DB688BD98835DDE69C40D94A039338096E40CAA",
+    "path": "artifacts\\jelly-oasis\\pond-edge-detail-v2\\jelly-oasis-pond-edge-detail-v2.blend1",
+    "bytes": 3298540
+  },
+  {
+    "reason": "Obsolete automatic backup; primary .blend preserved",
+    "sha256": "1405CC17ABD1CCBAF122481507968D37528BA81BEFF5479C7D66CAB87D78B4DC",
+    "path": "artifacts\\jelly-oasis\\ruin-root-night-v1\\jelly-oasis-ruin-root-detail-v1.blend1",
+    "bytes": 404400
+  },
+  {
+    "reason": "Unverified export superseded by verified Crystal GLBs",
+    "sha256": "52118FD58FAF65B8961E020A2058C383BF1F208E15E4B9A218F5A126CD068629",
+    "path": "artifacts\\jelly-oasis\\crystal-accent-detail-v1\\unverified-live-export.glb",
+    "bytes": 190348
+  },
+  {
+    "bytes": 644410,
+    "path": "artifacts\\jelly-oasis\\aesthetic-improvement-v1\\baseline-source.blend",
+    "sha256": "73DCDA1C80EAF3B53618FC96FDC4021680A0B386E05D1A5EA31B0E7EA32FDE0C",
+    "reason": "Completed temporary comparison/export; selected source and production GLBs preserved"
+  },
+  {
+    "bytes": 927776,
+    "path": "artifacts\\jelly-oasis\\aesthetic-improvement-v1\\Tree_Landmark_flat_v1.glb",
+    "sha256": "6608D9ED48BE89E208F04E46807B5CEA1C39A933811135841B70EC3D8EF3AE7B",
+    "reason": "Completed temporary comparison/export; selected source and production GLBs preserved"
+  },
+  {
+    "bytes": 927824,
+    "path": "artifacts\\jelly-oasis\\aesthetic-improvement-v1\\Tree_Landmark_refined_v1.glb",
+    "sha256": "0C8DD328D248F8100A73D6D1FC0DC5B15BBDC8543F27951786FD544A7A08BBF4",
+    "reason": "Completed temporary comparison/export; selected source and production GLBs preserved"
+  },
+  {
+    "bytes": 112948,
+    "path": "artifacts\\jelly-oasis\\aesthetic-improvement-v1\\PondEdge_refined_v1.glb",
+    "sha256": "56A347F99E67DFE0E48870A32DCAC0EDDC759259FE159EB276F26963435DA4C9",
+    "reason": "Completed temporary comparison/export; selected source and production GLBs preserved"
+  },
+  {
+    "bytes": 252484,
+    "path": "artifacts\\jelly-oasis\\aesthetic-improvement-v1\\Cliff_refined_v1.glb",
+    "sha256": "B2D101C2F9B45DCEBF89DB18C7262E366E9068799CD13968BE7A7058EF58C6FB",
+    "reason": "Completed temporary comparison/export; selected source and production GLBs preserved"
+  },
+  {
+    "bytes": 59880,
+    "path": "artifacts\\jelly-oasis\\aesthetic-improvement-v1\\Ruin_Arch_refined_v1.glb",
+    "sha256": "DAA8115BC44E3E7E7117ECA0539BDE4FF59553B5172A0C868D5748BB73CFB2FB",
+    "reason": "Completed temporary comparison/export; selected source and production GLBs preserved"
+  },
+  {
+    "bytes": 29340,
+    "path": "artifacts\\jelly-oasis\\aesthetic-improvement-v1\\Ruin_Wall_refined_v1.glb",
+    "sha256": "1B8840FB042E1446790F5A2AF940E21DCFB66896D4B0DFE43DB991111D8BD1CA",
+    "reason": "Completed temporary comparison/export; selected source and production GLBs preserved"
+  },
+  {
+    "reason": "Superseded by aesthetic-improvement-execution-v1 report",
+    "bytes": 9357,
+    "path": "docs/jelly-oasis-aesthetic-improvement-plan.md",
+    "sha256": "21B2AE5998B6A5846FC86B86CB2447D9B787B94398EEAA1D6A407C62C64998A1"
+  }
+]

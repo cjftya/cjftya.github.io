@@ -1,0 +1,26 @@
+{
+  "changed_vertices": [
+    159,
+    216,
+    160,
+    217,
+    161,
+    218,
+    162,
+    219,
+    163,
+    220,
+    164,
+    221
+  ],
+  "water_guide_preserved": true,
+  "inner_rows_preserved": true,
+  "outer_row_preserved": true,
+  "smooth_faces": 228,
+  "health": {
+    "zero_area": 0,
+    "loose": 0,
+    "nonmanifold_interior": 0,
+    "boundary_edges": 114
+  }
+}
