@@ -204,8 +204,10 @@ try {
   await touch.goto(`${base}/projects/jelly-oasis/?debug&cliff=detail-v1`);
   await touch.waitForFunction(() => window.__oasisLandmark?.snapshot().calls > 10);
   results.mobile = await touch.evaluate(() => window.__oasisLandmark.snapshot());
-  assert.equal(results.mobile.shadows, false);
-  assert.equal(results.mobile.shadow.allocated, false);
+  assert.equal(results.mobile.shadows, true);
+  assert.equal(results.mobile.shadow.allocated, true);
+  assert.equal(results.mobile.sun.castShadow, true);
+  assert.deepEqual(results.mobile.shadow.mapSize, [512, 512]);
   await touch.locator('#landmark-debug > summary').click();
   await touch.locator('[data-view=medium]').click();
   await touch.locator('#environment-debug > summary').click();

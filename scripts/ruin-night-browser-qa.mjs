@@ -3,10 +3,13 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { chromium } from '@playwright/test';
 
-const output = resolve('artifacts/jelly-oasis/ruin-root-night-v1');
+const output = resolve(
+  process.env.RUIN_QA_OUTPUT ?? 'artifacts/jelly-oasis/ruin-root-night-v1',
+);
 await mkdir(output, { recursive: true });
 const browser = await chromium.launch({
   executablePath:
+    process.env.LANDMARK_QA_BROWSER ??
     process.env.EDGE_PATH ??
     'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe',
   headless: true,
@@ -17,6 +20,7 @@ const context = await browser.newContext({
   reducedMotion: 'reduce',
 });
 const page = await context.newPage();
+page.setDefaultTimeout(Number(process.env.LANDMARK_QA_TIMEOUT_MS ?? 30000));
 function monitor(p) {
   p.on('pageerror', (e) => results.errors.push(String(e)));
   p.on('console', (m) => {
@@ -55,7 +59,8 @@ async function environment(p, time, weather = 'CLEAR') {
     return s.weather === expected && s.weatherBlend === 1;
   }, weather);
 }
-const base = process.env.RUIN_QA_URL ?? 'http://127.0.0.1:4175';
+const base =
+  process.env.LANDMARK_QA_URL ?? process.env.RUIN_QA_URL ?? 'http://127.0.0.1:4175';
 async function load(p, detail = true) {
   await p.goto(
     `${base}/projects/jelly-oasis/?debug&ruin=${detail ? 'detail' : 'blockout'}`,
@@ -208,7 +213,10 @@ try {
   await page.evaluate(() =>
     window.dispatchEvent(new PageTransitionEvent('pageshow', { persisted: true })),
   );
-  await page.waitForTimeout(200);
+  await page.waitForFunction(
+    (wait) => window.__oasisLandmark.snapshot().autoWeather.secondsUntilNext < wait,
+    hiddenWait,
+  );
   assert.ok((await snapshot(page)).autoWeather.secondsUntilNext < hiddenWait);
   // WebGL restoration must retain the chosen hour and caster.
   await environment(page, 0, 'CLEAR');
@@ -269,9 +277,11 @@ try {
   await load(mobile);
   await environment(mobile, 0);
   results.mobile = await snapshot(mobile);
-  assert.equal(results.mobile.moon.allocated, false);
+  assert.equal(results.mobile.moon.allocated, true);
+  assert.equal(results.mobile.moon.castShadow, true);
+  assert.deepEqual(results.mobile.shadow.mapSize, [512, 512]);
   assert.equal(results.mobile.shadow.allocated, false);
-  assert.equal(results.mobile.shadows, false);
+  assert.equal(results.mobile.shadows, true);
   assert.ok(results.mobile.moon.visibility > 0);
   await capture(mobile, 'mobile-night');
   await mobile.locator('#environment-sky').scrollIntoViewIfNeeded();

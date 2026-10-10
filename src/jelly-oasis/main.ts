@@ -31,9 +31,9 @@ function start(canvas: HTMLCanvasElement): void {
   controls.screenSpacePanning = false;
   controls.minDistance = 35;
   controls.maxDistance = 1050;
-  controls.minPolarAngle = 0.15;
-  controls.maxPolarAngle = Math.PI * 0.445;
-  controls.maxTargetRadius = config.size * 0.36;
+  controls.minPolarAngle = 0.01;
+  controls.maxPolarAngle = Math.PI - 0.01;
+  controls.maxTargetRadius = Infinity;
   controls.zoomSpeed = 0.8;
   const mobile =
     matchMedia('(pointer: coarse)').matches ||
@@ -57,14 +57,16 @@ function start(canvas: HTMLCanvasElement): void {
   let lastRender = 0;
   let lastDebug = 0;
   let frameMs = 0;
+  let renderCpuMs = 0;
+  let frameCpuMs = 0;
   let landmark: OvergrownRuin | null = null;
   let landmarkDebug: ReturnType<typeof createLandmarkDebug> | null = null;
   let reviewCamera = false;
   let groundCamera = false;
   let mediumCamera = false;
   function setShadows(enabled: boolean): void {
-    enabled = enabled && !mobile;
     renderer.shadowMap.enabled = enabled;
+    renderer.shadowMap.needsUpdate = true;
     environment.setShadows(enabled);
     terrain.castShadow = enabled;
     terrain.material.needsUpdate = true;
@@ -73,7 +75,7 @@ function start(canvas: HTMLCanvasElement): void {
     landmark?.refreshMaterials();
     dirty = true;
   }
-  setShadows(!mobile);
+  setShadows(true);
   const previousTarget = new Vector3();
   const resetButton = document.querySelector<HTMLButtonElement>('#reset-view')!;
 
@@ -81,8 +83,8 @@ function start(canvas: HTMLCanvasElement): void {
     mediumCamera = false;
     reviewCamera = groundCamera = false;
     controls.minDistance = 35;
-    controls.maxPolarAngle = Math.PI * 0.445;
-    controls.maxTargetRadius = config.size * 0.36;
+    controls.maxPolarAngle = Math.PI - 0.01;
+    controls.maxTargetRadius = Infinity;
     // Flush residual damping so reset also works during an active gesture.
     controls.enableDamping = false;
     controls.update();
@@ -130,7 +132,7 @@ function start(canvas: HTMLCanvasElement): void {
       controls.enableDamping = false;
       controls.update();
       controls.minDistance = 1;
-      controls.maxPolarAngle = Math.PI;
+      controls.maxPolarAngle = Math.PI - 0.01;
       controls.maxTargetRadius = Infinity;
       const uniforms = environment.sky.material.uniforms;
       const direction = uniforms[
@@ -154,7 +156,7 @@ function start(canvas: HTMLCanvasElement): void {
     reviewCamera = true;
     groundCamera = view === 'ground';
     mediumCamera = view === 'medium';
-    controls.maxTargetRadius = config.size * 0.36;
+    controls.maxTargetRadius = Infinity;
     frameLandmark(view, landmark, camera, controls);
     invalidate();
   }
@@ -213,6 +215,10 @@ function start(canvas: HTMLCanvasElement): void {
     pondDetail,
     crystalDetail,
     aesthetic,
+    {
+      water: debugEnabled && waterQuery === 'v1',
+      waterfall: debugEnabled && candidateQuery.get('waterfall') === 'v1',
+    },
   )
     .then((loaded) => {
       if (disposed) {
@@ -234,7 +240,7 @@ function start(canvas: HTMLCanvasElement): void {
               controls.enableDamping = false;
               controls.update();
               controls.minDistance = 1;
-              controls.maxPolarAngle = Math.PI;
+              controls.maxPolarAngle = Math.PI - 0.01;
               camera.position.fromArray(position);
               controls.target.fromArray(target);
               controls.update();
@@ -250,6 +256,13 @@ function start(canvas: HTMLCanvasElement): void {
               crystalDetail,
               aesthetic,
               mediumCamera,
+              waterEffects: loaded.waterEffects?.snapshot() ?? null,
+              orbit: {
+                polar: controls.getPolarAngle(),
+                azimuth: controls.getAzimuthalAngle(),
+                minPolar: controls.minPolarAngle,
+                maxPolar: controls.maxPolarAngle,
+              },
               pondVariant:
                 pondDetail === 'v2' ? 'detail-v2' : pondDetail ? 'detail' : 'blockout',
               pondHeight: loaded.pondHeight,
@@ -272,6 +285,9 @@ function start(canvas: HTMLCanvasElement): void {
                 allocated: Boolean(environment.moon.shadow.map),
               },
               sun: {
+                direction:
+                  environment.sky.material.uniforms.sunDirection!.value.toArray(),
+                allocated: Boolean(environment.sun.shadow.map),
                 intensity: environment.sun.intensity,
                 castShadow: environment.sun.castShadow,
               },
@@ -292,6 +308,8 @@ function start(canvas: HTMLCanvasElement): void {
               loadMs: loaded.assets.loadMs,
               timings: loaded.assets.timings,
               placement: loaded.placement,
+              renderCpuMs,
+              frameCpuMs,
               calls: renderer.info.render.calls,
               triangles: renderer.info.render.triangles,
               textures: renderer.info.memory.textures,
@@ -349,27 +367,41 @@ function start(canvas: HTMLCanvasElement): void {
     if (lastTick && now - lastTick < budget - 1) return;
     const seconds = lastTick ? Math.min(0.1, (now - lastTick) / 1000) : 0;
     lastTick = now;
+    const frameStart = debugEnabled ? performance.now() : 0;
     previousTarget.copy(controls.target);
     controls.update();
-    // Follow the terrain while panning; preserve camera offset above the target.
-    const ground = sampleTerrainHeight(controls.target.x, controls.target.z, config);
-    const delta = ground - controls.target.y;
-    if (!reviewCamera && Math.abs(delta) > 0.001) {
-      controls.target.y = ground;
-      camera.position.y += delta;
-      dirty = true;
-    }
-    if (
-      Math.abs(camera.position.x) <= config.size / 2 &&
-      Math.abs(camera.position.z) <= config.size / 2
-    ) {
-      const minimumY =
-        sampleTerrainHeight(camera.position.x, camera.position.z, config) +
-        (groundCamera ? 1.7 : 6);
-      if (camera.position.y < minimumY) {
-        camera.position.y = minimumY;
-        dirty = true;
+    // Preserve the orbit's view direction when it touches the ground by lifting
+    // both eye and pivot. The elevated pivot lets the same drag look at the sky.
+    // Ground-follow only tracks horizontal panning, never pulls a sky pivot down.
+    if (!reviewCamera) {
+      const radius = config.size * 0.36;
+      const horizontal = Math.hypot(controls.target.x, controls.target.z);
+      if (horizontal > radius) {
+        const x = (controls.target.x * radius) / horizontal;
+        const z = (controls.target.z * radius) / horizontal;
+        camera.position.x += x - controls.target.x;
+        camera.position.z += z - controls.target.z;
+        controls.target.x = x;
+        controls.target.z = z;
       }
+      const groundDelta =
+        sampleTerrainHeight(controls.target.x, controls.target.z, config) -
+        sampleTerrainHeight(previousTarget.x, previousTarget.z, config);
+      controls.target.y += groundDelta;
+      camera.position.y += groundDelta;
+    }
+    const onIsland =
+      Math.abs(camera.position.x) <= config.size / 2 &&
+      Math.abs(camera.position.z) <= config.size / 2;
+    const minimumY = onIsland
+      ? sampleTerrainHeight(camera.position.x, camera.position.z, config) +
+        (groundCamera ? 1.7 : 6)
+      : -30;
+    if (camera.position.y < minimumY) {
+      const lift = minimumY - camera.position.y;
+      camera.position.y += lift;
+      controls.target.y += lift;
+      dirty = true;
     }
     if (!previousTarget.equals(controls.target)) dirty = true;
     environment.focusShadow(
@@ -385,8 +417,22 @@ function start(canvas: HTMLCanvasElement): void {
       )
     )
       dirty = true;
+    if (
+      landmark?.waterEffects?.update(
+        seconds,
+        environment.state.timeOfDay,
+        motionPreference.matches,
+      )
+    )
+      dirty = true;
     if (!dirty) return;
+    const renderStart = debugEnabled ? performance.now() : 0;
     renderer.render(scene, camera);
+    if (debugEnabled) {
+      const end = performance.now();
+      renderCpuMs = end - renderStart;
+      frameCpuMs = end - frameStart;
+    }
     if (lastRender) frameMs = frameMs * 0.85 + (now - lastRender) * 0.15;
     lastRender = now;
     dirty = false;
@@ -452,6 +498,8 @@ function start(canvas: HTMLCanvasElement): void {
   canvas.addEventListener('webglcontextrestored', () => {
     contextLost = false;
     environment.invalidate();
+    renderer.shadowMap.needsUpdate = true;
+    landmark?.refreshMaterials();
     dirty = true;
     visibility();
   });

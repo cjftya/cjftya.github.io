@@ -174,7 +174,7 @@ describe('weather transitions and scene budgets', () => {
         environment.rain.count * 2,
       );
       expect(environment.clouds.mesh.material.map).toBeNull();
-      expect(environment.sun.shadow.mapSize.x).toBe(1024);
+      expect(environment.sun.shadow.mapSize.x).toBe(mobile ? 512 : 1024);
       const cloudGeometry = environment.clouds.mesh.geometry;
       const rainArray = environment.rain.mesh.geometry.attributes.position!.array;
       const sceneChildren = environment.root.children.length;
