@@ -1,0 +1,203 @@
+{
+  "baseHead": "e9d0176fa4b2fb1c9ade7db9a899e23487160d0f",
+  "authorization": "User explicitly requested commit and push to master; production default retained",
+  "assets": {
+    "v1": {
+      "triangles": 1232,
+      "materials": 5,
+      "imageTextures": 0,
+      "bytes": 149032
+    },
+    "v2": {
+      "triangles": 1176,
+      "materials": 5,
+      "imageTextures": 0,
+      "bytes": 113244
+    }
+  },
+  "sharedContour": {
+    "source": "scripts/blender/pond-contour-v2.json",
+    "boundarySamples": 57,
+    "waterTriangles": 55,
+    "polygonArea": 348.42430300573255,
+    "trianglesArea": 348.42430300573255
+  },
+  "checks": {
+    "lint": "PASS",
+    "test": "PASS: npm test -- --maxWorkers=2, 52 files / 289 tests",
+    "testNote": "Earlier concurrent runs timed out an unrelated 5-second Uriel test. Extended-timeout diagnostic and final default-timeout full run passed.",
+    "build": "PASS",
+    "landmarkQA": "PASS: 21 screenshots, unchanged blockout default",
+    "pondQA": "PASS: 14 same-camera screenshots, v1 vs v2, clear/night/rain/mobile, production ignored query and general URL",
+    "mesh": "PASS: GLB reimport bounds within 0.001m; roles and water extras preserved; zero loose vertices/zero-area/interior nonmanifold edges; all shore faces upward",
+    "determinism": "PASS: position/yaw/scale changes and A→B→A exact original position arrays",
+    "protectedSources": 28
+  },
+  "performance": {
+    "detail": {
+      "assetTriangles": 20842,
+      "drawCalls": 104,
+      "textures": 4,
+      "geometries": 77,
+      "loadMs": 1191.7999999523163,
+      "pondHeight": -5.389069482748612,
+      "maxWaterTerrainLift": 0.7417071625009234,
+      "maxVertexDisplacement": 1.0133479366508702
+    },
+    "detail-v2": {
+      "assetTriangles": 20786,
+      "drawCalls": 96,
+      "textures": 5,
+      "geometries": 69,
+      "loadMs": 328.7999999523163,
+      "pondHeight": -5.389069482748612,
+      "maxWaterTerrainLift": 0.8145113383431358,
+      "maxVertexDisplacement": 0.997333605864414
+    }
+  },
+  "routes": {
+    "method": "Projected GLB triangles clipped to 0.08–3 m above sampled terrain; discrete route samples, not a continuous collision guarantee.",
+    "placement": {
+      "id": "basin",
+      "label": "동쪽 분지",
+      "position": {
+        "x": 70,
+        "z": 58
+      },
+      "rotationY": 0.5235987755982988,
+      "scale": 1
+    },
+    "site": {
+      "relief": 7.367503976975923,
+      "pondRelief": 0.7310974095892329,
+      "insideWorld": true,
+      "meadowOverlap": 0,
+      "worldAreaFraction": 0.059375
+    },
+    "loop": {
+      "width": 6,
+      "samples": 5040,
+      "intersections": {},
+      "clear": true
+    },
+    "clearing": {
+      "diameter": 16,
+      "samples": 3209,
+      "intersections": {},
+      "clear": true
+    },
+    "approach": {
+      "samples": 4212,
+      "intersections": {},
+      "clear": true
+    },
+    "passage": {
+      "measuredJambWidth": 4.620000000000134,
+      "testedWidth": 4,
+      "samples": 1000,
+      "intersections": {},
+      "clear": true
+    },
+    "contact": {
+      "Cliff_Waterfall_A": {
+        "burial": 1.887559314409872,
+        "supportCount": 61,
+        "y": -5.671586008893642
+      },
+      "Rock_Large_A": {
+        "burial": 1.0343994461308443,
+        "supportCount": 22,
+        "y": -4.712236708338152
+      },
+      "Rock_Large_B": {
+        "burial": 0.8258652333460788,
+        "supportCount": 16,
+        "y": -3.218463871028857
+      },
+      "Rock_Large_C": {
+        "burial": 0.7092930757340645,
+        "supportCount": 16,
+        "y": -4.180207843928207
+      },
+      "Rock_Large_D": {
+        "burial": 0.8333341107739365,
+        "supportCount": 16,
+        "y": -4.702049294096674
+      },
+      "Rock_Large_E": {
+        "burial": 0.6447046238006275,
+        "supportCount": 16,
+        "y": -3.7120995210544927
+      },
+      "Ruin_Arch_A": {
+        "burial": 1.290435076322268,
+        "supportCount": 24,
+        "y": -5.8000104992213
+      },
+      "Ruin_Wall_A": {
+        "burial": 1.333841161993317,
+        "supportCount": 36,
+        "y": -5.6016449433395845
+      },
+      "Ruin_BrokenWall_A": {
+        "burial": 1.1926923251301975,
+        "supportCount": 36,
+        "y": -4.805628747005377
+      },
+      "Tree_Landmark_Blockout": {
+        "burial": 0.8440510781406823,
+        "supportCount": 9,
+        "y": -3.687496879261822
+      },
+      "Root_Large_A": {
+        "burial": 1.0954476681452503,
+        "supportCount": 51,
+        "y": -4.386980721720535
+      },
+      "Root_Tree_Base_Blockout": {
+        "burial": 0.9672265287947264,
+        "supportCount": 19,
+        "y": -4.158922772758809
+      },
+      "PondEdge_Blockout": {
+        "burial": 0,
+        "supportCount": 993,
+        "y": -5.389069482748612
+      },
+      "Crystal_Blockout_A": {
+        "burial": 0.4744579249107872,
+        "supportCount": 18,
+        "y": -4.756109113953943
+      },
+      "Crystal_Blockout_B": {
+        "burial": 0.4247576157751789,
+        "supportCount": 18,
+        "y": -5.105552504571298
+      },
+      "Crystal_Blockout_C": {
+        "burial": 0.3584559217009211,
+        "supportCount": 18,
+        "y": -3.8418252062291662
+      }
+    },
+    "pondHeight": -5.389069482748612,
+    "pondBankMaxLift": 0.8145113383431358,
+    "obstaclePolygons": 4331
+  },
+  "topCamera": {
+    "view": "ORTHO +Z",
+    "center": [
+      0,
+      -7,
+      0
+    ],
+    "distance": 32,
+    "maxImageSide": 1000
+  },
+  "limitations": [
+    "Headless narrow/touch viewport does not establish physical-device FPS or continuous collision safety.",
+    "The original transparent inspection water shader remains; flowing waterfall connection is outside scope.",
+    "One additional generated terrain-detail texture is owned and disposed by the local bank material; no image textures in GLB."
+  ],
+  "productionDefault": "PondEdge_Blockout.glb; Tree_Landmark_Detail_v1.glb"
+}

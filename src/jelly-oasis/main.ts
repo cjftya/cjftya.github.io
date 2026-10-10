@@ -163,7 +163,11 @@ function start(canvas: HTMLCanvasElement): void {
   const treeDetail = !(
     debugEnabled && new URLSearchParams(location.search).get('tree') === 'blockout'
   );
-  void createOvergrownRuin(config, cliffDetail, ruinDetail, treeDetail)
+  const pondQuery = debugEnabled
+    ? new URLSearchParams(location.search).get('pond')
+    : null;
+  const pondDetail = pondQuery === 'detail-v2' ? 'v2' : pondQuery === 'detail';
+  void createOvergrownRuin(config, cliffDetail, ruinDetail, treeDetail, pondDetail)
     .then((loaded) => {
       if (disposed) {
         loaded.dispose();
@@ -195,6 +199,15 @@ function start(canvas: HTMLCanvasElement): void {
               cliffDetail,
               ruinDetail,
               treeDetail,
+              pondDetail,
+              pondVariant:
+                pondDetail === 'v2' ? 'detail-v2' : pondDetail ? 'detail' : 'blockout',
+              pondHeight: loaded.pondHeight,
+              pondBankMaxLift:
+                loaded.assets.modules.get('PondEdge_Blockout')!.userData.maxBankLift,
+              pondBankMaxDisplacement:
+                loaded.assets.modules.get('PondEdge_Blockout')!.userData
+                  .maxBankDisplacement,
               autoWeather: {
                 enabled: environment.autoWeather.enabled,
                 secondsUntilNext: environment.autoWeather.secondsUntilNext,

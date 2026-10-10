@@ -84,6 +84,95 @@ describe('landmark integration against real exported GLBs', () => {
     before.dispose();
     for (const spy of spies.values()) expect(spy).toHaveBeenCalledTimes(1);
   });
+  it.each([true, 'v2'] as const)(
+    'grounds pond %s without rigid deformation or placement drift',
+    async (variant) => {
+      await useLocalAssets();
+      const baseline = await createOvergrownRuin(DEFAULT_TERRAIN_CONFIG);
+      const landmark = await createOvergrownRuin(
+        DEFAULT_TERRAIN_CONFIG,
+        true,
+        true,
+        true,
+        variant,
+      );
+      expect(landmark.pondHeight).toBe(baseline.pondHeight);
+      if (variant === 'v2') {
+        expect(landmark.pond.geometry.attributes.position!.count).toBe(57);
+        expect(landmark.pond.geometry.index!.count / 3).toBe(55);
+        expect(landmark.assetTriangles).toBe(20786);
+      }
+      const bank = landmark.assets.modules.get('PondEdge_Blockout')!;
+      const meshes: Mesh[] = [];
+      bank.traverse((o) => {
+        if (o instanceof Mesh) meshes.push(o);
+      });
+      expect(meshes.length).toBeGreaterThan(14); // real glTF material splitting
+      const positions = meshes.map((m) =>
+        Array.from(m.geometry.attributes.position!.array),
+      );
+      const source = await loadFile(
+        variant === 'v2'
+          ? 'PondEdge_Blockout_Detail_v2.glb'
+          : 'PondEdge_Blockout_Detail_v1.glb',
+      );
+      const sourceMeshes: Mesh[] = [];
+      source.scene.traverse((o) => {
+        if (o instanceof Mesh) sourceMeshes.push(o);
+      });
+      const shifts = new Map<string, number>();
+      meshes.forEach((mesh, index) => {
+        const original = sourceMeshes[index]!;
+        const owner = original;
+        const role = owner.userData.pond_role ?? owner.parent!.userData.pond_role;
+        const key = original.userData.pond_role ? original.name : original.parent!.name;
+        const src = original.geometry.attributes.position!;
+        const actual = mesh.geometry.attributes.position!;
+        for (let i = 0; i < src.count; i++) {
+          expect(actual.getX(i)).toBeCloseTo(src.getX(i), 6);
+          expect(actual.getZ(i)).toBeCloseTo(src.getZ(i), 6);
+          if (role === 'shore') {
+            const weight = original.geometry.attributes.uv!.getX(i);
+            if (weight === 0)
+              expect(landmark.root.position.y + actual.getY(i)).toBeCloseTo(
+                landmark.pondHeight + src.getY(i),
+                5,
+              );
+            if (weight === 1)
+              expect(actual.getY(i)).toBeCloseTo(
+                landmark.localGround(
+                  bank.position.x + src.getX(i),
+                  bank.position.z + src.getZ(i),
+                ) + src.getY(i),
+                5,
+              );
+          } else {
+            const delta = actual.getY(i) - src.getY(i);
+            if (!shifts.has(key)) shifts.set(key, delta);
+            expect(delta).toBeCloseTo(shifts.get(key)!, 5);
+          }
+        }
+      });
+      const audit = auditLandmark(landmark);
+      for (const result of [audit.loop, audit.clearing, audit.approach, audit.passage])
+        expect(result.clear).toBe(true);
+      for (const next of [
+        LANDMARK_CANDIDATES[1],
+        { position: { x: 65, z: 60 }, rotationY: -0.4, scale: 1.2 },
+      ]) {
+        landmark.place(next);
+        landmark.place(OVERGROWN_RUIN_CONFIG);
+        meshes.forEach((mesh, i) =>
+          expect(Array.from(mesh.geometry.attributes.position!.array)).toEqual(
+            positions[i],
+          ),
+        );
+      }
+      landmark.dispose();
+      baseline.dispose();
+    },
+  );
+
   it('reports a missing candidate tree and disposes late successful loads', async () => {
     const load = await useLocalAssets();
     const disposed = vi.fn();

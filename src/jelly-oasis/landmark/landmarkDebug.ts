@@ -110,9 +110,11 @@ export function createLandmarkDebug(
   }
   const projected: { mesh: Mesh; source: number[][] }[] = [];
   for (const [name, guide] of Object.entries(landmark.assets.layout.guides)) {
+    const actualGuide =
+      name === 'Pond_Blockout' ? (landmark.assets.pondGuide ?? guide) : guide;
     const isRoute = name.startsWith('Creature');
     const mesh = new Mesh(
-      guideGeometry(guide),
+      guideGeometry(actualGuide),
       new MeshBasicMaterial({
         color: name.includes('Clearing') ? '#ffda73' : isRoute ? '#85ffa7' : '#61dfff',
         side: DoubleSide,
@@ -125,7 +127,7 @@ export function createLandmarkDebug(
     mesh.name = name;
     mesh.renderOrder = 5;
     (isRoute ? route : pond).add(mesh);
-    projected.push({ mesh, source: guide.positions });
+    projected.push({ mesh, source: actualGuide.positions });
   }
   const box = new Box3Helper(new Box3(), new Color('#ffdf8b'));
   bounds.add(box);

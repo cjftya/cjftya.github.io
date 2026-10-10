@@ -1,0 +1,200 @@
+{
+  "source_file": "C:\\Users\\cjfty\\Documents\\dev\\cjftya.github.io\\artifacts\\jelly-oasis\\landmark-tree-detail-v1\\jelly-oasis-landmark-tree-detail-v1.blend",
+  "boundary_samples": 48,
+  "approaches": 2,
+  "rock_zones": 2,
+  "inlet_width_m": 5.920816701871943,
+  "parts": {
+    "Shore_Base": {
+      "role": "shore",
+      "triangles": 192,
+      "materials": [
+        "JO_PondEdge_Earth",
+        "JO_Canopy_Sage"
+      ],
+      "loose_vertices": 0,
+      "zero_area_faces": 0,
+      "boundary_edges": 96
+    },
+    "Bank_Upper_6": {
+      "role": "bank",
+      "triangles": 80,
+      "materials": [
+        "JO_PondEdge_Earth",
+        "JO_Canopy_Sage"
+      ],
+      "loose_vertices": 0,
+      "zero_area_faces": 0,
+      "boundary_edges": 0
+    },
+    "Bank_Upper_20": {
+      "role": "bank",
+      "triangles": 80,
+      "materials": [
+        "JO_PondEdge_Earth",
+        "JO_Canopy_Sage"
+      ],
+      "loose_vertices": 0,
+      "zero_area_faces": 0,
+      "boundary_edges": 0
+    },
+    "Bank_Upper_30": {
+      "role": "bank",
+      "triangles": 80,
+      "materials": [
+        "JO_PondEdge_Earth",
+        "JO_Canopy_Sage"
+      ],
+      "loose_vertices": 0,
+      "zero_area_faces": 0,
+      "boundary_edges": 0
+    },
+    "Bank_Upper_42": {
+      "role": "bank",
+      "triangles": 80,
+      "materials": [
+        "JO_PondEdge_Earth",
+        "JO_Canopy_Sage"
+      ],
+      "loose_vertices": 0,
+      "zero_area_faces": 0,
+      "boundary_edges": 0
+    },
+    "Rocks_A_0": {
+      "role": "rock",
+      "triangles": 80,
+      "materials": [
+        "JO_Rock_GrayBrown",
+        "JO_Rock_LightPlane",
+        "JO_Rock_DarkPlane"
+      ],
+      "loose_vertices": 0,
+      "zero_area_faces": 0,
+      "boundary_edges": 0
+    },
+    "Rocks_A_1": {
+      "role": "rock",
+      "triangles": 80,
+      "materials": [
+        "JO_Rock_GrayBrown",
+        "JO_Rock_LightPlane",
+        "JO_Rock_DarkPlane"
+      ],
+      "loose_vertices": 0,
+      "zero_area_faces": 0,
+      "boundary_edges": 0
+    },
+    "Rocks_A_2": {
+      "role": "rock",
+      "triangles": 80,
+      "materials": [
+        "JO_Rock_GrayBrown",
+        "JO_Rock_LightPlane",
+        "JO_Rock_DarkPlane"
+      ],
+      "loose_vertices": 0,
+      "zero_area_faces": 0,
+      "boundary_edges": 0
+    },
+    "Rocks_A_3": {
+      "role": "rock",
+      "triangles": 80,
+      "materials": [
+        "JO_Rock_GrayBrown",
+        "JO_Rock_LightPlane",
+        "JO_Rock_DarkPlane"
+      ],
+      "loose_vertices": 0,
+      "zero_area_faces": 0,
+      "boundary_edges": 0
+    },
+    "Rocks_A_4": {
+      "role": "rock",
+      "triangles": 80,
+      "materials": [
+        "JO_Rock_GrayBrown",
+        "JO_Rock_LightPlane",
+        "JO_Rock_DarkPlane"
+      ],
+      "loose_vertices": 0,
+      "zero_area_faces": 0,
+      "boundary_edges": 0
+    },
+    "Rocks_A_5": {
+      "role": "rock",
+      "triangles": 80,
+      "materials": [
+        "JO_Rock_GrayBrown",
+        "JO_Rock_LightPlane",
+        "JO_Rock_DarkPlane"
+      ],
+      "loose_vertices": 0,
+      "zero_area_faces": 0,
+      "boundary_edges": 0
+    },
+    "Rocks_A_6": {
+      "role": "rock",
+      "triangles": 80,
+      "materials": [
+        "JO_Rock_GrayBrown",
+        "JO_Rock_LightPlane",
+        "JO_Rock_DarkPlane"
+      ],
+      "loose_vertices": 0,
+      "zero_area_faces": 0,
+      "boundary_edges": 0
+    },
+    "Rocks_A_7": {
+      "role": "rock",
+      "triangles": 80,
+      "materials": [
+        "JO_Rock_GrayBrown",
+        "JO_Rock_LightPlane",
+        "JO_Rock_DarkPlane"
+      ],
+      "loose_vertices": 0,
+      "zero_area_faces": 0,
+      "boundary_edges": 0
+    },
+    "Rocks_A_8": {
+      "role": "rock",
+      "triangles": 80,
+      "materials": [
+        "JO_Rock_GrayBrown",
+        "JO_Rock_LightPlane",
+        "JO_Rock_DarkPlane"
+      ],
+      "loose_vertices": 0,
+      "zero_area_faces": 0,
+      "boundary_edges": 0
+    }
+  },
+  "triangles": 1232,
+  "bounds": [
+    [
+      -13.360065460205078,
+      -12.222371101379395,
+      -0.26712560653686523
+    ],
+    [
+      13.639852523803711,
+      10.375579833984375,
+      1.4142961502075195
+    ]
+  ],
+  "reimport_triangles": 1232,
+  "roles_preserved": true,
+  "reimport_bounds": [
+    [
+      -13.360065460205078,
+      -12.222371101379395,
+      -0.26712560653686523
+    ],
+    [
+      13.639852523803711,
+      10.375579833984375,
+      1.4142961502075195
+    ]
+  ],
+  "bytes": 149032
+}

@@ -8,7 +8,12 @@ const output = resolve(
   process.env.LANDMARK_QA_OUTPUT ?? 'artifacts/jelly-oasis/landmark-integration',
 );
 await mkdir(output, { recursive: true });
-const browser = await chromium.launch({ channel: 'msedge', headless: true });
+const browser = await chromium.launch({
+  ...(process.env.LANDMARK_QA_BROWSER
+    ? { executablePath: process.env.LANDMARK_QA_BROWSER }
+    : { channel: 'msedge' }),
+  headless: true,
+});
 const context = await browser.newContext({
   viewport: { width: 1440, height: 1000 },
   deviceScaleFactor: 1,
@@ -66,7 +71,7 @@ try {
   await environment(12, 'CLEAR');
   results.initial = await snapshot();
   assert.equal(results.initial.modules, 16);
-  assert.equal(results.initial.assetTriangles, 9844);
+  assert.equal(results.initial.assetTriangles, 19802);
   for (const name of ['Rock_Large_A', 'Ruin_Arch_A', 'Cliff_Waterfall_A']) {
     await page.locator('#landmark-isolate').selectOption(name);
     await capture(`asset-${name}`);

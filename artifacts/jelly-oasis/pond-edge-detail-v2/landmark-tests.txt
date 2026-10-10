@@ -1,0 +1,17 @@
+
+> jelly-plants@0.1.0 test
+> vitest run --maxWorkers=2 tests/jelly-oasis-landmark.test.ts
+
+
+ RUN  v4.1.10 C:/Users/cjfty/Documents/dev/cjftya.github.io
+
+ ✓ tests/jelly-oasis-landmark.test.ts (9 tests) 3071ms
+     ✓ keeps the default detail tree foot, routes and root placements identical to blockout  555ms
+     ✓ grounds pond true without rigid deformation or placement drift  710ms
+     ✓ grounds pond v2 without rigid deformation or placement drift  843ms
+     ✓ keeps detail roots joined after grounding, preserves clearance and reapplies placement without drift  308ms
+
+ Test Files  1 passed (1)
+      Tests  9 passed (9)
+   Start at  17:36:29
+   Duration  3.82s (transform 272ms, setup 0ms, import 417ms, tests 3.07s, environment 0ms)

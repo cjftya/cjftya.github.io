@@ -6,7 +6,7 @@ import {
   LANDMARK_FIRST_IMPORTS,
   LANDMARK_REFERENCE_FILE,
 } from './landmarkConfig';
-import type { LandmarkLayout } from './landmarkConfig';
+import type { LandmarkLayout, LayoutGuide } from './landmarkConfig';
 
 // One loader for modules and the optional reference. Each result has one owner.
 const loader = new GLTFLoader();
@@ -44,6 +44,7 @@ export async function loadLandmarkAssets(
   cliffDetail = true,
   ruinDetail = true,
   treeDetail = true,
+  pondDetail: boolean | 'v2' = false,
 ) {
   const started = performance.now();
   const response = await fetch(`${LANDMARK_ASSET_PATH}layout.json`);
@@ -52,6 +53,7 @@ export async function loadLandmarkAssets(
   if (!Array.isArray(layout.modules) || !layout.guides || layout.modules.length !== 16)
     throw new Error('Invalid landmark layout manifest');
   const modules = new Map<string, Group>();
+  let pondGuide: LayoutGuide | undefined;
   const timings: Record<string, number> = {};
   async function importModule(name: string) {
     const before = performance.now();
@@ -65,16 +67,40 @@ export async function loadLandmarkAssets(
         'Root_Tree_Base_Blockout',
       ].includes(name);
     const file =
-      treeDetail && name === 'Tree_Landmark_Blockout'
-        ? 'Tree_Landmark_Detail_v1.glb'
-        : detailedRuin
-          ? `${name}_Detail_v1.glb`
-          : cliffDetail && name === 'Cliff_Waterfall_A'
-            ? 'Cliff_Waterfall_A_Detail_v1.glb'
-            : `${name}.glb`;
+      pondDetail && name === 'PondEdge_Blockout'
+        ? pondDetail === 'v2'
+          ? 'PondEdge_Blockout_Detail_v2.glb'
+          : 'PondEdge_Blockout_Detail_v1.glb'
+        : treeDetail && name === 'Tree_Landmark_Blockout'
+          ? 'Tree_Landmark_Detail_v1.glb'
+          : detailedRuin
+            ? `${name}_Detail_v1.glb`
+            : cliffDetail && name === 'Cliff_Waterfall_A'
+              ? 'Cliff_Waterfall_A_Detail_v1.glb'
+              : `${name}.glb`;
     const object = await load(file);
     object.name = name;
     modules.set(name, object);
+    if (pondDetail === 'v2' && name === 'PondEdge_Blockout') {
+      object.traverse((child) => {
+        if (typeof child.userData.pond_guide_v2 === 'string')
+          pondGuide = JSON.parse(child.userData.pond_guide_v2);
+      });
+      if (
+        !pondGuide ||
+        pondGuide.positions.length < 3 ||
+        !pondGuide.positions.every((p) => p.length === 3 && p.every(Number.isFinite)) ||
+        !pondGuide.indices.length ||
+        !pondGuide.indices.every(
+          (face) =>
+            face.length === 3 &&
+            face.every(
+              (i) => Number.isInteger(i) && i >= 0 && i < pondGuide!.positions.length,
+            ),
+        )
+      )
+        throw new Error('Invalid shared v2 pond boundary');
+    }
     timings[name] = performance.now() - before;
   }
   try {
@@ -91,5 +117,5 @@ export async function loadLandmarkAssets(
     disposeLandmarkResources(modules.values());
     throw error;
   }
-  return { layout, modules, timings, loadMs: performance.now() - started };
+  return { layout, pondGuide, modules, timings, loadMs: performance.now() - started };
 }

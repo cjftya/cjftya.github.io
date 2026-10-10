@@ -1,0 +1,72 @@
+{
+  "status": "reviewable candidate; technical checks passed",
+  "baseCommit": "e9d0176fa4b2fb1c9ade7db9a899e23487160d0f",
+  "remoteVerified": false,
+  "remoteNote": "git ls-remote failed: GitHub port 443 inaccessible",
+  "sourceBlend": "C:\\Users\\cjfty\\Documents\\dev\\cjftya.github.io\\artifacts\\jelly-oasis\\landmark-tree-detail-v1\\jelly-oasis-landmark-tree-detail-v1.blend",
+  "candidateBlend": "C:\\Users\\cjfty\\Documents\\dev\\cjftya.github.io\\artifacts\\jelly-oasis\\pond-edge-detail-v1\\jelly-oasis-pond-edge-detail-v1.blend",
+  "assets": {
+    "PondEdge_Blockout.glb": {
+      "triangles": 192,
+      "materials": 1,
+      "bytes": 11604,
+      "textures": 0,
+      "nodes": 1
+    },
+    "PondEdge_Blockout_Detail_v1.glb": {
+      "triangles": 1232,
+      "materials": 5,
+      "bytes": 149032,
+      "textures": 0,
+      "nodes": 15
+    }
+  },
+  "pondHeight": {
+    "before": -5.389069482748612,
+    "after": -5.389069482748612
+  },
+  "maxWaterTerrainLift": {
+    "before": 0.7118680801222702,
+    "after": 0.7417071625009234
+  },
+  "maxSourceVertexDisplacement": {
+    "before": 1.0633685639462769,
+    "after": 1.0133479366508702
+  },
+  "rigidShape": "per-object shared translation across material primitives; regression verified",
+  "placementRoundTrip": {
+    "translationYaw": true,
+    "scale": true,
+    "maxVertexDifference": 0
+  },
+  "geometry": {
+    "reimport": true,
+    "rolesPreserved": true,
+    "inletWidth": 5.920816701871943,
+    "health": "rigid meshes manifold; shore intentionally open surface; no loose or zero-area faces"
+  },
+  "qa": {
+    "lint": "PASS",
+    "tests": "288/288 PASS; final pond tests 8/8 PASS",
+    "build": "PASS",
+    "landmark": "PASS",
+    "pond": "PASS",
+    "screenshots": 14,
+    "errors": 0,
+    "routes": {
+      "loop": true,
+      "clearing": true,
+      "approach": true,
+      "passage": true
+    }
+  },
+  "defaultPond": "blockout",
+  "defaultTree": "detail, preserved from baseline",
+  "committed": false,
+  "pushed": false,
+  "limitations": [
+    "Pond footprint/level retained: oval water silhouette remains; no final production approval inferred.",
+    "Headless desktop and touch emulation; not physical mobile FPS or continuous collision proof.",
+    "Waterfall inlet is future-facing space; existing cliff-to-pond distance preserved."
+  ]
+}

@@ -1,0 +1,100 @@
+
+> jelly-plants@0.1.0 test
+> vitest run --maxWorkers=2
+
+
+ RUN  v4.1.10 C:/Users/cjfty/Documents/dev/cjftya.github.io
+
+ ✓ tests/uriel-backtest-range.test.ts (6 tests) 3941ms
+     ✓ evaluates only the selected baseline method  1352ms
+     ✓ does not use rows after the selected validation range  2542ms
+stdout | tests/uriel-v3/shape7x7-performance.test.ts > Shape default-budget integration > produces 100K-sample games on the actual bundled history
+Shape 100K generation: 4881ms
+
+ ✓ tests/uriel-v3/shape7x7-performance.test.ts (1 test) 4920ms
+     ✓ produces 100K-sample games on the actual bundled history  4915ms
+ ✓ tests/jelly-oasis-landmark.test.ts (9 tests) 3221ms
+     ✓ keeps the default detail tree foot, routes and root placements identical to blockout  516ms
+     ✓ grounds pond true without rigid deformation or placement drift  901ms
+     ✓ grounds pond v2 without rigid deformation or placement drift  771ms
+     ✓ keeps detail roots joined after grounding, preserves clearance and reapplies placement without drift  326ms
+ ✓ tests/uriel-prediction-regression.test.ts (1 test) 18932ms
+   ✓ preserves the retained baseline predictions and purchases  18928ms
+ ✓ tests/uriel-analysis.test.ts (11 tests) 5980ms
+     ✓ returns one hundred deterministic unique candidates in circle layout  503ms
+     ✓ returns one hundred deterministic unique candidates in board layout  1394ms
+     ✓ restores the 7x7 transition ranking and tail-coverage purchase policy  3278ms
+ ✓ tests/virus-sim/v4.9-final-model-quality.test.ts (4 tests) 2449ms
+     ✓ audits all 95 high and low models with geometry diagnostics and hard budgets  2169ms
+ ✓ tests/virus-sim/v4.9-part2-special-builders.test.ts (5 tests) 1985ms
+     ✓ builds every catalog entry in both qualities with finite exact contracts  1829ms
+ ✓ tests/virus-sim/v4.8.5-structural-accuracy.test.ts (9 tests) 1185ms
+     ✓ builds all 95 entries in both qualities with finite part and layer contracts  933ms
+ ✓ tests/virus-sim/v4.8-final-audit.test.ts (6 tests) 2015ms
+     ✓ keeps all high and low models inside global resource budgets  1137ms
+     ✓ sweeps every view, layer, part and scanner axis for all 95 entries  522ms
+ ✓ tests/virus-sim/v3.5-catalog.test.ts (6 tests) 749ms
+     ✓ builds all 71 entries with complete parts, layers and bounded render cost  487ms
+ ✓ tests/jelly-oasis-terrain.test.ts (4 tests) 984ms
+     ✓ retains its polygon and texture budget when the world grows  526ms
+     ✓ is deterministic and changes gently with the seed  445ms
+ ✓ tests/uriel-v3/contrastive.test.ts (6 tests) 527ms
+ ✓ tests/virus-sim/v4.7-phages-and-global.test.ts (8 tests) 1133ms
+     ✓ sweeps all 71 entries through build, bounds, contracts, sources and disposal  790ms
+ ✓ tests/uriel-v3/backtest.test.ts (3 tests) 1242ms
+     ✓ evaluates the best ticket hit against equal-count random game baselines  442ms
+     ✓ does not use rows after the selected validation range  790ms
+ ✓ tests/uriel-v3/shape7x7-research.test.ts (4 tests) 800ms
+     ✓ runs the shape-specific walk-forward with actual prefix-only normalization and equal diversity  464ms
+     ✓ reruns full synthetic/shuffled histories and never promotes tiny smoke samples  323ms
+ ✓ tests/virus-sim/v4.8.4-human-expansion.test.ts (5 tests) 1259ms
+     ✓ builds all 95 entries in both qualities with finite exact contracts  1191ms
+ ✓ tests/jelly-oasis-environment.test.ts (10 tests) 619ms
+     ✓ allocates bounded geometry with no image textures and reuses it over time  555ms
+ ✓ tests/virus-sim/v4.5-capsids.test.ts (8 tests) 496ms
+     ✓ builds every rollout entry in high and low quality with complete contracts  301ms
+ ✓ tests/uriel-v3/projection.test.ts (3 tests) 336ms
+     ✓ keeps high-scoring combinations while reducing excessive overlap  303ms
+ ✓ tests/virus-sim/v4.4-enveloped.test.ts (7 tests) 456ms
+     ✓ builds every enveloped entry in high and low quality with complete contracts  321ms
+ ✓ tests/virus-sim/v4.9-part1-capsid-quality.test.ts (5 tests) 650ms
+     ✓ builds all 32 high and low models with finite contracts and budgets  561ms
+ ✓ tests/uriel-v3/models.test.ts (6 tests) 629ms
+ ✓ tests/uriel-data-update.test.mjs (22 tests) 423ms
+ ✓ tests/jelly-oasis-surface.test.ts (3 tests) 535ms
+     ✓ preserves the complete terrain mesh while smoothing only its shading  303ms
+ ✓ tests/virus-sim/v4.6-special-geometry.test.ts (9 tests) 531ms
+     ✓ builds every target in high and low quality with complete contracts  304ms
+ ✓ tests/virus-sim/v4.3-foundation.test.ts (7 tests) 367ms
+ ✓ tests/virus-sim/v4.8.2-full-catalog-explanations.test.ts (6 tests) 349ms
+ ✓ tests/virus-sim/v4.8.3-consistency-audit.test.ts (6 tests) 450ms
+     ✓ keeps every catalog part and layer aligned with the actual model maps  385ms
+ ✓ tests/jelly-oasis-night-weather.test.ts (6 tests) 290ms
+ ✓ tests/uriel-v3/shape7x7.test.ts (6 tests) 236ms
+ ✓ tests/uriel-v3/shape7x7-ui.test.tsx (3 tests) 128ms
+ ✓ tests/JsonProjectRepository.test.ts (3 tests) 64ms
+ ✓ tests/virus-sim/v4.8.1-explanations.test.ts (4 tests) 95ms
+ ✓ tests/virus-sim/v3.5-manual.test.ts (7 tests) 69ms
+ ✓ tests/viola-original-models.test.ts (12 tests) 224ms
+ ✓ tests/projects-file.test.ts (1 test) 36ms
+ ✓ tests/validation.test.ts (15 tests) 43ms
+ ✓ tests/panel-styles.test.ts (2 tests) 11ms
+ ✓ tests/viola-core.test.ts (5 tests) 22ms
+ ✓ tests/uriel-v3/foundation.test.ts (4 tests) 17ms
+ ✓ tests/uriel-v3/representations.test.ts (7 tests) 27ms
+ ✓ tests/uriel-v3/ui-wiring.test.ts (3 tests) 13ms
+ ✓ tests/uriel-prediction-client.test.ts (6 tests) 18ms
+ ✓ tests/FocusFollower.test.ts (3 tests) 11ms
+ ✓ tests/starSurface.test.ts (2 tests) 11ms
+ ✓ tests/projectActionPolicy.test.ts (5 tests) 12ms
+ ✓ tests/RendererManager.test.ts (4 tests) 13ms
+ ✓ tests/uriel-v3/advanced.test.ts (2 tests) 15ms
+ ✓ tests/pageLifecycle.test.ts (3 tests) 11ms
+ ✓ tests/seededNoise.test.ts (2 tests) 9ms
+ ✓ tests/PlanetPicker.test.ts (1 test) 8ms
+ ✓ tests/surfacePattern.test.ts (3 tests) 6ms
+
+ Test Files  52 passed (52)
+      Tests  289 passed (289)
+   Start at  17:33:55
+   Duration  48.00s (transform 5.03s, setup 0ms, import 14.64s, tests 58.55s, environment 13ms)
