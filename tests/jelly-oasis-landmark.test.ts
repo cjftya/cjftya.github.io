@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { Mesh, Raycaster, Vector3 } from 'three';
+import { Box3, Mesh, Raycaster, Vector3 } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { createTerrain } from '../src/jelly-oasis/terrain/createTerrain';
 import { DEFAULT_TERRAIN_CONFIG } from '../src/jelly-oasis/terrain/heightfield';
@@ -40,6 +40,71 @@ afterEach(() => {
 });
 
 describe('landmark integration against real exported GLBs', () => {
+  it('keeps the candidate tree foot, routes and root placements identical to production', async () => {
+    await useLocalAssets();
+    const before = await createOvergrownRuin(DEFAULT_TERRAIN_CONFIG);
+    const after = await createOvergrownRuin(DEFAULT_TERRAIN_CONFIG, true, true, true);
+    expect(after.contact).toEqual(before.contact);
+    expect(after.assetTriangles - before.assetTriangles).toBe(11866 - 1908);
+    const tree = after.assets.modules.get('Tree_Landmark_Blockout')!;
+    tree.updateMatrixWorld(true);
+    const local = tree.clone();
+    local.position.set(0, 0, 0);
+    local.updateMatrixWorld(true);
+    const size = new Box3().setFromObject(local).getSize(new Vector3());
+    expect(size.x).toBeCloseTo(25, 3);
+    expect(size.y).toBeCloseTo(28, 3);
+    expect(size.z).toBeCloseTo(20, 3);
+    const audit = auditLandmark(after);
+    for (const result of [audit.loop, audit.clearing, audit.approach, audit.passage])
+      expect(result.intersections).toEqual({});
+    tree.traverse((o) => {
+      if (o instanceof Mesh && o.name.includes('Canopy'))
+        expect(o.castShadow).toBe(false);
+    });
+    after.place(LANDMARK_CANDIDATES[1]);
+    after.place(OVERGROWN_RUIN_CONFIG);
+    expect(after.contact).toEqual(before.contact);
+    const spies = new Map<object, ReturnType<typeof vi.fn>>();
+    after.root.traverse((o) => {
+      if (!(o instanceof Mesh)) return;
+      for (const r of [
+        o.geometry,
+        ...(Array.isArray(o.material) ? o.material : [o.material]),
+      ]) {
+        if (!spies.has(r)) {
+          const spy = vi.fn();
+          r.addEventListener('dispose', spy);
+          spies.set(r, spy);
+        }
+      }
+    });
+    after.dispose();
+    after.dispose();
+    before.dispose();
+    for (const spy of spies.values()) expect(spy).toHaveBeenCalledTimes(1);
+  });
+  it('reports a missing candidate tree and disposes late successful loads', async () => {
+    const load = await useLocalAssets();
+    const disposed = vi.fn();
+    let successful = 0;
+    load.mockImplementation(async (url) => {
+      if (url.endsWith('Tree_Landmark_Detail_v1.glb'))
+        throw new Error('Injected tree failure');
+      const gltf = await loadFile(url);
+      successful++;
+      gltf.scene.traverse((o) => {
+        if (o instanceof Mesh) o.geometry.addEventListener('dispose', disposed);
+      });
+      return gltf;
+    });
+    await expect(loadLandmarkAssets(true, true, true)).rejects.toThrow(
+      'Tree_Landmark_Detail_v1.glb',
+    );
+    expect(successful).toBe(15);
+    expect(disposed.mock.calls.length).toBeGreaterThanOrEqual(15);
+  });
+
   it('keeps detail roots joined after grounding, preserves clearance and reapplies placement without drift', async () => {
     await useLocalAssets();
     const landmark = await createOvergrownRuin(DEFAULT_TERRAIN_CONFIG, true, true);

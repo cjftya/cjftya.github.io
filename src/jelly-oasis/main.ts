@@ -160,7 +160,9 @@ function start(canvas: HTMLCanvasElement): void {
   const ruinDetail = !(
     debugEnabled && new URLSearchParams(location.search).get('ruin') === 'blockout'
   );
-  void createOvergrownRuin(config, cliffDetail, ruinDetail)
+  const treeDetail =
+    debugEnabled && new URLSearchParams(location.search).get('tree') === 'detail';
+  void createOvergrownRuin(config, cliffDetail, ruinDetail, treeDetail)
     .then((loaded) => {
       if (disposed) {
         loaded.dispose();
@@ -191,6 +193,7 @@ function start(canvas: HTMLCanvasElement): void {
               modules: loaded.assets.modules.size,
               cliffDetail,
               ruinDetail,
+              treeDetail,
               autoWeather: {
                 enabled: environment.autoWeather.enabled,
                 secondsUntilNext: environment.autoWeather.secondsUntilNext,
