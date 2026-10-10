@@ -6,6 +6,7 @@ from pathlib import Path
 ROOT=Path(r'C:/Users/cjfty/Documents/dev/cjftya.github.io')
 OUT=ROOT/'artifacts/jelly-oasis/aesthetic-improvement-v1'
 bpy.ops.wm.open_mainfile(filepath=str(OUT/'baseline-source.blend'))
+bpy.context.preferences.filepaths.save_version=0
 parent=bpy.data.objects['Tree_Landmark_Detail_v1']
 parts=list(parent.children)
 wood=bpy.data.objects['Trunk_and_Branches']

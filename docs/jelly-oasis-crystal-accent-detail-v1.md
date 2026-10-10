@@ -2,7 +2,7 @@
 
 상태: **Phase B 제작·통합·검증·보고 완료 — PASS.** Phase A WARN 게이트 이후 사용자 승인으로 진행했다. 후보 브라우저 QA까지 통과했다.
 
-2026-10-10 후속 요청: 사용자 검토 후 이 변경과 검증 산출물의 commit/push가 승인되었다. 아래 HEAD·commit/push 없음 기록은 제작 종료 당시 상태다. 일반 기본값 전환은 이번 push 범위에 포함하지 않는다. 추가 미관 개선 범위는 [미관 개선 보고서](jelly-oasis-aesthetic-improvement-plan.md)에 정리했다.
+2026-10-10 후속 요청: 사용자 검토 후 이 변경과 검증 산출물의 commit/push가 승인되었다. 아래 HEAD·commit/push 없음 기록은 제작 종료 당시 상태다. 일반 기본값 전환은 당시 push 범위에 포함하지 않았다. 2026-10-11 나무·연못·절벽 미관 개선과 모바일 debug 구도를 메인으로 적용한 후속 결과는 [미관 개선 실행 보고서](jelly-oasis-aesthetic-improvement-execution-v1.md)에 정리했다. Crystal 기본값은 계속 blockout이며 detail은 debug 비교용이다.
 
 - 기준 HEAD: `11324c15a7a5f28f4d7c612b52ef35c88baaafd3` (master, 원격 일치).
 - 기존 통합 Blender 파일의 미커밋 변경 및 Phase A 산출물 보존.

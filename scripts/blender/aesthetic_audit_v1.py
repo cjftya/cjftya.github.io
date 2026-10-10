@@ -11,6 +11,7 @@ sources = {
 report = {}
 for label, source in sources.items():
     bpy.ops.wm.read_factory_settings(use_empty=True)
+    bpy.context.preferences.filepaths.save_version=0
     with bpy.data.libraries.load(str(source), link=False) as (available, loaded):
         loaded.collections = [n for n in available.collections if not n.startswith(('Scene', 'JellyOasis_OvergrownRuin_v1.'))]
     nested = {child.name for col in loaded.collections for child in col.children}

@@ -5,6 +5,7 @@ from mathutils import Vector
 ROOT=Path(r'C:/Users/cjfty/Documents/dev/cjftya.github.io')
 OUT=ROOT/'artifacts/jelly-oasis/aesthetic-improvement-v1'
 bpy.ops.wm.open_mainfile(filepath=str(OUT/'jelly-oasis-aesthetic-refined-v1.blend'))
+bpy.context.preferences.filepaths.save_version=0
 parent=bpy.data.objects['PondEdge_Detail_v2']
 shore=bpy.data.objects['Shore_Base_Bank_Upper_v2']
 guide=parent['pond_guide_v2']

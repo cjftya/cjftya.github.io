@@ -1,0 +1,1881 @@
+{
+  "verified": {
+    "sha256": "76cae98610433799b36c50a7428fbd9181ddfa8c338993c0fbffd03a9724e345",
+    "objects": {
+      "Ground_Presentation_ONLY": {
+        "triangles": 64,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Ground_PresentationOnly"
+        ],
+        "location": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": null,
+        "geometry_sha256": "50846d9b98d09341045e43561d6406584beb8e9d96fc9ad70d0684303676886a"
+      },
+      "Pond_Blockout": {
+        "triangles": 48,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Pond_BlueFootprint_ONLY"
+        ],
+        "location": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": null,
+        "geometry_sha256": "bb3a2066391a716aab404c2505c8fab59b1add32fb4fdba3246d8c36fd4e2d76"
+      },
+      "CreaturePaths_Loop_6m": {
+        "triangles": 256,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Debug_PathGreen"
+        ],
+        "location": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": null,
+        "geometry_sha256": "f2e1457a4f574e4b05fa99ff87fabaf54467bdd0ccf2d2e95735976ba531eb65"
+      },
+      "CreatureClearing_Diameter16m": {
+        "triangles": 48,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Debug_ClearanceYellow"
+        ],
+        "location": [
+          0.0,
+          -2.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": null,
+        "geometry_sha256": "5379d1889d713f5a8578e582458ba8428ef428d30c29fbd0dee89aa8e220a4d1"
+      },
+      "CreaturePaths_ArchApproach_6m": {
+        "triangles": 8,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Debug_PathGreen"
+        ],
+        "location": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": null,
+        "geometry_sha256": "3e6cbdba9797dec1a0226197c56e77b07ef934d24ee4d8e1c5805a4f50514836"
+      },
+      "Waterfall_Drop_Guide_L": {
+        "triangles": 36,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Debug_WaterfallCyan"
+        ],
+        "location": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": null,
+        "geometry_sha256": "bbb9054c7e9924545fc9e1a90a1bb3f986a0185132c1195baf84b7d613171888"
+      },
+      "Waterfall_Drop_Guide_R": {
+        "triangles": 36,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Debug_WaterfallCyan"
+        ],
+        "location": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": null,
+        "geometry_sha256": "6936d86e47507936e89ef1ba193705851f8825b1fdc869f120be77d575e0ca14"
+      },
+      "Cliff_Waterfall_A": {
+        "triangles": 2196,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Rock_GrayBrown",
+          "JO_Rock_LightPlane",
+          "JO_Rock_DarkPlane"
+        ],
+        "location": [
+          0.01491403579711914,
+          12.586786270141602,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": null,
+        "geometry_sha256": "4f5bf29d01c6f1da84fdb1a1972f1a674a0e3f4efb70dd38f5dbd52cd9ca3ce9"
+      },
+      "Rock_Large_A": {
+        "triangles": 436,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Rock_GrayBrown",
+          "JO_Rock_LightPlane",
+          "JO_Rock_DarkPlane"
+        ],
+        "location": [
+          -20.102170944213867,
+          -6.032805442810059,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": null,
+        "geometry_sha256": "1ff477ebff2743874cf362480de1706fdb1215c5560c84a1426943985fb80fcb"
+      },
+      "Rock_Large_B": {
+        "triangles": 220,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Rock_GrayBrown",
+          "JO_Rock_LightPlane",
+          "JO_Rock_DarkPlane"
+        ],
+        "location": [
+          -22.367612838745117,
+          11.886499404907227,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": null,
+        "geometry_sha256": "9100ec7f3278894feb49bbf3ba5ca0d9b8d5be09a89bab4bf3192bee5c71065d"
+      },
+      "Rock_Large_C": {
+        "triangles": 220,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Rock_GrayBrown",
+          "JO_Rock_LightPlane",
+          "JO_Rock_DarkPlane"
+        ],
+        "location": [
+          24.845170974731445,
+          -7.992313385009766,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": null,
+        "geometry_sha256": "64c766da5958f197fbf2eb498887452a9fe23ed2f4d66d357688fa19111b49b0"
+      },
+      "Rock_Large_D": {
+        "triangles": 220,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Rock_GrayBrown",
+          "JO_Rock_LightPlane",
+          "JO_Rock_DarkPlane"
+        ],
+        "location": [
+          -15.151616096496582,
+          -17.991193771362305,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": null,
+        "geometry_sha256": "c365cd1ca69a8dc6be4a98f3a7d7b88f984fc9723aa493b7a5e5c9f0df967674"
+      },
+      "Rock_Large_E": {
+        "triangles": 220,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Rock_GrayBrown",
+          "JO_Rock_LightPlane",
+          "JO_Rock_DarkPlane"
+        ],
+        "location": [
+          21.983375549316406,
+          14.873836517333984,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": null,
+        "geometry_sha256": "635c0ec6ba6efbf904a097e3d7ee2e4e3de0ada5134d99b5b0472bd5aa0a7a29"
+      },
+      "Cliff_Waterfall_A_Detail_v1": {
+        "triangles": 3238,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Rock_GrayBrown",
+          "JO_Rock_LightPlane",
+          "JO_Rock_DarkPlane"
+        ],
+        "location": [
+          0.01491403579711914,
+          12.586786270141602,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": null,
+        "geometry_sha256": "0dafb06e86d31a6b8e4e40ab78cf07dc33a38475c76898caa1538627e7a67704"
+      },
+      "Ruin_Arch_A": {
+        "triangles": 924,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Ruin_WarmGray",
+          "JO_Ruin_LightStone",
+          "JO_Ruin_ShadowStone"
+        ],
+        "location": [
+          15.0,
+          6.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": null,
+        "geometry_sha256": "c29808eda9e3a07b5c0507e11bd65441a9b5bb0ebe2050b2913e6b918a541902"
+      },
+      "Ruin_Wall_A": {
+        "triangles": 440,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Ruin_WarmGray",
+          "JO_Ruin_LightStone",
+          "JO_Ruin_ShadowStone"
+        ],
+        "location": [
+          -14.0,
+          2.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": null,
+        "geometry_sha256": "c7235e7ffe70de0801f0ec612fec08d5b00f88f012d01a5ce5fdbe344f040056"
+      },
+      "Ruin_BrokenWall_A": {
+        "triangles": 396,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Ruin_WarmGray",
+          "JO_Ruin_LightStone",
+          "JO_Ruin_ShadowStone"
+        ],
+        "location": [
+          18.0,
+          17.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": null,
+        "geometry_sha256": "334990dbec64b4384f9d1349c5438d6869498069b3dd3c4ed49cc7baff593433"
+      },
+      "Ruin_Arch_A_Detail_v1": {
+        "triangles": 1046,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Ruin_WarmGray",
+          "JO_Ruin_LightStone",
+          "JO_Ruin_ShadowStone"
+        ],
+        "location": [
+          15.0,
+          6.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": null,
+        "geometry_sha256": "52d91b41ac31d3bea3a93c8378300a948ca8dcf431a496be463510844612ae3b"
+      },
+      "Ruin_Wall_A_Detail_v1": {
+        "triangles": 500,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Ruin_WarmGray",
+          "JO_Ruin_LightStone",
+          "JO_Ruin_ShadowStone"
+        ],
+        "location": [
+          -14.0,
+          2.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": null,
+        "geometry_sha256": "9c25f3dc9e392ec72d710cd301ecd00a387f3a7f262b05c96872059ff7cd4a38"
+      },
+      "Ruin_BrokenWall_A_Detail_v1": {
+        "triangles": 450,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Ruin_WarmGray",
+          "JO_Ruin_LightStone",
+          "JO_Ruin_ShadowStone"
+        ],
+        "location": [
+          18.0,
+          17.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": null,
+        "geometry_sha256": "cff6d103c9cb603e273ebb070392bc5f1ab051f94bed3e4afbaed960269ffcb6"
+      },
+      "Tree_Landmark_Blockout": {
+        "triangles": 1908,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Tree_DarkBrown",
+          "JO_Canopy_Sage",
+          "JO_Canopy_Light",
+          "JO_Canopy_Shadow"
+        ],
+        "location": [
+          -12.0,
+          18.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": null,
+        "geometry_sha256": "266485aaa5b2bd1ae280a4eb35d8b9023ca223f9ffdef9bbf4dd178485c826fa"
+      },
+      "Root_Large_A": {
+        "triangles": 356,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Tree_DarkBrown"
+        ],
+        "location": [
+          -12.0,
+          10.0,
+          1.2999999523162842
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": null,
+        "geometry_sha256": "da8ca6d94dfc4e5cdac4747cc88e8487161c1f143f2abfc91e3017a593662539"
+      },
+      "Root_Tree_Base_Blockout": {
+        "triangles": 76,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Tree_DarkBrown"
+        ],
+        "location": [
+          -12.0,
+          18.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": null,
+        "geometry_sha256": "3c5100bdd1d44b276733f48bf7215f7ef68b59cff8082ddc0136fc3d05fa4d28"
+      },
+      "Root_Large_A_Detail_v1": {
+        "triangles": 740,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Tree_DarkBrown"
+        ],
+        "location": [
+          -12.0,
+          10.0,
+          1.2999999523162842
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": null,
+        "geometry_sha256": "009910629160c5a64504e31f105e2cdc93f1c2dc88b928d15af10422dc0e897b"
+      },
+      "Root_Tree_Base_Blockout_Detail_v1": {
+        "triangles": 256,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Tree_DarkBrown"
+        ],
+        "location": [
+          -12.0,
+          18.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": null,
+        "geometry_sha256": "ae2a302c9372561f7f93979c8048fbe978189adad7c240329696a8d265022c20"
+      },
+      "PondEdge_Blockout": {
+        "triangles": 192,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_PondEdge_Earth"
+        ],
+        "location": [
+          0.0,
+          -7.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": null,
+        "geometry_sha256": "022bdbc6f577983310bb7bafeda4d49e7d0e2f4ac3640a86aaf6b51b2107947d"
+      },
+      "Crystal_Blockout_A": {
+        "triangles": 66,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Crystal_VioletPlaceholder"
+        ],
+        "location": [
+          15.0,
+          -19.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": null,
+        "geometry_sha256": "dfb6e793b46a741c5cd2a4da68b22203dcbbac4a8a105265387be15d8869d799"
+      },
+      "Crystal_Blockout_B": {
+        "triangles": 66,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Crystal_VioletPlaceholder"
+        ],
+        "location": [
+          -15.0,
+          -12.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": null,
+        "geometry_sha256": "dfb6e793b46a741c5cd2a4da68b22203dcbbac4a8a105265387be15d8869d799"
+      },
+      "Crystal_Blockout_C": {
+        "triangles": 66,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Crystal_VioletPlaceholder"
+        ],
+        "location": [
+          9.0,
+          20.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": null,
+        "geometry_sha256": "dfb6e793b46a741c5cd2a4da68b22203dcbbac4a8a105265387be15d8869d799"
+      },
+      "Crystal_Blockout_A_Detail_v1": {
+        "triangles": 102,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Crystal_DeepIndigo",
+          "JO_Crystal_BlueViolet",
+          "JO_Crystal_CoolFacet",
+          "JO_Crystal_QuietGlint"
+        ],
+        "location": [
+          15.0,
+          -19.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": null,
+        "geometry_sha256": "754c7b5a5b56f77921cfe0205c34e641201087ee10849a54fe44e4997ad22fde"
+      },
+      "Crystal_Blockout_B_Detail_v1": {
+        "triangles": 102,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Crystal_DeepIndigo",
+          "JO_Crystal_BlueViolet",
+          "JO_Crystal_CoolFacet",
+          "JO_Crystal_QuietGlint"
+        ],
+        "location": [
+          -15.0,
+          -12.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": null,
+        "geometry_sha256": "924c89b5efba7504fb77f51feb6e76319991871eccdfc59fa4275eff220ff79d"
+      },
+      "Crystal_Blockout_C_Detail_v1": {
+        "triangles": 102,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Crystal_DeepIndigo",
+          "JO_Crystal_BlueViolet",
+          "JO_Crystal_CoolFacet",
+          "JO_Crystal_QuietGlint"
+        ],
+        "location": [
+          9.0,
+          20.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": null,
+        "geometry_sha256": "60d8ad919176faf06616528d28b410208e861d483ff4551c8a9b12fe47a7ffa0"
+      }
+    },
+    "collections": [
+      "ACCENT",
+      "BLOCKOUT",
+      "CLIFF",
+      "CompositionGuides",
+      "JellyOasis_Landmark_v1",
+      "POND",
+      "REVIEW",
+      "RUIN",
+      "TREE"
+    ]
+  },
+  "pond-v2": {
+    "sha256": "485c82ff31c892c0df739b5fb114b5de07b0a3d00da93344d4e502b71ac190c4",
+    "objects": {
+      "Trunk_and_Branches": {
+        "triangles": 4186,
+        "smooth_faces": 4186,
+        "materials": [
+          "JO_Tree_DarkBrown"
+        ],
+        "location": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": "Tree_Landmark_Detail_v1",
+        "geometry_sha256": "0a5e368940e7bd0d7024c4fbf73dd70125cb05aff1a65a8ff9853fbaec616d7f"
+      },
+      "Canopy_Clusters": {
+        "triangles": 7680,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Canopy_Sage",
+          "JO_Canopy_Light",
+          "JO_Canopy_Shadow"
+        ],
+        "location": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": "Tree_Landmark_Detail_v1",
+        "geometry_sha256": "adfad850a8937a0843b64f9c3b8900c55440543b0e386e87cc1aaa3bf15ada9d"
+      },
+      "PondWaterBoundary_Guide_v2": {
+        "triangles": 55,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Pond_BlueFootprint_ONLY"
+        ],
+        "location": [
+          0.0,
+          0.0,
+          0.014999999664723873
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": "PondEdge_Detail_v2",
+        "geometry_sha256": "9e0e5336d36ec0b18a9979fb44142583be8e92ca8c859e609308f620b46dc498"
+      },
+      "Shore_Base_Bank_Upper_v2": {
+        "triangles": 456,
+        "smooth_faces": 228,
+        "materials": [
+          "JO_PondEdge_Earth",
+          "JO_Canopy_Sage"
+        ],
+        "location": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": "PondEdge_Detail_v2",
+        "geometry_sha256": "c332773b0eeefaf0b9e7fa8995d2119d973662b3f2b15eecc822bee6b3d86264"
+      },
+      "Rocks_v2_0": {
+        "triangles": 80,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Rock_GrayBrown",
+          "JO_Rock_LightPlane",
+          "JO_Rock_DarkPlane"
+        ],
+        "location": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": "PondEdge_Detail_v2",
+        "geometry_sha256": "200d80d7cad26984c2249ab67f57961bbd7cde080dc79782be1a34bf12097f78"
+      },
+      "Rocks_v2_1": {
+        "triangles": 80,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Rock_GrayBrown",
+          "JO_Rock_LightPlane",
+          "JO_Rock_DarkPlane"
+        ],
+        "location": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": "PondEdge_Detail_v2",
+        "geometry_sha256": "352d2614a422ea9962d0e20037d6aa49b97c9b505f0f2823502c861e08e464be"
+      },
+      "Rocks_v2_2": {
+        "triangles": 80,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Rock_GrayBrown",
+          "JO_Rock_LightPlane",
+          "JO_Rock_DarkPlane"
+        ],
+        "location": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": "PondEdge_Detail_v2",
+        "geometry_sha256": "6f0ec97dd3c17dad5a15784b778ccdda58b44df3c28372c11ed287ec41487e68"
+      },
+      "Rocks_v2_3": {
+        "triangles": 80,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Rock_GrayBrown",
+          "JO_Rock_LightPlane",
+          "JO_Rock_DarkPlane"
+        ],
+        "location": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": "PondEdge_Detail_v2",
+        "geometry_sha256": "1ab4aa3adcfe56a833335a65596476e19a77610bcbe65aa065f63d1ee9fd4292"
+      },
+      "Rocks_v2_4": {
+        "triangles": 80,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Rock_GrayBrown",
+          "JO_Rock_LightPlane",
+          "JO_Rock_DarkPlane"
+        ],
+        "location": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": "PondEdge_Detail_v2",
+        "geometry_sha256": "edafd2a663f01b7a9915866818ee83a229ec12396e58fc42a594307f917d79fa"
+      },
+      "Rocks_v2_5": {
+        "triangles": 80,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Rock_GrayBrown",
+          "JO_Rock_LightPlane",
+          "JO_Rock_DarkPlane"
+        ],
+        "location": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": "PondEdge_Detail_v2",
+        "geometry_sha256": "cad911f774be3cd877098b107796665dedd1b38d13de07d5b21af7c676849c43"
+      },
+      "Rocks_v2_6": {
+        "triangles": 80,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Rock_GrayBrown",
+          "JO_Rock_LightPlane",
+          "JO_Rock_DarkPlane"
+        ],
+        "location": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": "PondEdge_Detail_v2",
+        "geometry_sha256": "41a6c27687aa63f3325098ffa2741b15d6e421ce96804d9f2e3f3a4420700b05"
+      },
+      "Rocks_v2_7": {
+        "triangles": 80,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Rock_GrayBrown",
+          "JO_Rock_LightPlane",
+          "JO_Rock_DarkPlane"
+        ],
+        "location": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": "PondEdge_Detail_v2",
+        "geometry_sha256": "b2d1826263f6ca896fb5a674efe253b20b3ea593c2ec4ea1dcf4a6efe790680f"
+      },
+      "Rocks_v2_8": {
+        "triangles": 80,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Rock_GrayBrown",
+          "JO_Rock_LightPlane",
+          "JO_Rock_DarkPlane"
+        ],
+        "location": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": "PondEdge_Detail_v2",
+        "geometry_sha256": "6e51b2a9dbc7416f47d3745caca1240e45e50f09efd3f71a29b880128f873e20"
+      },
+      "Shore_Base": {
+        "triangles": 192,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_PondEdge_Earth",
+          "JO_Canopy_Sage"
+        ],
+        "location": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": "PondEdge_Detail_v1",
+        "geometry_sha256": "86249581b0de16f95a97257307f9df968c25ea097a84ed415099193ec580b09f"
+      },
+      "Bank_Upper_6": {
+        "triangles": 80,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_PondEdge_Earth",
+          "JO_Canopy_Sage"
+        ],
+        "location": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": "PondEdge_Detail_v1",
+        "geometry_sha256": "a7f31d4aea035b41dc2e8cfeef1c282ed657753303d0d63684138e5cbb7a5ec9"
+      },
+      "Bank_Upper_20": {
+        "triangles": 80,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_PondEdge_Earth",
+          "JO_Canopy_Sage"
+        ],
+        "location": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": "PondEdge_Detail_v1",
+        "geometry_sha256": "f4171ec5a71f18410295466a846076f95bf1b2ddffff01ee3321af67028da125"
+      },
+      "Bank_Upper_30": {
+        "triangles": 80,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_PondEdge_Earth",
+          "JO_Canopy_Sage"
+        ],
+        "location": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": "PondEdge_Detail_v1",
+        "geometry_sha256": "b960ce030e4941003f79bf64697c2c620c01573f58f92bbc8fd398092e80a542"
+      },
+      "Bank_Upper_42": {
+        "triangles": 80,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_PondEdge_Earth",
+          "JO_Canopy_Sage"
+        ],
+        "location": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": "PondEdge_Detail_v1",
+        "geometry_sha256": "74bc5044ff94b8fbecdf3d29a3cd8ebb1d0c7bc513f54ce5f091b1a01b9028ed"
+      },
+      "Rocks_A_0": {
+        "triangles": 80,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Rock_GrayBrown",
+          "JO_Rock_LightPlane",
+          "JO_Rock_DarkPlane"
+        ],
+        "location": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": "PondEdge_Detail_v1",
+        "geometry_sha256": "06c71d0e33a08361f3a8e5e43796a48a19cdd14db1b424b2d3088167f32220c4"
+      },
+      "Rocks_A_1": {
+        "triangles": 80,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Rock_GrayBrown",
+          "JO_Rock_LightPlane",
+          "JO_Rock_DarkPlane"
+        ],
+        "location": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": "PondEdge_Detail_v1",
+        "geometry_sha256": "b243115115a55306328fe33aaceb22ba9ac09bfb934819b3d433da904f596555"
+      },
+      "Rocks_A_2": {
+        "triangles": 80,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Rock_GrayBrown",
+          "JO_Rock_LightPlane",
+          "JO_Rock_DarkPlane"
+        ],
+        "location": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": "PondEdge_Detail_v1",
+        "geometry_sha256": "ebcba7600b9c6bbbc8f85b56eba3d3801baec319d9930424e9f0b036cfd04e86"
+      },
+      "Rocks_A_3": {
+        "triangles": 80,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Rock_GrayBrown",
+          "JO_Rock_LightPlane",
+          "JO_Rock_DarkPlane"
+        ],
+        "location": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": "PondEdge_Detail_v1",
+        "geometry_sha256": "3e6dafdcb6ae7cb07684216884cc9221a47af461ae89d7941003d01f2df2a403"
+      },
+      "Rocks_A_4": {
+        "triangles": 80,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Rock_GrayBrown",
+          "JO_Rock_LightPlane",
+          "JO_Rock_DarkPlane"
+        ],
+        "location": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": "PondEdge_Detail_v1",
+        "geometry_sha256": "783bc55de58dfb6ab80215d8a7d03db9f679db90340bb1c5779c0a4f053132f4"
+      },
+      "Rocks_A_5": {
+        "triangles": 80,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Rock_GrayBrown",
+          "JO_Rock_LightPlane",
+          "JO_Rock_DarkPlane"
+        ],
+        "location": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": "PondEdge_Detail_v1",
+        "geometry_sha256": "5c9276f34a412c06de7dbaac9300d55d8d11953ce61e8de9889b10fd37526454"
+      },
+      "Rocks_A_6": {
+        "triangles": 80,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Rock_GrayBrown",
+          "JO_Rock_LightPlane",
+          "JO_Rock_DarkPlane"
+        ],
+        "location": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": "PondEdge_Detail_v1",
+        "geometry_sha256": "8246f59c648819962434fc4249511d72ee2d792d5545187a38a1fe820513cfe0"
+      },
+      "Rocks_A_7": {
+        "triangles": 80,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Rock_GrayBrown",
+          "JO_Rock_LightPlane",
+          "JO_Rock_DarkPlane"
+        ],
+        "location": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": "PondEdge_Detail_v1",
+        "geometry_sha256": "30c6f69dd852d1b856321d554751970846815d3a510ab6e58d120fde70bea55e"
+      },
+      "Rocks_A_8": {
+        "triangles": 80,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Rock_GrayBrown",
+          "JO_Rock_LightPlane",
+          "JO_Rock_DarkPlane"
+        ],
+        "location": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": "PondEdge_Detail_v1",
+        "geometry_sha256": "efe48d17841cba66a0c87d2c8ff19afe8f07330b09a2e89a98cfdea9105f1a78"
+      },
+      "Ground_Presentation_ONLY": {
+        "triangles": 64,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Ground_PresentationOnly"
+        ],
+        "location": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": null,
+        "geometry_sha256": "50846d9b98d09341045e43561d6406584beb8e9d96fc9ad70d0684303676886a"
+      },
+      "Pond_Blockout": {
+        "triangles": 48,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Pond_BlueFootprint_ONLY"
+        ],
+        "location": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": null,
+        "geometry_sha256": "bb3a2066391a716aab404c2505c8fab59b1add32fb4fdba3246d8c36fd4e2d76"
+      },
+      "CreaturePaths_Loop_6m": {
+        "triangles": 256,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Debug_PathGreen"
+        ],
+        "location": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": null,
+        "geometry_sha256": "f2e1457a4f574e4b05fa99ff87fabaf54467bdd0ccf2d2e95735976ba531eb65"
+      },
+      "CreatureClearing_Diameter16m": {
+        "triangles": 48,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Debug_ClearanceYellow"
+        ],
+        "location": [
+          0.0,
+          -2.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": null,
+        "geometry_sha256": "5379d1889d713f5a8578e582458ba8428ef428d30c29fbd0dee89aa8e220a4d1"
+      },
+      "CreaturePaths_ArchApproach_6m": {
+        "triangles": 8,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Debug_PathGreen"
+        ],
+        "location": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": null,
+        "geometry_sha256": "3e6cbdba9797dec1a0226197c56e77b07ef934d24ee4d8e1c5805a4f50514836"
+      },
+      "Waterfall_Drop_Guide_L": {
+        "triangles": 36,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Debug_WaterfallCyan"
+        ],
+        "location": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": null,
+        "geometry_sha256": "bbb9054c7e9924545fc9e1a90a1bb3f986a0185132c1195baf84b7d613171888"
+      },
+      "Waterfall_Drop_Guide_R": {
+        "triangles": 36,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Debug_WaterfallCyan"
+        ],
+        "location": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": null,
+        "geometry_sha256": "6936d86e47507936e89ef1ba193705851f8825b1fdc869f120be77d575e0ca14"
+      },
+      "Cliff_Waterfall_A": {
+        "triangles": 2196,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Rock_GrayBrown",
+          "JO_Rock_LightPlane",
+          "JO_Rock_DarkPlane"
+        ],
+        "location": [
+          0.01491403579711914,
+          12.586786270141602,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": null,
+        "geometry_sha256": "4f5bf29d01c6f1da84fdb1a1972f1a674a0e3f4efb70dd38f5dbd52cd9ca3ce9"
+      },
+      "Rock_Large_A": {
+        "triangles": 436,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Rock_GrayBrown",
+          "JO_Rock_LightPlane",
+          "JO_Rock_DarkPlane"
+        ],
+        "location": [
+          -20.102170944213867,
+          -6.032805442810059,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": null,
+        "geometry_sha256": "1ff477ebff2743874cf362480de1706fdb1215c5560c84a1426943985fb80fcb"
+      },
+      "Rock_Large_B": {
+        "triangles": 220,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Rock_GrayBrown",
+          "JO_Rock_LightPlane",
+          "JO_Rock_DarkPlane"
+        ],
+        "location": [
+          -22.367612838745117,
+          11.886499404907227,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": null,
+        "geometry_sha256": "9100ec7f3278894feb49bbf3ba5ca0d9b8d5be09a89bab4bf3192bee5c71065d"
+      },
+      "Rock_Large_C": {
+        "triangles": 220,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Rock_GrayBrown",
+          "JO_Rock_LightPlane",
+          "JO_Rock_DarkPlane"
+        ],
+        "location": [
+          24.845170974731445,
+          -7.992313385009766,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": null,
+        "geometry_sha256": "64c766da5958f197fbf2eb498887452a9fe23ed2f4d66d357688fa19111b49b0"
+      },
+      "Rock_Large_D": {
+        "triangles": 220,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Rock_GrayBrown",
+          "JO_Rock_LightPlane",
+          "JO_Rock_DarkPlane"
+        ],
+        "location": [
+          -15.151616096496582,
+          -17.991193771362305,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": null,
+        "geometry_sha256": "c365cd1ca69a8dc6be4a98f3a7d7b88f984fc9723aa493b7a5e5c9f0df967674"
+      },
+      "Rock_Large_E": {
+        "triangles": 220,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Rock_GrayBrown",
+          "JO_Rock_LightPlane",
+          "JO_Rock_DarkPlane"
+        ],
+        "location": [
+          21.983375549316406,
+          14.873836517333984,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": null,
+        "geometry_sha256": "635c0ec6ba6efbf904a097e3d7ee2e4e3de0ada5134d99b5b0472bd5aa0a7a29"
+      },
+      "Cliff_Waterfall_A_Detail_v1": {
+        "triangles": 3238,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Rock_GrayBrown",
+          "JO_Rock_LightPlane",
+          "JO_Rock_DarkPlane"
+        ],
+        "location": [
+          0.01491403579711914,
+          12.586786270141602,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": null,
+        "geometry_sha256": "0dafb06e86d31a6b8e4e40ab78cf07dc33a38475c76898caa1538627e7a67704"
+      },
+      "Ruin_Arch_A": {
+        "triangles": 924,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Ruin_WarmGray",
+          "JO_Ruin_LightStone",
+          "JO_Ruin_ShadowStone"
+        ],
+        "location": [
+          15.0,
+          6.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": null,
+        "geometry_sha256": "c29808eda9e3a07b5c0507e11bd65441a9b5bb0ebe2050b2913e6b918a541902"
+      },
+      "Ruin_Wall_A": {
+        "triangles": 440,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Ruin_WarmGray",
+          "JO_Ruin_LightStone",
+          "JO_Ruin_ShadowStone"
+        ],
+        "location": [
+          -14.0,
+          2.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": null,
+        "geometry_sha256": "c7235e7ffe70de0801f0ec612fec08d5b00f88f012d01a5ce5fdbe344f040056"
+      },
+      "Ruin_BrokenWall_A": {
+        "triangles": 396,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Ruin_WarmGray",
+          "JO_Ruin_LightStone",
+          "JO_Ruin_ShadowStone"
+        ],
+        "location": [
+          18.0,
+          17.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": null,
+        "geometry_sha256": "334990dbec64b4384f9d1349c5438d6869498069b3dd3c4ed49cc7baff593433"
+      },
+      "Ruin_Arch_A_Detail_v1": {
+        "triangles": 1046,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Ruin_WarmGray",
+          "JO_Ruin_LightStone",
+          "JO_Ruin_ShadowStone"
+        ],
+        "location": [
+          15.0,
+          6.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": null,
+        "geometry_sha256": "52d91b41ac31d3bea3a93c8378300a948ca8dcf431a496be463510844612ae3b"
+      },
+      "Ruin_Wall_A_Detail_v1": {
+        "triangles": 500,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Ruin_WarmGray",
+          "JO_Ruin_LightStone",
+          "JO_Ruin_ShadowStone"
+        ],
+        "location": [
+          -14.0,
+          2.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": null,
+        "geometry_sha256": "9c25f3dc9e392ec72d710cd301ecd00a387f3a7f262b05c96872059ff7cd4a38"
+      },
+      "Ruin_BrokenWall_A_Detail_v1": {
+        "triangles": 450,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Ruin_WarmGray",
+          "JO_Ruin_LightStone",
+          "JO_Ruin_ShadowStone"
+        ],
+        "location": [
+          18.0,
+          17.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": null,
+        "geometry_sha256": "cff6d103c9cb603e273ebb070392bc5f1ab051f94bed3e4afbaed960269ffcb6"
+      },
+      "Tree_Landmark_Blockout": {
+        "triangles": 1908,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Tree_DarkBrown",
+          "JO_Canopy_Sage",
+          "JO_Canopy_Light",
+          "JO_Canopy_Shadow"
+        ],
+        "location": [
+          -12.0,
+          18.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": null,
+        "geometry_sha256": "266485aaa5b2bd1ae280a4eb35d8b9023ca223f9ffdef9bbf4dd178485c826fa"
+      },
+      "Root_Large_A": {
+        "triangles": 356,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Tree_DarkBrown"
+        ],
+        "location": [
+          -12.0,
+          10.0,
+          1.2999999523162842
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": null,
+        "geometry_sha256": "da8ca6d94dfc4e5cdac4747cc88e8487161c1f143f2abfc91e3017a593662539"
+      },
+      "Root_Tree_Base_Blockout": {
+        "triangles": 76,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Tree_DarkBrown"
+        ],
+        "location": [
+          -12.0,
+          18.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": null,
+        "geometry_sha256": "3c5100bdd1d44b276733f48bf7215f7ef68b59cff8082ddc0136fc3d05fa4d28"
+      },
+      "Root_Large_A_Detail_v1": {
+        "triangles": 740,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Tree_DarkBrown"
+        ],
+        "location": [
+          -12.0,
+          10.0,
+          1.2999999523162842
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": null,
+        "geometry_sha256": "009910629160c5a64504e31f105e2cdc93f1c2dc88b928d15af10422dc0e897b"
+      },
+      "Root_Tree_Base_Blockout_Detail_v1": {
+        "triangles": 256,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Tree_DarkBrown"
+        ],
+        "location": [
+          -12.0,
+          18.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": null,
+        "geometry_sha256": "ae2a302c9372561f7f93979c8048fbe978189adad7c240329696a8d265022c20"
+      },
+      "PondEdge_Blockout": {
+        "triangles": 192,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_PondEdge_Earth"
+        ],
+        "location": [
+          0.0,
+          -7.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": null,
+        "geometry_sha256": "022bdbc6f577983310bb7bafeda4d49e7d0e2f4ac3640a86aaf6b51b2107947d"
+      },
+      "Crystal_Blockout_A": {
+        "triangles": 66,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Crystal_VioletPlaceholder"
+        ],
+        "location": [
+          15.0,
+          -19.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": null,
+        "geometry_sha256": "dfb6e793b46a741c5cd2a4da68b22203dcbbac4a8a105265387be15d8869d799"
+      },
+      "Crystal_Blockout_B": {
+        "triangles": 66,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Crystal_VioletPlaceholder"
+        ],
+        "location": [
+          -15.0,
+          -12.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": null,
+        "geometry_sha256": "dfb6e793b46a741c5cd2a4da68b22203dcbbac4a8a105265387be15d8869d799"
+      },
+      "Crystal_Blockout_C": {
+        "triangles": 66,
+        "smooth_faces": 0,
+        "materials": [
+          "JO_Crystal_VioletPlaceholder"
+        ],
+        "location": [
+          9.0,
+          20.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": null,
+        "geometry_sha256": "dfb6e793b46a741c5cd2a4da68b22203dcbbac4a8a105265387be15d8869d799"
+      },
+      "Cube": {
+        "triangles": 12,
+        "smooth_faces": 0,
+        "materials": [
+          "Material"
+        ],
+        "location": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "parent": null,
+        "geometry_sha256": "d7823a603239691746667bca5de25292c940f6b5e71cc433d3c743a5c8e67cd9"
+      }
+    },
+    "collections": [
+      "ACCENT",
+      "BLOCKOUT",
+      "CLIFF",
+      "Collection",
+      "CompositionGuides",
+      "JellyOasis_Landmark_v1",
+      "JellyOasis_OvergrownRuin_v1",
+      "POND",
+      "PondEdge_Detail_v1",
+      "PondEdge_Detail_v2",
+      "REVIEW",
+      "RUIN",
+      "TREE",
+      "Tree_Detail_v1"
+    ]
+  },
+  "differences": [
+    "Bank_Upper_20",
+    "Bank_Upper_30",
+    "Bank_Upper_42",
+    "Bank_Upper_6",
+    "Canopy_Clusters",
+    "Crystal_Blockout_A_Detail_v1",
+    "Crystal_Blockout_B_Detail_v1",
+    "Crystal_Blockout_C_Detail_v1",
+    "Cube",
+    "PondWaterBoundary_Guide_v2",
+    "Rocks_A_0",
+    "Rocks_A_1",
+    "Rocks_A_2",
+    "Rocks_A_3",
+    "Rocks_A_4",
+    "Rocks_A_5",
+    "Rocks_A_6",
+    "Rocks_A_7",
+    "Rocks_A_8",
+    "Rocks_v2_0",
+    "Rocks_v2_1",
+    "Rocks_v2_2",
+    "Rocks_v2_3",
+    "Rocks_v2_4",
+    "Rocks_v2_5",
+    "Rocks_v2_6",
+    "Rocks_v2_7",
+    "Rocks_v2_8",
+    "Shore_Base",
+    "Shore_Base_Bank_Upper_v2",
+    "Trunk_and_Branches"
+  ],
+  "missing_verified_collections": [
+    "Collection",
+    "JellyOasis_OvergrownRuin_v1",
+    "PondEdge_Detail_v1",
+    "PondEdge_Detail_v2",
+    "Tree_Detail_v1"
+  ]
+}

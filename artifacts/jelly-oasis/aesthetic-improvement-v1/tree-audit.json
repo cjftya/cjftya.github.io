@@ -1,0 +1,63 @@
+{
+  "flat": {
+    "wood_triangles": 4186,
+    "smooth_faces": 0,
+    "bounds": [
+      [
+        -12.5,
+        -10.0,
+        0.0
+      ],
+      [
+        12.5,
+        10.0,
+        28.0
+      ]
+    ],
+    "health": {
+      "nonmanifold": 0,
+      "winding": 0,
+      "zero_area": 0,
+      "loose": 0
+    },
+    "bytes": 927776,
+    "geometry_changed": false,
+    "tip_changes": []
+  },
+  "refined": {
+    "wood_triangles": 4186,
+    "smooth_faces": 0,
+    "bounds": [
+      [
+        -12.5,
+        -10.0,
+        0.0
+      ],
+      [
+        12.5,
+        10.0,
+        28.0
+      ]
+    ],
+    "health": {
+      "nonmanifold": 0,
+      "winding": 0,
+      "zero_area": 0,
+      "loose": 0
+    },
+    "bytes": 927824,
+    "geometry_changed": true,
+    "tip_changes": [
+      {
+        "tip": [
+          -9,
+          0.2,
+          19.3
+        ],
+        "gap": 0.30336251854896545,
+        "maximum_lift": 0.6533625185489654,
+        "vertices": 24
+      }
+    ]
+  }
+}
