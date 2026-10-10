@@ -40,10 +40,10 @@ afterEach(() => {
 });
 
 describe('landmark integration against real exported GLBs', () => {
-  it('keeps the candidate tree foot, routes and root placements identical to production', async () => {
+  it('keeps the default detail tree foot, routes and root placements identical to blockout', async () => {
     await useLocalAssets();
-    const before = await createOvergrownRuin(DEFAULT_TERRAIN_CONFIG);
-    const after = await createOvergrownRuin(DEFAULT_TERRAIN_CONFIG, true, true, true);
+    const before = await createOvergrownRuin(DEFAULT_TERRAIN_CONFIG, true, true, false);
+    const after = await createOvergrownRuin(DEFAULT_TERRAIN_CONFIG);
     expect(after.contact).toEqual(before.contact);
     expect(after.assetTriangles - before.assetTriangles).toBe(11866 - 1908);
     const tree = after.assets.modules.get('Tree_Landmark_Blockout')!;
@@ -108,7 +108,7 @@ describe('landmark integration against real exported GLBs', () => {
   it('keeps detail roots joined after grounding, preserves clearance and reapplies placement without drift', async () => {
     await useLocalAssets();
     const landmark = await createOvergrownRuin(DEFAULT_TERRAIN_CONFIG, true, true);
-    expect(landmark.assetTriangles).toBe(9844);
+    expect(landmark.assetTriangles).toBe(19802);
     const audit = auditLandmark(landmark);
     for (const result of [audit.loop, audit.clearing, audit.approach, audit.passage])
       expect(result.intersections).toEqual({});
@@ -184,7 +184,7 @@ describe('landmark integration against real exported GLBs', () => {
       'Cliff_Waterfall_A_Detail_v1.glb',
     ]);
     expect(landmark.assets.modules.size).toBe(16);
-    expect(landmark.assetTriangles).toBe(9044);
+    expect(landmark.assetTriangles).toBe(19002);
     const audit = auditLandmark(landmark);
     for (const result of [audit.loop, audit.clearing, audit.approach, audit.passage])
       expect(result.intersections).toEqual({});
