@@ -220,16 +220,18 @@ function start(canvas: HTMLCanvasElement): void {
       water:
         debugEnabled &&
         (['v1', 'v2'].includes(waterQuery ?? '') ||
-          ['v3', 'v4'].includes(candidateQuery.get('waterfall') ?? '')),
+          ['v3', 'v4', 'v5'].includes(candidateQuery.get('waterfall') ?? '')),
       realistic:
         debugEnabled &&
         (waterQuery === 'v2' ||
-          ['v3', 'v4'].includes(candidateQuery.get('waterfall') ?? '')),
+          ['v3', 'v4', 'v5'].includes(candidateQuery.get('waterfall') ?? '')),
       mobile,
-      freeFall: debugEnabled && candidateQuery.get('waterfall') === 'v4',
+      freeFall:
+        debugEnabled && ['v4', 'v5'].includes(candidateQuery.get('waterfall') ?? ''),
+      interaction: debugEnabled && candidateQuery.get('waterfall') === 'v5',
       waterfall:
         debugEnabled &&
-        ['v1', 'v2', 'v3', 'v4'].includes(candidateQuery.get('waterfall') ?? ''),
+        ['v1', 'v2', 'v3', 'v4', 'v5'].includes(candidateQuery.get('waterfall') ?? ''),
     },
   )
     .then((loaded) => {
