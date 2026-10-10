@@ -45,6 +45,7 @@ export async function loadLandmarkAssets(
   ruinDetail = true,
   treeDetail = true,
   pondDetail: boolean | 'v2' = false,
+  crystalDetail = false,
 ) {
   const started = performance.now();
   const response = await fetch(`${LANDMARK_ASSET_PATH}layout.json`);
@@ -67,17 +68,19 @@ export async function loadLandmarkAssets(
         'Root_Tree_Base_Blockout',
       ].includes(name);
     const file =
-      pondDetail && name === 'PondEdge_Blockout'
-        ? pondDetail === 'v2'
-          ? 'PondEdge_Blockout_Detail_v2.glb'
-          : 'PondEdge_Blockout_Detail_v1.glb'
-        : treeDetail && name === 'Tree_Landmark_Blockout'
-          ? 'Tree_Landmark_Detail_v1.glb'
-          : detailedRuin
-            ? `${name}_Detail_v1.glb`
-            : cliffDetail && name === 'Cliff_Waterfall_A'
-              ? 'Cliff_Waterfall_A_Detail_v1.glb'
-              : `${name}.glb`;
+      crystalDetail && /^Crystal_Blockout_[ABC]$/.test(name)
+        ? `crystal-accent-detail-v1/${name}_Detail_v1.glb`
+        : pondDetail && name === 'PondEdge_Blockout'
+          ? pondDetail === 'v2'
+            ? 'PondEdge_Blockout_Detail_v2.glb'
+            : 'PondEdge_Blockout_Detail_v1.glb'
+          : treeDetail && name === 'Tree_Landmark_Blockout'
+            ? 'Tree_Landmark_Detail_v1.glb'
+            : detailedRuin
+              ? `${name}_Detail_v1.glb`
+              : cliffDetail && name === 'Cliff_Waterfall_A'
+                ? 'Cliff_Waterfall_A_Detail_v1.glb'
+                : `${name}.glb`;
     const object = await load(file);
     object.name = name;
     modules.set(name, object);

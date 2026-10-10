@@ -1,0 +1,150 @@
+{
+  "source": "C:\\Users\\cjfty\\Documents\\dev\\cjftya.github.io\\artifacts\\jelly-oasis\\pond-edge-detail-v2\\jelly-oasis-pond-edge-detail-v2.blend",
+  "source_sha256": "485c82ff31c892c0df739b5fb114b5de07b0a3d00da93344d4e502b71ac190c4",
+  "modules": {
+    "Crystal_Blockout_A": {
+      "source_anchor_blender": [
+        15.0,
+        -19.0,
+        0.0
+      ],
+      "triangles": 102,
+      "height": 3.25,
+      "bounds_blender": [
+        [
+          -1.1168192625045776,
+          -0.6138818264007568,
+          0.0
+        ],
+        [
+          1.5472781658172607,
+          1.0998917818069458,
+          3.25
+        ]
+      ],
+      "shards": 3,
+      "support_preserved": true,
+      "support_count": 18,
+      "health": {
+        "nonmanifold_edges": 0,
+        "inconsistent_winding": 0,
+        "loose_vertices": 0,
+        "zero_area_faces": 0,
+        "signed_volume": 3.7677833132485787
+      },
+      "flat_faces": 93,
+      "reimport_triangles": 102,
+      "reimport_bounds_blender": [
+        [
+          -1.1168192625045776,
+          -0.6138818264007568,
+          0.0
+        ],
+        [
+          1.5472781658172607,
+          1.0998917818069458,
+          3.25
+        ]
+      ],
+      "bytes": 11128
+    },
+    "Crystal_Blockout_B": {
+      "source_anchor_blender": [
+        -15.0,
+        -12.0,
+        0.0
+      ],
+      "triangles": 102,
+      "height": 3.450000047683716,
+      "bounds_blender": [
+        [
+          -1.100000023841858,
+          -0.593923032283783,
+          0.0
+        ],
+        [
+          1.5175446271896362,
+          1.0926551818847656,
+          3.450000047683716
+        ]
+      ],
+      "shards": 3,
+      "support_preserved": true,
+      "support_count": 18,
+      "health": {
+        "nonmanifold_edges": 0,
+        "inconsistent_winding": 0,
+        "loose_vertices": 0,
+        "zero_area_faces": 0,
+        "signed_volume": 3.8051309707981713
+      },
+      "flat_faces": 93,
+      "reimport_triangles": 102,
+      "reimport_bounds_blender": [
+        [
+          -1.100000023841858,
+          -0.593923032283783,
+          0.0
+        ],
+        [
+          1.5175446271896362,
+          1.0926551818847656,
+          3.450000047683716
+        ]
+      ],
+      "bytes": 11168
+    },
+    "Crystal_Blockout_C": {
+      "source_anchor_blender": [
+        9.0,
+        20.0,
+        0.0
+      ],
+      "triangles": 102,
+      "height": 3.0999999046325684,
+      "bounds_blender": [
+        [
+          -1.1682735681533813,
+          -0.5827078223228455,
+          0.0
+        ],
+        [
+          1.5,
+          1.0621367692947388,
+          3.0999999046325684
+        ]
+      ],
+      "shards": 3,
+      "support_preserved": true,
+      "support_count": 18,
+      "health": {
+        "nonmanifold_edges": 0,
+        "inconsistent_winding": 0,
+        "loose_vertices": 0,
+        "zero_area_faces": 0,
+        "signed_volume": 3.823905047357066
+      },
+      "flat_faces": 93,
+      "reimport_triangles": 102,
+      "reimport_bounds_blender": [
+        [
+          -1.1682735681533813,
+          -0.5827078223228455,
+          0.0
+        ],
+        [
+          1.5,
+          1.0621367692947388,
+          3.0999999046325684
+        ]
+      ],
+      "bytes": 11144
+    }
+  },
+  "scene_count_before": 1,
+  "scene_count_after": 1,
+  "source_collections_appended_without_empty_scenes": true,
+  "other_models_preserved": true,
+  "source_file_preserved": true,
+  "existing_assets_preserved": true
+}

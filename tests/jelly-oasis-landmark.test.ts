@@ -20,7 +20,10 @@ import { loadLandmarkAssets } from '../src/jelly-oasis/landmark/loadLandmarkAsse
 
 const directory = resolve('public/assets/jelly-oasis/landmarks/overgrown-ruin');
 async function loadFile(url: string) {
-  const file = await readFile(resolve(directory, url.split('/').at(-1)!));
+  const relative = url.includes('/overgrown-ruin/')
+    ? url.split('/overgrown-ruin/').at(-1)!
+    : url;
+  const file = await readFile(resolve(directory, relative));
   return new GLTFLoader().parseAsync(
     file.buffer.slice(file.byteOffset, file.byteOffset + file.byteLength),
     '',
@@ -40,6 +43,81 @@ afterEach(() => {
 });
 
 describe('landmark integration against real exported GLBs', () => {
+  it('keeps crystal candidates opt-in, flat and grounded without changing other modules or routes', async () => {
+    const load = await useLocalAssets();
+    const before = await createOvergrownRuin(
+      DEFAULT_TERRAIN_CONFIG,
+      true,
+      true,
+      true,
+      'v2',
+    );
+    expect(
+      load.mock.calls.some(([url]) => /Crystal_Blockout_[ABC]_Detail/.test(url)),
+    ).toBe(false);
+    const after = await createOvergrownRuin(
+      DEFAULT_TERRAIN_CONFIG,
+      true,
+      true,
+      true,
+      'v2',
+      true,
+    );
+    expect(after.contact).toEqual(before.contact);
+    expect(after.placement).toEqual(before.placement);
+    expect(after.pondHeight).toBe(before.pondHeight);
+    expect(after.assetTriangles - before.assetTriangles).toBe(3 * (102 - 66));
+    for (const [name, object] of after.assets.modules) {
+      const original = before.assets.modules.get(name)!;
+      expect(object.position).toEqual(original.position);
+      if (!name.startsWith('Crystal_')) continue;
+      object.traverse((mesh) => {
+        if (!(mesh instanceof Mesh)) return;
+        expect(mesh.castShadow && mesh.receiveShadow).toBe(true);
+        const normals = mesh.geometry.attributes.normal!;
+        const index = mesh.geometry.index!;
+        for (let i = 0; i < index.count; i += 3) {
+          const normal = new Vector3().fromBufferAttribute(normals, index.getX(i));
+          for (const offset of [1, 2])
+            expect(
+              normal.distanceTo(
+                new Vector3().fromBufferAttribute(normals, index.getX(i + offset)),
+              ),
+            ).toBeLessThan(1e-5);
+        }
+      });
+    }
+    const audit = auditLandmark(after);
+    for (const result of [audit.loop, audit.clearing, audit.approach, audit.passage])
+      expect(result.clear).toBe(true);
+    after.place(LANDMARK_CANDIDATES[1]);
+    after.place(OVERGROWN_RUIN_CONFIG);
+    expect(after.contact).toEqual(before.contact);
+    after.dispose();
+    before.dispose();
+  });
+
+  it('reports a missing crystal candidate and cleans up late successful loads', async () => {
+    const load = await useLocalAssets();
+    const disposed = vi.fn();
+    let successful = 0;
+    load.mockImplementation(async (url) => {
+      if (url.endsWith('Crystal_Blockout_B_Detail_v1.glb'))
+        throw new Error('Injected crystal failure');
+      const gltf = await loadFile(url);
+      successful++;
+      gltf.scene.traverse((o) => {
+        if (o instanceof Mesh) o.geometry.addEventListener('dispose', disposed);
+      });
+      return gltf;
+    });
+    await expect(loadLandmarkAssets(true, true, true, 'v2', true)).rejects.toThrow(
+      'Crystal_Blockout_B_Detail_v1.glb',
+    );
+    expect(successful).toBe(15);
+    expect(disposed.mock.calls.length).toBeGreaterThanOrEqual(15);
+  });
+
   it('keeps the default detail tree foot, routes and root placements identical to blockout', async () => {
     await useLocalAssets();
     const before = await createOvergrownRuin(DEFAULT_TERRAIN_CONFIG, true, true, false);

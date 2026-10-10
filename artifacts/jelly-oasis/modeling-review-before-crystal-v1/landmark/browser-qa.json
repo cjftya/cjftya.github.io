@@ -1,0 +1,3629 @@
+{
+  "base": "http://127.0.0.1:4183",
+  "screenshots": [
+    "asset-Rock_Large_A.png",
+    "asset-Ruin_Arch_A.png",
+    "asset-Cliff_Waterfall_A.png",
+    "candidate-west.png",
+    "candidate-north.png",
+    "candidate-basin.png",
+    "yaw--30.png",
+    "yaw-0.png",
+    "yaw-60.png",
+    "yaw-30.png",
+    "overview.png",
+    "medium.png",
+    "ground.png",
+    "noon.png",
+    "sunset.png",
+    "night.png",
+    "overcast.png",
+    "rain.png",
+    "mist.png",
+    "movement-guides.png",
+    "layout-reference.png"
+  ],
+  "candidates": {
+    "west": {
+      "method": "Projected GLB triangles clipped to 0.08–3 m above sampled terrain; discrete route samples, not a continuous collision guarantee.",
+      "placement": {
+        "id": "basin",
+        "label": "동쪽 분지",
+        "position": {
+          "x": -94,
+          "z": -12
+        },
+        "rotationY": 0,
+        "scale": 1
+      },
+      "site": {
+        "relief": 17.376857420976535,
+        "pondRelief": 8.158256639108751,
+        "insideWorld": true,
+        "meadowOverlap": 0,
+        "worldAreaFraction": 0.059375
+      },
+      "loop": {
+        "width": 6,
+        "samples": 5040,
+        "intersections": {},
+        "clear": true
+      },
+      "clearing": {
+        "diameter": 16,
+        "samples": 3209,
+        "intersections": {},
+        "clear": true
+      },
+      "approach": {
+        "samples": 4212,
+        "intersections": {},
+        "clear": true
+      },
+      "passage": {
+        "measuredJambWidth": 4.570000000000155,
+        "testedWidth": 4,
+        "samples": 1000,
+        "intersections": {},
+        "clear": true
+      },
+      "contact": {
+        "Cliff_Waterfall_A": {
+          "burial": 6.112518512949533,
+          "supportCount": 61,
+          "y": 10.719977361800167
+        },
+        "Rock_Large_A": {
+          "burial": 0.43172296535898447,
+          "supportCount": 22,
+          "y": 16.6226588753513
+        },
+        "Rock_Large_B": {
+          "burial": 0.4892374333311995,
+          "supportCount": 16,
+          "y": 16.702140623498813
+        },
+        "Rock_Large_C": {
+          "burial": 1.2682546434043278,
+          "supportCount": 16,
+          "y": 2.1987872295561512
+        },
+        "Rock_Large_D": {
+          "burial": 0.5824837682272913,
+          "supportCount": 16,
+          "y": 15.465436014457197
+        },
+        "Rock_Large_E": {
+          "burial": 1.696640614149647,
+          "supportCount": 16,
+          "y": 4.447081088132391
+        },
+        "Ruin_Arch_A": {
+          "burial": 4.643673492313294,
+          "supportCount": 24,
+          "y": 5.604242263146242
+        },
+        "Ruin_Wall_A": {
+          "burial": 0.749570100467631,
+          "supportCount": 36,
+          "y": 16.574769752315262
+        },
+        "Ruin_BrokenWall_A": {
+          "burial": 3.5107234805727066,
+          "supportCount": 36,
+          "y": 2.9963887283765143
+        },
+        "Tree_Landmark_Blockout": {
+          "burial": 0.7122397007320505,
+          "supportCount": 9,
+          "y": 16.242882457409742
+        },
+        "Root_Large_A": {
+          "burial": 0.4878120566913804,
+          "supportCount": 51,
+          "y": 17.839954670628345
+        },
+        "Root_Tree_Base_Blockout": {
+          "burial": 0.7137362988698381,
+          "supportCount": 19,
+          "y": 16.623828208741436
+        },
+        "PondEdge_Blockout": {
+          "burial": 0,
+          "supportCount": 993,
+          "y": 16.7838359390942
+        },
+        "Crystal_Blockout_A": {
+          "burial": 1.2997359869775238,
+          "supportCount": 18,
+          "y": 5.499034135513561
+        },
+        "Crystal_Blockout_B": {
+          "burial": 0.2902465703999386,
+          "supportCount": 18,
+          "y": 16.261597648273067
+        },
+        "Crystal_Blockout_C": {
+          "burial": 1.1491989064066424,
+          "supportCount": 18,
+          "y": 10.97555311225768
+        }
+      },
+      "pondHeight": 16.7838359390942,
+      "pondBankMaxLift": 8.741881895566957,
+      "obstaclePolygons": 4094
+    },
+    "north": {
+      "method": "Projected GLB triangles clipped to 0.08–3 m above sampled terrain; discrete route samples, not a continuous collision guarantee.",
+      "placement": {
+        "id": "basin",
+        "label": "동쪽 분지",
+        "position": {
+          "x": 5,
+          "z": -94
+        },
+        "rotationY": 0,
+        "scale": 1
+      },
+      "site": {
+        "relief": 26.626598988738817,
+        "pondRelief": 12.720829939420234,
+        "insideWorld": true,
+        "meadowOverlap": 0,
+        "worldAreaFraction": 0.059375
+      },
+      "loop": {
+        "width": 6,
+        "samples": 5040,
+        "intersections": {},
+        "clear": true
+      },
+      "clearing": {
+        "diameter": 16,
+        "samples": 3209,
+        "intersections": {},
+        "clear": true
+      },
+      "approach": {
+        "samples": 4212,
+        "intersections": {},
+        "clear": true
+      },
+      "passage": {
+        "measuredJambWidth": 4.620000000000134,
+        "testedWidth": 4,
+        "samples": 1000,
+        "intersections": {},
+        "clear": true
+      },
+      "contact": {
+        "Cliff_Waterfall_A": {
+          "burial": 1.8499733292337464,
+          "supportCount": 61,
+          "y": 26.00476877575955
+        },
+        "Rock_Large_A": {
+          "burial": 2.635761728089312,
+          "supportCount": 22,
+          "y": 18.42872887909867
+        },
+        "Rock_Large_B": {
+          "burial": 0.9091628096793993,
+          "supportCount": 16,
+          "y": 24.559519101290963
+        },
+        "Rock_Large_C": {
+          "burial": 1.6936256524827886,
+          "supportCount": 16,
+          "y": 19.087568725330257
+        },
+        "Rock_Large_D": {
+          "burial": 2.6756216717486385,
+          "supportCount": 16,
+          "y": 10.252800995446433
+        },
+        "Rock_Large_E": {
+          "burial": 0.583944249351811,
+          "supportCount": 16,
+          "y": 26.145084324996553
+        },
+        "Ruin_Arch_A": {
+          "burial": 1.2681148383463228,
+          "supportCount": 24,
+          "y": 25.02140213297404
+        },
+        "Ruin_Wall_A": {
+          "burial": 1.3537875787150444,
+          "supportCount": 36,
+          "y": 23.29967560663407
+        },
+        "Ruin_BrokenWall_A": {
+          "burial": 1.8672340638704537,
+          "supportCount": 36,
+          "y": 24.11940125328078
+        },
+        "Tree_Landmark_Blockout": {
+          "burial": 0.3753999385363844,
+          "supportCount": 9,
+          "y": 26.562983318940226
+        },
+        "Root_Large_A": {
+          "burial": 2.574416961811119,
+          "supportCount": 51,
+          "y": 24.36965069309853
+        },
+        "Root_Tree_Base_Blockout": {
+          "burial": 0.811658201605761,
+          "supportCount": 19,
+          "y": 26.138366895189797
+        },
+        "PondEdge_Blockout": {
+          "burial": 0,
+          "supportCount": 993,
+          "y": 25.341814546871344
+        },
+        "Crystal_Blockout_A": {
+          "burial": 1.2330074971346985,
+          "supportCount": 18,
+          "y": 11.598223173037312
+        },
+        "Crystal_Blockout_B": {
+          "burial": 1.2549206114366047,
+          "supportCount": 18,
+          "y": 15.632991546604524
+        },
+        "Crystal_Blockout_C": {
+          "burial": 0.17873064539812056,
+          "supportCount": 18,
+          "y": 27.626583776037222
+        }
+      },
+      "pondHeight": 25.341814546871344,
+      "pondBankMaxLift": 13.592908627506489,
+      "obstaclePolygons": 4037
+    },
+    "basin": {
+      "method": "Projected GLB triangles clipped to 0.08–3 m above sampled terrain; discrete route samples, not a continuous collision guarantee.",
+      "placement": {
+        "id": "basin",
+        "label": "동쪽 분지",
+        "position": {
+          "x": 70,
+          "z": 58
+        },
+        "rotationY": 0.5235987755982988,
+        "scale": 1
+      },
+      "site": {
+        "relief": 7.367503976975923,
+        "pondRelief": 0.7310974095892329,
+        "insideWorld": true,
+        "meadowOverlap": 0,
+        "worldAreaFraction": 0.059375
+      },
+      "loop": {
+        "width": 6,
+        "samples": 5040,
+        "intersections": {},
+        "clear": true
+      },
+      "clearing": {
+        "diameter": 16,
+        "samples": 3209,
+        "intersections": {},
+        "clear": true
+      },
+      "approach": {
+        "samples": 4212,
+        "intersections": {},
+        "clear": true
+      },
+      "passage": {
+        "measuredJambWidth": 4.620000000000134,
+        "testedWidth": 4,
+        "samples": 1000,
+        "intersections": {},
+        "clear": true
+      },
+      "contact": {
+        "Cliff_Waterfall_A": {
+          "burial": 1.887559314409872,
+          "supportCount": 61,
+          "y": -5.671586008893642
+        },
+        "Rock_Large_A": {
+          "burial": 1.0343994461308443,
+          "supportCount": 22,
+          "y": -4.712236708338152
+        },
+        "Rock_Large_B": {
+          "burial": 0.8258652333460788,
+          "supportCount": 16,
+          "y": -3.218463871028857
+        },
+        "Rock_Large_C": {
+          "burial": 0.7092930757340645,
+          "supportCount": 16,
+          "y": -4.180207843928207
+        },
+        "Rock_Large_D": {
+          "burial": 0.8333341107739365,
+          "supportCount": 16,
+          "y": -4.702049294096674
+        },
+        "Rock_Large_E": {
+          "burial": 0.6447046238006275,
+          "supportCount": 16,
+          "y": -3.7120995210544927
+        },
+        "Ruin_Arch_A": {
+          "burial": 1.290435076322268,
+          "supportCount": 24,
+          "y": -5.8000104992213
+        },
+        "Ruin_Wall_A": {
+          "burial": 1.333841161993317,
+          "supportCount": 36,
+          "y": -5.6016449433395845
+        },
+        "Ruin_BrokenWall_A": {
+          "burial": 1.1926923251301975,
+          "supportCount": 36,
+          "y": -4.805628747005377
+        },
+        "Tree_Landmark_Blockout": {
+          "burial": 0.8440510781406823,
+          "supportCount": 9,
+          "y": -3.687496879261822
+        },
+        "Root_Large_A": {
+          "burial": 1.0954476681452503,
+          "supportCount": 51,
+          "y": -4.386980721720535
+        },
+        "Root_Tree_Base_Blockout": {
+          "burial": 0.9672265287947264,
+          "supportCount": 19,
+          "y": -4.158922772758809
+        },
+        "PondEdge_Blockout": {
+          "burial": 0,
+          "supportCount": 993,
+          "y": -5.389069482748612
+        },
+        "Crystal_Blockout_A": {
+          "burial": 0.4744579249107872,
+          "supportCount": 18,
+          "y": -4.756109113953943
+        },
+        "Crystal_Blockout_B": {
+          "burial": 0.4247576157751789,
+          "supportCount": 18,
+          "y": -5.105552504571298
+        },
+        "Crystal_Blockout_C": {
+          "burial": 0.3584559217009211,
+          "supportCount": 18,
+          "y": -3.8418252062291662
+        }
+      },
+      "pondHeight": -5.389069482748612,
+      "pondBankMaxLift": 0.8145113383431358,
+      "obstaclePolygons": 4331
+    }
+  },
+  "rotations": {
+    "0": {
+      "method": "Projected GLB triangles clipped to 0.08–3 m above sampled terrain; discrete route samples, not a continuous collision guarantee.",
+      "placement": {
+        "id": "basin",
+        "label": "동쪽 분지",
+        "position": {
+          "x": 70,
+          "z": 58
+        },
+        "rotationY": 0,
+        "scale": 1
+      },
+      "site": {
+        "relief": 8.364857464511113,
+        "pondRelief": 1.2765760926259127,
+        "insideWorld": true,
+        "meadowOverlap": 0.011904761904761904,
+        "worldAreaFraction": 0.059375
+      },
+      "loop": {
+        "width": 6,
+        "samples": 5040,
+        "intersections": {},
+        "clear": true
+      },
+      "clearing": {
+        "diameter": 16,
+        "samples": 3209,
+        "intersections": {},
+        "clear": true
+      },
+      "approach": {
+        "samples": 4212,
+        "intersections": {},
+        "clear": true
+      },
+      "passage": {
+        "measuredJambWidth": 4.620000000000134,
+        "testedWidth": 4,
+        "samples": 1000,
+        "intersections": {},
+        "clear": true
+      },
+      "contact": {
+        "Cliff_Waterfall_A": {
+          "burial": 1.9105059201487826,
+          "supportCount": 61,
+          "y": -5.910697400844504
+        },
+        "Rock_Large_A": {
+          "burial": 1.1092578553061712,
+          "supportCount": 22,
+          "y": -4.254749895417757
+        },
+        "Rock_Large_B": {
+          "burial": 0.8297541061930493,
+          "supportCount": 16,
+          "y": -2.9967031360044096
+        },
+        "Rock_Large_C": {
+          "burial": 0.6777996295431334,
+          "supportCount": 16,
+          "y": -4.482026617264392
+        },
+        "Rock_Large_D": {
+          "burial": 0.844681963811257,
+          "supportCount": 16,
+          "y": -4.276639432422697
+        },
+        "Rock_Large_E": {
+          "burial": 0.7088978428986166,
+          "supportCount": 16,
+          "y": -3.8773842636368365
+        },
+        "Ruin_Arch_A": {
+          "burial": 1.3084978234312148,
+          "supportCount": 24,
+          "y": -6.013089559281778
+        },
+        "Ruin_Wall_A": {
+          "burial": 1.4881385804742484,
+          "supportCount": 36,
+          "y": -5.403750586392103
+        },
+        "Ruin_BrokenWall_A": {
+          "burial": 1.231402761376637,
+          "supportCount": 36,
+          "y": -5.017139034286664
+        },
+        "Tree_Landmark_Blockout": {
+          "burial": 0.7922551631732482,
+          "supportCount": 9,
+          "y": -3.7632934689597963
+        },
+        "Root_Large_A": {
+          "burial": 0.9360404511957174,
+          "supportCount": 51,
+          "y": -4.1056200364782836
+        },
+        "Root_Tree_Base_Blockout": {
+          "burial": 0.8349940870818955,
+          "supportCount": 19,
+          "y": -4.117958469723304
+        },
+        "PondEdge_Blockout": {
+          "burial": 0,
+          "supportCount": 993,
+          "y": -5.008668429448852
+        },
+        "Crystal_Blockout_A": {
+          "burial": 0.45952177416081064,
+          "supportCount": 18,
+          "y": -4.892448416839302
+        },
+        "Crystal_Blockout_B": {
+          "burial": 0.45096625769223664,
+          "supportCount": 18,
+          "y": -4.6692779512766975
+        },
+        "Crystal_Blockout_C": {
+          "burial": 0.3263603961749215,
+          "supportCount": 18,
+          "y": -4.298488184839176
+        }
+      },
+      "pondHeight": -5.008668429448852,
+      "pondBankMaxLift": 1.3041044670858697,
+      "obstaclePolygons": 4337
+    },
+    "30": {
+      "method": "Projected GLB triangles clipped to 0.08–3 m above sampled terrain; discrete route samples, not a continuous collision guarantee.",
+      "placement": {
+        "id": "basin",
+        "label": "동쪽 분지",
+        "position": {
+          "x": 70,
+          "z": 58
+        },
+        "rotationY": 0.5235987755982988,
+        "scale": 1
+      },
+      "site": {
+        "relief": 7.367503976975923,
+        "pondRelief": 0.7310974095892329,
+        "insideWorld": true,
+        "meadowOverlap": 0,
+        "worldAreaFraction": 0.059375
+      },
+      "loop": {
+        "width": 6,
+        "samples": 5040,
+        "intersections": {},
+        "clear": true
+      },
+      "clearing": {
+        "diameter": 16,
+        "samples": 3209,
+        "intersections": {},
+        "clear": true
+      },
+      "approach": {
+        "samples": 4212,
+        "intersections": {},
+        "clear": true
+      },
+      "passage": {
+        "measuredJambWidth": 4.620000000000134,
+        "testedWidth": 4,
+        "samples": 1000,
+        "intersections": {},
+        "clear": true
+      },
+      "contact": {
+        "Cliff_Waterfall_A": {
+          "burial": 1.887559314409872,
+          "supportCount": 61,
+          "y": -5.671586008893642
+        },
+        "Rock_Large_A": {
+          "burial": 1.0343994461308443,
+          "supportCount": 22,
+          "y": -4.712236708338152
+        },
+        "Rock_Large_B": {
+          "burial": 0.8258652333460788,
+          "supportCount": 16,
+          "y": -3.218463871028857
+        },
+        "Rock_Large_C": {
+          "burial": 0.7092930757340645,
+          "supportCount": 16,
+          "y": -4.180207843928207
+        },
+        "Rock_Large_D": {
+          "burial": 0.8333341107739365,
+          "supportCount": 16,
+          "y": -4.702049294096674
+        },
+        "Rock_Large_E": {
+          "burial": 0.6447046238006275,
+          "supportCount": 16,
+          "y": -3.7120995210544927
+        },
+        "Ruin_Arch_A": {
+          "burial": 1.290435076322268,
+          "supportCount": 24,
+          "y": -5.8000104992213
+        },
+        "Ruin_Wall_A": {
+          "burial": 1.333841161993317,
+          "supportCount": 36,
+          "y": -5.6016449433395845
+        },
+        "Ruin_BrokenWall_A": {
+          "burial": 1.1926923251301975,
+          "supportCount": 36,
+          "y": -4.805628747005377
+        },
+        "Tree_Landmark_Blockout": {
+          "burial": 0.8440510781406823,
+          "supportCount": 9,
+          "y": -3.687496879261822
+        },
+        "Root_Large_A": {
+          "burial": 1.0954476681452503,
+          "supportCount": 51,
+          "y": -4.386980721720535
+        },
+        "Root_Tree_Base_Blockout": {
+          "burial": 0.9672265287947264,
+          "supportCount": 19,
+          "y": -4.158922772758809
+        },
+        "PondEdge_Blockout": {
+          "burial": 0,
+          "supportCount": 993,
+          "y": -5.389069482748612
+        },
+        "Crystal_Blockout_A": {
+          "burial": 0.4744579249107872,
+          "supportCount": 18,
+          "y": -4.756109113953943
+        },
+        "Crystal_Blockout_B": {
+          "burial": 0.4247576157751789,
+          "supportCount": 18,
+          "y": -5.105552504571298
+        },
+        "Crystal_Blockout_C": {
+          "burial": 0.3584559217009211,
+          "supportCount": 18,
+          "y": -3.8418252062291662
+        }
+      },
+      "pondHeight": -5.389069482748612,
+      "pondBankMaxLift": 0.8145113383431358,
+      "obstaclePolygons": 4331
+    },
+    "60": {
+      "method": "Projected GLB triangles clipped to 0.08–3 m above sampled terrain; discrete route samples, not a continuous collision guarantee.",
+      "placement": {
+        "id": "basin",
+        "label": "동쪽 분지",
+        "position": {
+          "x": 70,
+          "z": 58
+        },
+        "rotationY": 1.0471975511965976,
+        "scale": 1
+      },
+      "site": {
+        "relief": 6.976060321303438,
+        "pondRelief": 0.6192267195032324,
+        "insideWorld": true,
+        "meadowOverlap": 0,
+        "worldAreaFraction": 0.059375
+      },
+      "loop": {
+        "width": 6,
+        "samples": 5040,
+        "intersections": {},
+        "clear": true
+      },
+      "clearing": {
+        "diameter": 16,
+        "samples": 3209,
+        "intersections": {},
+        "clear": true
+      },
+      "approach": {
+        "samples": 4212,
+        "intersections": {},
+        "clear": true
+      },
+      "passage": {
+        "measuredJambWidth": 4.620000000000134,
+        "testedWidth": 4,
+        "samples": 1000,
+        "intersections": {},
+        "clear": true
+      },
+      "contact": {
+        "Cliff_Waterfall_A": {
+          "burial": 1.7071773341189047,
+          "supportCount": 61,
+          "y": -5.590073779085628
+        },
+        "Rock_Large_A": {
+          "burial": 0.9943625969970746,
+          "supportCount": 22,
+          "y": -5.125433235589283
+        },
+        "Rock_Large_B": {
+          "burial": 0.7892805250683339,
+          "supportCount": 16,
+          "y": -3.708268130137101
+        },
+        "Rock_Large_C": {
+          "burial": 0.6761476906914914,
+          "supportCount": 16,
+          "y": -4.001425322718401
+        },
+        "Rock_Large_D": {
+          "burial": 0.789845998606646,
+          "supportCount": 16,
+          "y": -4.983024417496578
+        },
+        "Rock_Large_E": {
+          "burial": 0.6623629757285405,
+          "supportCount": 16,
+          "y": -3.223072159448142
+        },
+        "Ruin_Arch_A": {
+          "burial": 1.3509933346002692,
+          "supportCount": 24,
+          "y": -5.51177740186413
+        },
+        "Ruin_Wall_A": {
+          "burial": 1.167853260505252,
+          "supportCount": 36,
+          "y": -5.895821347697506
+        },
+        "Ruin_BrokenWall_A": {
+          "burial": 1.0519782635834614,
+          "supportCount": 36,
+          "y": -4.457496018053149
+        },
+        "Tree_Landmark_Blockout": {
+          "burial": 0.8666267123806732,
+          "supportCount": 9,
+          "y": -3.9488621582762136
+        },
+        "Root_Large_A": {
+          "burial": 1.0638287967696378,
+          "supportCount": 51,
+          "y": -4.695593874419161
+        },
+        "Root_Tree_Base_Blockout": {
+          "burial": 1.02476357960406,
+          "supportCount": 19,
+          "y": -4.474497348879986
+        },
+        "PondEdge_Blockout": {
+          "burial": 0,
+          "supportCount": 993,
+          "y": -5.38297222577223
+        },
+        "Crystal_Blockout_A": {
+          "burial": 0.5006209677335627,
+          "supportCount": 18,
+          "y": -4.476270252181751
+        },
+        "Crystal_Blockout_B": {
+          "burial": 0.37645990232974735,
+          "supportCount": 18,
+          "y": -5.4323454396287545
+        },
+        "Crystal_Blockout_C": {
+          "burial": 0.39606541944889795,
+          "supportCount": 18,
+          "y": -3.409385689177504
+        }
+      },
+      "pondHeight": -5.38297222577223,
+      "pondBankMaxLift": 0.8485346790447977,
+      "obstaclePolygons": 4328
+    },
+    "-30": {
+      "method": "Projected GLB triangles clipped to 0.08–3 m above sampled terrain; discrete route samples, not a continuous collision guarantee.",
+      "placement": {
+        "id": "basin",
+        "label": "동쪽 분지",
+        "position": {
+          "x": 70,
+          "z": 58
+        },
+        "rotationY": -0.5235987755982988,
+        "scale": 1
+      },
+      "site": {
+        "relief": 6.9538050091176045,
+        "pondRelief": 1.7813037842518957,
+        "insideWorld": true,
+        "meadowOverlap": 0,
+        "worldAreaFraction": 0.059375
+      },
+      "loop": {
+        "width": 6,
+        "samples": 5040,
+        "intersections": {},
+        "clear": true
+      },
+      "clearing": {
+        "diameter": 16,
+        "samples": 3209,
+        "intersections": {},
+        "clear": true
+      },
+      "approach": {
+        "samples": 4212,
+        "intersections": {},
+        "clear": true
+      },
+      "passage": {
+        "measuredJambWidth": 4.620000000000134,
+        "testedWidth": 4,
+        "samples": 1000,
+        "intersections": {},
+        "clear": true
+      },
+      "contact": {
+        "Cliff_Waterfall_A": {
+          "burial": 1.6397831989447793,
+          "supportCount": 61,
+          "y": -6.0869953976873274
+        },
+        "Rock_Large_A": {
+          "burial": 1.1218710338486861,
+          "supportCount": 22,
+          "y": -3.899621657535697
+        },
+        "Rock_Large_B": {
+          "burial": 0.8306890939211491,
+          "supportCount": 16,
+          "y": -3.1645489194697856
+        },
+        "Rock_Large_C": {
+          "burial": 0.6458653174018734,
+          "supportCount": 16,
+          "y": -4.645629292641502
+        },
+        "Rock_Large_D": {
+          "burial": 0.8849227959112951,
+          "supportCount": 16,
+          "y": -3.7703257149763747
+        },
+        "Rock_Large_E": {
+          "burial": 0.7232099887599159,
+          "supportCount": 16,
+          "y": -4.097569297860691
+        },
+        "Ruin_Arch_A": {
+          "burial": 1.2380116028803778,
+          "supportCount": 24,
+          "y": -6.187898050147125
+        },
+        "Ruin_Wall_A": {
+          "burial": 1.514148399969966,
+          "supportCount": 36,
+          "y": -5.338967182764723
+        },
+        "Ruin_BrokenWall_A": {
+          "burial": 1.1492743628717532,
+          "supportCount": 36,
+          "y": -5.254512587509943
+        },
+        "Tree_Landmark_Blockout": {
+          "burial": 0.7296119363049192,
+          "supportCount": 9,
+          "y": -4.17819492938928
+        },
+        "Root_Large_A": {
+          "burial": 0.6670221551643651,
+          "supportCount": 51,
+          "y": -3.9702259721932815
+        },
+        "Root_Tree_Base_Blockout": {
+          "burial": 0.7354595446796797,
+          "supportCount": 19,
+          "y": -4.377448375006995
+        },
+        "PondEdge_Blockout": {
+          "burial": 0,
+          "supportCount": 993,
+          "y": -4.598864767697991
+        },
+        "Crystal_Blockout_A": {
+          "burial": 0.43252914526215314,
+          "supportCount": 18,
+          "y": -4.683888583121644
+        },
+        "Crystal_Blockout_B": {
+          "burial": 0.4590221188781909,
+          "supportCount": 18,
+          "y": -4.2305516417124185
+        },
+        "Crystal_Blockout_C": {
+          "burial": 0.3728324642146097,
+          "supportCount": 18,
+          "y": -4.533508071052495
+        }
+      },
+      "pondHeight": -4.598864767697991,
+      "pondBankMaxLift": 1.7656740943774065,
+      "obstaclePolygons": 4338
+    }
+  },
+  "environments": {
+    "noon": {
+      "modules": 16,
+      "cliffDetail": true,
+      "ruinDetail": true,
+      "treeDetail": true,
+      "pondDetail": "v2",
+      "pondVariant": "detail-v2",
+      "pondHeight": -5.389069482748612,
+      "pondBankMaxLift": 0.8145113383431358,
+      "pondBankMaxDisplacement": 0.997333605864414,
+      "autoWeather": {
+        "enabled": false,
+        "secondsUntilNext": 232.79871535487473,
+        "seed": 2326690896
+      },
+      "moon": {
+        "direction": [
+          -0.3387379202452915,
+          -0.9408807689542256,
+          0
+        ],
+        "visibility": 0,
+        "intensity": 0,
+        "castShadow": false,
+        "allocated": false
+      },
+      "sun": {
+        "intensity": 2.5,
+        "castShadow": true
+      },
+      "contact": {
+        "Cliff_Waterfall_A": {
+          "burial": 1.887559314409872,
+          "supportCount": 61,
+          "y": -5.671586008893642
+        },
+        "Rock_Large_A": {
+          "burial": 1.0343994461308443,
+          "supportCount": 22,
+          "y": -4.712236708338152
+        },
+        "Rock_Large_B": {
+          "burial": 0.8258652333460788,
+          "supportCount": 16,
+          "y": -3.218463871028857
+        },
+        "Rock_Large_C": {
+          "burial": 0.7092930757340645,
+          "supportCount": 16,
+          "y": -4.180207843928207
+        },
+        "Rock_Large_D": {
+          "burial": 0.8333341107739365,
+          "supportCount": 16,
+          "y": -4.702049294096674
+        },
+        "Rock_Large_E": {
+          "burial": 0.6447046238006275,
+          "supportCount": 16,
+          "y": -3.7120995210544927
+        },
+        "Ruin_Arch_A": {
+          "burial": 1.290435076322268,
+          "supportCount": 24,
+          "y": -5.8000104992213
+        },
+        "Ruin_Wall_A": {
+          "burial": 1.333841161993317,
+          "supportCount": 36,
+          "y": -5.6016449433395845
+        },
+        "Ruin_BrokenWall_A": {
+          "burial": 1.1926923251301975,
+          "supportCount": 36,
+          "y": -4.805628747005377
+        },
+        "Tree_Landmark_Blockout": {
+          "burial": 0.8440510781406823,
+          "supportCount": 9,
+          "y": -3.687496879261822
+        },
+        "Root_Large_A": {
+          "burial": 1.0954476681452503,
+          "supportCount": 51,
+          "y": -4.386980721720535
+        },
+        "Root_Tree_Base_Blockout": {
+          "burial": 0.9672265287947264,
+          "supportCount": 19,
+          "y": -4.158922772758809
+        },
+        "PondEdge_Blockout": {
+          "burial": 0,
+          "supportCount": 993,
+          "y": -5.389069482748612
+        },
+        "Crystal_Blockout_A": {
+          "burial": 0.4744579249107872,
+          "supportCount": 18,
+          "y": -4.756109113953943
+        },
+        "Crystal_Blockout_B": {
+          "burial": 0.4247576157751789,
+          "supportCount": 18,
+          "y": -5.105552504571298
+        },
+        "Crystal_Blockout_C": {
+          "burial": 0.3584559217009211,
+          "supportCount": 18,
+          "y": -3.8418252062291662
+        }
+      },
+      "shadow": {
+        "bias": -0.0001,
+        "normalBias": 0.12,
+        "mapSize": [
+          1024,
+          1024
+        ],
+        "allocated": true,
+        "bounds": [
+          -83.09993983150648,
+          83.09993983150648,
+          10,
+          700
+        ]
+      },
+      "assetTriangles": 20786,
+      "loadMs": 1665.4000000000233,
+      "timings": {
+        "Rock_Large_A": 41.5,
+        "Ruin_Arch_A": 46.199999999953434,
+        "Cliff_Waterfall_A": 21.400000000023283,
+        "Rock_Large_B": 29.099999999976717,
+        "Rock_Large_C": 37.89999999990687,
+        "Rock_Large_E": 45.40000000002328,
+        "Rock_Large_D": 47.90000000002328,
+        "Ruin_Wall_A": 60.09999999997672,
+        "Ruin_BrokenWall_A": 76.59999999997672,
+        "Tree_Landmark_Blockout": 100,
+        "Root_Large_A": 126.90000000002328,
+        "Root_Tree_Base_Blockout": 188.70000000006985,
+        "PondEdge_Blockout": 197.79999999993015,
+        "Crystal_Blockout_A": 198.59999999997672,
+        "Crystal_Blockout_B": 199.30000000004657,
+        "Crystal_Blockout_C": 199.69999999995343
+      },
+      "placement": {
+        "id": "basin",
+        "label": "동쪽 분지",
+        "position": {
+          "x": 70,
+          "z": 58
+        },
+        "rotationY": 0.5235987755982988,
+        "scale": 1
+      },
+      "calls": 99,
+      "triangles": 63594,
+      "textures": 5,
+      "geometries": 67,
+      "shadows": true,
+      "timeOfDay": 12,
+      "weather": "CLEAR",
+      "weatherBlend": 1,
+      "rainVisible": false,
+      "visible": true,
+      "camera": [
+        125,
+        41.763324186719395,
+        135.99999999999994
+      ],
+      "target": [
+        70,
+        0.7633241867194048,
+        57.999999999999986
+      ]
+    },
+    "sunset": {
+      "modules": 16,
+      "cliffDetail": true,
+      "ruinDetail": true,
+      "treeDetail": true,
+      "pondDetail": "v2",
+      "pondVariant": "detail-v2",
+      "pondHeight": -5.389069482748612,
+      "pondBankMaxLift": 0.8145113383431358,
+      "pondBankMaxDisplacement": 0.997333605864414,
+      "autoWeather": {
+        "enabled": false,
+        "secondsUntilNext": 232.79871535487473,
+        "seed": 2326690896
+      },
+      "moon": {
+        "direction": [
+          -6.123233995736766e-17,
+          -9.552245033349355e-17,
+          -1
+        ],
+        "visibility": 0,
+        "intensity": 0,
+        "castShadow": false,
+        "allocated": false
+      },
+      "sun": {
+        "intensity": 0.935,
+        "castShadow": true
+      },
+      "contact": {
+        "Cliff_Waterfall_A": {
+          "burial": 1.887559314409872,
+          "supportCount": 61,
+          "y": -5.671586008893642
+        },
+        "Rock_Large_A": {
+          "burial": 1.0343994461308443,
+          "supportCount": 22,
+          "y": -4.712236708338152
+        },
+        "Rock_Large_B": {
+          "burial": 0.8258652333460788,
+          "supportCount": 16,
+          "y": -3.218463871028857
+        },
+        "Rock_Large_C": {
+          "burial": 0.7092930757340645,
+          "supportCount": 16,
+          "y": -4.180207843928207
+        },
+        "Rock_Large_D": {
+          "burial": 0.8333341107739365,
+          "supportCount": 16,
+          "y": -4.702049294096674
+        },
+        "Rock_Large_E": {
+          "burial": 0.6447046238006275,
+          "supportCount": 16,
+          "y": -3.7120995210544927
+        },
+        "Ruin_Arch_A": {
+          "burial": 1.290435076322268,
+          "supportCount": 24,
+          "y": -5.8000104992213
+        },
+        "Ruin_Wall_A": {
+          "burial": 1.333841161993317,
+          "supportCount": 36,
+          "y": -5.6016449433395845
+        },
+        "Ruin_BrokenWall_A": {
+          "burial": 1.1926923251301975,
+          "supportCount": 36,
+          "y": -4.805628747005377
+        },
+        "Tree_Landmark_Blockout": {
+          "burial": 0.8440510781406823,
+          "supportCount": 9,
+          "y": -3.687496879261822
+        },
+        "Root_Large_A": {
+          "burial": 1.0954476681452503,
+          "supportCount": 51,
+          "y": -4.386980721720535
+        },
+        "Root_Tree_Base_Blockout": {
+          "burial": 0.9672265287947264,
+          "supportCount": 19,
+          "y": -4.158922772758809
+        },
+        "PondEdge_Blockout": {
+          "burial": 0,
+          "supportCount": 993,
+          "y": -5.389069482748612
+        },
+        "Crystal_Blockout_A": {
+          "burial": 0.4744579249107872,
+          "supportCount": 18,
+          "y": -4.756109113953943
+        },
+        "Crystal_Blockout_B": {
+          "burial": 0.4247576157751789,
+          "supportCount": 18,
+          "y": -5.105552504571298
+        },
+        "Crystal_Blockout_C": {
+          "burial": 0.3584559217009211,
+          "supportCount": 18,
+          "y": -3.8418252062291662
+        }
+      },
+      "shadow": {
+        "bias": -0.0001,
+        "normalBias": 0.12,
+        "mapSize": [
+          1024,
+          1024
+        ],
+        "allocated": true,
+        "bounds": [
+          -83.09993983150648,
+          83.09993983150648,
+          10,
+          700
+        ]
+      },
+      "assetTriangles": 20786,
+      "loadMs": 1665.4000000000233,
+      "timings": {
+        "Rock_Large_A": 41.5,
+        "Ruin_Arch_A": 46.199999999953434,
+        "Cliff_Waterfall_A": 21.400000000023283,
+        "Rock_Large_B": 29.099999999976717,
+        "Rock_Large_C": 37.89999999990687,
+        "Rock_Large_E": 45.40000000002328,
+        "Rock_Large_D": 47.90000000002328,
+        "Ruin_Wall_A": 60.09999999997672,
+        "Ruin_BrokenWall_A": 76.59999999997672,
+        "Tree_Landmark_Blockout": 100,
+        "Root_Large_A": 126.90000000002328,
+        "Root_Tree_Base_Blockout": 188.70000000006985,
+        "PondEdge_Blockout": 197.79999999993015,
+        "Crystal_Blockout_A": 198.59999999997672,
+        "Crystal_Blockout_B": 199.30000000004657,
+        "Crystal_Blockout_C": 199.69999999995343
+      },
+      "placement": {
+        "id": "basin",
+        "label": "동쪽 분지",
+        "position": {
+          "x": 70,
+          "z": 58
+        },
+        "rotationY": 0.5235987755982988,
+        "scale": 1
+      },
+      "calls": 99,
+      "triangles": 63594,
+      "textures": 5,
+      "geometries": 67,
+      "shadows": true,
+      "timeOfDay": 18,
+      "weather": "PARTLY_CLOUDY",
+      "weatherBlend": 1,
+      "rainVisible": false,
+      "visible": true,
+      "camera": [
+        125,
+        41.763324186719395,
+        135.99999999999994
+      ],
+      "target": [
+        70,
+        0.7633241867194048,
+        57.999999999999986
+      ]
+    },
+    "night": {
+      "modules": 16,
+      "cliffDetail": true,
+      "ruinDetail": true,
+      "treeDetail": true,
+      "pondDetail": "v2",
+      "pondVariant": "detail-v2",
+      "pondHeight": -5.389069482748612,
+      "pondBankMaxLift": 0.8145113383431358,
+      "pondBankMaxDisplacement": 0.997333605864414,
+      "autoWeather": {
+        "enabled": false,
+        "secondsUntilNext": 232.79871535487473,
+        "seed": 2326690896
+      },
+      "moon": {
+        "direction": [
+          0.3387379202452915,
+          0.9408807689542256,
+          4.148343097782277e-17
+        ],
+        "visibility": 1,
+        "intensity": 0.65,
+        "castShadow": true,
+        "allocated": true
+      },
+      "sun": {
+        "intensity": 0,
+        "castShadow": false
+      },
+      "contact": {
+        "Cliff_Waterfall_A": {
+          "burial": 1.887559314409872,
+          "supportCount": 61,
+          "y": -5.671586008893642
+        },
+        "Rock_Large_A": {
+          "burial": 1.0343994461308443,
+          "supportCount": 22,
+          "y": -4.712236708338152
+        },
+        "Rock_Large_B": {
+          "burial": 0.8258652333460788,
+          "supportCount": 16,
+          "y": -3.218463871028857
+        },
+        "Rock_Large_C": {
+          "burial": 0.7092930757340645,
+          "supportCount": 16,
+          "y": -4.180207843928207
+        },
+        "Rock_Large_D": {
+          "burial": 0.8333341107739365,
+          "supportCount": 16,
+          "y": -4.702049294096674
+        },
+        "Rock_Large_E": {
+          "burial": 0.6447046238006275,
+          "supportCount": 16,
+          "y": -3.7120995210544927
+        },
+        "Ruin_Arch_A": {
+          "burial": 1.290435076322268,
+          "supportCount": 24,
+          "y": -5.8000104992213
+        },
+        "Ruin_Wall_A": {
+          "burial": 1.333841161993317,
+          "supportCount": 36,
+          "y": -5.6016449433395845
+        },
+        "Ruin_BrokenWall_A": {
+          "burial": 1.1926923251301975,
+          "supportCount": 36,
+          "y": -4.805628747005377
+        },
+        "Tree_Landmark_Blockout": {
+          "burial": 0.8440510781406823,
+          "supportCount": 9,
+          "y": -3.687496879261822
+        },
+        "Root_Large_A": {
+          "burial": 1.0954476681452503,
+          "supportCount": 51,
+          "y": -4.386980721720535
+        },
+        "Root_Tree_Base_Blockout": {
+          "burial": 0.9672265287947264,
+          "supportCount": 19,
+          "y": -4.158922772758809
+        },
+        "PondEdge_Blockout": {
+          "burial": 0,
+          "supportCount": 993,
+          "y": -5.389069482748612
+        },
+        "Crystal_Blockout_A": {
+          "burial": 0.4744579249107872,
+          "supportCount": 18,
+          "y": -4.756109113953943
+        },
+        "Crystal_Blockout_B": {
+          "burial": 0.4247576157751789,
+          "supportCount": 18,
+          "y": -5.105552504571298
+        },
+        "Crystal_Blockout_C": {
+          "burial": 0.3584559217009211,
+          "supportCount": 18,
+          "y": -3.8418252062291662
+        }
+      },
+      "shadow": {
+        "bias": -0.0001,
+        "normalBias": 0.12,
+        "mapSize": [
+          1024,
+          1024
+        ],
+        "allocated": false,
+        "bounds": [
+          -83.09993983150648,
+          83.09993983150648,
+          10,
+          700
+        ]
+      },
+      "assetTriangles": 20786,
+      "loadMs": 1665.4000000000233,
+      "timings": {
+        "Rock_Large_A": 41.5,
+        "Ruin_Arch_A": 46.199999999953434,
+        "Cliff_Waterfall_A": 21.400000000023283,
+        "Rock_Large_B": 29.099999999976717,
+        "Rock_Large_C": 37.89999999990687,
+        "Rock_Large_E": 45.40000000002328,
+        "Rock_Large_D": 47.90000000002328,
+        "Ruin_Wall_A": 60.09999999997672,
+        "Ruin_BrokenWall_A": 76.59999999997672,
+        "Tree_Landmark_Blockout": 100,
+        "Root_Large_A": 126.90000000002328,
+        "Root_Tree_Base_Blockout": 188.70000000006985,
+        "PondEdge_Blockout": 197.79999999993015,
+        "Crystal_Blockout_A": 198.59999999997672,
+        "Crystal_Blockout_B": 199.30000000004657,
+        "Crystal_Blockout_C": 199.69999999995343
+      },
+      "placement": {
+        "id": "basin",
+        "label": "동쪽 분지",
+        "position": {
+          "x": 70,
+          "z": 58
+        },
+        "rotationY": 0.5235987755982988,
+        "scale": 1
+      },
+      "calls": 100,
+      "triangles": 63594,
+      "textures": 5,
+      "geometries": 68,
+      "shadows": true,
+      "timeOfDay": 0,
+      "weather": "CLEAR",
+      "weatherBlend": 1,
+      "rainVisible": false,
+      "visible": true,
+      "camera": [
+        125,
+        41.763324186719395,
+        135.99999999999994
+      ],
+      "target": [
+        70,
+        0.7633241867194048,
+        57.999999999999986
+      ]
+    },
+    "overcast": {
+      "modules": 16,
+      "cliffDetail": true,
+      "ruinDetail": true,
+      "treeDetail": true,
+      "pondDetail": "v2",
+      "pondVariant": "detail-v2",
+      "pondHeight": -5.389069482748612,
+      "pondBankMaxLift": 0.8145113383431358,
+      "pondBankMaxDisplacement": 0.997333605864414,
+      "autoWeather": {
+        "enabled": false,
+        "secondsUntilNext": 232.79871535487473,
+        "seed": 2326690896
+      },
+      "moon": {
+        "direction": [
+          -0.3387379202452915,
+          -0.9408807689542256,
+          0
+        ],
+        "visibility": 0,
+        "intensity": 0,
+        "castShadow": false,
+        "allocated": false
+      },
+      "sun": {
+        "intensity": 0.75,
+        "castShadow": true
+      },
+      "contact": {
+        "Cliff_Waterfall_A": {
+          "burial": 1.887559314409872,
+          "supportCount": 61,
+          "y": -5.671586008893642
+        },
+        "Rock_Large_A": {
+          "burial": 1.0343994461308443,
+          "supportCount": 22,
+          "y": -4.712236708338152
+        },
+        "Rock_Large_B": {
+          "burial": 0.8258652333460788,
+          "supportCount": 16,
+          "y": -3.218463871028857
+        },
+        "Rock_Large_C": {
+          "burial": 0.7092930757340645,
+          "supportCount": 16,
+          "y": -4.180207843928207
+        },
+        "Rock_Large_D": {
+          "burial": 0.8333341107739365,
+          "supportCount": 16,
+          "y": -4.702049294096674
+        },
+        "Rock_Large_E": {
+          "burial": 0.6447046238006275,
+          "supportCount": 16,
+          "y": -3.7120995210544927
+        },
+        "Ruin_Arch_A": {
+          "burial": 1.290435076322268,
+          "supportCount": 24,
+          "y": -5.8000104992213
+        },
+        "Ruin_Wall_A": {
+          "burial": 1.333841161993317,
+          "supportCount": 36,
+          "y": -5.6016449433395845
+        },
+        "Ruin_BrokenWall_A": {
+          "burial": 1.1926923251301975,
+          "supportCount": 36,
+          "y": -4.805628747005377
+        },
+        "Tree_Landmark_Blockout": {
+          "burial": 0.8440510781406823,
+          "supportCount": 9,
+          "y": -3.687496879261822
+        },
+        "Root_Large_A": {
+          "burial": 1.0954476681452503,
+          "supportCount": 51,
+          "y": -4.386980721720535
+        },
+        "Root_Tree_Base_Blockout": {
+          "burial": 0.9672265287947264,
+          "supportCount": 19,
+          "y": -4.158922772758809
+        },
+        "PondEdge_Blockout": {
+          "burial": 0,
+          "supportCount": 993,
+          "y": -5.389069482748612
+        },
+        "Crystal_Blockout_A": {
+          "burial": 0.4744579249107872,
+          "supportCount": 18,
+          "y": -4.756109113953943
+        },
+        "Crystal_Blockout_B": {
+          "burial": 0.4247576157751789,
+          "supportCount": 18,
+          "y": -5.105552504571298
+        },
+        "Crystal_Blockout_C": {
+          "burial": 0.3584559217009211,
+          "supportCount": 18,
+          "y": -3.8418252062291662
+        }
+      },
+      "shadow": {
+        "bias": -0.0001,
+        "normalBias": 0.12,
+        "mapSize": [
+          1024,
+          1024
+        ],
+        "allocated": true,
+        "bounds": [
+          -83.09993983150648,
+          83.09993983150648,
+          10,
+          700
+        ]
+      },
+      "assetTriangles": 20786,
+      "loadMs": 1665.4000000000233,
+      "timings": {
+        "Rock_Large_A": 41.5,
+        "Ruin_Arch_A": 46.199999999953434,
+        "Cliff_Waterfall_A": 21.400000000023283,
+        "Rock_Large_B": 29.099999999976717,
+        "Rock_Large_C": 37.89999999990687,
+        "Rock_Large_E": 45.40000000002328,
+        "Rock_Large_D": 47.90000000002328,
+        "Ruin_Wall_A": 60.09999999997672,
+        "Ruin_BrokenWall_A": 76.59999999997672,
+        "Tree_Landmark_Blockout": 100,
+        "Root_Large_A": 126.90000000002328,
+        "Root_Tree_Base_Blockout": 188.70000000006985,
+        "PondEdge_Blockout": 197.79999999993015,
+        "Crystal_Blockout_A": 198.59999999997672,
+        "Crystal_Blockout_B": 199.30000000004657,
+        "Crystal_Blockout_C": 199.69999999995343
+      },
+      "placement": {
+        "id": "basin",
+        "label": "동쪽 분지",
+        "position": {
+          "x": 70,
+          "z": 58
+        },
+        "rotationY": 0.5235987755982988,
+        "scale": 1
+      },
+      "calls": 99,
+      "triangles": 63594,
+      "textures": 5,
+      "geometries": 68,
+      "shadows": true,
+      "timeOfDay": 12,
+      "weather": "OVERCAST",
+      "weatherBlend": 1,
+      "rainVisible": false,
+      "visible": true,
+      "camera": [
+        125,
+        41.763324186719395,
+        135.99999999999994
+      ],
+      "target": [
+        70,
+        0.7633241867194048,
+        57.999999999999986
+      ]
+    },
+    "rain": {
+      "modules": 16,
+      "cliffDetail": true,
+      "ruinDetail": true,
+      "treeDetail": true,
+      "pondDetail": "v2",
+      "pondVariant": "detail-v2",
+      "pondHeight": -5.389069482748612,
+      "pondBankMaxLift": 0.8145113383431358,
+      "pondBankMaxDisplacement": 0.997333605864414,
+      "autoWeather": {
+        "enabled": false,
+        "secondsUntilNext": 232.79871535487473,
+        "seed": 2326690896
+      },
+      "moon": {
+        "direction": [
+          -0.3387379202452915,
+          -0.9408807689542256,
+          0
+        ],
+        "visibility": 0,
+        "intensity": 0,
+        "castShadow": false,
+        "allocated": false
+      },
+      "sun": {
+        "intensity": 0.44999999999999996,
+        "castShadow": true
+      },
+      "contact": {
+        "Cliff_Waterfall_A": {
+          "burial": 1.887559314409872,
+          "supportCount": 61,
+          "y": -5.671586008893642
+        },
+        "Rock_Large_A": {
+          "burial": 1.0343994461308443,
+          "supportCount": 22,
+          "y": -4.712236708338152
+        },
+        "Rock_Large_B": {
+          "burial": 0.8258652333460788,
+          "supportCount": 16,
+          "y": -3.218463871028857
+        },
+        "Rock_Large_C": {
+          "burial": 0.7092930757340645,
+          "supportCount": 16,
+          "y": -4.180207843928207
+        },
+        "Rock_Large_D": {
+          "burial": 0.8333341107739365,
+          "supportCount": 16,
+          "y": -4.702049294096674
+        },
+        "Rock_Large_E": {
+          "burial": 0.6447046238006275,
+          "supportCount": 16,
+          "y": -3.7120995210544927
+        },
+        "Ruin_Arch_A": {
+          "burial": 1.290435076322268,
+          "supportCount": 24,
+          "y": -5.8000104992213
+        },
+        "Ruin_Wall_A": {
+          "burial": 1.333841161993317,
+          "supportCount": 36,
+          "y": -5.6016449433395845
+        },
+        "Ruin_BrokenWall_A": {
+          "burial": 1.1926923251301975,
+          "supportCount": 36,
+          "y": -4.805628747005377
+        },
+        "Tree_Landmark_Blockout": {
+          "burial": 0.8440510781406823,
+          "supportCount": 9,
+          "y": -3.687496879261822
+        },
+        "Root_Large_A": {
+          "burial": 1.0954476681452503,
+          "supportCount": 51,
+          "y": -4.386980721720535
+        },
+        "Root_Tree_Base_Blockout": {
+          "burial": 0.9672265287947264,
+          "supportCount": 19,
+          "y": -4.158922772758809
+        },
+        "PondEdge_Blockout": {
+          "burial": 0,
+          "supportCount": 993,
+          "y": -5.389069482748612
+        },
+        "Crystal_Blockout_A": {
+          "burial": 0.4744579249107872,
+          "supportCount": 18,
+          "y": -4.756109113953943
+        },
+        "Crystal_Blockout_B": {
+          "burial": 0.4247576157751789,
+          "supportCount": 18,
+          "y": -5.105552504571298
+        },
+        "Crystal_Blockout_C": {
+          "burial": 0.3584559217009211,
+          "supportCount": 18,
+          "y": -3.8418252062291662
+        }
+      },
+      "shadow": {
+        "bias": -0.0001,
+        "normalBias": 0.12,
+        "mapSize": [
+          1024,
+          1024
+        ],
+        "allocated": true,
+        "bounds": [
+          -83.09993983150648,
+          83.09993983150648,
+          10,
+          700
+        ]
+      },
+      "assetTriangles": 20786,
+      "loadMs": 1665.4000000000233,
+      "timings": {
+        "Rock_Large_A": 41.5,
+        "Ruin_Arch_A": 46.199999999953434,
+        "Cliff_Waterfall_A": 21.400000000023283,
+        "Rock_Large_B": 29.099999999976717,
+        "Rock_Large_C": 37.89999999990687,
+        "Rock_Large_E": 45.40000000002328,
+        "Rock_Large_D": 47.90000000002328,
+        "Ruin_Wall_A": 60.09999999997672,
+        "Ruin_BrokenWall_A": 76.59999999997672,
+        "Tree_Landmark_Blockout": 100,
+        "Root_Large_A": 126.90000000002328,
+        "Root_Tree_Base_Blockout": 188.70000000006985,
+        "PondEdge_Blockout": 197.79999999993015,
+        "Crystal_Blockout_A": 198.59999999997672,
+        "Crystal_Blockout_B": 199.30000000004657,
+        "Crystal_Blockout_C": 199.69999999995343
+      },
+      "placement": {
+        "id": "basin",
+        "label": "동쪽 분지",
+        "position": {
+          "x": 70,
+          "z": 58
+        },
+        "rotationY": 0.5235987755982988,
+        "scale": 1
+      },
+      "calls": 100,
+      "triangles": 63594,
+      "textures": 5,
+      "geometries": 69,
+      "shadows": true,
+      "timeOfDay": 12,
+      "weather": "RAIN",
+      "weatherBlend": 1,
+      "rainVisible": true,
+      "visible": true,
+      "camera": [
+        125,
+        41.763324186719395,
+        135.99999999999994
+      ],
+      "target": [
+        70,
+        0.7633241867194048,
+        57.999999999999986
+      ]
+    },
+    "mist": {
+      "modules": 16,
+      "cliffDetail": true,
+      "ruinDetail": true,
+      "treeDetail": true,
+      "pondDetail": "v2",
+      "pondVariant": "detail-v2",
+      "pondHeight": -5.389069482748612,
+      "pondBankMaxLift": 0.8145113383431358,
+      "pondBankMaxDisplacement": 0.997333605864414,
+      "autoWeather": {
+        "enabled": false,
+        "secondsUntilNext": 232.79871535487473,
+        "seed": 2326690896
+      },
+      "moon": {
+        "direction": [
+          -0.3387379202452915,
+          -0.9408807689542256,
+          0
+        ],
+        "visibility": 0,
+        "intensity": 0,
+        "castShadow": false,
+        "allocated": false
+      },
+      "sun": {
+        "intensity": 1.375,
+        "castShadow": true
+      },
+      "contact": {
+        "Cliff_Waterfall_A": {
+          "burial": 1.887559314409872,
+          "supportCount": 61,
+          "y": -5.671586008893642
+        },
+        "Rock_Large_A": {
+          "burial": 1.0343994461308443,
+          "supportCount": 22,
+          "y": -4.712236708338152
+        },
+        "Rock_Large_B": {
+          "burial": 0.8258652333460788,
+          "supportCount": 16,
+          "y": -3.218463871028857
+        },
+        "Rock_Large_C": {
+          "burial": 0.7092930757340645,
+          "supportCount": 16,
+          "y": -4.180207843928207
+        },
+        "Rock_Large_D": {
+          "burial": 0.8333341107739365,
+          "supportCount": 16,
+          "y": -4.702049294096674
+        },
+        "Rock_Large_E": {
+          "burial": 0.6447046238006275,
+          "supportCount": 16,
+          "y": -3.7120995210544927
+        },
+        "Ruin_Arch_A": {
+          "burial": 1.290435076322268,
+          "supportCount": 24,
+          "y": -5.8000104992213
+        },
+        "Ruin_Wall_A": {
+          "burial": 1.333841161993317,
+          "supportCount": 36,
+          "y": -5.6016449433395845
+        },
+        "Ruin_BrokenWall_A": {
+          "burial": 1.1926923251301975,
+          "supportCount": 36,
+          "y": -4.805628747005377
+        },
+        "Tree_Landmark_Blockout": {
+          "burial": 0.8440510781406823,
+          "supportCount": 9,
+          "y": -3.687496879261822
+        },
+        "Root_Large_A": {
+          "burial": 1.0954476681452503,
+          "supportCount": 51,
+          "y": -4.386980721720535
+        },
+        "Root_Tree_Base_Blockout": {
+          "burial": 0.9672265287947264,
+          "supportCount": 19,
+          "y": -4.158922772758809
+        },
+        "PondEdge_Blockout": {
+          "burial": 0,
+          "supportCount": 993,
+          "y": -5.389069482748612
+        },
+        "Crystal_Blockout_A": {
+          "burial": 0.4744579249107872,
+          "supportCount": 18,
+          "y": -4.756109113953943
+        },
+        "Crystal_Blockout_B": {
+          "burial": 0.4247576157751789,
+          "supportCount": 18,
+          "y": -5.105552504571298
+        },
+        "Crystal_Blockout_C": {
+          "burial": 0.3584559217009211,
+          "supportCount": 18,
+          "y": -3.8418252062291662
+        }
+      },
+      "shadow": {
+        "bias": -0.0001,
+        "normalBias": 0.12,
+        "mapSize": [
+          1024,
+          1024
+        ],
+        "allocated": true,
+        "bounds": [
+          -83.09993983150648,
+          83.09993983150648,
+          10,
+          700
+        ]
+      },
+      "assetTriangles": 20786,
+      "loadMs": 1665.4000000000233,
+      "timings": {
+        "Rock_Large_A": 41.5,
+        "Ruin_Arch_A": 46.199999999953434,
+        "Cliff_Waterfall_A": 21.400000000023283,
+        "Rock_Large_B": 29.099999999976717,
+        "Rock_Large_C": 37.89999999990687,
+        "Rock_Large_E": 45.40000000002328,
+        "Rock_Large_D": 47.90000000002328,
+        "Ruin_Wall_A": 60.09999999997672,
+        "Ruin_BrokenWall_A": 76.59999999997672,
+        "Tree_Landmark_Blockout": 100,
+        "Root_Large_A": 126.90000000002328,
+        "Root_Tree_Base_Blockout": 188.70000000006985,
+        "PondEdge_Blockout": 197.79999999993015,
+        "Crystal_Blockout_A": 198.59999999997672,
+        "Crystal_Blockout_B": 199.30000000004657,
+        "Crystal_Blockout_C": 199.69999999995343
+      },
+      "placement": {
+        "id": "basin",
+        "label": "동쪽 분지",
+        "position": {
+          "x": 70,
+          "z": 58
+        },
+        "rotationY": 0.5235987755982988,
+        "scale": 1
+      },
+      "calls": 99,
+      "triangles": 63594,
+      "textures": 5,
+      "geometries": 69,
+      "shadows": true,
+      "timeOfDay": 12,
+      "weather": "MIST",
+      "weatherBlend": 1,
+      "rainVisible": false,
+      "visible": true,
+      "camera": [
+        125,
+        41.763324186719395,
+        135.99999999999994
+      ],
+      "target": [
+        70,
+        0.7633241867194048,
+        57.999999999999986
+      ]
+    }
+  },
+  "errors": [],
+  "initial": {
+    "modules": 16,
+    "cliffDetail": true,
+    "ruinDetail": true,
+    "treeDetail": true,
+    "pondDetail": "v2",
+    "pondVariant": "detail-v2",
+    "pondHeight": -5.389069482748612,
+    "pondBankMaxLift": 0.8145113383431358,
+    "pondBankMaxDisplacement": 0.997333605864414,
+    "autoWeather": {
+      "enabled": false,
+      "secondsUntilNext": 232.79871535487473,
+      "seed": 2326690896
+    },
+    "moon": {
+      "direction": [
+        -0.3387379202452915,
+        -0.9408807689542256,
+        0
+      ],
+      "visibility": 0,
+      "intensity": 0,
+      "castShadow": false,
+      "allocated": false
+    },
+    "sun": {
+      "intensity": 2.5,
+      "castShadow": true
+    },
+    "contact": {
+      "Cliff_Waterfall_A": {
+        "burial": 1.887559314409872,
+        "supportCount": 61,
+        "y": -5.671586008893642
+      },
+      "Rock_Large_A": {
+        "burial": 1.0343994461308443,
+        "supportCount": 22,
+        "y": -4.712236708338152
+      },
+      "Rock_Large_B": {
+        "burial": 0.8258652333460788,
+        "supportCount": 16,
+        "y": -3.218463871028857
+      },
+      "Rock_Large_C": {
+        "burial": 0.7092930757340645,
+        "supportCount": 16,
+        "y": -4.180207843928207
+      },
+      "Rock_Large_D": {
+        "burial": 0.8333341107739365,
+        "supportCount": 16,
+        "y": -4.702049294096674
+      },
+      "Rock_Large_E": {
+        "burial": 0.6447046238006275,
+        "supportCount": 16,
+        "y": -3.7120995210544927
+      },
+      "Ruin_Arch_A": {
+        "burial": 1.290435076322268,
+        "supportCount": 24,
+        "y": -5.8000104992213
+      },
+      "Ruin_Wall_A": {
+        "burial": 1.333841161993317,
+        "supportCount": 36,
+        "y": -5.6016449433395845
+      },
+      "Ruin_BrokenWall_A": {
+        "burial": 1.1926923251301975,
+        "supportCount": 36,
+        "y": -4.805628747005377
+      },
+      "Tree_Landmark_Blockout": {
+        "burial": 0.8440510781406823,
+        "supportCount": 9,
+        "y": -3.687496879261822
+      },
+      "Root_Large_A": {
+        "burial": 1.0954476681452503,
+        "supportCount": 51,
+        "y": -4.386980721720535
+      },
+      "Root_Tree_Base_Blockout": {
+        "burial": 0.9672265287947264,
+        "supportCount": 19,
+        "y": -4.158922772758809
+      },
+      "PondEdge_Blockout": {
+        "burial": 0,
+        "supportCount": 993,
+        "y": -5.389069482748612
+      },
+      "Crystal_Blockout_A": {
+        "burial": 0.4744579249107872,
+        "supportCount": 18,
+        "y": -4.756109113953943
+      },
+      "Crystal_Blockout_B": {
+        "burial": 0.4247576157751789,
+        "supportCount": 18,
+        "y": -5.105552504571298
+      },
+      "Crystal_Blockout_C": {
+        "burial": 0.3584559217009211,
+        "supportCount": 18,
+        "y": -3.8418252062291662
+      }
+    },
+    "shadow": {
+      "bias": -0.0001,
+      "normalBias": 0.12,
+      "mapSize": [
+        1024,
+        1024
+      ],
+      "allocated": true,
+      "bounds": [
+        -230,
+        230,
+        10,
+        700
+      ]
+    },
+    "assetTriangles": 20786,
+    "loadMs": 1665.4000000000233,
+    "timings": {
+      "Rock_Large_A": 41.5,
+      "Ruin_Arch_A": 46.199999999953434,
+      "Cliff_Waterfall_A": 21.400000000023283,
+      "Rock_Large_B": 29.099999999976717,
+      "Rock_Large_C": 37.89999999990687,
+      "Rock_Large_E": 45.40000000002328,
+      "Rock_Large_D": 47.90000000002328,
+      "Ruin_Wall_A": 60.09999999997672,
+      "Ruin_BrokenWall_A": 76.59999999997672,
+      "Tree_Landmark_Blockout": 100,
+      "Root_Large_A": 126.90000000002328,
+      "Root_Tree_Base_Blockout": 188.70000000006985,
+      "PondEdge_Blockout": 197.79999999993015,
+      "Crystal_Blockout_A": 198.59999999997672,
+      "Crystal_Blockout_B": 199.30000000004657,
+      "Crystal_Blockout_C": 199.69999999995343
+    },
+    "placement": {
+      "id": "basin",
+      "label": "동쪽 분지",
+      "position": {
+        "x": 70,
+        "z": 58
+      },
+      "rotationY": 0.5235987755982988,
+      "scale": 1
+    },
+    "calls": 99,
+    "triangles": 63594,
+    "textures": 5,
+    "geometries": 67,
+    "shadows": true,
+    "timeOfDay": 12,
+    "weather": "CLEAR",
+    "weatherBlend": 1,
+    "rainVisible": false,
+    "visible": true,
+    "camera": [
+      255.00000000000003,
+      235,
+      300
+    ],
+    "target": [
+      0,
+      0,
+      0
+    ]
+  },
+  "audit": {
+    "method": "Projected GLB triangles clipped to 0.08–3 m above sampled terrain; discrete route samples, not a continuous collision guarantee.",
+    "placement": {
+      "id": "basin",
+      "label": "동쪽 분지",
+      "position": {
+        "x": 70,
+        "z": 58
+      },
+      "rotationY": 0.5235987755982988,
+      "scale": 1
+    },
+    "site": {
+      "relief": 7.367503976975923,
+      "pondRelief": 0.7310974095892329,
+      "insideWorld": true,
+      "meadowOverlap": 0,
+      "worldAreaFraction": 0.059375
+    },
+    "loop": {
+      "width": 6,
+      "samples": 5040,
+      "intersections": {},
+      "clear": true
+    },
+    "clearing": {
+      "diameter": 16,
+      "samples": 3209,
+      "intersections": {},
+      "clear": true
+    },
+    "approach": {
+      "samples": 4212,
+      "intersections": {},
+      "clear": true
+    },
+    "passage": {
+      "measuredJambWidth": 4.620000000000134,
+      "testedWidth": 4,
+      "samples": 1000,
+      "intersections": {},
+      "clear": true
+    },
+    "contact": {
+      "Cliff_Waterfall_A": {
+        "burial": 1.887559314409872,
+        "supportCount": 61,
+        "y": -5.671586008893642
+      },
+      "Rock_Large_A": {
+        "burial": 1.0343994461308443,
+        "supportCount": 22,
+        "y": -4.712236708338152
+      },
+      "Rock_Large_B": {
+        "burial": 0.8258652333460788,
+        "supportCount": 16,
+        "y": -3.218463871028857
+      },
+      "Rock_Large_C": {
+        "burial": 0.7092930757340645,
+        "supportCount": 16,
+        "y": -4.180207843928207
+      },
+      "Rock_Large_D": {
+        "burial": 0.8333341107739365,
+        "supportCount": 16,
+        "y": -4.702049294096674
+      },
+      "Rock_Large_E": {
+        "burial": 0.6447046238006275,
+        "supportCount": 16,
+        "y": -3.7120995210544927
+      },
+      "Ruin_Arch_A": {
+        "burial": 1.290435076322268,
+        "supportCount": 24,
+        "y": -5.8000104992213
+      },
+      "Ruin_Wall_A": {
+        "burial": 1.333841161993317,
+        "supportCount": 36,
+        "y": -5.6016449433395845
+      },
+      "Ruin_BrokenWall_A": {
+        "burial": 1.1926923251301975,
+        "supportCount": 36,
+        "y": -4.805628747005377
+      },
+      "Tree_Landmark_Blockout": {
+        "burial": 0.8440510781406823,
+        "supportCount": 9,
+        "y": -3.687496879261822
+      },
+      "Root_Large_A": {
+        "burial": 1.0954476681452503,
+        "supportCount": 51,
+        "y": -4.386980721720535
+      },
+      "Root_Tree_Base_Blockout": {
+        "burial": 0.9672265287947264,
+        "supportCount": 19,
+        "y": -4.158922772758809
+      },
+      "PondEdge_Blockout": {
+        "burial": 0,
+        "supportCount": 993,
+        "y": -5.389069482748612
+      },
+      "Crystal_Blockout_A": {
+        "burial": 0.4744579249107872,
+        "supportCount": 18,
+        "y": -4.756109113953943
+      },
+      "Crystal_Blockout_B": {
+        "burial": 0.4247576157751789,
+        "supportCount": 18,
+        "y": -5.105552504571298
+      },
+      "Crystal_Blockout_C": {
+        "burial": 0.3584559217009211,
+        "supportCount": 18,
+        "y": -3.8418252062291662
+      }
+    },
+    "pondHeight": -5.389069482748612,
+    "pondBankMaxLift": 0.8145113383431358,
+    "obstaclePolygons": 4331
+  },
+  "overview": {
+    "modules": 16,
+    "cliffDetail": true,
+    "ruinDetail": true,
+    "treeDetail": true,
+    "pondDetail": "v2",
+    "pondVariant": "detail-v2",
+    "pondHeight": -5.389069482748612,
+    "pondBankMaxLift": 0.8145113383431358,
+    "pondBankMaxDisplacement": 0.997333605864414,
+    "autoWeather": {
+      "enabled": false,
+      "secondsUntilNext": 232.79871535487473,
+      "seed": 2326690896
+    },
+    "moon": {
+      "direction": [
+        -0.3387379202452915,
+        -0.9408807689542256,
+        0
+      ],
+      "visibility": 0,
+      "intensity": 0,
+      "castShadow": false,
+      "allocated": false
+    },
+    "sun": {
+      "intensity": 2.5,
+      "castShadow": true
+    },
+    "contact": {
+      "Cliff_Waterfall_A": {
+        "burial": 1.887559314409872,
+        "supportCount": 61,
+        "y": -5.671586008893642
+      },
+      "Rock_Large_A": {
+        "burial": 1.0343994461308443,
+        "supportCount": 22,
+        "y": -4.712236708338152
+      },
+      "Rock_Large_B": {
+        "burial": 0.8258652333460788,
+        "supportCount": 16,
+        "y": -3.218463871028857
+      },
+      "Rock_Large_C": {
+        "burial": 0.7092930757340645,
+        "supportCount": 16,
+        "y": -4.180207843928207
+      },
+      "Rock_Large_D": {
+        "burial": 0.8333341107739365,
+        "supportCount": 16,
+        "y": -4.702049294096674
+      },
+      "Rock_Large_E": {
+        "burial": 0.6447046238006275,
+        "supportCount": 16,
+        "y": -3.7120995210544927
+      },
+      "Ruin_Arch_A": {
+        "burial": 1.290435076322268,
+        "supportCount": 24,
+        "y": -5.8000104992213
+      },
+      "Ruin_Wall_A": {
+        "burial": 1.333841161993317,
+        "supportCount": 36,
+        "y": -5.6016449433395845
+      },
+      "Ruin_BrokenWall_A": {
+        "burial": 1.1926923251301975,
+        "supportCount": 36,
+        "y": -4.805628747005377
+      },
+      "Tree_Landmark_Blockout": {
+        "burial": 0.8440510781406823,
+        "supportCount": 9,
+        "y": -3.687496879261822
+      },
+      "Root_Large_A": {
+        "burial": 1.0954476681452503,
+        "supportCount": 51,
+        "y": -4.386980721720535
+      },
+      "Root_Tree_Base_Blockout": {
+        "burial": 0.9672265287947264,
+        "supportCount": 19,
+        "y": -4.158922772758809
+      },
+      "PondEdge_Blockout": {
+        "burial": 0,
+        "supportCount": 993,
+        "y": -5.389069482748612
+      },
+      "Crystal_Blockout_A": {
+        "burial": 0.4744579249107872,
+        "supportCount": 18,
+        "y": -4.756109113953943
+      },
+      "Crystal_Blockout_B": {
+        "burial": 0.4247576157751789,
+        "supportCount": 18,
+        "y": -5.105552504571298
+      },
+      "Crystal_Blockout_C": {
+        "burial": 0.3584559217009211,
+        "supportCount": 18,
+        "y": -3.8418252062291662
+      }
+    },
+    "shadow": {
+      "bias": -0.0001,
+      "normalBias": 0.12,
+      "mapSize": [
+        1024,
+        1024
+      ],
+      "allocated": true,
+      "bounds": [
+        -230,
+        230,
+        10,
+        700
+      ]
+    },
+    "assetTriangles": 20786,
+    "loadMs": 1665.4000000000233,
+    "timings": {
+      "Rock_Large_A": 41.5,
+      "Ruin_Arch_A": 46.199999999953434,
+      "Cliff_Waterfall_A": 21.400000000023283,
+      "Rock_Large_B": 29.099999999976717,
+      "Rock_Large_C": 37.89999999990687,
+      "Rock_Large_E": 45.40000000002328,
+      "Rock_Large_D": 47.90000000002328,
+      "Ruin_Wall_A": 60.09999999997672,
+      "Ruin_BrokenWall_A": 76.59999999997672,
+      "Tree_Landmark_Blockout": 100,
+      "Root_Large_A": 126.90000000002328,
+      "Root_Tree_Base_Blockout": 188.70000000006985,
+      "PondEdge_Blockout": 197.79999999993015,
+      "Crystal_Blockout_A": 198.59999999997672,
+      "Crystal_Blockout_B": 199.30000000004657,
+      "Crystal_Blockout_C": 199.69999999995343
+    },
+    "placement": {
+      "id": "basin",
+      "label": "동쪽 분지",
+      "position": {
+        "x": 70,
+        "z": 58
+      },
+      "rotationY": 0.5235987755982988,
+      "scale": 1
+    },
+    "calls": 99,
+    "triangles": 63594,
+    "textures": 5,
+    "geometries": 67,
+    "shadows": true,
+    "timeOfDay": 12,
+    "weather": "CLEAR",
+    "weatherBlend": 1,
+    "rainVisible": false,
+    "visible": true,
+    "camera": [
+      255.00000000000003,
+      235,
+      300
+    ],
+    "target": [
+      0,
+      0,
+      0
+    ]
+  },
+  "medium": {
+    "modules": 16,
+    "cliffDetail": true,
+    "ruinDetail": true,
+    "treeDetail": true,
+    "pondDetail": "v2",
+    "pondVariant": "detail-v2",
+    "pondHeight": -5.389069482748612,
+    "pondBankMaxLift": 0.8145113383431358,
+    "pondBankMaxDisplacement": 0.997333605864414,
+    "autoWeather": {
+      "enabled": false,
+      "secondsUntilNext": 232.79871535487473,
+      "seed": 2326690896
+    },
+    "moon": {
+      "direction": [
+        -0.3387379202452915,
+        -0.9408807689542256,
+        0
+      ],
+      "visibility": 0,
+      "intensity": 0,
+      "castShadow": false,
+      "allocated": false
+    },
+    "sun": {
+      "intensity": 2.5,
+      "castShadow": true
+    },
+    "contact": {
+      "Cliff_Waterfall_A": {
+        "burial": 1.887559314409872,
+        "supportCount": 61,
+        "y": -5.671586008893642
+      },
+      "Rock_Large_A": {
+        "burial": 1.0343994461308443,
+        "supportCount": 22,
+        "y": -4.712236708338152
+      },
+      "Rock_Large_B": {
+        "burial": 0.8258652333460788,
+        "supportCount": 16,
+        "y": -3.218463871028857
+      },
+      "Rock_Large_C": {
+        "burial": 0.7092930757340645,
+        "supportCount": 16,
+        "y": -4.180207843928207
+      },
+      "Rock_Large_D": {
+        "burial": 0.8333341107739365,
+        "supportCount": 16,
+        "y": -4.702049294096674
+      },
+      "Rock_Large_E": {
+        "burial": 0.6447046238006275,
+        "supportCount": 16,
+        "y": -3.7120995210544927
+      },
+      "Ruin_Arch_A": {
+        "burial": 1.290435076322268,
+        "supportCount": 24,
+        "y": -5.8000104992213
+      },
+      "Ruin_Wall_A": {
+        "burial": 1.333841161993317,
+        "supportCount": 36,
+        "y": -5.6016449433395845
+      },
+      "Ruin_BrokenWall_A": {
+        "burial": 1.1926923251301975,
+        "supportCount": 36,
+        "y": -4.805628747005377
+      },
+      "Tree_Landmark_Blockout": {
+        "burial": 0.8440510781406823,
+        "supportCount": 9,
+        "y": -3.687496879261822
+      },
+      "Root_Large_A": {
+        "burial": 1.0954476681452503,
+        "supportCount": 51,
+        "y": -4.386980721720535
+      },
+      "Root_Tree_Base_Blockout": {
+        "burial": 0.9672265287947264,
+        "supportCount": 19,
+        "y": -4.158922772758809
+      },
+      "PondEdge_Blockout": {
+        "burial": 0,
+        "supportCount": 993,
+        "y": -5.389069482748612
+      },
+      "Crystal_Blockout_A": {
+        "burial": 0.4744579249107872,
+        "supportCount": 18,
+        "y": -4.756109113953943
+      },
+      "Crystal_Blockout_B": {
+        "burial": 0.4247576157751789,
+        "supportCount": 18,
+        "y": -5.105552504571298
+      },
+      "Crystal_Blockout_C": {
+        "burial": 0.3584559217009211,
+        "supportCount": 18,
+        "y": -3.8418252062291662
+      }
+    },
+    "shadow": {
+      "bias": -0.0001,
+      "normalBias": 0.12,
+      "mapSize": [
+        1024,
+        1024
+      ],
+      "allocated": true,
+      "bounds": [
+        -83.09993983150648,
+        83.09993983150648,
+        10,
+        700
+      ]
+    },
+    "assetTriangles": 20786,
+    "loadMs": 1665.4000000000233,
+    "timings": {
+      "Rock_Large_A": 41.5,
+      "Ruin_Arch_A": 46.199999999953434,
+      "Cliff_Waterfall_A": 21.400000000023283,
+      "Rock_Large_B": 29.099999999976717,
+      "Rock_Large_C": 37.89999999990687,
+      "Rock_Large_E": 45.40000000002328,
+      "Rock_Large_D": 47.90000000002328,
+      "Ruin_Wall_A": 60.09999999997672,
+      "Ruin_BrokenWall_A": 76.59999999997672,
+      "Tree_Landmark_Blockout": 100,
+      "Root_Large_A": 126.90000000002328,
+      "Root_Tree_Base_Blockout": 188.70000000006985,
+      "PondEdge_Blockout": 197.79999999993015,
+      "Crystal_Blockout_A": 198.59999999997672,
+      "Crystal_Blockout_B": 199.30000000004657,
+      "Crystal_Blockout_C": 199.69999999995343
+    },
+    "placement": {
+      "id": "basin",
+      "label": "동쪽 분지",
+      "position": {
+        "x": 70,
+        "z": 58
+      },
+      "rotationY": 0.5235987755982988,
+      "scale": 1
+    },
+    "calls": 99,
+    "triangles": 63594,
+    "textures": 5,
+    "geometries": 67,
+    "shadows": true,
+    "timeOfDay": 12,
+    "weather": "CLEAR",
+    "weatherBlend": 1,
+    "rainVisible": false,
+    "visible": true,
+    "camera": [
+      125,
+      41.763324186719395,
+      135.99999999999994
+    ],
+    "target": [
+      70,
+      0.7633241867194048,
+      57.999999999999986
+    ]
+  },
+  "ground": {
+    "modules": 16,
+    "cliffDetail": true,
+    "ruinDetail": true,
+    "treeDetail": true,
+    "pondDetail": "v2",
+    "pondVariant": "detail-v2",
+    "pondHeight": -5.389069482748612,
+    "pondBankMaxLift": 0.8145113383431358,
+    "pondBankMaxDisplacement": 0.997333605864414,
+    "autoWeather": {
+      "enabled": false,
+      "secondsUntilNext": 232.79871535487473,
+      "seed": 2326690896
+    },
+    "moon": {
+      "direction": [
+        -0.3387379202452915,
+        -0.9408807689542256,
+        0
+      ],
+      "visibility": 0,
+      "intensity": 0,
+      "castShadow": false,
+      "allocated": false
+    },
+    "sun": {
+      "intensity": 2.5,
+      "castShadow": true
+    },
+    "contact": {
+      "Cliff_Waterfall_A": {
+        "burial": 1.887559314409872,
+        "supportCount": 61,
+        "y": -5.671586008893642
+      },
+      "Rock_Large_A": {
+        "burial": 1.0343994461308443,
+        "supportCount": 22,
+        "y": -4.712236708338152
+      },
+      "Rock_Large_B": {
+        "burial": 0.8258652333460788,
+        "supportCount": 16,
+        "y": -3.218463871028857
+      },
+      "Rock_Large_C": {
+        "burial": 0.7092930757340645,
+        "supportCount": 16,
+        "y": -4.180207843928207
+      },
+      "Rock_Large_D": {
+        "burial": 0.8333341107739365,
+        "supportCount": 16,
+        "y": -4.702049294096674
+      },
+      "Rock_Large_E": {
+        "burial": 0.6447046238006275,
+        "supportCount": 16,
+        "y": -3.7120995210544927
+      },
+      "Ruin_Arch_A": {
+        "burial": 1.290435076322268,
+        "supportCount": 24,
+        "y": -5.8000104992213
+      },
+      "Ruin_Wall_A": {
+        "burial": 1.333841161993317,
+        "supportCount": 36,
+        "y": -5.6016449433395845
+      },
+      "Ruin_BrokenWall_A": {
+        "burial": 1.1926923251301975,
+        "supportCount": 36,
+        "y": -4.805628747005377
+      },
+      "Tree_Landmark_Blockout": {
+        "burial": 0.8440510781406823,
+        "supportCount": 9,
+        "y": -3.687496879261822
+      },
+      "Root_Large_A": {
+        "burial": 1.0954476681452503,
+        "supportCount": 51,
+        "y": -4.386980721720535
+      },
+      "Root_Tree_Base_Blockout": {
+        "burial": 0.9672265287947264,
+        "supportCount": 19,
+        "y": -4.158922772758809
+      },
+      "PondEdge_Blockout": {
+        "burial": 0,
+        "supportCount": 993,
+        "y": -5.389069482748612
+      },
+      "Crystal_Blockout_A": {
+        "burial": 0.4744579249107872,
+        "supportCount": 18,
+        "y": -4.756109113953943
+      },
+      "Crystal_Blockout_B": {
+        "burial": 0.4247576157751789,
+        "supportCount": 18,
+        "y": -5.105552504571298
+      },
+      "Crystal_Blockout_C": {
+        "burial": 0.3584559217009211,
+        "supportCount": 18,
+        "y": -3.8418252062291662
+      }
+    },
+    "shadow": {
+      "bias": -0.0001,
+      "normalBias": 0.12,
+      "mapSize": [
+        1024,
+        1024
+      ],
+      "allocated": true,
+      "bounds": [
+        -45,
+        45,
+        10,
+        700
+      ]
+    },
+    "assetTriangles": 20786,
+    "loadMs": 1665.4000000000233,
+    "timings": {
+      "Rock_Large_A": 41.5,
+      "Ruin_Arch_A": 46.199999999953434,
+      "Cliff_Waterfall_A": 21.400000000023283,
+      "Rock_Large_B": 29.099999999976717,
+      "Rock_Large_C": 37.89999999990687,
+      "Rock_Large_E": 45.40000000002328,
+      "Rock_Large_D": 47.90000000002328,
+      "Ruin_Wall_A": 60.09999999997672,
+      "Ruin_BrokenWall_A": 76.59999999997672,
+      "Tree_Landmark_Blockout": 100,
+      "Root_Large_A": 126.90000000002328,
+      "Root_Tree_Base_Blockout": 188.70000000006985,
+      "PondEdge_Blockout": 197.79999999993015,
+      "Crystal_Blockout_A": 198.59999999997672,
+      "Crystal_Blockout_B": 199.30000000004657,
+      "Crystal_Blockout_C": 199.69999999995343
+    },
+    "placement": {
+      "id": "basin",
+      "label": "동쪽 분지",
+      "position": {
+        "x": 70,
+        "z": 58
+      },
+      "rotationY": 0.5235987755982988,
+      "scale": 1
+    },
+    "calls": 61,
+    "triangles": 60376,
+    "textures": 5,
+    "geometries": 67,
+    "shadows": true,
+    "timeOfDay": 12,
+    "weather": "CLEAR",
+    "weatherBlend": 1,
+    "rainVisible": false,
+    "visible": true,
+    "camera": [
+      91.99038105676658,
+      -2.8729898904681823,
+      66.0884572681199
+    ],
+    "target": [
+      79.99038105676658,
+      -3.4018055357720516,
+      45.30384757729337
+    ]
+  },
+  "baseline": {
+    "modules": 16,
+    "cliffDetail": true,
+    "ruinDetail": true,
+    "treeDetail": true,
+    "pondDetail": "v2",
+    "pondVariant": "detail-v2",
+    "pondHeight": -5.389069482748612,
+    "pondBankMaxLift": 0.8145113383431358,
+    "pondBankMaxDisplacement": 0.997333605864414,
+    "autoWeather": {
+      "enabled": false,
+      "secondsUntilNext": 232.79871535487473,
+      "seed": 2326690896
+    },
+    "moon": {
+      "direction": [
+        -0.3387379202452915,
+        -0.9408807689542256,
+        0
+      ],
+      "visibility": 0,
+      "intensity": 0,
+      "castShadow": false,
+      "allocated": false
+    },
+    "sun": {
+      "intensity": 2.5,
+      "castShadow": true
+    },
+    "contact": {
+      "Cliff_Waterfall_A": {
+        "burial": 1.887559314409872,
+        "supportCount": 61,
+        "y": -5.671586008893642
+      },
+      "Rock_Large_A": {
+        "burial": 1.0343994461308443,
+        "supportCount": 22,
+        "y": -4.712236708338152
+      },
+      "Rock_Large_B": {
+        "burial": 0.8258652333460788,
+        "supportCount": 16,
+        "y": -3.218463871028857
+      },
+      "Rock_Large_C": {
+        "burial": 0.7092930757340645,
+        "supportCount": 16,
+        "y": -4.180207843928207
+      },
+      "Rock_Large_D": {
+        "burial": 0.8333341107739365,
+        "supportCount": 16,
+        "y": -4.702049294096674
+      },
+      "Rock_Large_E": {
+        "burial": 0.6447046238006275,
+        "supportCount": 16,
+        "y": -3.7120995210544927
+      },
+      "Ruin_Arch_A": {
+        "burial": 1.290435076322268,
+        "supportCount": 24,
+        "y": -5.8000104992213
+      },
+      "Ruin_Wall_A": {
+        "burial": 1.333841161993317,
+        "supportCount": 36,
+        "y": -5.6016449433395845
+      },
+      "Ruin_BrokenWall_A": {
+        "burial": 1.1926923251301975,
+        "supportCount": 36,
+        "y": -4.805628747005377
+      },
+      "Tree_Landmark_Blockout": {
+        "burial": 0.8440510781406823,
+        "supportCount": 9,
+        "y": -3.687496879261822
+      },
+      "Root_Large_A": {
+        "burial": 1.0954476681452503,
+        "supportCount": 51,
+        "y": -4.386980721720535
+      },
+      "Root_Tree_Base_Blockout": {
+        "burial": 0.9672265287947264,
+        "supportCount": 19,
+        "y": -4.158922772758809
+      },
+      "PondEdge_Blockout": {
+        "burial": 0,
+        "supportCount": 993,
+        "y": -5.389069482748612
+      },
+      "Crystal_Blockout_A": {
+        "burial": 0.4744579249107872,
+        "supportCount": 18,
+        "y": -4.756109113953943
+      },
+      "Crystal_Blockout_B": {
+        "burial": 0.4247576157751789,
+        "supportCount": 18,
+        "y": -5.105552504571298
+      },
+      "Crystal_Blockout_C": {
+        "burial": 0.3584559217009211,
+        "supportCount": 18,
+        "y": -3.8418252062291662
+      }
+    },
+    "shadow": {
+      "bias": -0.0001,
+      "normalBias": 0.12,
+      "mapSize": [
+        1024,
+        1024
+      ],
+      "allocated": true,
+      "bounds": [
+        -83.09993983150648,
+        83.09993983150648,
+        10,
+        700
+      ]
+    },
+    "assetTriangles": 20786,
+    "loadMs": 1665.4000000000233,
+    "timings": {
+      "Rock_Large_A": 41.5,
+      "Ruin_Arch_A": 46.199999999953434,
+      "Cliff_Waterfall_A": 21.400000000023283,
+      "Rock_Large_B": 29.099999999976717,
+      "Rock_Large_C": 37.89999999990687,
+      "Rock_Large_E": 45.40000000002328,
+      "Rock_Large_D": 47.90000000002328,
+      "Ruin_Wall_A": 60.09999999997672,
+      "Ruin_BrokenWall_A": 76.59999999997672,
+      "Tree_Landmark_Blockout": 100,
+      "Root_Large_A": 126.90000000002328,
+      "Root_Tree_Base_Blockout": 188.70000000006985,
+      "PondEdge_Blockout": 197.79999999993015,
+      "Crystal_Blockout_A": 198.59999999997672,
+      "Crystal_Blockout_B": 199.30000000004657,
+      "Crystal_Blockout_C": 199.69999999995343
+    },
+    "placement": {
+      "id": "basin",
+      "label": "동쪽 분지",
+      "position": {
+        "x": 70,
+        "z": 58
+      },
+      "rotationY": 0.5235987755982988,
+      "scale": 1
+    },
+    "calls": 5,
+    "triangles": 30768,
+    "textures": 5,
+    "geometries": 117,
+    "shadows": true,
+    "timeOfDay": 12,
+    "weather": "CLEAR",
+    "weatherBlend": 1,
+    "rainVisible": false,
+    "visible": false,
+    "camera": [
+      125,
+      41.763324186719395,
+      135.99999999999994
+    ],
+    "target": [
+      70,
+      0.7633241867194048,
+      57.999999999999986
+    ]
+  },
+  "withLandmark": {
+    "modules": 16,
+    "cliffDetail": true,
+    "ruinDetail": true,
+    "treeDetail": true,
+    "pondDetail": "v2",
+    "pondVariant": "detail-v2",
+    "pondHeight": -5.389069482748612,
+    "pondBankMaxLift": 0.8145113383431358,
+    "pondBankMaxDisplacement": 0.997333605864414,
+    "autoWeather": {
+      "enabled": false,
+      "secondsUntilNext": 232.79871535487473,
+      "seed": 2326690896
+    },
+    "moon": {
+      "direction": [
+        -0.3387379202452915,
+        -0.9408807689542256,
+        0
+      ],
+      "visibility": 0,
+      "intensity": 0,
+      "castShadow": false,
+      "allocated": false
+    },
+    "sun": {
+      "intensity": 2.5,
+      "castShadow": true
+    },
+    "contact": {
+      "Cliff_Waterfall_A": {
+        "burial": 1.887559314409872,
+        "supportCount": 61,
+        "y": -5.671586008893642
+      },
+      "Rock_Large_A": {
+        "burial": 1.0343994461308443,
+        "supportCount": 22,
+        "y": -4.712236708338152
+      },
+      "Rock_Large_B": {
+        "burial": 0.8258652333460788,
+        "supportCount": 16,
+        "y": -3.218463871028857
+      },
+      "Rock_Large_C": {
+        "burial": 0.7092930757340645,
+        "supportCount": 16,
+        "y": -4.180207843928207
+      },
+      "Rock_Large_D": {
+        "burial": 0.8333341107739365,
+        "supportCount": 16,
+        "y": -4.702049294096674
+      },
+      "Rock_Large_E": {
+        "burial": 0.6447046238006275,
+        "supportCount": 16,
+        "y": -3.7120995210544927
+      },
+      "Ruin_Arch_A": {
+        "burial": 1.290435076322268,
+        "supportCount": 24,
+        "y": -5.8000104992213
+      },
+      "Ruin_Wall_A": {
+        "burial": 1.333841161993317,
+        "supportCount": 36,
+        "y": -5.6016449433395845
+      },
+      "Ruin_BrokenWall_A": {
+        "burial": 1.1926923251301975,
+        "supportCount": 36,
+        "y": -4.805628747005377
+      },
+      "Tree_Landmark_Blockout": {
+        "burial": 0.8440510781406823,
+        "supportCount": 9,
+        "y": -3.687496879261822
+      },
+      "Root_Large_A": {
+        "burial": 1.0954476681452503,
+        "supportCount": 51,
+        "y": -4.386980721720535
+      },
+      "Root_Tree_Base_Blockout": {
+        "burial": 0.9672265287947264,
+        "supportCount": 19,
+        "y": -4.158922772758809
+      },
+      "PondEdge_Blockout": {
+        "burial": 0,
+        "supportCount": 993,
+        "y": -5.389069482748612
+      },
+      "Crystal_Blockout_A": {
+        "burial": 0.4744579249107872,
+        "supportCount": 18,
+        "y": -4.756109113953943
+      },
+      "Crystal_Blockout_B": {
+        "burial": 0.4247576157751789,
+        "supportCount": 18,
+        "y": -5.105552504571298
+      },
+      "Crystal_Blockout_C": {
+        "burial": 0.3584559217009211,
+        "supportCount": 18,
+        "y": -3.8418252062291662
+      }
+    },
+    "shadow": {
+      "bias": -0.0001,
+      "normalBias": 0.12,
+      "mapSize": [
+        1024,
+        1024
+      ],
+      "allocated": true,
+      "bounds": [
+        -83.09993983150648,
+        83.09993983150648,
+        10,
+        700
+      ]
+    },
+    "assetTriangles": 20786,
+    "loadMs": 1665.4000000000233,
+    "timings": {
+      "Rock_Large_A": 41.5,
+      "Ruin_Arch_A": 46.199999999953434,
+      "Cliff_Waterfall_A": 21.400000000023283,
+      "Rock_Large_B": 29.099999999976717,
+      "Rock_Large_C": 37.89999999990687,
+      "Rock_Large_E": 45.40000000002328,
+      "Rock_Large_D": 47.90000000002328,
+      "Ruin_Wall_A": 60.09999999997672,
+      "Ruin_BrokenWall_A": 76.59999999997672,
+      "Tree_Landmark_Blockout": 100,
+      "Root_Large_A": 126.90000000002328,
+      "Root_Tree_Base_Blockout": 188.70000000006985,
+      "PondEdge_Blockout": 197.79999999993015,
+      "Crystal_Blockout_A": 198.59999999997672,
+      "Crystal_Blockout_B": 199.30000000004657,
+      "Crystal_Blockout_C": 199.69999999995343
+    },
+    "placement": {
+      "id": "basin",
+      "label": "동쪽 분지",
+      "position": {
+        "x": 70,
+        "z": 58
+      },
+      "rotationY": 0.5235987755982988,
+      "scale": 1
+    },
+    "calls": 99,
+    "triangles": 63594,
+    "textures": 5,
+    "geometries": 117,
+    "shadows": true,
+    "timeOfDay": 12,
+    "weather": "CLEAR",
+    "weatherBlend": 1,
+    "rainVisible": false,
+    "visible": true,
+    "camera": [
+      125,
+      41.763324186719395,
+      135.99999999999994
+    ],
+    "target": [
+      70,
+      0.7633241867194048,
+      57.999999999999986
+    ]
+  },
+  "withoutShadows": {
+    "modules": 16,
+    "cliffDetail": true,
+    "ruinDetail": true,
+    "treeDetail": true,
+    "pondDetail": "v2",
+    "pondVariant": "detail-v2",
+    "pondHeight": -5.389069482748612,
+    "pondBankMaxLift": 0.8145113383431358,
+    "pondBankMaxDisplacement": 0.997333605864414,
+    "autoWeather": {
+      "enabled": false,
+      "secondsUntilNext": 232.79871535487473,
+      "seed": 2326690896
+    },
+    "moon": {
+      "direction": [
+        -0.3387379202452915,
+        -0.9408807689542256,
+        0
+      ],
+      "visibility": 0,
+      "intensity": 0,
+      "castShadow": false,
+      "allocated": false
+    },
+    "sun": {
+      "intensity": 2.5,
+      "castShadow": false
+    },
+    "contact": {
+      "Cliff_Waterfall_A": {
+        "burial": 1.887559314409872,
+        "supportCount": 61,
+        "y": -5.671586008893642
+      },
+      "Rock_Large_A": {
+        "burial": 1.0343994461308443,
+        "supportCount": 22,
+        "y": -4.712236708338152
+      },
+      "Rock_Large_B": {
+        "burial": 0.8258652333460788,
+        "supportCount": 16,
+        "y": -3.218463871028857
+      },
+      "Rock_Large_C": {
+        "burial": 0.7092930757340645,
+        "supportCount": 16,
+        "y": -4.180207843928207
+      },
+      "Rock_Large_D": {
+        "burial": 0.8333341107739365,
+        "supportCount": 16,
+        "y": -4.702049294096674
+      },
+      "Rock_Large_E": {
+        "burial": 0.6447046238006275,
+        "supportCount": 16,
+        "y": -3.7120995210544927
+      },
+      "Ruin_Arch_A": {
+        "burial": 1.290435076322268,
+        "supportCount": 24,
+        "y": -5.8000104992213
+      },
+      "Ruin_Wall_A": {
+        "burial": 1.333841161993317,
+        "supportCount": 36,
+        "y": -5.6016449433395845
+      },
+      "Ruin_BrokenWall_A": {
+        "burial": 1.1926923251301975,
+        "supportCount": 36,
+        "y": -4.805628747005377
+      },
+      "Tree_Landmark_Blockout": {
+        "burial": 0.8440510781406823,
+        "supportCount": 9,
+        "y": -3.687496879261822
+      },
+      "Root_Large_A": {
+        "burial": 1.0954476681452503,
+        "supportCount": 51,
+        "y": -4.386980721720535
+      },
+      "Root_Tree_Base_Blockout": {
+        "burial": 0.9672265287947264,
+        "supportCount": 19,
+        "y": -4.158922772758809
+      },
+      "PondEdge_Blockout": {
+        "burial": 0,
+        "supportCount": 993,
+        "y": -5.389069482748612
+      },
+      "Crystal_Blockout_A": {
+        "burial": 0.4744579249107872,
+        "supportCount": 18,
+        "y": -4.756109113953943
+      },
+      "Crystal_Blockout_B": {
+        "burial": 0.4247576157751789,
+        "supportCount": 18,
+        "y": -5.105552504571298
+      },
+      "Crystal_Blockout_C": {
+        "burial": 0.3584559217009211,
+        "supportCount": 18,
+        "y": -3.8418252062291662
+      }
+    },
+    "shadow": {
+      "bias": -0.0001,
+      "normalBias": 0.12,
+      "mapSize": [
+        1024,
+        1024
+      ],
+      "allocated": false,
+      "bounds": [
+        -83.09993983150648,
+        83.09993983150648,
+        10,
+        700
+      ]
+    },
+    "assetTriangles": 20786,
+    "loadMs": 1665.4000000000233,
+    "timings": {
+      "Rock_Large_A": 41.5,
+      "Ruin_Arch_A": 46.199999999953434,
+      "Cliff_Waterfall_A": 21.400000000023283,
+      "Rock_Large_B": 29.099999999976717,
+      "Rock_Large_C": 37.89999999990687,
+      "Rock_Large_E": 45.40000000002328,
+      "Rock_Large_D": 47.90000000002328,
+      "Ruin_Wall_A": 60.09999999997672,
+      "Ruin_BrokenWall_A": 76.59999999997672,
+      "Tree_Landmark_Blockout": 100,
+      "Root_Large_A": 126.90000000002328,
+      "Root_Tree_Base_Blockout": 188.70000000006985,
+      "PondEdge_Blockout": 197.79999999993015,
+      "Crystal_Blockout_A": 198.59999999997672,
+      "Crystal_Blockout_B": 199.30000000004657,
+      "Crystal_Blockout_C": 199.69999999995343
+    },
+    "placement": {
+      "id": "basin",
+      "label": "동쪽 분지",
+      "position": {
+        "x": 70,
+        "z": 58
+      },
+      "rotationY": 0.5235987755982988,
+      "scale": 1
+    },
+    "calls": 68,
+    "triangles": 38864,
+    "textures": 3,
+    "geometries": 117,
+    "shadows": false,
+    "timeOfDay": 12,
+    "weather": "CLEAR",
+    "weatherBlend": 1,
+    "rainVisible": false,
+    "visible": true,
+    "camera": [
+      125,
+      41.763324186719395,
+      135.99999999999994
+    ],
+    "target": [
+      70,
+      0.7633241867194048,
+      57.999999999999986
+    ]
+  },
+  "assetResponses": [
+    {
+      "url": "http://127.0.0.1:4183/assets/jelly-oasis/landmarks/overgrown-ruin/Rock_Large_A.glb",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:4183/assets/jelly-oasis/landmarks/overgrown-ruin/Ruin_Arch_A_Detail_v1.glb",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:4183/assets/jelly-oasis/landmarks/overgrown-ruin/Cliff_Waterfall_A_Detail_v1.glb",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:4183/assets/jelly-oasis/landmarks/overgrown-ruin/Rock_Large_B.glb",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:4183/assets/jelly-oasis/landmarks/overgrown-ruin/Rock_Large_C.glb",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:4183/assets/jelly-oasis/landmarks/overgrown-ruin/Rock_Large_D.glb",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:4183/assets/jelly-oasis/landmarks/overgrown-ruin/Rock_Large_E.glb",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:4183/assets/jelly-oasis/landmarks/overgrown-ruin/Ruin_Wall_A_Detail_v1.glb",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:4183/assets/jelly-oasis/landmarks/overgrown-ruin/Ruin_BrokenWall_A_Detail_v1.glb",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:4183/assets/jelly-oasis/landmarks/overgrown-ruin/Tree_Landmark_Detail_v1.glb",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:4183/assets/jelly-oasis/landmarks/overgrown-ruin/Root_Large_A_Detail_v1.glb",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:4183/assets/jelly-oasis/landmarks/overgrown-ruin/Root_Tree_Base_Blockout_Detail_v1.glb",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:4183/assets/jelly-oasis/landmarks/overgrown-ruin/PondEdge_Blockout_Detail_v2.glb",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:4183/assets/jelly-oasis/landmarks/overgrown-ruin/Crystal_Blockout_A.glb",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:4183/assets/jelly-oasis/landmarks/overgrown-ruin/Crystal_Blockout_B.glb",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:4183/assets/jelly-oasis/landmarks/overgrown-ruin/Crystal_Blockout_C.glb",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:4183/assets/jelly-oasis/landmarks/overgrown-ruin/Overgrown_Oasis_Ruin_Blockout_v1.glb",
+      "status": 200
+    }
+  ],
+  "mobile": {
+    "modules": 16,
+    "cliffDetail": true,
+    "ruinDetail": true,
+    "treeDetail": true,
+    "pondDetail": "v2",
+    "pondVariant": "detail-v2",
+    "pondHeight": -5.389069482748612,
+    "pondBankMaxLift": 0.8145113383431358,
+    "pondBankMaxDisplacement": 0.997333605864414,
+    "autoWeather": {
+      "enabled": false,
+      "secondsUntilNext": 178.43410721048713,
+      "seed": 3206188799
+    },
+    "moon": {
+      "direction": [
+        -0.5928351838213616,
+        -0.7289686274214116,
+        0.34227355296434436
+      ],
+      "visibility": 0,
+      "intensity": 0,
+      "castShadow": false,
+      "allocated": false
+    },
+    "sun": {
+      "intensity": 2.2359999999999998,
+      "castShadow": false
+    },
+    "contact": {
+      "Cliff_Waterfall_A": {
+        "burial": 1.887559314409872,
+        "supportCount": 61,
+        "y": -5.671586008893642
+      },
+      "Rock_Large_A": {
+        "burial": 1.0343994461308443,
+        "supportCount": 22,
+        "y": -4.712236708338152
+      },
+      "Rock_Large_B": {
+        "burial": 0.8258652333460788,
+        "supportCount": 16,
+        "y": -3.218463871028857
+      },
+      "Rock_Large_C": {
+        "burial": 0.7092930757340645,
+        "supportCount": 16,
+        "y": -4.180207843928207
+      },
+      "Rock_Large_D": {
+        "burial": 0.8333341107739365,
+        "supportCount": 16,
+        "y": -4.702049294096674
+      },
+      "Rock_Large_E": {
+        "burial": 0.6447046238006275,
+        "supportCount": 16,
+        "y": -3.7120995210544927
+      },
+      "Ruin_Arch_A": {
+        "burial": 1.290435076322268,
+        "supportCount": 24,
+        "y": -5.8000104992213
+      },
+      "Ruin_Wall_A": {
+        "burial": 1.333841161993317,
+        "supportCount": 36,
+        "y": -5.6016449433395845
+      },
+      "Ruin_BrokenWall_A": {
+        "burial": 1.1926923251301975,
+        "supportCount": 36,
+        "y": -4.805628747005377
+      },
+      "Tree_Landmark_Blockout": {
+        "burial": 0.8440510781406823,
+        "supportCount": 9,
+        "y": -3.687496879261822
+      },
+      "Root_Large_A": {
+        "burial": 1.0954476681452503,
+        "supportCount": 51,
+        "y": -4.386980721720535
+      },
+      "Root_Tree_Base_Blockout": {
+        "burial": 0.9672265287947264,
+        "supportCount": 19,
+        "y": -4.158922772758809
+      },
+      "PondEdge_Blockout": {
+        "burial": 0,
+        "supportCount": 993,
+        "y": -5.389069482748612
+      },
+      "Crystal_Blockout_A": {
+        "burial": 0.4744579249107872,
+        "supportCount": 18,
+        "y": -4.756109113953943
+      },
+      "Crystal_Blockout_B": {
+        "burial": 0.4247576157751789,
+        "supportCount": 18,
+        "y": -5.105552504571298
+      },
+      "Crystal_Blockout_C": {
+        "burial": 0.3584559217009211,
+        "supportCount": 18,
+        "y": -3.8418252062291662
+      }
+    },
+    "shadow": {
+      "bias": -0.0001,
+      "normalBias": 0.12,
+      "mapSize": [
+        1024,
+        1024
+      ],
+      "allocated": false,
+      "bounds": [
+        -230,
+        230,
+        10,
+        700
+      ]
+    },
+    "assetTriangles": 20786,
+    "loadMs": 345.80000000004657,
+    "timings": {
+      "Rock_Large_A": 38.199999999953434,
+      "Ruin_Arch_A": 10.900000000023283,
+      "Cliff_Waterfall_A": 11.20000000006985,
+      "Rock_Large_B": 31.599999999976717,
+      "Rock_Large_C": 33.79999999993015,
+      "Rock_Large_D": 35,
+      "Rock_Large_E": 35.5,
+      "Ruin_Wall_A": 43.09999999997672,
+      "Ruin_BrokenWall_A": 53.199999999953434,
+      "Tree_Landmark_Blockout": 68.90000000002328,
+      "Root_Large_A": 79.09999999997672,
+      "Root_Tree_Base_Blockout": 101.10000000009313,
+      "PondEdge_Blockout": 104.5,
+      "Crystal_Blockout_A": 104.80000000004657,
+      "Crystal_Blockout_B": 104.70000000006985,
+      "Crystal_Blockout_C": 104.80000000004657
+    },
+    "placement": {
+      "id": "basin",
+      "label": "동쪽 분지",
+      "position": {
+        "x": 70,
+        "z": 58
+      },
+      "rotationY": 0.5235987755982988,
+      "scale": 1
+    },
+    "calls": 68,
+    "triangles": 38864,
+    "textures": 3,
+    "geometries": 67,
+    "shadows": false,
+    "timeOfDay": 10,
+    "weather": "CLEAR",
+    "weatherBlend": 1,
+    "rainVisible": false,
+    "visible": true,
+    "camera": [
+      524.2538461538461,
+      483.13589743589733,
+      616.7692307692307
+    ],
+    "target": [
+      0,
+      0,
+      0
+    ]
+  },
+  "failureMessage": "랜드마크를 불러오지 못했습니다. 페이지를 새로고침해 주세요.",
+  "disposal": "pagehide removed debug API and panels without page errors"
+}

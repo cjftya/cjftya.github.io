@@ -32,7 +32,7 @@ export function createLandmarkDebug(
     <label>후보 지역 <select id="landmark-site">${LANDMARK_CANDIDATES.map((c) => `<option value="${c.id}">${c.label}</option>`).join('')}</select></label>
     <label>방향 <input id="landmark-yaw" type="range" min="-180" max="180" step="5" value="${Math.round((landmark.placement.rotationY * 180) / Math.PI)}"><output id="landmark-transform"></output></label>
     <div class="debug-row"><label>X <input id="landmark-x" type="number" min="-110" max="110" value="${landmark.placement.position.x}"></label><label>Z <input id="landmark-z" type="number" min="-110" max="110" value="${landmark.placement.position.z}"></label></div>
-    <label>개별 자산 <select id="landmark-isolate"><option value="">전체 blockout</option>${LANDMARK_FIRST_IMPORTS.map((n) => `<option>${n}</option>`).join('')}</select></label>
+    <label>개별 자산 <select id="landmark-isolate"><option value="">전체 blockout</option>${[...LANDMARK_FIRST_IMPORTS, 'Crystal_Blockout_A', 'Crystal_Blockout_B', 'Crystal_Blockout_C'].map((n) => `<option>${n}</option>`).join('')}</select></label>
     <div class="debug-row"><button data-view="overview">Overview</button><button data-view="medium">Medium</button><button data-view="ground">Ground</button></div>
     <label><input id="landmark-visible" type="checkbox" checked> 랜드마크</label>
     <label><input id="landmark-reference" type="checkbox"> 원본 전체 배치 (청록 wireframe)</label>
