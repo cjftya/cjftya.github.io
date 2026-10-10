@@ -61,6 +61,7 @@ function start(canvas: HTMLCanvasElement): void {
   let landmarkDebug: ReturnType<typeof createLandmarkDebug> | null = null;
   let reviewCamera = false;
   let groundCamera = false;
+  let mediumCamera = false;
   function setShadows(enabled: boolean): void {
     enabled = enabled && !mobile;
     renderer.shadowMap.enabled = enabled;
@@ -77,6 +78,7 @@ function start(canvas: HTMLCanvasElement): void {
   const resetButton = document.querySelector<HTMLButtonElement>('#reset-view')!;
 
   function resetView(): void {
+    mediumCamera = false;
     reviewCamera = groundCamera = false;
     controls.minDistance = 35;
     controls.maxPolarAngle = Math.PI * 0.445;
@@ -97,6 +99,7 @@ function start(canvas: HTMLCanvasElement): void {
     manager.resize(width, height);
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
+    if (mediumCamera && landmark) frameLandmark('medium', landmark, camera, controls);
     dirty = true;
   }
   const observer = new ResizeObserver(resize);
@@ -108,6 +111,10 @@ function start(canvas: HTMLCanvasElement): void {
     dirty = true;
   };
   controls.addEventListener('change', invalidate);
+  const releaseMediumCamera = (): void => {
+    mediumCamera = false;
+  };
+  controls.addEventListener('start', releaseMediumCamera);
   const debugPanel = createEnvironmentPanel(
     environment,
     renderer,
@@ -118,6 +125,7 @@ function start(canvas: HTMLCanvasElement): void {
       // A high moon is outside the terrain-facing orbit's field of view.
       // The existing reset button returns this deliberate sky view to the land.
       reviewCamera = true;
+      mediumCamera = false;
       groundCamera = false;
       controls.enableDamping = false;
       controls.update();
@@ -145,6 +153,7 @@ function start(canvas: HTMLCanvasElement): void {
     if (!landmark) return;
     reviewCamera = true;
     groundCamera = view === 'ground';
+    mediumCamera = view === 'medium';
     controls.maxTargetRadius = config.size * 0.36;
     frameLandmark(view, landmark, camera, controls);
     invalidate();
@@ -170,6 +179,32 @@ function start(canvas: HTMLCanvasElement): void {
     pondQuery === 'blockout' ? false : pondQuery === 'detail' ? true : 'v2';
   const crystalDetail =
     debugEnabled && new URLSearchParams(location.search).get('crystal') === 'detail';
+  const candidateQuery = new URLSearchParams(location.search);
+  const waterQuery = debugEnabled ? candidateQuery.get('water') : null;
+  const refinedDefault = !(
+    debugEnabled && candidateQuery.get('aesthetic') === 'baseline'
+  );
+  const aesthetic = {
+    tree:
+      (refinedDefault && !(debugEnabled && candidateQuery.get('tree') === 'detail')) ||
+      (debugEnabled && candidateQuery.get('tree') === 'refined'),
+    pond:
+      (refinedDefault && !(debugEnabled && pondQuery === 'detail-v2')) ||
+      (debugEnabled && pondQuery === 'refined'),
+    cliff:
+      (refinedDefault &&
+        !(
+          debugEnabled &&
+          ['detail', 'detail-v1'].includes(candidateQuery.get('cliff') ?? '')
+        )) ||
+      (debugEnabled && candidateQuery.get('cliff') === 'refined'),
+    water:
+      waterQuery === 'deep' || waterQuery === 'soft'
+        ? waterQuery
+        : waterQuery === 'baseline' || !refinedDefault
+          ? undefined
+          : 'soft',
+  } as const;
   void createOvergrownRuin(
     config,
     cliffDetail,
@@ -177,6 +212,7 @@ function start(canvas: HTMLCanvasElement): void {
     treeDetail,
     pondDetail,
     crystalDetail,
+    aesthetic,
   )
     .then((loaded) => {
       if (disposed) {
@@ -193,6 +229,7 @@ function start(canvas: HTMLCanvasElement): void {
           __oasisLandmark: {
             audit: () => auditLandmark(loaded),
             reviewCamera: (position: number[], target: number[]) => {
+              mediumCamera = false;
               reviewCamera = groundCamera = true;
               controls.enableDamping = false;
               controls.update();
@@ -211,6 +248,8 @@ function start(canvas: HTMLCanvasElement): void {
               treeDetail,
               pondDetail,
               crystalDetail,
+              aesthetic,
+              mediumCamera,
               pondVariant:
                 pondDetail === 'v2' ? 'detail-v2' : pondDetail ? 'detail' : 'blockout',
               pondHeight: loaded.pondHeight,
@@ -391,6 +430,7 @@ function start(canvas: HTMLCanvasElement): void {
     motionPreference.removeEventListener('change', motionChanged);
     manager.dispose();
     resetButton.removeEventListener('click', resetView);
+    controls.removeEventListener('start', releaseMediumCamera);
     window.removeEventListener('keydown', keydown);
     document.removeEventListener('visibilitychange', visibility);
     window.removeEventListener('pagehide', pagehide);

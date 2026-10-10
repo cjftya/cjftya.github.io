@@ -4,7 +4,9 @@ import { resolve } from 'node:path';
 import { chromium } from '@playwright/test';
 
 const base = process.env.LANDMARK_QA_URL ?? 'http://127.0.0.1:4183';
-const output = resolve('artifacts/jelly-oasis/crystal-accent-detail-v1');
+const output = resolve(
+  process.env.CRYSTAL_QA_OUTPUT ?? 'artifacts/jelly-oasis/crystal-accent-detail-v1',
+);
 await mkdir(output, { recursive: true });
 const browser = await chromium.launch({ channel: 'msedge', headless: true });
 const results = {
@@ -147,21 +149,11 @@ try {
   });
   const touch = await mobile.newPage();
   monitor(touch);
-  let mobileCamera;
   for (const variant of ['blockout', 'detail']) {
     await touch.goto(`${base}/projects/jelly-oasis/?debug&crystal=${variant}`);
     await touch.waitForFunction(() => window.__oasisLandmark?.snapshot().calls > 10);
     await environment(touch, 12);
     await medium(touch);
-    const s = await snap(touch);
-    mobileCamera ??= {
-      position: s.camera.map((v, i) => s.target[i] + (v - s.target[i]) * 1.55),
-      target: s.target,
-    };
-    await touch.evaluate(
-      ({ position, target }) => window.__oasisLandmark.reviewCamera(position, target),
-      mobileCamera,
-    );
     results.mobile[variant] = await capture(touch, variant + '-mobile');
     assert.equal(results.mobile[variant].shadows, false);
   }
