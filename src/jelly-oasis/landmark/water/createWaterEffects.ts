@@ -33,6 +33,8 @@ export interface WaterOptions {
   continuous?: boolean;
   dynamics?: boolean;
   basinOnly?: boolean;
+  fallingFlow?: boolean;
+  flowPaths?: boolean;
   gpgpuPrototype?: boolean;
   gpuNeutral?: boolean;
   renderer?: WebGLRenderer;

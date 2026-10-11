@@ -9,10 +9,15 @@ import {
 import type { WaterFlowPath } from './flowPath';
 
 /** Foam and waves live on the exact pond mesh; only ballistic spray uses extra geometry. */
-export function createImpactZone(flow: WaterFlowPath, mobile: boolean) {
+export function createImpactZone(
+  flow: WaterFlowPath,
+  mobile: boolean,
+  settings?: { gravity: number; count: number; surface: 'channel' },
+) {
   const group = new Group();
   group.name = 'ImpactZoneV6';
-  const count = mobile ? 56 : 112;
+  const count = settings?.count ?? (mobile ? 56 : 112);
+  const gravity = settings?.gravity ?? 9.8;
   const drops = new InstancedMesh(
     new SphereGeometry(1, 6, 4),
     new MeshStandardMaterial({
@@ -32,7 +37,7 @@ export function createImpactZone(flow: WaterFlowPath, mobile: boolean) {
     3.8,
     Math.hypot(
       flow.velocity.x,
-      flow.velocity.y - 9.8 * flow.duration,
+      flow.velocity.y - gravity * flow.duration,
       flow.velocity.z,
     ) * 0.19,
   );
@@ -41,7 +46,7 @@ export function createImpactZone(flow: WaterFlowPath, mobile: boolean) {
   function update(time: number) {
     for (let i = 0; i < count; i++) {
       const seed = (Math.sin(i * 127.1) * 43758.5453) % 1;
-      const lifetime = 0.55 + (i % 7) * 0.047;
+      const lifetime = settings ? 0.18 + (i % 3) * 0.035 : 0.55 + (i % 7) * 0.047;
       const age = (time + i * 0.173) % lifetime;
       const angle =
         i * 2.39996 +
@@ -49,12 +54,13 @@ export function createImpactZone(flow: WaterFlowPath, mobile: boolean) {
       const speed = 0.55 + (i % 9) * 0.11;
       velocity.set(
         Math.cos(angle) * speed,
-        spraySpeed + (i % 5) * 0.22,
+        (settings ? Math.min(1.6, spraySpeed) : spraySpeed) +
+          (i % 5) * (settings ? 0.1 : 0.22),
         Math.sin(angle) * speed * 0.75 + 0.22,
       );
       particle.position.copy(flow.impact).addScaledVector(velocity, age);
-      particle.position.y += 0.015 - 4.9 * age * age;
-      particle.position.x += Math.sin(i * 2.17) * 0.46;
+      particle.position.y += 0.015 - (gravity * age * age) / 2;
+      particle.position.x += Math.sin(i * 2.17) * (settings ? 0.18 : 0.46);
       const size =
         particle.position.y <= flow.impact.y
           ? 0

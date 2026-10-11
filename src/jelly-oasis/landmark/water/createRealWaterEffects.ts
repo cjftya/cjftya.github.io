@@ -2,12 +2,16 @@ import {
   Float32BufferAttribute,
   Group,
   Mesh,
+  Line,
   InstancedMesh,
   Vector2,
   Vector3,
   Vector4,
 } from 'three';
 import type { BufferGeometry, MeshStandardMaterial } from 'three';
+import { traceFallingFlow } from './fallingFlow';
+import type { FallingFlow } from './fallingFlow';
+import { createFallingFilm } from './createFallingFilm';
 import { GPGPUPondSurface } from './gpgpuPondSurface';
 import type { PondControls } from './gpgpuPondSurface';
 import { ShallowWater } from './shallowWater';
@@ -39,6 +43,11 @@ export function createRealWaterEffects(
   const originalPond = options.dynamics ? pond.geometry.clone() : undefined;
   const fluid: { value: ShallowWater | undefined } = { value: undefined };
   const gpu: { value: GPGPUPondSurface | undefined } = { value: undefined };
+  let falling: FallingFlow | undefined;
+  let flowError: string | null = null;
+  let inletClock = 0,
+    inletEvents = 0,
+    inletDelay = 0;
   let gpuError: string | null = null;
   let flowRate = 1;
   let pondControls: PondControls = { neutral: options.gpuNeutral ?? true };
@@ -224,7 +233,7 @@ export function createRealWaterEffects(
     environment = '';
   function retire() {
     group.traverse((object) => {
-      if (object instanceof Mesh) {
+      if (object instanceof Mesh || object instanceof Line) {
         object.geometry.dispose();
         if (Array.isArray(object.material)) object.material.forEach((m) => m.dispose());
         else object.material.dispose();
@@ -255,6 +264,10 @@ export function createRealWaterEffects(
     reflection.setImpact(null);
     flow = undefined;
     triangles = 0;
+    falling = undefined;
+    flowError = null;
+    inletClock = inletEvents = inletDelay = 0;
+    if (gpu.value) gpu.value.automaticInlet = true;
     if (!options.waterfall) return;
     if (options.continuous) {
       pond.geometry.computeBoundingBox();
@@ -266,6 +279,55 @@ export function createRealWaterEffects(
         options.dynamics,
       );
       flow.impact = channel.at(-1)!.point.clone().setY(pondY());
+      if (options.fallingFlow && options.dynamics) {
+        try {
+          // Fixed narrower source from the outset, not velocities selected to aim at water.
+          falling = traceFallingFlow(
+            root,
+            cliff,
+            channel,
+            { ...flow, lanes: flow.lanes.slice(2, 5) },
+            ground,
+            (p) =>
+              channel.some((s, i) => {
+                const b = channel[i + 1];
+                if (!b || p.z < s.point.z || p.z > b.point.z) return false;
+                const t = (p.z - s.point.z) / (b.point.z - s.point.z);
+                return (
+                  Math.abs(p.x - s.point.x - (b.point.x - s.point.x) * t) <
+                  (s.width + (b.width - s.width) * t) / 2
+                );
+              }),
+          );
+          const centre = falling.paths[1]!;
+          flow = { ...centre, lanes: falling.paths.map((p) => p.lanes[0]!) };
+          group.add(
+            createFallingFilm(
+              falling,
+              time,
+              options.mobile ?? false,
+              options.flowPaths,
+            ),
+          );
+          impact = createImpactZone(centre, options.mobile ?? false, {
+            gravity: falling.gravity,
+            count: options.mobile ? 12 : 24,
+            surface: 'channel',
+          });
+          group.add(impact.group);
+          const tail = channelStates.find(
+            (s) => s.distance >= centre.impact.distanceTo(channel[0]!.point),
+          );
+          inletDelay =
+            falling.travelTime +
+            centre.duration +
+            Math.max(0, channelStates.at(-1)!.travelTime - (tail?.travelTime ?? 0));
+          if (gpu.value) gpu.value.automaticInlet = false;
+        } catch (error) {
+          flowError = String(error); // Preserve baseline on incompatible geometry/placement.
+          falling = undefined;
+        }
+      }
       group.add(createRockFlow(flow, time, options.dynamics, root.scale.x));
       if (!options.dynamics) {
         const watercourse = createRockFlow(
@@ -339,6 +401,21 @@ export function createRealWaterEffects(
         return false;
       elapsed = (elapsed + Math.min(dt, 0.1)) % 10000;
       time.value = reflection.time.value = elapsed;
+      if (falling) {
+        group.visible = flowRate > 0;
+        if (flowRate > 0 && gpu.value?.active.value && !gpu.value.paused) {
+          inletClock += Math.min(dt, 0.05);
+          if (inletClock >= inletDelay + 0.38) {
+            gpu.value.impulse(
+              gpu.value.inlet,
+              0.016 * flowRate * (falling.paths.length / 7),
+              0.65,
+            );
+            inletClock -= 0.38;
+            inletEvents++;
+          }
+        }
+      }
       if (gpu.value?.active.value) {
         try {
           gpu.value.update(dt);
@@ -354,6 +431,10 @@ export function createRealWaterEffects(
       flowRate = Math.max(0, Math.min(3, value));
       if (fluid.value) fluid.value.flowRate = flowRate;
       if (gpu.value) gpu.value.flowRate = flowRate;
+      if (falling) {
+        group.visible = flowRate > 0;
+        if (flowRate === 0) inletClock = 0;
+      }
     },
     configurePond(settings: PondControls) {
       pondControls = { ...pondControls, ...settings, reset: false, impulse: false };
@@ -391,6 +472,26 @@ export function createRealWaterEffects(
       ),
       gpuPond: gpu.value?.snapshot() ?? null,
       gpuError,
+      fallingFlow: falling
+        ? {
+            status: 'GEOMETRY_PASS',
+            releaseIndex: falling.releaseIndex,
+            gravity: falling.gravity,
+            landing: falling.landing,
+            inletDelay,
+            inletEvents,
+            sourceWidth: 0.65,
+            paths: falling.paths.map((p) => ({
+              launch: p.launch.toArray(),
+              velocity: p.velocity.toArray(),
+              impact: p.impact.toArray(),
+              duration: p.duration,
+              clearance: p.clearance,
+            })),
+            artApproval: 'USER_REVIEW',
+          }
+        : null,
+      flowError,
       solver: gpu.value?.active.value ? 'gpgpu-heightfield' : 'cpu-v8',
       version: options.dynamics ? 8 : options.continuous ? 7 : 6,
       pondVersion: 4,
@@ -405,9 +506,18 @@ export function createRealWaterEffects(
           l.map((s) => root.localToWorld(s.point.clone()).toArray()),
         ) ?? [],
       rockFlowCount: flow?.lanes.length ?? 0,
-      regions: options.continuous
-        ? ['rock-flow', 'rock-foot', 'channel', 'pond-inlet']
-        : ['rock-flow', 'crest', 'falling-volume', 'impact-pond'],
+      regions: falling
+        ? [
+            'attached-film',
+            'shelf-release',
+            'gravity-fall',
+            'channel-impact',
+            'channel',
+            'pond-inlet',
+          ]
+        : options.continuous
+          ? ['rock-flow', 'rock-foot', 'channel', 'pond-inlet']
+          : ['rock-flow', 'crest', 'falling-volume', 'impact-pond'],
       launch: flow?.launch.toArray() ?? null,
       velocity: flow?.velocity.toArray() ?? null,
       impact: flow ? [flow.impact.x, flow.impact.z] : null,
@@ -415,9 +525,12 @@ export function createRealWaterEffects(
       droplets: impact?.count ?? 0,
       ripples: 0,
       path:
-        (options.continuous ? flow?.lanes[3]?.map((s) => s.point) : flow?.fall)?.map(
-          (p) => root.localToWorld(p.clone()).toArray(),
-        ) ?? [],
+        (falling
+          ? flow?.fall
+          : options.continuous
+            ? flow?.lanes[3]?.map((s) => s.point)
+            : flow?.fall
+        )?.map((p) => root.localToWorld(p.clone()).toArray()) ?? [],
       waveModel: options.dynamics
         ? 'depth-averaged-height-and-momentum'
         : 'jittered-directional-packets-and-advected-turbulence',
