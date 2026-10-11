@@ -6,6 +6,8 @@ import {
   Vector2,
 } from 'three';
 import type { Vector4 } from 'three';
+// Display gain only; the conservative solver and its height texture stay unchanged.
+const RENDER_WAVE_SCALE = 3;
 export interface InletSource {
   point: Vector2;
   direction: Vector2;
@@ -296,7 +298,7 @@ export class ShallowWater {
       backend: 'cpu-staggered-shallow-water',
       updateCpuMs: this.updateCpuMs,
       averageUpdateCpuMs: this.cpuTotal / Math.max(1, this.updates),
-      renderWaveScale: 2,
+      renderWaveScale: RENDER_WAVE_SCALE,
       resolution: this.n,
       elapsed: this.elapsed,
       fixedDt: this.step,
@@ -332,6 +334,12 @@ vec4 fluidSample(vec2 p) {
  vec4 f=texture2D(fluidField,clamp(uv,0.0,1.0));
  return vec4((f.r*255.0-128.0)/127.0*0.3,(f.gb*255.0-128.0)/127.0*4.0,f.a)*valid;
 }
-float waterHeight(vec2 p,float depth){return fluidSample(p).r*2.0*smoothstep(0.015,0.24,depth)+sin(dot(p,vec2(1.2,0.8))-waterTime*0.65)*0.005*smoothstep(0.0,0.5,depth);}
+float waterHeight(vec2 p,float depth){
+ float ambient=sin(dot(p,vec2(1.31,0.73))-waterTime*0.68)*0.014
+   +sin(dot(p,vec2(-2.17,2.63))-waterTime*0.97)*0.008
+   +sin(dot(p,vec2(5.37,3.91))+waterTime*1.19)*0.003;
+ return fluidSample(p).r*${RENDER_WAVE_SCALE.toFixed(1)}*smoothstep(0.015,0.24,depth)
+   +ambient*smoothstep(0.02,0.5,depth);
+}
 float waterFoam(vec2 p,float depth){return fluidSample(p).a*smoothstep(0.03,0.2,depth);}
 `;

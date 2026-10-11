@@ -159,7 +159,7 @@ export function createReflectivePond(
         '#include <opaque_fragment>',
         `
         if (waterCaptured > 0.5 && gl_FrontFacing) {
-          vec2 distortion = slope * 0.007 * shore;
+          vec2 distortion = slope * ${fluid ? '0.012' : '0.007'} * shore;
           vec2 reflectionUV = waterReflectCoord.xy / waterReflectCoord.w;
           vec2 refractionUV = waterRefractCoord.xy / waterRefractCoord.w;
           vec3 reflected = texture2D(waterReflection, clamp(reflectionUV + distortion, 0.002, 0.998)).rgb;
