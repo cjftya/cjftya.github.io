@@ -8,10 +8,12 @@ import {
   Vector4,
 } from 'three';
 import type { BufferGeometry, MeshStandardMaterial } from 'three';
+import { GPGPUPondSurface } from './gpgpuPondSurface';
+import type { PondControls } from './gpgpuPondSurface';
 import { ShallowWater } from './shallowWater';
 import { continuousSurface } from './continuousSurface';
 import { solveFlow } from './flowDynamics';
-import { subdividePond } from './subdividePond';
+import { subdividePond, tessellatePond } from './subdividePond';
 import { createReflectivePond } from './createReflectivePond';
 import { traceWaterFlow } from './flowPath';
 import type { WaterFlowPath } from './flowPath';
@@ -36,6 +38,10 @@ export function createRealWaterEffects(
   content.add(group);
   const originalPond = options.dynamics ? pond.geometry.clone() : undefined;
   const fluid: { value: ShallowWater | undefined } = { value: undefined };
+  const gpu: { value: GPGPUPondSurface | undefined } = { value: undefined };
+  let gpuError: string | null = null;
+  let flowRate = 1;
+  let pondControls: PondControls = { neutral: options.gpuNeutral ?? true };
   let flowStates: ReturnType<typeof solveFlow> = [];
   let channelStates: ReturnType<typeof solveFlow> = [];
   let seam = {
@@ -79,6 +85,8 @@ export function createRealWaterEffects(
       }
       return false;
     }
+    gpu.value?.dispose();
+    gpu.value = undefined;
     fluid.value?.dispose();
     fluid.value = new ShallowWater(
       options.mobile ? 64 : 128,
@@ -110,6 +118,25 @@ export function createRealWaterEffects(
       },
       root.scale.x,
     );
+    fluid.value.flowRate = flowRate;
+    if (options.gpgpuPrototype && options.renderer) {
+      try {
+        gpu.value = new GPGPUPondSurface(
+          options.renderer,
+          originalPond,
+          new Vector2(end.point.x, end.point.z),
+          direction,
+          ground,
+          pondY(),
+          options.mobile ?? false,
+        );
+        gpu.value.flowRate = flowRate;
+        gpu.value.configure(pondControls);
+        gpuError = null;
+      } catch (error) {
+        gpuError = String(error);
+      }
+    }
     const previousGeometry = pond.geometry;
     pond.geometry = continuousSurface(originalPond, channel);
     previousGeometry.dispose();
@@ -120,15 +147,39 @@ export function createRealWaterEffects(
     };
   }
   prepareSurface();
-  const reflection = createReflectivePond(
-    root,
-    pond,
-    ground,
-    options.mobile ?? false,
-    true,
-    options.continuous ?? false,
-    options.dynamics ? fluid : undefined,
-  );
+  function makeReflection(subdivide = true) {
+    // Rebuilding replaces uniform owners; release the material program cache too.
+    if (!subdivide) pond.material.dispose();
+    return createReflectivePond(
+      root,
+      pond,
+      ground,
+      options.mobile ?? false,
+      true,
+      options.continuous ?? false,
+      options.dynamics ? fluid : undefined,
+      gpu.value?.active.value ? gpu : undefined,
+      subdivide,
+    );
+  }
+  let reflection = makeReflection();
+  const priorShaderError = options.renderer?.debug.onShaderError;
+  let shaderFailed = false;
+  if (options.gpgpuPrototype && options.renderer) {
+    options.renderer.debug.onShaderError = (...args) => {
+      shaderFailed = true;
+      priorShaderError?.(...args);
+    };
+  }
+  function fallback(error: unknown) {
+    gpuError = String(error);
+    gpu.value?.dispose();
+    gpu.value = undefined;
+    reflection.dispose();
+    reflection = makeReflection(false);
+    shaderFailed = false;
+  }
+
   function channelAttributes() {
     if (!options.dynamics) return;
     const channel = makeChannel(
@@ -186,15 +237,21 @@ export function createRealWaterEffects(
   let initial = true;
   function rebuild() {
     retire();
-    if (options.dynamics && !initial) {
+    const rebuilding = !initial;
+    if (options.dynamics && rebuilding) {
       prepareSurface();
       const combined = pond.geometry;
-      pond.geometry = subdividePond(combined, options.mobile ? 2 : 3);
+      pond.geometry = gpu.value?.active.value
+        ? tessellatePond(combined, options.mobile ? 0.7 : 0.45, pondY())
+        : subdividePond(combined, options.mobile ? 2 : 3);
       combined.dispose();
     }
     initial = false;
     channelAttributes();
-    reflection.rebuild();
+    if (options.gpgpuPrototype && rebuilding) {
+      reflection.dispose();
+      reflection = makeReflection(false);
+    } else reflection.rebuild();
     reflection.setImpact(null);
     flow = undefined;
     triangles = 0;
@@ -257,9 +314,12 @@ export function createRealWaterEffects(
   try {
     rebuild();
   } catch (error) {
+    if (options.gpgpuPrototype && options.renderer)
+      options.renderer.debug.onShaderError = priorShaderError ?? null;
     retire();
     group.removeFromParent();
     reflection.dispose();
+    gpu.value?.dispose();
     fluid.value?.dispose();
     originalPond?.dispose();
     throw error;
@@ -273,28 +333,65 @@ export function createRealWaterEffects(
         environment = key;
         reflection.invalidate();
       }
+      if (shaderFailed && gpu.value)
+        fallback('GPU pond surface shader compilation failed');
       if (reduced || dt <= 0 || !Number.isFinite(dt) || !root.visible || !pond.visible)
         return false;
       elapsed = (elapsed + Math.min(dt, 0.1)) % 10000;
       time.value = reflection.time.value = elapsed;
-      fluid.value?.update(dt);
+      if (gpu.value?.active.value) {
+        try {
+          gpu.value.update(dt);
+        } catch (error) {
+          fallback(error);
+        }
+      } else fluid.value?.update(dt);
       impact?.update(elapsed);
       return true;
     },
     setFlowRate(value: number) {
-      if (fluid.value && Number.isFinite(value))
-        fluid.value.flowRate = Math.max(0, Math.min(3, value));
+      if (!Number.isFinite(value)) return;
+      flowRate = Math.max(0, Math.min(3, value));
+      if (fluid.value) fluid.value.flowRate = flowRate;
+      if (gpu.value) gpu.value.flowRate = flowRate;
+    },
+    configurePond(settings: PondControls) {
+      pondControls = { ...pondControls, ...settings, reset: false, impulse: false };
+      gpu.value?.configure(settings);
+      if (settings.wireframe !== undefined)
+        pond.material.wireframe = settings.wireframe;
+      reflection.invalidate();
+    },
+    readPondHeights() {
+      if (!gpu.value || !options.renderer) return null;
+      const raw = gpu.value.readHeights(options.renderer);
+      return {
+        halfFloat: raw instanceof Uint16Array,
+        n: gpu.value.n,
+        values: Array.from(raw),
+      };
+    },
+    restorePond() {
+      if (options.gpgpuPrototype) rebuild();
     },
     invalidate: () => reflection.invalidate(),
     dispose() {
+      if (options.gpgpuPrototype && options.renderer)
+        options.renderer.debug.onShaderError = priorShaderError ?? null;
       retire();
       group.removeFromParent();
       reflection.dispose();
+      gpu.value?.dispose();
       fluid.value?.dispose();
       originalPond?.dispose();
     },
     snapshot: () => ({
-      ...options,
+      ...Object.fromEntries(
+        Object.entries(options).filter(([key]) => key !== 'renderer'),
+      ),
+      gpuPond: gpu.value?.snapshot() ?? null,
+      gpuError,
+      solver: gpu.value?.active.value ? 'gpgpu-heightfield' : 'cpu-v8',
       version: options.dynamics ? 8 : options.continuous ? 7 : 6,
       pondVersion: 4,
       elapsed,

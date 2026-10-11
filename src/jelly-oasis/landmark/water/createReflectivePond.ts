@@ -16,11 +16,13 @@ import type {
 import { Reflector } from 'three/examples/jsm/objects/Reflector.js';
 import { Refractor } from 'three/examples/jsm/objects/Refractor.js';
 
+import { pondSurfaceGLSL } from './gpgpuPondShader';
+import type { GPGPUPondSurface } from './gpgpuPondSurface';
 import { flowNoiseGLSL } from './flowMaterial';
 import { shallowWaterGLSL } from './shallowWater';
 import type { ShallowWater } from './shallowWater';
 import { realPondFieldGLSL } from './pondWaves';
-import { subdividePond } from './subdividePond';
+import { subdividePond, tessellatePond } from './subdividePond';
 
 /** One pair of bounded planar captures, shared by the whole pond surface. */
 export function createReflectivePond(
@@ -31,10 +33,14 @@ export function createReflectivePond(
   realWater = false,
   excavated = false,
   fluid?: { value: ShallowWater | undefined },
+  gpu?: { value: GPGPUPondSurface | undefined },
+  subdivide = true,
 ) {
-  if (realWater) {
+  if (realWater && subdivide) {
     const source = pond.geometry;
-    pond.geometry = subdividePond(source, fluid ? (mobile ? 2 : 3) : mobile ? 3 : 4);
+    pond.geometry = gpu
+      ? tessellatePond(source, mobile ? 0.7 : 0.45, source.attributes.position!.getY(0))
+      : subdividePond(source, fluid ? (mobile ? 2 : 3) : mobile ? 3 : 4);
     source.dispose();
   }
   const size = mobile ? 256 : 768;
@@ -77,8 +83,30 @@ export function createReflectivePond(
   const waterLevel = { value: pond.geometry.attributes.position!.getY(0) };
   const fluidTexture = { value: fluid?.value?.texture };
   const fluidBounds = { value: fluid?.value?.bounds };
+  const gpuField = { value: gpu?.value?.texture.value ?? fluid?.value?.texture };
+  const gpuMask = { value: gpu?.value?.maskTexture ?? fluid?.value?.texture };
+  const gpuBounds = { value: gpu?.value?.bounds ?? fluid?.value?.bounds };
+  const gpuActive = { value: gpu?.value?.active.value ?? 0 };
+  const gpuAmplitude = { value: gpu?.value?.amplitude.value ?? 1 };
+  const gpuNeutral = { value: gpu?.value?.neutral.value ?? 0 };
+  const heightGLSL = gpu
+    ? shallowWaterGLSL
+        .replace(/waterHeight/g, 'cpuWaterHeight')
+        .replace(/waterFoam/g, 'cpuWaterFoam') +
+      pondSurfaceGLSL +
+      `
+    float waterHeight(vec2 p, float depth) { return gpuPondActive > 0.5 ? gpuPondHeight(p) : cpuWaterHeight(p, depth); }
+    float waterFoam(vec2 p, float depth) { return gpuPondActive > 0.5 ? 0.0 : cpuWaterFoam(p, depth); }
+  `
+    : shallowWaterGLSL;
   material.onBeforeCompile = (shader) => {
     Object.assign(shader.uniforms, {
+      gpuPondField: gpuField,
+      gpuPondMask: gpuMask,
+      gpuPondBounds: gpuBounds,
+      gpuPondActive: gpuActive,
+      gpuPondAmplitude: gpuAmplitude,
+      gpuPondNeutral: gpuNeutral,
       waterTime: time,
       fluidField: fluidTexture,
       fluidBounds,
@@ -97,17 +125,18 @@ export function createReflectivePond(
         '#include <common>',
         `#include <common>
       attribute float waterDepth;
+      ${gpu ? 'attribute float gpuVertexWeight;' : ''}
       ${fluid ? 'attribute float channelTravel, channelMask; varying float inletTravel, inletMask;' : ''}
       varying vec3 waterPosition; varying vec3 waterBaseNormal;
       varying float waterThickness;
       varying vec4 waterReflectCoord, waterRefractCoord;
       uniform mat4 waterReflectionMatrix, waterRefractionMatrix;
-      ${realWater ? `uniform float waterTime; uniform vec3 waterImpact; uniform vec2 waterFlowDirection; ${fluid ? shallowWaterGLSL : realPondFieldGLSL}` : ''}`,
+      ${realWater ? `uniform float waterTime; uniform vec3 waterImpact; uniform vec2 waterFlowDirection; ${fluid ? heightGLSL : realPondFieldGLSL}` : ''}`,
       )
       .replace(
         '#include <begin_vertex>',
         `#include <begin_vertex>
-        ${realWater ? 'transformed.y += waterHeight(position.xz, waterDepth);' : ''}
+        ${realWater ? (gpu ? 'transformed.y += gpuPondActive > 0.5 ? waterHeight(position.xz, waterDepth) * step(0.000001, gpuVertexWeight) : waterHeight(position.xz, waterDepth);' : 'transformed.y += waterHeight(position.xz, waterDepth);') : ''}
         waterPosition = position; waterBaseNormal = normal;
         ${fluid ? 'inletTravel=channelTravel; inletMask=channelMask;' : ''}
         waterThickness = waterDepth;
@@ -119,6 +148,7 @@ export function createReflectivePond(
         '#include <common>',
         `#include <common>
       uniform float waterTime, waterCaptured, waterLevel;
+      ${gpu ? 'uniform float gpuPondNeutral;' : ''}
       ${fluid ? 'varying float inletTravel, inletMask;' + flowNoiseGLSL : ''}
       uniform vec3 waterImpact; uniform vec2 waterFlowDirection;
       uniform sampler2D waterReflection, waterRefraction;
@@ -129,7 +159,7 @@ export function createReflectivePond(
       ${
         realWater
           ? fluid
-            ? shallowWaterGLSL
+            ? heightGLSL
             : realPondFieldGLSL
           : `      float waterHeight(vec2 p) {
         float radius = length((p - waterImpact.xy) * vec2(1.0, 0.89));
@@ -151,7 +181,7 @@ export function createReflectivePond(
         vec2 slope = vec2(waterHeight(waterPosition.xz + vec2(0.025, 0.0)${realWater ? ', waterThickness' : ''}) - wave,
           waterHeight(waterPosition.xz + vec2(0.0, 0.025)${realWater ? ', waterThickness' : ''}) - wave) / 0.025;
         ${fluid ? 'float channelNoise = rwFbm(vec2(waterPosition.x * 4.3, (inletTravel-waterTime)*7.9)); slope += vec2(channelNoise-0.5, channelNoise-0.5) * inletMask * 0.14;' : ''}
-        float shore = smoothstep(0.0, 0.5, waterThickness);
+        float shore = ${gpu ? 'gpuPondActive > 0.5 ? 1.0 : ' : ''}smoothstep(0.0, 0.5, waterThickness);
         normal = normalize(waterNormalMatrix * (normalize(waterBaseNormal) + vec3(-slope.x * shore, 0.0, -slope.y * shore)));
         normal *= gl_FrontFacing ? 1.0 : -1.0;`,
       )
@@ -180,25 +210,46 @@ export function createReflectivePond(
         outgoingLight = mix(outgoingLight, foamLight, foam);`
             : ''
         }
+        ${
+          gpu
+            ? `if (gpuPondActive > 0.5 && gpuPondNeutral > 0.5 && waterPosition.z >= gpuPondBounds.y && abs(waterPosition.y - waterLevel) < 0.0001) {
+          vec3 neutralLight = normalize(waterNormalMatrix * vec3(-0.7, 0.7, 0.2));
+          vec3 neutralHalf = normalize(waterNormalMatrix * vec3(0.12, 1.0, 0.06));
+          float glint = pow(max(0.0, dot(normal, neutralHalf)), 96.0);
+          outgoingLight = vec3(0.38) * (0.3 + 0.7 * max(0.0, dot(normal, neutralLight))) + vec3(0.55) * glint;
+          diffuseColor.a = 1.0;
+        }`
+            : ''
+        }
         #include <opaque_fragment>`,
       );
   };
   material.customProgramCacheKey = () =>
-    fluid
-      ? 'oasis-shallow-water-v8'
-      : excavated
-        ? 'oasis-reflective-pond-excavated-v1'
-        : realWater
-          ? 'oasis-reflective-pond-v4'
-          : 'oasis-reflective-pond-v3';
+    gpu
+      ? 'oasis-gpgpu-pond-prototype-v1'
+      : fluid
+        ? 'oasis-shallow-water-v8'
+        : excavated
+          ? 'oasis-reflective-pond-excavated-v1'
+          : realWater
+            ? 'oasis-reflective-pond-v4'
+            : 'oasis-reflective-pond-v3';
   material.needsUpdate = true;
   function rebuild() {
+    gpuField.value = gpu?.value?.texture.value ?? fluid?.value?.texture;
+    gpuMask.value = gpu?.value?.maskTexture ?? fluid?.value?.texture;
+    gpuBounds.value = gpu?.value?.bounds ?? fluid?.value?.bounds;
+    gpuActive.value = gpu?.value?.active.value ?? 0;
+    gpuNeutral.value = gpu?.value?.neutral.value ?? 0;
     waterLevel.value = pond.geometry.attributes.position!.getY(0);
     fluidTexture.value = fluid?.value?.texture;
     fluidBounds.value = fluid?.value?.bounds;
     const positions = pond.geometry.attributes.position!;
     const depths: number[] = [];
+    const weights: number[] = [];
     for (let i = 0; i < positions.count; i++) {
+      if (gpu?.value)
+        weights.push(gpu.value.maskAt(positions.getX(i), positions.getZ(i)));
       depths.push(
         Math.max(
           excavated ? 0 : 0.03,
@@ -207,12 +258,21 @@ export function createReflectivePond(
       );
     }
     pond.geometry.setAttribute('waterDepth', new Float32BufferAttribute(depths, 1));
+    if (gpu?.value)
+      pond.geometry.setAttribute(
+        'gpuVertexWeight',
+        new Float32BufferAttribute(weights, 1),
+      );
     lastBucket = -1;
     captured.value = 0;
   }
   rebuild();
   pond.onBeforeRender = (renderer, scene, camera) => {
     if (!root.visible || !pond.visible) return;
+    gpuField.value = gpu?.value?.texture.value ?? fluid?.value?.texture;
+    gpuActive.value = gpu?.value?.active.value ?? 0;
+    gpuAmplitude.value = gpu?.value?.amplitude.value ?? 1;
+    gpuNeutral.value = gpu?.value?.neutral.value ?? 0;
     pond.updateWorldMatrix(true, false);
     viewModel.multiplyMatrices(camera.matrixWorldInverse, pond.matrixWorld);
     normalMatrix.getNormalMatrix(viewModel);
@@ -222,6 +282,10 @@ export function createReflectivePond(
       0,
     ).applyMatrix4(pond.matrixWorld).y;
     if (camera.position.y <= surfaceY + 0.05) {
+      captured.value = 0;
+      return;
+    }
+    if (gpuActive.value && gpuNeutral.value) {
       captured.value = 0;
       return;
     }
@@ -291,6 +355,8 @@ export function createReflectivePond(
       size,
       version: realWater ? 4 : 3,
       vertices: pond.geometry.attributes.position!.count,
+      triangles:
+        (pond.geometry.index?.count ?? pond.geometry.attributes.position!.count) / 3,
       captures,
       passes: 2,
       captured: captured.value === 1,

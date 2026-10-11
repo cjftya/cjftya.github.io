@@ -19,6 +19,7 @@ import {
 import { createRealWaterEffects } from './createRealWaterEffects';
 import { createReflectivePond } from './createReflectivePond';
 import { createWaterNormal, createFoamTexture } from './waterTextures';
+import type { WebGLRenderer } from 'three';
 import type { LayoutGuide } from '../landmarkConfig';
 
 export interface WaterOptions {
@@ -32,6 +33,9 @@ export interface WaterOptions {
   continuous?: boolean;
   dynamics?: boolean;
   basinOnly?: boolean;
+  gpgpuPrototype?: boolean;
+  gpuNeutral?: boolean;
+  renderer?: WebGLRenderer;
 }
 
 // Keep standard lighting, fog and receiving shadows. Only the diffuse colour
