@@ -115,6 +115,7 @@ export class GPGPUPondSurface {
   readonly inlet: Vector2;
   readonly diagnosticPoint: Vector2;
   flowRate = 1;
+  automaticInlet = true;
   paused = false;
   private readonly gpu: GPUComputationRenderer;
   private readonly variable;
@@ -284,6 +285,7 @@ export class GPGPUPondSurface {
     while (this.accumulator >= this.step && substeps < 3) {
       this.inletClock += this.step;
       if (
+        this.automaticInlet &&
         this.flowRate > 0 &&
         this.inletClock > 0.38 + 0.1 * Math.sin(this.pulses * 2.4)
       ) {
@@ -339,6 +341,7 @@ export class GPGPUPondSurface {
       dropped: this.dropped,
       updateCpuMs: this.cpuMs,
       flowRate: this.flowRate,
+      automaticInlet: this.automaticInlet,
       paused: this.paused,
       amplitude: this.amplitude.value,
       neutral: !!this.neutral.value,

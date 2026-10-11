@@ -17,6 +17,7 @@ export function createFlowMaterial(
   seed: number,
   aerated = false,
   dynamics = false,
+  deform = true,
 ) {
   const material = new MeshStandardMaterial({
     color: dynamics ? '#b7c5c3' : aerated ? '#d8e8e5' : falling ? '#98bdc0' : '#9bbdc0',
@@ -43,7 +44,7 @@ export function createFlowMaterial(
         rwCoord=vec2(uv.x,travelTime); rwProgress=flowProgress;
         ${dynamics ? 'rwThickness=filmDepth;' : ''}
         ${
-          falling
+          falling && deform
             ? `
         float age=travelTime-rwTime;
         float anchor=sin(clamp(flowProgress,0.0,1.0)*3.14159265);
@@ -80,6 +81,6 @@ export function createFlowMaterial(
       );
   };
   material.customProgramCacheKey = () =>
-    `real-flow-${dynamics ? 8 : 6}-${falling}-${aerated}-${seed}`;
+    `real-flow-${dynamics ? 8 : 6}-${falling}-${aerated}-${seed}-${deform}`;
   return material;
 }

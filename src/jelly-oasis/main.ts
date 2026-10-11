@@ -253,6 +253,11 @@ function start(canvas: HTMLCanvasElement): void {
         debugEnabled &&
         candidateQuery.get('waterfall') === 'v8' &&
         candidateQuery.get('surface') === 'gpgpu-proto',
+      fallingFlow:
+        debugEnabled &&
+        candidateQuery.get('waterfall') === 'v8' &&
+        candidateQuery.get('flow') === 'fall-v1',
+      flowPaths: debugEnabled && candidateQuery.get('paths') === '1',
       gpuNeutral: candidateQuery.get('material') !== 'optics',
       dynamics: debugEnabled && candidateQuery.get('waterfall') === 'v8',
       basinOnly:
