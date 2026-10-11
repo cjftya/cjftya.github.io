@@ -23,7 +23,7 @@ export function createFlowMaterial(
     roughness: dynamics ? 0.12 : aerated ? 0.52 : falling ? 0.38 : 0.27,
     metalness: 0,
     transparent: true,
-    opacity: dynamics ? 0.24 : aerated ? 0.68 : falling ? 0.94 : 0.62,
+    opacity: dynamics ? 0.42 : aerated ? 0.68 : falling ? 0.94 : 0.62,
     depthWrite: false,
   });
   material.onBeforeCompile = (shader) => {
@@ -68,15 +68,15 @@ export function createFlowMaterial(
         float entrained = ${falling ? 'pow(rwProgress, 1.4) * 0.18' : '0.0'};
         float white=clamp(entrained+bubbles*${dynamics ? '0.15' : falling ? '0.76' : '0.55'} + smoothstep(0.68,0.92,fine)*0.15,0.0,0.88);
         diffuseColor.rgb=mix(diffuseColor.rgb,vec3(0.86,0.93,0.92),white);
-        ${dynamics ? 'diffuseColor.a *= clamp(0.12 + (1.0-exp(-rwThickness*14.0))*1.4 + bubbles*0.3, 0.55, 1.5);' : aerated ? 'diffuseColor.a *= smoothstep(0.2,0.53,density);' : 'diffuseColor.a *= 0.72+0.28*density;'}
+        ${dynamics ? 'diffuseColor.a *= clamp(0.34 + (1.0-exp(-rwThickness*20.0))*1.2 + bubbles*0.16, 0.72, 1.1);' : aerated ? 'diffuseColor.a *= smoothstep(0.2,0.53,density);' : 'diffuseColor.a *= 0.72+0.28*density;'}
         ${falling && !aerated ? 'diffuseColor.a *= mix(1.0,smoothstep(0.17,0.42,density),smoothstep(0.35,0.97,rwProgress)*0.6);' : ''}
-        ${!falling ? 'diffuseColor.a *= 1.0-smoothstep(0.3,0.5,abs(rwCoord.x-0.5));' : ''}`,
+        ${!falling ? `diffuseColor.a *= 1.0-smoothstep(${dynamics ? '0.34' : '0.3'},0.5,abs(rwCoord.x-0.5));` : ''}`,
       )
       .replace(
         '#include <normal_fragment_maps>',
         `#include <normal_fragment_maps>
         ${falling ? 'normal = normalize(cross(dFdx(vViewPosition),dFdy(vViewPosition)));' : ''}
-        normal = normalize(normal + vec3((fine-0.5)*0.16,(density-0.5)*0.12,0.0));`,
+        normal = normalize(normal + vec3((fine-0.5)*${dynamics ? '0.26' : '0.16'},(density-0.5)*${dynamics ? '0.20' : '0.12'},0.0));`,
       );
   };
   material.customProgramCacheKey = () =>
