@@ -3,6 +3,7 @@ import {
   Matrix3,
   Matrix4,
   PlaneGeometry,
+  Vector2,
   Vector3,
 } from 'three';
 import type {
@@ -11,10 +12,12 @@ import type {
   ShaderMaterial,
   Mesh,
   MeshStandardMaterial,
-  Vector2,
 } from 'three';
 import { Reflector } from 'three/examples/jsm/objects/Reflector.js';
 import { Refractor } from 'three/examples/jsm/objects/Refractor.js';
+
+import { realPondFieldGLSL } from './pondWaves';
+import { subdividePond } from './subdividePond';
 
 /** One pair of bounded planar captures, shared by the whole pond surface. */
 export function createReflectivePond(
@@ -22,7 +25,13 @@ export function createReflectivePond(
   pond: Mesh<BufferGeometry, MeshStandardMaterial>,
   ground: (x: number, z: number) => number,
   mobile: boolean,
+  realWater = false,
 ) {
+  if (realWater) {
+    const source = pond.geometry;
+    pond.geometry = subdividePond(source, mobile ? 3 : 4);
+    source.dispose();
+  }
   const size = mobile ? 256 : 768;
   const plane = new PlaneGeometry(1, 1);
   const reflector = new Reflector(plane, {
@@ -47,6 +56,7 @@ export function createReflectivePond(
   const time = { value: 0 },
     captured = { value: 0 },
     impact = { value: new Vector3(0, 0, 0) };
+  const flowDirection = { value: new Vector2(0, 1) };
   let captures = 0,
     lastBucket = -1,
     environmentRevision = 0,
@@ -69,6 +79,7 @@ export function createReflectivePond(
       waterRefractionMatrix: { value: refractionMatrix },
       waterNormalMatrix: { value: normalMatrix },
       waterImpact: impact,
+      waterFlowDirection: flowDirection,
     });
     shader.vertexShader = shader.vertexShader
       .replace(
@@ -78,28 +89,33 @@ export function createReflectivePond(
       varying vec3 waterPosition;
       varying float waterThickness;
       varying vec4 waterReflectCoord, waterRefractCoord;
-      uniform mat4 waterReflectionMatrix, waterRefractionMatrix;`,
+      uniform mat4 waterReflectionMatrix, waterRefractionMatrix;
+      ${realWater ? `uniform float waterTime; uniform vec3 waterImpact; uniform vec2 waterFlowDirection; ${realPondFieldGLSL}` : ''}`,
       )
       .replace(
         '#include <begin_vertex>',
         `#include <begin_vertex>
+        ${realWater ? 'transformed.y += waterHeight(position.xz, waterDepth);' : ''}
         waterPosition = position;
         waterThickness = waterDepth;
-        waterReflectCoord = waterReflectionMatrix * vec4(position, 1.0);
-        waterRefractCoord = waterRefractionMatrix * vec4(position, 1.0);`,
+        waterReflectCoord = waterReflectionMatrix * vec4(transformed, 1.0);
+        waterRefractCoord = waterRefractionMatrix * vec4(transformed, 1.0);`,
       );
     shader.fragmentShader = shader.fragmentShader
       .replace(
         '#include <common>',
         `#include <common>
       uniform float waterTime, waterCaptured;
-      uniform vec3 waterImpact;
+      uniform vec3 waterImpact; uniform vec2 waterFlowDirection;
       uniform sampler2D waterReflection, waterRefraction;
       uniform mat3 waterNormalMatrix;
       varying vec3 waterPosition;
       varying float waterThickness;
       varying vec4 waterReflectCoord, waterRefractCoord;
-      float waterHeight(vec2 p) {
+      ${
+        realWater
+          ? realPondFieldGLSL
+          : `      float waterHeight(vec2 p) {
         float radius = length((p - waterImpact.xy) * vec2(1.0, 0.89));
         p += vec2(sin(p.y * 0.31), cos(p.x * 0.27)) * 0.45;
         float wake = sin(radius * 8.0 - waterTime * 5.2 + sin(p.x * 1.3) * 0.15)
@@ -108,14 +124,15 @@ export function createReflectivePond(
           + sin(dot(p, vec2(-2.1, 2.7)) - waterTime * 0.93) * 0.018
           + sin(dot(p, vec2(5.9, 4.3)) + waterTime * 1.14) * 0.006
           + sin(dot(p, vec2(-11.1, 8.5)) - waterTime * 1.72) * 0.002;
+      }`
       }`,
       )
       .replace(
         '#include <normal_fragment_maps>',
         `#include <normal_fragment_maps>
-        float wave = waterHeight(waterPosition.xz);
-        vec2 slope = vec2(waterHeight(waterPosition.xz + vec2(0.025, 0.0)) - wave,
-          waterHeight(waterPosition.xz + vec2(0.0, 0.025)) - wave) / 0.025;
+        float wave = waterHeight(waterPosition.xz${realWater ? ', waterThickness' : ''});
+        vec2 slope = vec2(waterHeight(waterPosition.xz + vec2(0.025, 0.0)${realWater ? ', waterThickness' : ''}) - wave,
+          waterHeight(waterPosition.xz + vec2(0.0, 0.025)${realWater ? ', waterThickness' : ''}) - wave) / 0.025;
         float shore = smoothstep(0.0, 0.5, waterThickness);
         normal = normalize(waterNormalMatrix * vec3(-slope.x * shore, 1.0, -slope.y * shore));
         normal *= gl_FrontFacing ? 1.0 : -1.0;`,
@@ -136,10 +153,18 @@ export function createReflectivePond(
           vec3 body = refracted * absorption + outgoingLight * (1.0 - absorption) * 0.65;
           outgoingLight = mix(body, reflected, fresnel) + reflectedLight.directSpecular * 0.8;
         }
+        ${
+          realWater
+            ? `float foam = waterFoam(waterPosition.xz, waterThickness);
+        vec3 foamLight = (reflectedLight.directDiffuse + reflectedLight.indirectDiffuse) / max(diffuseColor.rgb, vec3(0.04)) * vec3(0.72, 0.81, 0.78);
+        outgoingLight = mix(outgoingLight, foamLight, foam);`
+            : ''
+        }
         #include <opaque_fragment>`,
       );
   };
-  material.customProgramCacheKey = () => 'oasis-reflective-pond-v3';
+  material.customProgramCacheKey = () =>
+    realWater ? 'oasis-reflective-pond-v4' : 'oasis-reflective-pond-v3';
   material.needsUpdate = true;
   function rebuild() {
     const positions = pond.geometry.attributes.position!;
@@ -226,18 +251,22 @@ export function createReflectivePond(
   return {
     time,
     rebuild,
-    setImpact(point: Vector2 | null, strength = 0) {
+    setImpact(point: Vector2 | null, strength = 0, direction?: Vector2) {
       impact.value.set(point?.x ?? 0, point?.y ?? 0, point ? strength : 0);
+      if (direction) flowDirection.value.copy(direction).normalize();
     },
     invalidate() {
       environmentRevision++;
     },
     snapshot: () => ({
       size,
+      version: realWater ? 4 : 3,
+      vertices: pond.geometry.attributes.position!.count,
       captures,
       passes: 2,
       captured: captured.value === 1,
       impact: impact.value.toArray(),
+      flowDirection: flowDirection.value.toArray(),
     }),
     dispose() {
       pond.onBeforeRender = () => {};

@@ -16,6 +16,7 @@ import {
   Raycaster,
   Vector3,
 } from 'three';
+import { createRealWaterEffects } from './createRealWaterEffects';
 import { createReflectivePond } from './createReflectivePond';
 import { createWaterNormal, createFoamTexture } from './waterTextures';
 import type { LayoutGuide } from '../landmarkConfig';
@@ -27,6 +28,7 @@ export interface WaterOptions {
   mobile?: boolean;
   freeFall?: boolean;
   interaction?: boolean;
+  realWater?: boolean;
 }
 
 // Keep standard lighting, fog and receiving shadows. Only the diffuse colour
@@ -142,6 +144,8 @@ export function createWaterEffects(
   ground: (x: number, z: number) => number,
   options: WaterOptions,
 ) {
+  if (options.realWater)
+    return createRealWaterEffects(root, content, pond, cliff, pondY, ground, options);
   const clocks: { value: number }[] = [];
   const reflectivePond =
     options.realistic && options.water

@@ -219,19 +219,26 @@ function start(canvas: HTMLCanvasElement): void {
     {
       water:
         debugEnabled &&
-        (['v1', 'v2'].includes(waterQuery ?? '') ||
-          ['v3', 'v4', 'v5'].includes(candidateQuery.get('waterfall') ?? '')),
+        (['v1', 'v2', 'v4'].includes(waterQuery ?? '') ||
+          ['v3', 'v4', 'v5', 'v6'].includes(candidateQuery.get('waterfall') ?? '')),
       realistic:
         debugEnabled &&
         (waterQuery === 'v2' ||
-          ['v3', 'v4', 'v5'].includes(candidateQuery.get('waterfall') ?? '')),
+          waterQuery === 'v4' ||
+          ['v3', 'v4', 'v5', 'v6'].includes(candidateQuery.get('waterfall') ?? '')),
       mobile,
+      realWater:
+        debugEnabled &&
+        (candidateQuery.get('waterfall') === 'v6' || waterQuery === 'v4'),
       freeFall:
-        debugEnabled && ['v4', 'v5'].includes(candidateQuery.get('waterfall') ?? ''),
+        debugEnabled &&
+        ['v4', 'v5', 'v6'].includes(candidateQuery.get('waterfall') ?? ''),
       interaction: debugEnabled && candidateQuery.get('waterfall') === 'v5',
       waterfall:
         debugEnabled &&
-        ['v1', 'v2', 'v3', 'v4', 'v5'].includes(candidateQuery.get('waterfall') ?? ''),
+        ['v1', 'v2', 'v3', 'v4', 'v5', 'v6'].includes(
+          candidateQuery.get('waterfall') ?? '',
+        ),
     },
   )
     .then((loaded) => {
@@ -259,6 +266,19 @@ function start(canvas: HTMLCanvasElement): void {
               controls.target.fromArray(target);
               controls.update();
               controls.enableDamping = true;
+              invalidate();
+            },
+            reviewWaterStep: (seconds = 0.5) => {
+              const duration = Math.max(
+                0,
+                Math.min(2, Number.isFinite(seconds) ? seconds : 0),
+              );
+              for (let remaining = duration; remaining > 0.0001; remaining -= 0.1)
+                loaded.waterEffects?.update(
+                  Math.min(0.1, remaining),
+                  environment.state.timeOfDay,
+                  false,
+                );
               invalidate();
             },
             snapshot: () => ({
@@ -339,6 +359,19 @@ function start(canvas: HTMLCanvasElement): void {
             }),
           },
         });
+      }
+      if (debugEnabled && candidateQuery.get('view') === 'waterfall') {
+        mediumCamera = false;
+        reviewCamera = groundCamera = true;
+        controls.enableDamping = false;
+        controls.update();
+        controls.minDistance = 1;
+        controls.maxPolarAngle = Math.PI - 0.01;
+        camera.position.set(82, 1, 93);
+        controls.target.set(66, -3, 50);
+        controls.update();
+        controls.enableDamping = true;
+        environment.setTime(12);
       }
       invalidate();
     })
