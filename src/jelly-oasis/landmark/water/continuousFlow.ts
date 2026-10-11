@@ -59,6 +59,7 @@ export function makeChannel(
   foot: Vector3,
   waterY: number,
   inletZ: number,
+  dynamics = false,
 ): ChannelSample[] {
   if (foot.y <= waterY) throw new Error('v7: channel cannot flow uphill');
   const path: ChannelSample[] = [];
@@ -67,10 +68,13 @@ export function makeChannel(
   for (let i = 0; i <= steps; i++) {
     const t = i / steps;
     const x = foot.x + Math.sin(t * Math.PI) * 0.38;
-    const y = waterY + 0.035 + (foot.y - waterY - 0.035) * (1 - t);
+    const tail = Math.max(0, 1 - t / 0.72);
+    const y = dynamics
+      ? waterY + (foot.y - waterY) * tail * tail
+      : waterY + 0.035 + (foot.y - waterY - 0.035) * (1 - t);
     path.push({
       point: new Vector3(x, y, foot.z + length * t),
-      width: 1.8 + 0.2 * Math.sin(t * 8.3) + t * 0.35,
+      width: dynamics ? 1.8 + 1.0 * t * t : 1.8 + 0.2 * Math.sin(t * 8.3) + t * 0.35,
     });
   }
   return path;

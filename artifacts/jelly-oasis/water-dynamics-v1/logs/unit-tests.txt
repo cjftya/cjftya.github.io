@@ -1,0 +1,14 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> jelly-plants@0.1.0 test
+> vitest run --maxWorkers=2
+
+
+ RUN  v4.1.10 /workspace/scratch/379900b7c529/repo
+
+
+ Test Files  55 passed (55)
+      Tests  302 passed (302)
+   Start at  21:33:10
+   Duration  32.33s (transform 3.10s, setup 0ms, import 7.71s, tests 46.63s, environment 4ms)
+

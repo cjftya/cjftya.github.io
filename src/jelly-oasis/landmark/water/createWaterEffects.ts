@@ -30,6 +30,7 @@ export interface WaterOptions {
   interaction?: boolean;
   realWater?: boolean;
   continuous?: boolean;
+  dynamics?: boolean;
   basinOnly?: boolean;
 }
 

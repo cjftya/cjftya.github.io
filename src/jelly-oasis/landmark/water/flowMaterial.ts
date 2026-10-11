@@ -16,29 +16,32 @@ export function createFlowMaterial(
   falling: boolean,
   seed: number,
   aerated = false,
+  dynamics = false,
 ) {
   const material = new MeshStandardMaterial({
-    color: aerated ? '#d8e8e5' : falling ? '#98bdc0' : '#9bbdc0',
-    roughness: aerated ? 0.52 : falling ? 0.38 : 0.27,
+    color: dynamics ? '#b7c5c3' : aerated ? '#d8e8e5' : falling ? '#98bdc0' : '#9bbdc0',
+    roughness: dynamics ? 0.12 : aerated ? 0.52 : falling ? 0.38 : 0.27,
     metalness: 0,
     transparent: true,
-    opacity: aerated ? 0.68 : falling ? 0.94 : 0.62,
+    opacity: dynamics ? 0.24 : aerated ? 0.68 : falling ? 0.94 : 0.62,
     depthWrite: false,
   });
   material.onBeforeCompile = (shader) => {
     Object.assign(shader.uniforms, { rwTime: time, rwSeed: { value: seed } });
-    const declarations = `uniform float rwTime,rwSeed; varying vec2 rwCoord; varying float rwProgress;\n${flowNoiseGLSL}`;
+    const declarations = `uniform float rwTime,rwSeed; varying vec2 rwCoord; varying float rwProgress; ${dynamics ? 'varying float rwThickness;' : ''}\n${flowNoiseGLSL}`;
     shader.vertexShader = shader.vertexShader
       .replace(
         '#include <common>',
         `#include <common>
       ${declarations}
-      attribute float travelTime; attribute float flowProgress;`,
+      attribute float travelTime; attribute float flowProgress;
+      ${dynamics ? 'attribute float filmDepth;' : ''}`,
       )
       .replace(
         '#include <begin_vertex>',
         `#include <begin_vertex>
         rwCoord=vec2(uv.x,travelTime); rwProgress=flowProgress;
+        ${dynamics ? 'rwThickness=filmDepth;' : ''}
         ${
           falling
             ? `
@@ -63,9 +66,9 @@ export function createFlowMaterial(
         float fine=rwNoise(advected*vec2(3.1,1.7));
         float bubbles=smoothstep(${aerated ? '0.32,0.7' : '0.49,0.82'},density);
         float entrained = ${falling ? 'pow(rwProgress, 1.4) * 0.18' : '0.0'};
-        float white=clamp(entrained+bubbles*${falling ? '0.76' : '0.55'} + smoothstep(0.68,0.92,fine)*0.15,0.0,0.88);
+        float white=clamp(entrained+bubbles*${dynamics ? '0.15' : falling ? '0.76' : '0.55'} + smoothstep(0.68,0.92,fine)*0.15,0.0,0.88);
         diffuseColor.rgb=mix(diffuseColor.rgb,vec3(0.86,0.93,0.92),white);
-        ${aerated ? 'diffuseColor.a *= smoothstep(0.2,0.53,density);' : 'diffuseColor.a *= 0.72+0.28*density;'}
+        ${dynamics ? 'diffuseColor.a *= clamp(0.12 + (1.0-exp(-rwThickness*14.0))*1.4 + bubbles*0.3, 0.55, 1.5);' : aerated ? 'diffuseColor.a *= smoothstep(0.2,0.53,density);' : 'diffuseColor.a *= 0.72+0.28*density;'}
         ${falling && !aerated ? 'diffuseColor.a *= mix(1.0,smoothstep(0.17,0.42,density),smoothstep(0.35,0.97,rwProgress)*0.6);' : ''}
         ${!falling ? 'diffuseColor.a *= 1.0-smoothstep(0.3,0.5,abs(rwCoord.x-0.5));' : ''}`,
       )
@@ -76,6 +79,7 @@ export function createFlowMaterial(
         normal = normalize(normal + vec3((fine-0.5)*0.16,(density-0.5)*0.12,0.0));`,
       );
   };
-  material.customProgramCacheKey = () => `real-flow-v6-${falling}-${aerated}-${seed}`;
+  material.customProgramCacheKey = () =>
+    `real-flow-${dynamics ? 8 : 6}-${falling}-${aerated}-${seed}`;
   return material;
 }

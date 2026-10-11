@@ -16,6 +16,9 @@ import type {
 import { Reflector } from 'three/examples/jsm/objects/Reflector.js';
 import { Refractor } from 'three/examples/jsm/objects/Refractor.js';
 
+import { flowNoiseGLSL } from './flowMaterial';
+import { shallowWaterGLSL } from './shallowWater';
+import type { ShallowWater } from './shallowWater';
 import { realPondFieldGLSL } from './pondWaves';
 import { subdividePond } from './subdividePond';
 
@@ -27,10 +30,11 @@ export function createReflectivePond(
   mobile: boolean,
   realWater = false,
   excavated = false,
+  fluid?: { value: ShallowWater | undefined },
 ) {
   if (realWater) {
     const source = pond.geometry;
-    pond.geometry = subdividePond(source, mobile ? 3 : 4);
+    pond.geometry = subdividePond(source, fluid ? (mobile ? 2 : 3) : mobile ? 3 : 4);
     source.dispose();
   }
   const size = mobile ? 256 : 768;
@@ -68,11 +72,17 @@ export function createReflectivePond(
   material.color.set('#347982');
   material.roughness = 0.16;
   material.opacity = 1;
-  material.transparent = false;
-  material.depthWrite = true;
+  material.transparent = !!fluid;
+  material.depthWrite = !fluid;
+  const waterLevel = { value: pond.geometry.attributes.position!.getY(0) };
+  const fluidTexture = { value: fluid?.value?.texture };
+  const fluidBounds = { value: fluid?.value?.bounds };
   material.onBeforeCompile = (shader) => {
     Object.assign(shader.uniforms, {
       waterTime: time,
+      fluidField: fluidTexture,
+      fluidBounds,
+      waterLevel,
       waterCaptured: captured,
       waterReflection: { value: reflector.getRenderTarget().texture },
       waterRefraction: { value: refractor.getRenderTarget().texture },
@@ -87,17 +97,19 @@ export function createReflectivePond(
         '#include <common>',
         `#include <common>
       attribute float waterDepth;
-      varying vec3 waterPosition;
+      ${fluid ? 'attribute float channelTravel, channelMask; varying float inletTravel, inletMask;' : ''}
+      varying vec3 waterPosition; varying vec3 waterBaseNormal;
       varying float waterThickness;
       varying vec4 waterReflectCoord, waterRefractCoord;
       uniform mat4 waterReflectionMatrix, waterRefractionMatrix;
-      ${realWater ? `uniform float waterTime; uniform vec3 waterImpact; uniform vec2 waterFlowDirection; ${realPondFieldGLSL}` : ''}`,
+      ${realWater ? `uniform float waterTime; uniform vec3 waterImpact; uniform vec2 waterFlowDirection; ${fluid ? shallowWaterGLSL : realPondFieldGLSL}` : ''}`,
       )
       .replace(
         '#include <begin_vertex>',
         `#include <begin_vertex>
         ${realWater ? 'transformed.y += waterHeight(position.xz, waterDepth);' : ''}
-        waterPosition = position;
+        waterPosition = position; waterBaseNormal = normal;
+        ${fluid ? 'inletTravel=channelTravel; inletMask=channelMask;' : ''}
         waterThickness = waterDepth;
         waterReflectCoord = waterReflectionMatrix * vec4(transformed, 1.0);
         waterRefractCoord = waterRefractionMatrix * vec4(transformed, 1.0);`,
@@ -106,16 +118,19 @@ export function createReflectivePond(
       .replace(
         '#include <common>',
         `#include <common>
-      uniform float waterTime, waterCaptured;
+      uniform float waterTime, waterCaptured, waterLevel;
+      ${fluid ? 'varying float inletTravel, inletMask;' + flowNoiseGLSL : ''}
       uniform vec3 waterImpact; uniform vec2 waterFlowDirection;
       uniform sampler2D waterReflection, waterRefraction;
       uniform mat3 waterNormalMatrix;
-      varying vec3 waterPosition;
+      varying vec3 waterPosition; varying vec3 waterBaseNormal;
       varying float waterThickness;
       varying vec4 waterReflectCoord, waterRefractCoord;
       ${
         realWater
-          ? realPondFieldGLSL
+          ? fluid
+            ? shallowWaterGLSL
+            : realPondFieldGLSL
           : `      float waterHeight(vec2 p) {
         float radius = length((p - waterImpact.xy) * vec2(1.0, 0.89));
         p += vec2(sin(p.y * 0.31), cos(p.x * 0.27)) * 0.45;
@@ -135,8 +150,9 @@ export function createReflectivePond(
         float wave = waterHeight(waterPosition.xz${realWater ? ', waterThickness' : ''});
         vec2 slope = vec2(waterHeight(waterPosition.xz + vec2(0.025, 0.0)${realWater ? ', waterThickness' : ''}) - wave,
           waterHeight(waterPosition.xz + vec2(0.0, 0.025)${realWater ? ', waterThickness' : ''}) - wave) / 0.025;
+        ${fluid ? 'float channelNoise = rwFbm(vec2(waterPosition.x * 4.3, (inletTravel-waterTime)*7.9)); slope += vec2(channelNoise-0.5, channelNoise-0.5) * inletMask * 0.14;' : ''}
         float shore = smoothstep(0.0, 0.5, waterThickness);
-        normal = normalize(waterNormalMatrix * vec3(-slope.x * shore, 1.0, -slope.y * shore));
+        normal = normalize(waterNormalMatrix * (normalize(waterBaseNormal) + vec3(-slope.x * shore, 0.0, -slope.y * shore)));
         normal *= gl_FrontFacing ? 1.0 : -1.0;`,
       )
       .replace(
@@ -153,7 +169,9 @@ export function createReflectivePond(
           float depth = max(0.03, waterThickness) / max(0.25, facing);
           vec3 absorption = exp(-vec3(0.65, 0.19, 0.12) * depth);
           vec3 body = refracted * absorption + outgoingLight * (1.0 - absorption) * 0.65;
-          outgoingLight = mix(body, reflected, fresnel) + reflectedLight.directSpecular * 0.8;
+          vec3 capturedWater = mix(body, reflected, fresnel) + reflectedLight.directSpecular * 0.8;
+          ${fluid ? 'float flatCapture = 1.0 - smoothstep(0.005, 0.10, abs(waterPosition.y - waterLevel));' : ''}
+          outgoingLight = ${fluid ? 'mix(outgoingLight, capturedWater, flatCapture); diffuseColor.a = mix(0.24, 1.0, flatCapture)' : 'capturedWater'};
         }
         ${
           realWater
@@ -166,13 +184,18 @@ export function createReflectivePond(
       );
   };
   material.customProgramCacheKey = () =>
-    excavated
-      ? 'oasis-reflective-pond-excavated-v1'
-      : realWater
-        ? 'oasis-reflective-pond-v4'
-        : 'oasis-reflective-pond-v3';
+    fluid
+      ? 'oasis-shallow-water-v8'
+      : excavated
+        ? 'oasis-reflective-pond-excavated-v1'
+        : realWater
+          ? 'oasis-reflective-pond-v4'
+          : 'oasis-reflective-pond-v3';
   material.needsUpdate = true;
   function rebuild() {
+    waterLevel.value = pond.geometry.attributes.position!.getY(0);
+    fluidTexture.value = fluid?.value?.texture;
+    fluidBounds.value = fluid?.value?.bounds;
     const positions = pond.geometry.attributes.position!;
     const depths: number[] = [];
     for (let i = 0; i < positions.count; i++) {

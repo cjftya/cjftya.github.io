@@ -1,16 +1,24 @@
 import { BufferGeometry, Float32BufferAttribute, Group, Mesh, Vector3 } from 'three';
+import { solveFlow } from './flowDynamics';
 import { createFlowMaterial } from './flowMaterial';
 import type { WaterFlowPath } from './flowPath';
 
-export function createRockFlow(flow: WaterFlowPath, time: { value: number }) {
+export function createRockFlow(
+  flow: WaterFlowPath,
+  time: { value: number },
+  dynamics = false,
+  scale = 1,
+) {
   const group = new Group();
   group.name = 'RockFlowV6';
   flow.lanes.forEach((lane, index) => {
     const positions: number[] = [],
       uvs: number[] = [],
       travel: number[] = [],
+      thickness: number[] = [],
       progress: number[] = [],
       indices: number[] = [];
+    const states = dynamics ? solveFlow(lane, 0.032, scale) : undefined;
     let distance = 0;
     lane.forEach((s, i) => {
       if (i) distance += s.point.distanceTo(lane[i - 1]!.point);
@@ -26,7 +34,8 @@ export function createRockFlow(flow: WaterFlowPath, time: { value: number }) {
           .addScaledVector(s.normal, Math.sin(u * Math.PI) * 0.026);
         positions.push(...p.toArray());
         uvs.push(u, distance);
-        travel.push(distance / (1.5 + index * 0.14));
+        thickness.push(states?.[i]?.depth ?? 0.02);
+        travel.push(states?.[i]?.travelTime ?? distance / (1.5 + index * 0.14));
         progress.push(i / (lane.length - 1));
         if (i && j < 4) {
           const a = (i - 1) * 5 + j,
@@ -39,10 +48,14 @@ export function createRockFlow(flow: WaterFlowPath, time: { value: number }) {
     geometry.setAttribute('position', new Float32BufferAttribute(positions, 3));
     geometry.setAttribute('uv', new Float32BufferAttribute(uvs, 2));
     geometry.setAttribute('travelTime', new Float32BufferAttribute(travel, 1));
+    geometry.setAttribute('filmDepth', new Float32BufferAttribute(thickness, 1));
     geometry.setAttribute('flowProgress', new Float32BufferAttribute(progress, 1));
     geometry.setIndex(indices);
     geometry.computeVertexNormals();
-    const mesh = new Mesh(geometry, createFlowMaterial(time, false, index));
+    const mesh = new Mesh(
+      geometry,
+      createFlowMaterial(time, false, index, false, dynamics),
+    );
     mesh.name = `RockStreamlet-${index}`;
     mesh.receiveShadow = true;
     group.add(mesh);
