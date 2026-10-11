@@ -1,10 +1,11 @@
-import { Group, Mesh, InstancedMesh, Vector2 } from 'three';
+import { Group, Mesh, InstancedMesh, Vector2, Vector3 } from 'three';
 import type { BufferGeometry, MeshStandardMaterial } from 'three';
 import { createReflectivePond } from './createReflectivePond';
 import { traceWaterFlow } from './flowPath';
 import type { WaterFlowPath } from './flowPath';
 import { createRockFlow } from './createRockFlow';
 import { createFallingWater } from './createFallingWater';
+import { traceAttachedFlow, makeChannel } from './continuousFlow';
 import { createImpactZone } from './createImpactZone';
 import type { WaterOptions } from './createWaterEffects';
 
@@ -27,6 +28,7 @@ export function createRealWaterEffects(
     ground,
     options.mobile ?? false,
     true,
+    options.continuous ?? false,
   );
   let flow: WaterFlowPath | undefined,
     impact: ReturnType<typeof createImpactZone> | undefined;
@@ -52,23 +54,49 @@ export function createRealWaterEffects(
     flow = undefined;
     triangles = 0;
     if (!options.waterfall) return;
-    flow = traceWaterFlow(root, cliff, pond, pondY());
-    group.add(
-      createRockFlow(flow, time),
-      createFallingWater(flow, time, options.mobile ?? false),
-    );
-    impact = createImpactZone(flow, options.mobile ?? false);
-    group.add(impact.group);
-    const impactSpeed = Math.hypot(
-      flow.velocity.x,
-      flow.velocity.y - 9.8 * flow.duration,
-      flow.velocity.z,
-    );
-    reflection.setImpact(
-      new Vector2(flow.impact.x, flow.impact.z),
-      Math.min(1.15, impactSpeed / 14),
-      new Vector2(flow.velocity.x, flow.velocity.z),
-    );
+    if (options.continuous) {
+      pond.geometry.computeBoundingBox();
+      flow = traceAttachedFlow(root, cliff);
+      const channel = makeChannel(
+        flow.launch,
+        pondY(),
+        pond.geometry.boundingBox!.min.z + 1.4,
+      );
+      flow.impact = channel.at(-1)!.point.clone().setY(pondY());
+      group.add(createRockFlow(flow, time));
+      const watercourse = createRockFlow(
+        {
+          ...flow,
+          lanes: [channel.map((s) => ({ ...s, normal: new Vector3(0, 1, 0) }))],
+        },
+        time,
+      );
+      watercourse.name = 'ExcavatedChannelWater';
+      group.add(watercourse);
+      reflection.setImpact(
+        new Vector2(flow.impact.x, flow.impact.z),
+        0.36,
+        new Vector2(0, 1),
+      );
+    } else {
+      flow = traceWaterFlow(root, cliff, pond, pondY());
+      group.add(
+        createRockFlow(flow, time),
+        createFallingWater(flow, time, options.mobile ?? false),
+      );
+      impact = createImpactZone(flow, options.mobile ?? false);
+      group.add(impact.group);
+      const impactSpeed = Math.hypot(
+        flow.velocity.x,
+        flow.velocity.y - 9.8 * flow.duration,
+        flow.velocity.z,
+      );
+      reflection.setImpact(
+        new Vector2(flow.impact.x, flow.impact.z),
+        Math.min(1.15, impactSpeed / 14),
+        new Vector2(flow.velocity.x, flow.velocity.z),
+      );
+    }
     group.traverse((object) => {
       if (object instanceof Mesh)
         triangles +=
@@ -110,7 +138,7 @@ export function createRealWaterEffects(
     },
     snapshot: () => ({
       ...options,
-      version: 6,
+      version: options.continuous ? 7 : 6,
       pondVersion: 4,
       elapsed,
       triangles,
@@ -123,14 +151,19 @@ export function createRealWaterEffects(
           l.map((s) => root.localToWorld(s.point.clone()).toArray()),
         ) ?? [],
       rockFlowCount: flow?.lanes.length ?? 0,
-      regions: ['rock-flow', 'crest', 'falling-volume', 'impact-pond'],
+      regions: options.continuous
+        ? ['rock-flow', 'rock-foot', 'channel', 'pond-inlet']
+        : ['rock-flow', 'crest', 'falling-volume', 'impact-pond'],
       launch: flow?.launch.toArray() ?? null,
       velocity: flow?.velocity.toArray() ?? null,
       impact: flow ? [flow.impact.x, flow.impact.z] : null,
       reflection: reflection.snapshot(),
       droplets: impact?.count ?? 0,
       ripples: 0,
-      path: flow?.fall.map((p) => root.localToWorld(p.clone()).toArray()) ?? [],
+      path:
+        (options.continuous ? flow?.lanes[3]?.map((s) => s.point) : flow?.fall)?.map(
+          (p) => root.localToWorld(p.clone()).toArray(),
+        ) ?? [],
       waveModel: 'jittered-directional-packets-and-advected-turbulence',
     }),
   };

@@ -29,6 +29,8 @@ export interface WaterOptions {
   freeFall?: boolean;
   interaction?: boolean;
   realWater?: boolean;
+  continuous?: boolean;
+  basinOnly?: boolean;
 }
 
 // Keep standard lighting, fog and receiving shadows. Only the diffuse colour

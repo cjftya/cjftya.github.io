@@ -20,7 +20,7 @@ import { auditLandmark } from './landmark/landmarkAudit';
 import './styles.css';
 
 function start(canvas: HTMLCanvasElement): void {
-  const config = DEFAULT_TERRAIN_CONFIG;
+  const config = { ...DEFAULT_TERRAIN_CONFIG };
   const scene = new Scene();
   const manager = new RendererManager(canvas);
   const renderer = manager.renderer;
@@ -220,26 +220,37 @@ function start(canvas: HTMLCanvasElement): void {
       water:
         debugEnabled &&
         (['v1', 'v2', 'v4'].includes(waterQuery ?? '') ||
-          ['v3', 'v4', 'v5', 'v6'].includes(candidateQuery.get('waterfall') ?? '')),
+          ['v3', 'v4', 'v5', 'v6', 'v7'].includes(
+            candidateQuery.get('waterfall') ?? '',
+          )),
       realistic:
         debugEnabled &&
         (waterQuery === 'v2' ||
           waterQuery === 'v4' ||
-          ['v3', 'v4', 'v5', 'v6'].includes(candidateQuery.get('waterfall') ?? '')),
+          ['v3', 'v4', 'v5', 'v6', 'v7'].includes(
+            candidateQuery.get('waterfall') ?? '',
+          )),
       mobile,
       realWater:
         debugEnabled &&
-        (candidateQuery.get('waterfall') === 'v6' || waterQuery === 'v4'),
+        (['v6', 'v7'].includes(candidateQuery.get('waterfall') ?? '') ||
+          waterQuery === 'v4'),
       freeFall:
         debugEnabled &&
         ['v4', 'v5', 'v6'].includes(candidateQuery.get('waterfall') ?? ''),
+      continuous: debugEnabled && candidateQuery.get('waterfall') === 'v7',
+      basinOnly:
+        debugEnabled &&
+        candidateQuery.get('basin') === 'excavated' &&
+        candidateQuery.get('waterfall') === 'off',
       interaction: debugEnabled && candidateQuery.get('waterfall') === 'v5',
       waterfall:
         debugEnabled &&
-        ['v1', 'v2', 'v3', 'v4', 'v5', 'v6'].includes(
+        ['v1', 'v2', 'v3', 'v4', 'v5', 'v6', 'v7'].includes(
           candidateQuery.get('waterfall') ?? '',
         ),
     },
+    terrain,
   )
     .then((loaded) => {
       if (disposed) {
@@ -268,6 +279,13 @@ function start(canvas: HTMLCanvasElement): void {
               controls.enableDamping = true;
               invalidate();
             },
+            reviewRebuild: () => {
+              loaded.place({
+                ...loaded.placement,
+                position: { ...loaded.placement.position },
+              });
+              invalidate();
+            },
             reviewWaterStep: (seconds = 0.5) => {
               const duration = Math.max(
                 0,
@@ -290,6 +308,7 @@ function start(canvas: HTMLCanvasElement): void {
               crystalDetail,
               aesthetic,
               mediumCamera,
+              excavation: loaded.excavationSnapshot(),
               waterEffects: loaded.waterEffects?.snapshot() ?? null,
               orbit: {
                 polar: controls.getPolarAngle(),
