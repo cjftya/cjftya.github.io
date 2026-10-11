@@ -1,3 +1,4 @@
+import { samplePatchedTerrain } from '../terrain/terrainSampling';
 import { sampleTerrainHeight, DEFAULT_TERRAIN_CONFIG } from '../terrain/heightfield';
 import type { TerrainConfig } from '../terrain/heightfield';
 import type { LandmarkPlacement } from './landmarkConfig';
@@ -14,6 +15,16 @@ export function landmarkWorldPoint(x: number, z: number, placement: LandmarkPlac
 /** Interpolate the actual terrain triangles, not just the analytic heightfield.
  * This avoids small hovering seams between the terrain's four-metre vertices. */
 export function sampleGround(
+  x: number,
+  z: number,
+  config: TerrainConfig = DEFAULT_TERRAIN_CONFIG,
+): number {
+  const patched = samplePatchedTerrain(x, z, config);
+  if (patched !== undefined) return patched;
+  return sampleOriginalGround(x, z, config);
+}
+
+export function sampleOriginalGround(
   x: number,
   z: number,
   config: TerrainConfig = DEFAULT_TERRAIN_CONFIG,

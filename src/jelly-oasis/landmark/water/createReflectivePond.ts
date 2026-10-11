@@ -26,6 +26,7 @@ export function createReflectivePond(
   ground: (x: number, z: number) => number,
   mobile: boolean,
   realWater = false,
+  excavated = false,
 ) {
   if (realWater) {
     const source = pond.geometry;
@@ -130,6 +131,7 @@ export function createReflectivePond(
       .replace(
         '#include <normal_fragment_maps>',
         `#include <normal_fragment_maps>
+        ${excavated ? 'if (waterThickness < 0.006) discard;' : ''}
         float wave = waterHeight(waterPosition.xz${realWater ? ', waterThickness' : ''});
         vec2 slope = vec2(waterHeight(waterPosition.xz + vec2(0.025, 0.0)${realWater ? ', waterThickness' : ''}) - wave,
           waterHeight(waterPosition.xz + vec2(0.0, 0.025)${realWater ? ', waterThickness' : ''}) - wave) / 0.025;
@@ -164,7 +166,11 @@ export function createReflectivePond(
       );
   };
   material.customProgramCacheKey = () =>
-    realWater ? 'oasis-reflective-pond-v4' : 'oasis-reflective-pond-v3';
+    excavated
+      ? 'oasis-reflective-pond-excavated-v1'
+      : realWater
+        ? 'oasis-reflective-pond-v4'
+        : 'oasis-reflective-pond-v3';
   material.needsUpdate = true;
   function rebuild() {
     const positions = pond.geometry.attributes.position!;
@@ -172,7 +178,7 @@ export function createReflectivePond(
     for (let i = 0; i < positions.count; i++) {
       depths.push(
         Math.max(
-          0.03,
+          excavated ? 0 : 0.03,
           positions.getY(i) - ground(positions.getX(i), positions.getZ(i)),
         ) * root.scale.x,
       );

@@ -1,3 +1,6 @@
+import { basinPlacementData } from './basinPlacementData';
+import { excavateTerrain } from '../terrain/excavateTerrain';
+import { traceAttachedFlow, makeChannel } from './water/continuousFlow';
 import {
   Box3,
   Color,
@@ -46,6 +49,7 @@ export async function createOvergrownRuin(
   crystalDetail = false,
   aesthetic: AestheticVariants = {},
   waterOptions: WaterOptions = { water: false, waterfall: false },
+  terrainMesh?: Mesh<BufferGeometry, MeshStandardMaterial>,
 ) {
   const assets = await loadLandmarkAssets(
     cliffDetail,
@@ -94,6 +98,11 @@ export async function createOvergrownRuin(
   pond.receiveShadow = true;
   content.add(pond);
   let pondHeight = 0;
+  let excavation: ReturnType<typeof excavateTerrain> | undefined;
+  let channelPath: ReturnType<typeof makeChannel> = [];
+  let hiddenShoreMeshes = 0;
+  let shorelineContacts: number[][] = [];
+  let shorelineContactTypes: string[] = [];
   let waterEffects: ReturnType<typeof createWaterEffects> | undefined;
   const bankVertices = new Map<Mesh, Float32Array>();
   const detailBankVertices = new Map<
@@ -158,6 +167,13 @@ export async function createOvergrownRuin(
           while (!owner.userData.pond_role && owner.parent && owner !== object)
             owner = owner.parent;
           const role = owner.userData.pond_role;
+          if (
+            (waterOptions.continuous || waterOptions.basinOnly) &&
+            ['shore', 'bank'].includes(role)
+          ) {
+            child.visible = false;
+            hiddenShoreMeshes++;
+          }
           if (
             pondDetail === 'v2' &&
             role === 'shore' &&
@@ -226,6 +242,8 @@ export async function createOvergrownRuin(
       next.scale <= 0
     )
       throw new Error('Invalid landmark placement');
+    excavation?.dispose();
+    excavation = undefined;
     Object.assign(placement, next, { position: { ...next.position } });
     root.position.set(
       next.position.x,
@@ -286,9 +304,13 @@ export async function createOvergrownRuin(
       mesh.geometry.computeBoundingBox();
       mesh.geometry.computeBoundingSphere();
     }
-    // A level inspection surface in the existing basin; terrain is never edited.
+    // Baseline uses the original inspection level; excavation is opt-in.
     const shore = heightGuide.positions.slice(1).map((p) => localGround(p[0]!, p[2]!));
-    pondHeight = Math.max(...shore) + 0.025 / placement.scale;
+    pondHeight =
+      waterOptions.continuous || waterOptions.basinOnly
+        ? Math.min(...pondGuide.positions.map((p) => localGround(p[0]!, p[2]!))) -
+          0.12 / placement.scale
+        : Math.max(...shore) + 0.025 / placement.scale;
     const vertices = pond.geometry.attributes.position!;
     for (let i = 0; i < vertices.count; i++) vertices.setY(i, pondHeight);
     vertices.needsUpdate = true;
@@ -399,6 +421,85 @@ export async function createOvergrownRuin(
     bank.userData.maxBankLift = maxBankLift;
     bank.userData.maxBankDisplacement = maxBankDisplacement;
     root.updateMatrixWorld(true);
+    if (waterOptions.continuous || waterOptions.basinOnly) {
+      if (!terrainMesh)
+        throw new Error('Excavation requires the rendered terrain mesh');
+      const attached = traceAttachedFlow(
+        root,
+        assets.modules.get('Cliff_Waterfall_A')!,
+      );
+      pond.geometry.computeBoundingBox();
+      channelPath = makeChannel(
+        attached.launch,
+        pondHeight,
+        pond.geometry.boundingBox!.min.z + 1.4,
+      );
+      const protectedZones = assets.layout.modules
+        .filter((m) => /^(Ruin_|Root_|Crystal_)/.test(m.name))
+        .map((m) => m.bounds);
+      excavation = excavateTerrain(
+        terrainMesh,
+        terrain,
+        root,
+        pondGuide,
+        pondHeight,
+        channelPath,
+        protectedZones,
+      );
+      // Shift whole stone owners, including all material primitives, rigidly.
+      const rockShifts = new Map<Object3D, number>();
+      for (const [owner, points] of rigidBankParts) {
+        if (owner.userData.pond_role !== 'rock') continue;
+        const low = Math.min(...points.map((p) => p.y));
+        const high = Math.max(...points.map((p) => p.y));
+        const feet = points.filter((p) => p.y <= low + (high - low) * 0.45);
+        rockShifts.set(
+          owner,
+          Math.min(
+            ...feet.map(
+              (p) => localGround(bank.position.x + p.x, bank.position.z + p.z) - p.y,
+            ),
+          ) - 0.1,
+        );
+      }
+      for (const [mesh, data] of detailBankVertices) {
+        if (data.role !== 'rock') continue;
+        const shift = rockShifts.get(data.owner) ?? 0;
+        data.points.forEach((p, i) => {
+          point.copy(p);
+          point.y += shift;
+          point.applyMatrix4(data.toMesh);
+          mesh.geometry.attributes.position!.setXYZ(i, point.x, point.y, point.z);
+        });
+        mesh.geometry.attributes.position!.needsUpdate = true;
+        mesh.geometry.computeVertexNormals();
+        mesh.geometry.computeBoundingBox();
+        mesh.geometry.computeBoundingSphere();
+      }
+      shorelineContactTypes = [];
+      shorelineContacts = pondGuide.positions.map((p) => {
+        if (localGround(p[0]!, p[2]!) < pondHeight) {
+          shorelineContactTypes.push('channel-inlet');
+          return [p[0]!, localGround(p[0]!, p[2]!), p[2]!];
+        }
+        shorelineContactTypes.push('shoreline');
+        let dry = 0,
+          wet = 1;
+        for (let i = 0; i < 24; i++) {
+          const t = (dry + wet) / 2,
+            x = p[0]! * (1 - t),
+            z = p[2]! + (7 - p[2]!) * t;
+          if (localGround(x, z) > pondHeight) dry = t;
+          else wet = t;
+        }
+        const t = (dry + wet) / 2,
+          x = p[0]! * (1 - t),
+          z = p[2]! + (7 - p[2]!) * t;
+        return [x, localGround(x, z), z];
+      });
+      pond.visible = !waterOptions.basinOnly;
+      root.updateMatrixWorld(true);
+    }
     waterEffects?.rebuild();
   }
   place(placement);
@@ -463,6 +564,31 @@ export async function createOvergrownRuin(
     pond,
     waterEffects,
     localGround,
+    excavationSnapshot: () =>
+      excavation
+        ? {
+            ...excavation.snapshot(),
+            hiddenShoreMeshes,
+            channelPath: channelPath.map((s) => s.point.toArray()),
+            channelFloorHeight: channelPath.map((s) =>
+              localGround(s.point.x, s.point.z),
+            ),
+            inletPosition: channelPath.at(-1)!.point.clone().setY(pondHeight).toArray(),
+            flowSegments: ['rock-flow', 'rock-foot', 'channel', 'pond-inlet'],
+            shorelineContacts,
+            shorelineContactTypes,
+            shorelineGaps: shorelineContacts
+              .filter((_, i) => shorelineContactTypes[i] === 'shoreline')
+              .map((p) => Math.abs(p[1]! - pondHeight)),
+            phase2: basinPlacementData(
+              pondGuide,
+              assets.layout,
+              localGround,
+              pondHeight,
+              channelPath,
+            ),
+          }
+        : null,
     place,
     showReference,
     get pondHeight() {
@@ -471,7 +597,7 @@ export async function createOvergrownRuin(
     isolate(name: string) {
       for (const [key, object] of assets.modules)
         object.visible = !name || key === name;
-      pond.visible = !name;
+      pond.visible = !name && !waterOptions.basinOnly;
       if (waterEffects) waterEffects.group.visible = !name;
     },
     refreshMaterials() {
@@ -487,6 +613,7 @@ export async function createOvergrownRuin(
       if (disposed) return;
       disposed = true;
       waterEffects?.dispose();
+      excavation?.dispose();
       root.removeFromParent();
       disposeLandmarkResources([root]);
       root.clear();
