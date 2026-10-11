@@ -17,6 +17,8 @@ import { createLandmarkDebug } from './landmark/landmarkDebug';
 import { frameLandmark } from './landmark/landmarkCamera';
 import type { LandmarkCamera } from './landmark/landmarkConfig';
 import { auditLandmark } from './landmark/landmarkAudit';
+import type { PondControls } from './landmark/water/gpgpuPondSurface';
+import { createPondPanel } from './landmark/water/gpgpuPondPanel';
 import './styles.css';
 
 function start(canvas: HTMLCanvasElement): void {
@@ -60,6 +62,7 @@ function start(canvas: HTMLCanvasElement): void {
   let renderCpuMs = 0;
   let frameCpuMs = 0;
   let landmark: OvergrownRuin | null = null;
+  let pondPanel: HTMLElement | undefined;
   let landmarkDebug: ReturnType<typeof createLandmarkDebug> | null = null;
   let reviewCamera = false;
   let groundCamera = false;
@@ -240,6 +243,17 @@ function start(canvas: HTMLCanvasElement): void {
         ['v4', 'v5', 'v6'].includes(candidateQuery.get('waterfall') ?? ''),
       continuous:
         debugEnabled && ['v7', 'v8'].includes(candidateQuery.get('waterfall') ?? ''),
+      renderer:
+        debugEnabled &&
+        candidateQuery.get('waterfall') === 'v8' &&
+        candidateQuery.get('surface') === 'gpgpu-proto'
+          ? renderer
+          : undefined,
+      gpgpuPrototype:
+        debugEnabled &&
+        candidateQuery.get('waterfall') === 'v8' &&
+        candidateQuery.get('surface') === 'gpgpu-proto',
+      gpuNeutral: candidateQuery.get('material') !== 'optics',
       dynamics: debugEnabled && candidateQuery.get('waterfall') === 'v8',
       basinOnly:
         debugEnabled &&
@@ -293,14 +307,26 @@ function start(canvas: HTMLCanvasElement): void {
               if (effects && 'setFlowRate' in effects) effects.setFlowRate(rate);
               invalidate();
             },
+            reviewPond: (settings: PondControls) => {
+              const effects = loaded.waterEffects;
+              if (effects && 'configurePond' in effects)
+                effects.configurePond(settings);
+              invalidate();
+            },
+            reviewPondHeights: () => {
+              const effects = loaded.waterEffects;
+              return effects && 'readPondHeights' in effects
+                ? effects.readPondHeights()
+                : null;
+            },
             reviewWaterStep: (seconds = 0.5) => {
               const duration = Math.max(
                 0,
                 Math.min(2, Number.isFinite(seconds) ? seconds : 0),
               );
-              for (let remaining = duration; remaining > 0.0001; remaining -= 0.1)
+              for (let remaining = duration; remaining > 0.0001; remaining -= 1 / 60)
                 loaded.waterEffects?.update(
-                  Math.min(0.1, remaining),
+                  Math.min(1 / 60, remaining),
                   environment.state.timeOfDay,
                   false,
                 );
@@ -386,18 +412,44 @@ function start(canvas: HTMLCanvasElement): void {
           },
         });
       }
-      if (debugEnabled && candidateQuery.get('view') === 'waterfall') {
+      if (
+        debugEnabled &&
+        ['waterfall', 'pond-low', 'pond-top'].includes(candidateQuery.get('view') ?? '')
+      ) {
         mediumCamera = false;
         reviewCamera = groundCamera = true;
         controls.enableDamping = false;
         controls.update();
         controls.minDistance = 1;
         controls.maxPolarAngle = Math.PI - 0.01;
-        camera.position.set(82, 1, 93);
-        controls.target.set(66, -3, 50);
+        const pondView = candidateQuery.get('view');
+        if (pondView === 'pond-low') {
+          camera.position.set(70, -4.6, 79);
+          controls.target.set(70, -6.3, 66);
+        } else if (pondView === 'pond-top') {
+          camera.position.set(70, 24, 65);
+          controls.target.set(70, -6.3, 64);
+        } else {
+          camera.position.set(82, 1, 93);
+          controls.target.set(66, -3, 50);
+        }
         controls.update();
         controls.enableDamping = true;
         environment.setTime(12);
+      }
+      if (
+        debugEnabled &&
+        candidateQuery.get('waterfall') === 'v8' &&
+        candidateQuery.get('surface') === 'gpgpu-proto' &&
+        loaded.waterEffects &&
+        'configurePond' in loaded.waterEffects
+      ) {
+        pondPanel = createPondPanel(
+          loaded.waterEffects.configurePond,
+          invalidate,
+          candidateQuery.get('material') !== 'optics',
+          loaded.waterEffects.snapshot().gpuError,
+        );
       }
       invalidate();
     })
@@ -546,6 +598,7 @@ function start(canvas: HTMLCanvasElement): void {
     edge.geometry.dispose();
     edge.material.dispose();
     environment.dispose();
+    pondPanel?.remove();
     debugPanel?.dispose();
     motionPreference.removeEventListener('change', motionChanged);
     manager.dispose();
@@ -574,6 +627,8 @@ function start(canvas: HTMLCanvasElement): void {
     environment.invalidate();
     renderer.shadowMap.needsUpdate = true;
     landmark?.refreshMaterials();
+    if (landmark?.waterEffects && 'restorePond' in landmark.waterEffects)
+      landmark.waterEffects.restorePond();
     landmark?.waterEffects?.invalidate();
     dirty = true;
     visibility();
