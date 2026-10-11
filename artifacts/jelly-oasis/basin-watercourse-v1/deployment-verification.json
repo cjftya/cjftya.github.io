@@ -1,0 +1,45 @@
+{
+  "verifiedSourceCommit": "eaa98bbd0feaadc6d61fe9b3455bc3b8dcc01589",
+  "verifiedSourceTree": "573cfa9b8f3de1863f4840e82497262e2e7b7aa1",
+  "workflowRunId": 38109243152,
+  "workflowURL": "https://github.com/cjftya/cjftya.github.io/actions/runs/38109243152",
+  "build": "success",
+  "deploy": "success",
+  "publishedAsset": "/assets/jellyOasis-CQV3YRPo.js",
+  "publishedAssetSHA256": "c012dd4c02fef986244a18755e7971f7886f3c9739263527c6d6cd8c2611f129",
+  "matchesLocalValidatedBuild": true,
+  "verifiedAt": "2026-10-11T03:46:51.192Z",
+  "runtime": {
+    "base": "https://cjftya.github.io/projects/jelly-oasis/",
+    "method": "Published HTML, JavaScript and GLBs retrieved through certificate-validating curl and replayed on loopback in WebGL-capable headless Chromium. Direct cloud browser WebGL and proxy TLS runtime unavailable.",
+    "states": {
+      "v7": {
+        "modules": 16,
+        "version": 7,
+        "excavationDepth": 2.3641164019366254,
+        "flightDuration": 0
+      },
+      "terrain": {
+        "modules": 16,
+        "version": null,
+        "excavationDepth": 2.3641164019366254,
+        "flightDuration": null
+      },
+      "v6": {
+        "modules": 16,
+        "version": 6,
+        "excavationDepth": null,
+        "flightDuration": 1.1987743977146101
+      },
+      "default": {
+        "modules": 16,
+        "version": null,
+        "excavationDepth": null,
+        "flightDuration": null
+      }
+    },
+    "errors": []
+  },
+  "physicalMobilePerformance": "unverified",
+  "note": "This record adds documentation only; application source and published bundle are unchanged."
+}
