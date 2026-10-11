@@ -1,0 +1,645 @@
+{
+  "head": "c56880bae07fb68a11dde0f57b4c48f5b9c7ec92",
+  "dateKST": "2026-10-12",
+  "environment": "Linux; Node/Vite; no working WebGL browser",
+  "assets": [
+    {
+      "name": "Cliff_Waterfall_A",
+      "file": "aesthetic-improvement-v1/Cliff_Waterfall_A_Refined_v1.glb",
+      "triangles": 3238,
+      "bad": 0,
+      "degenerate": 0,
+      "flatNormalTriangles": 3238,
+      "meshes": 1,
+      "primitives": 2,
+      "images": 0,
+      "bytes": 252484
+    },
+    {
+      "name": "Rock_Large_A",
+      "file": "Rock_Large_A.glb",
+      "triangles": 436,
+      "bad": 0,
+      "degenerate": 0,
+      "flatNormalTriangles": 436,
+      "meshes": 1,
+      "primitives": 3,
+      "images": 0,
+      "bytes": 34872
+    },
+    {
+      "name": "Rock_Large_B",
+      "file": "Rock_Large_B.glb",
+      "triangles": 220,
+      "bad": 0,
+      "degenerate": 0,
+      "flatNormalTriangles": 220,
+      "meshes": 1,
+      "primitives": 3,
+      "images": 0,
+      "bytes": 18576
+    },
+    {
+      "name": "Rock_Large_C",
+      "file": "Rock_Large_C.glb",
+      "triangles": 220,
+      "bad": 0,
+      "degenerate": 0,
+      "flatNormalTriangles": 220,
+      "meshes": 1,
+      "primitives": 3,
+      "images": 0,
+      "bytes": 18592
+    },
+    {
+      "name": "Rock_Large_D",
+      "file": "Rock_Large_D.glb",
+      "triangles": 220,
+      "bad": 0,
+      "degenerate": 0,
+      "flatNormalTriangles": 220,
+      "meshes": 1,
+      "primitives": 3,
+      "images": 0,
+      "bytes": 18628
+    },
+    {
+      "name": "Rock_Large_E",
+      "file": "Rock_Large_E.glb",
+      "triangles": 220,
+      "bad": 0,
+      "degenerate": 0,
+      "flatNormalTriangles": 220,
+      "meshes": 1,
+      "primitives": 3,
+      "images": 0,
+      "bytes": 18580
+    },
+    {
+      "name": "Ruin_Arch_A",
+      "file": "Ruin_Arch_A_Detail_v1.glb",
+      "triangles": 1046,
+      "bad": 0,
+      "degenerate": 0,
+      "flatNormalTriangles": 1046,
+      "meshes": 1,
+      "primitives": 3,
+      "images": 0,
+      "bytes": 62584
+    },
+    {
+      "name": "Ruin_Wall_A",
+      "file": "Ruin_Wall_A_Detail_v1.glb",
+      "triangles": 500,
+      "bad": 0,
+      "degenerate": 0,
+      "flatNormalTriangles": 500,
+      "meshes": 1,
+      "primitives": 2,
+      "images": 0,
+      "bytes": 34736
+    },
+    {
+      "name": "Ruin_BrokenWall_A",
+      "file": "Ruin_BrokenWall_A_Detail_v1.glb",
+      "triangles": 450,
+      "bad": 0,
+      "degenerate": 0,
+      "flatNormalTriangles": 450,
+      "meshes": 1,
+      "primitives": 2,
+      "images": 0,
+      "bytes": 37376
+    },
+    {
+      "name": "Tree_Landmark_Blockout",
+      "file": "aesthetic-improvement-v1/Tree_Landmark_Blockout_Refined_v1.glb",
+      "triangles": 11866,
+      "bad": 0,
+      "degenerate": 0,
+      "flatNormalTriangles": 11866,
+      "meshes": 2,
+      "primitives": 4,
+      "images": 0,
+      "bytes": 927824
+    },
+    {
+      "name": "Root_Large_A",
+      "file": "Root_Large_A_Detail_v1.glb",
+      "triangles": 740,
+      "bad": 0,
+      "degenerate": 0,
+      "flatNormalTriangles": 740,
+      "meshes": 1,
+      "primitives": 1,
+      "images": 0,
+      "bytes": 62264
+    },
+    {
+      "name": "Root_Tree_Base_Blockout",
+      "file": "Root_Tree_Base_Blockout_Detail_v1.glb",
+      "triangles": 256,
+      "bad": 0,
+      "degenerate": 0,
+      "flatNormalTriangles": 256,
+      "meshes": 1,
+      "primitives": 1,
+      "images": 0,
+      "bytes": 58768
+    },
+    {
+      "name": "PondEdge_Blockout",
+      "file": "aesthetic-improvement-v1/PondEdge_Blockout_Refined_v1.glb",
+      "triangles": 1176,
+      "bad": 0,
+      "degenerate": 0,
+      "flatNormalTriangles": 720,
+      "meshes": 10,
+      "primitives": 29,
+      "images": 0,
+      "bytes": 112948
+    },
+    {
+      "name": "Crystal_Blockout_A",
+      "file": "Crystal_Blockout_A.glb",
+      "triangles": 66,
+      "bad": 0,
+      "degenerate": 0,
+      "flatNormalTriangles": 66,
+      "meshes": 1,
+      "primitives": 1,
+      "images": 0,
+      "bytes": 5144
+    },
+    {
+      "name": "Crystal_Blockout_B",
+      "file": "Crystal_Blockout_B.glb",
+      "triangles": 66,
+      "bad": 0,
+      "degenerate": 0,
+      "flatNormalTriangles": 66,
+      "meshes": 1,
+      "primitives": 1,
+      "images": 0,
+      "bytes": 5144
+    },
+    {
+      "name": "Crystal_Blockout_C",
+      "file": "Crystal_Blockout_C.glb",
+      "triangles": 66,
+      "bad": 0,
+      "degenerate": 0,
+      "flatNormalTriangles": 66,
+      "meshes": 1,
+      "primitives": 1,
+      "images": 0,
+      "bytes": 5144
+    }
+  ],
+  "crystalCandidates": [
+    {
+      "name": "Crystal_Blockout_A",
+      "file": "crystal-accent-detail-v1/Crystal_Blockout_A_Detail_v1.glb",
+      "triangles": 102,
+      "bad": 0,
+      "degenerate": 0,
+      "flatNormalTriangles": 102,
+      "meshes": 1,
+      "primitives": 4,
+      "images": 0,
+      "bytes": 11128
+    },
+    {
+      "name": "Crystal_Blockout_B",
+      "file": "crystal-accent-detail-v1/Crystal_Blockout_B_Detail_v1.glb",
+      "triangles": 102,
+      "bad": 0,
+      "degenerate": 0,
+      "flatNormalTriangles": 102,
+      "meshes": 1,
+      "primitives": 4,
+      "images": 0,
+      "bytes": 11168
+    },
+    {
+      "name": "Crystal_Blockout_C",
+      "file": "crystal-accent-detail-v1/Crystal_Blockout_C_Detail_v1.glb",
+      "triangles": 102,
+      "bad": 0,
+      "degenerate": 0,
+      "flatNormalTriangles": 102,
+      "meshes": 1,
+      "primitives": 4,
+      "images": 0,
+      "bytes": 11144
+    }
+  ],
+  "httpAndPreservation": [
+    {
+      "name": "Cliff_Waterfall_A",
+      "file": "aesthetic-improvement-v1/Cliff_Waterfall_A_Refined_v1.glb",
+      "status": 200,
+      "sha256": "b2d101c2f9b45dcebf89db18c7262e366e9068799cd13968be7a7058ef58c6fb",
+      "same_as_aesthetic": true,
+      "http_matches_source": true
+    },
+    {
+      "name": "Rock_Large_A",
+      "file": "Rock_Large_A.glb",
+      "status": 200,
+      "sha256": "7691a0f1788b6a3258e180627a0c88f0fe3c76b0069134c2d477baa380c12f44",
+      "same_as_aesthetic": true,
+      "http_matches_source": true
+    },
+    {
+      "name": "Rock_Large_B",
+      "file": "Rock_Large_B.glb",
+      "status": 200,
+      "sha256": "738648a0403b46bfad5676cd43b41538abda64213702b863446bf40cf5136697",
+      "same_as_aesthetic": true,
+      "http_matches_source": true
+    },
+    {
+      "name": "Rock_Large_C",
+      "file": "Rock_Large_C.glb",
+      "status": 200,
+      "sha256": "51abe046434b45e6988f49e374150f40e800896b0342420f1dbc7ada34d65376",
+      "same_as_aesthetic": true,
+      "http_matches_source": true
+    },
+    {
+      "name": "Rock_Large_D",
+      "file": "Rock_Large_D.glb",
+      "status": 200,
+      "sha256": "4c72463ea44e4ef156cf21b6401e4b3aaa8a78e87387aaa115e59e85cf8c9d9a",
+      "same_as_aesthetic": true,
+      "http_matches_source": true
+    },
+    {
+      "name": "Rock_Large_E",
+      "file": "Rock_Large_E.glb",
+      "status": 200,
+      "sha256": "470f5169117cade45427ab655b66c19b6cc1855c2eedb0de256f1e2d9d0db198",
+      "same_as_aesthetic": true,
+      "http_matches_source": true
+    },
+    {
+      "name": "Ruin_Arch_A",
+      "file": "Ruin_Arch_A_Detail_v1.glb",
+      "status": 200,
+      "sha256": "e0957ece91c0ed103b6c5e9b846810c72e1601ac18544fee4a32383296490737",
+      "same_as_aesthetic": true,
+      "http_matches_source": true
+    },
+    {
+      "name": "Ruin_Wall_A",
+      "file": "Ruin_Wall_A_Detail_v1.glb",
+      "status": 200,
+      "sha256": "6ca3501de74d1c055ef9a4fec53039509d6bf789255f55aa96f81626a0ca06da",
+      "same_as_aesthetic": true,
+      "http_matches_source": true
+    },
+    {
+      "name": "Ruin_BrokenWall_A",
+      "file": "Ruin_BrokenWall_A_Detail_v1.glb",
+      "status": 200,
+      "sha256": "101c21ad988811827305aa09a85508c2af8b58c123afa0b0e8c8f7af455484a6",
+      "same_as_aesthetic": true,
+      "http_matches_source": true
+    },
+    {
+      "name": "Tree_Landmark_Blockout",
+      "file": "aesthetic-improvement-v1/Tree_Landmark_Blockout_Refined_v1.glb",
+      "status": 200,
+      "sha256": "0c8dd328d248f8100a73d6d1fc0dc5b15bbdc8543f27951786fd544a7a08bbf4",
+      "same_as_aesthetic": true,
+      "http_matches_source": true
+    },
+    {
+      "name": "Root_Large_A",
+      "file": "Root_Large_A_Detail_v1.glb",
+      "status": 200,
+      "sha256": "472bd407499d7440c6a029425ce834b5bb39f8dc061aa2cf79f9fab212391fe1",
+      "same_as_aesthetic": true,
+      "http_matches_source": true
+    },
+    {
+      "name": "Root_Tree_Base_Blockout",
+      "file": "Root_Tree_Base_Blockout_Detail_v1.glb",
+      "status": 200,
+      "sha256": "62087eed9fe46c5c82eaf15a7e3ad6be8b6f35200c8858637c889c5a983dbb9a",
+      "same_as_aesthetic": true,
+      "http_matches_source": true
+    },
+    {
+      "name": "PondEdge_Blockout",
+      "file": "aesthetic-improvement-v1/PondEdge_Blockout_Refined_v1.glb",
+      "status": 200,
+      "sha256": "56a347f99e67dfe0e48870a32dcac0eddc759259fe159eb276f26963435da4c9",
+      "same_as_aesthetic": true,
+      "http_matches_source": true
+    },
+    {
+      "name": "Crystal_Blockout_A",
+      "file": "Crystal_Blockout_A.glb",
+      "status": 200,
+      "sha256": "907527669a85fea4c0e8633bb1ad9bbe28a38d69d3f97554bc48720d250797ce",
+      "same_as_aesthetic": true,
+      "http_matches_source": true
+    },
+    {
+      "name": "Crystal_Blockout_B",
+      "file": "Crystal_Blockout_B.glb",
+      "status": 200,
+      "sha256": "7d81b07dda5b631998575816d4060030b3ed7480f914ba2fa41d450930b4ab5c",
+      "same_as_aesthetic": true,
+      "http_matches_source": true
+    },
+    {
+      "name": "Crystal_Blockout_C",
+      "file": "Crystal_Blockout_C.glb",
+      "status": 200,
+      "sha256": "4c6e102789aa65ac76bec7746fb7d411b99b9df88798a438a196184f5ed95b89",
+      "same_as_aesthetic": true,
+      "http_matches_source": true
+    }
+  ],
+  "runtime": {
+    "default": {
+      "modules": 16,
+      "triangles": 20786,
+      "audit": {
+        "method": "Projected GLB triangles clipped to 0.08–3 m above sampled terrain; discrete route samples, not a continuous collision guarantee.",
+        "placement": {
+          "id": "basin",
+          "label": "동쪽 분지",
+          "position": {
+            "x": 70,
+            "z": 58
+          },
+          "rotationY": 0.5235987755982988,
+          "scale": 1
+        },
+        "site": {
+          "relief": 7.367503976975923,
+          "pondRelief": 0.7310974095892329,
+          "insideWorld": true,
+          "meadowOverlap": 0,
+          "worldAreaFraction": 0.059375
+        },
+        "loop": {
+          "width": 6,
+          "samples": 5040,
+          "intersections": {},
+          "clear": true
+        },
+        "clearing": {
+          "diameter": 16,
+          "samples": 3209,
+          "intersections": {},
+          "clear": true
+        },
+        "approach": {
+          "samples": 4212,
+          "intersections": {},
+          "clear": true
+        },
+        "passage": {
+          "measuredJambWidth": 4.620000000000134,
+          "testedWidth": 4,
+          "samples": 1000,
+          "intersections": {},
+          "clear": true
+        },
+        "contact": {
+          "Cliff_Waterfall_A": {
+            "burial": 1.887559314409872,
+            "supportCount": 61,
+            "y": -5.671586008893642
+          },
+          "Rock_Large_A": {
+            "burial": 1.0343994461308443,
+            "supportCount": 22,
+            "y": -4.712236708338152
+          },
+          "Rock_Large_B": {
+            "burial": 0.8258652333460788,
+            "supportCount": 16,
+            "y": -3.218463871028857
+          },
+          "Rock_Large_C": {
+            "burial": 0.7092930757340645,
+            "supportCount": 16,
+            "y": -4.180207843928207
+          },
+          "Rock_Large_D": {
+            "burial": 0.8333341107739365,
+            "supportCount": 16,
+            "y": -4.702049294096674
+          },
+          "Rock_Large_E": {
+            "burial": 0.6447046238006275,
+            "supportCount": 16,
+            "y": -3.7120995210544927
+          },
+          "Ruin_Arch_A": {
+            "burial": 1.290435076322268,
+            "supportCount": 24,
+            "y": -5.8000104992213
+          },
+          "Ruin_Wall_A": {
+            "burial": 1.333841161993317,
+            "supportCount": 36,
+            "y": -5.6016449433395845
+          },
+          "Ruin_BrokenWall_A": {
+            "burial": 1.1926923251301975,
+            "supportCount": 36,
+            "y": -4.805628747005377
+          },
+          "Tree_Landmark_Blockout": {
+            "burial": 0.8440510781406823,
+            "supportCount": 9,
+            "y": -3.687496879261822
+          },
+          "Root_Large_A": {
+            "burial": 1.0954476681452503,
+            "supportCount": 51,
+            "y": -4.386980721720535
+          },
+          "Root_Tree_Base_Blockout": {
+            "burial": 0.9672265287947264,
+            "supportCount": 19,
+            "y": -4.158922772758809
+          },
+          "PondEdge_Blockout": {
+            "burial": 0,
+            "supportCount": 993,
+            "y": -5.389069482748612
+          },
+          "Crystal_Blockout_A": {
+            "burial": 0.4744579249107872,
+            "supportCount": 18,
+            "y": -4.756109113953943
+          },
+          "Crystal_Blockout_B": {
+            "burial": 0.4247576157751789,
+            "supportCount": 18,
+            "y": -5.105552504571298
+          },
+          "Crystal_Blockout_C": {
+            "burial": 0.3584559217009211,
+            "supportCount": 18,
+            "y": -3.8418252062291662
+          }
+        },
+        "pondHeight": -5.389069482748612,
+        "pondBankMaxLift": 0.8145113383431358,
+        "obstaclePolygons": 4339
+      },
+      "pondHeight": -5.389069482748612
+    },
+    "detail": {
+      "modules": 16,
+      "triangles": 20894,
+      "audit": {
+        "method": "Projected GLB triangles clipped to 0.08–3 m above sampled terrain; discrete route samples, not a continuous collision guarantee.",
+        "placement": {
+          "id": "basin",
+          "label": "동쪽 분지",
+          "position": {
+            "x": 70,
+            "z": 58
+          },
+          "rotationY": 0.5235987755982988,
+          "scale": 1
+        },
+        "site": {
+          "relief": 7.367503976975923,
+          "pondRelief": 0.7310974095892329,
+          "insideWorld": true,
+          "meadowOverlap": 0,
+          "worldAreaFraction": 0.059375
+        },
+        "loop": {
+          "width": 6,
+          "samples": 5040,
+          "intersections": {},
+          "clear": true
+        },
+        "clearing": {
+          "diameter": 16,
+          "samples": 3209,
+          "intersections": {},
+          "clear": true
+        },
+        "approach": {
+          "samples": 4212,
+          "intersections": {},
+          "clear": true
+        },
+        "passage": {
+          "measuredJambWidth": 4.620000000000134,
+          "testedWidth": 4,
+          "samples": 1000,
+          "intersections": {},
+          "clear": true
+        },
+        "contact": {
+          "Cliff_Waterfall_A": {
+            "burial": 1.887559314409872,
+            "supportCount": 61,
+            "y": -5.671586008893642
+          },
+          "Rock_Large_A": {
+            "burial": 1.0343994461308443,
+            "supportCount": 22,
+            "y": -4.712236708338152
+          },
+          "Rock_Large_B": {
+            "burial": 0.8258652333460788,
+            "supportCount": 16,
+            "y": -3.218463871028857
+          },
+          "Rock_Large_C": {
+            "burial": 0.7092930757340645,
+            "supportCount": 16,
+            "y": -4.180207843928207
+          },
+          "Rock_Large_D": {
+            "burial": 0.8333341107739365,
+            "supportCount": 16,
+            "y": -4.702049294096674
+          },
+          "Rock_Large_E": {
+            "burial": 0.6447046238006275,
+            "supportCount": 16,
+            "y": -3.7120995210544927
+          },
+          "Ruin_Arch_A": {
+            "burial": 1.290435076322268,
+            "supportCount": 24,
+            "y": -5.8000104992213
+          },
+          "Ruin_Wall_A": {
+            "burial": 1.333841161993317,
+            "supportCount": 36,
+            "y": -5.6016449433395845
+          },
+          "Ruin_BrokenWall_A": {
+            "burial": 1.1926923251301975,
+            "supportCount": 36,
+            "y": -4.805628747005377
+          },
+          "Tree_Landmark_Blockout": {
+            "burial": 0.8440510781406823,
+            "supportCount": 9,
+            "y": -3.687496879261822
+          },
+          "Root_Large_A": {
+            "burial": 1.0954476681452503,
+            "supportCount": 51,
+            "y": -4.386980721720535
+          },
+          "Root_Tree_Base_Blockout": {
+            "burial": 0.9672265287947264,
+            "supportCount": 19,
+            "y": -4.158922772758809
+          },
+          "PondEdge_Blockout": {
+            "burial": 0,
+            "supportCount": 993,
+            "y": -5.389069482748612
+          },
+          "Crystal_Blockout_A": {
+            "burial": 0.4744579249107872,
+            "supportCount": 18,
+            "y": -4.756109113953943
+          },
+          "Crystal_Blockout_B": {
+            "burial": 0.4247576157751789,
+            "supportCount": 18,
+            "y": -5.105552504571298
+          },
+          "Crystal_Blockout_C": {
+            "burial": 0.3584559217009211,
+            "supportCount": 18,
+            "y": -3.8418252062291662
+          }
+        },
+        "pondHeight": -5.389069482748612,
+        "pondBankMaxLift": 0.8145113383431358,
+        "obstaclePolygons": 4437
+      },
+      "pondHeight": -5.389069482748612
+    }
+  },
+  "visual": "NOT_TESTED at current HEAD; reused repository captures are historical evidence only",
+  "checks": {
+    "lint": "PASS",
+    "build": "PASS",
+    "focusedTests": "PASS: 4 files / 22 tests",
+    "fullSuite": "NOT_RUN",
+    "realDevice": "NOT_TESTED"
+  }
+}
