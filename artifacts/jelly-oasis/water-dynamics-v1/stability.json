@@ -1,0 +1,629 @@
+[
+  {
+    "rate": 0,
+    "samples": [
+      {
+        "backend": "cpu-staggered-shallow-water",
+        "updateCpuMs": 3.107844,
+        "averageUpdateCpuMs": 3.6502668099999984,
+        "renderWaveScale": 2,
+        "resolution": 64,
+        "elapsed": 9.995916007139163,
+        "fixedDt": 0.008074245563117437,
+        "cfl": 0.385508502065193,
+        "maxHeight": 0,
+        "maxSpeed": 0,
+        "heightEnergy": 0,
+        "meanHeight": 0,
+        "volume": 182.25000724196434,
+        "inputVolume": 0,
+        "returnDrainVolume": 0,
+        "massError": 0,
+        "droppedTime": 0,
+        "textureBytes": 16384,
+        "flowRate": 0,
+        "source": {
+          "point": [
+            0,
+            -3
+          ],
+          "direction": [
+            0,
+            1
+          ],
+          "width": 2,
+          "speed": 1.4,
+          "discharge": 0.224
+        }
+      },
+      {
+        "backend": "cpu-staggered-shallow-water",
+        "updateCpuMs": 3.478953000000047,
+        "averageUpdateCpuMs": 3.57657337,
+        "renderWaveScale": 2,
+        "resolution": 64,
+        "elapsed": 19.999906259842117,
+        "fixedDt": 0.008074245563117437,
+        "cfl": 0.385508502065193,
+        "maxHeight": 0,
+        "maxSpeed": 0,
+        "heightEnergy": 0,
+        "meanHeight": 0,
+        "volume": 182.25000724196434,
+        "inputVolume": 0,
+        "returnDrainVolume": 0,
+        "massError": 0,
+        "droppedTime": 0,
+        "textureBytes": 16384,
+        "flowRate": 0,
+        "source": {
+          "point": [
+            0,
+            -3
+          ],
+          "direction": [
+            0,
+            1
+          ],
+          "width": 2,
+          "speed": 1.4,
+          "discharge": 0.224
+        }
+      },
+      {
+        "backend": "cpu-staggered-shallow-water",
+        "updateCpuMs": 3.20016099999998,
+        "averageUpdateCpuMs": 3.491743676666669,
+        "renderWaveScale": 2,
+        "resolution": 64,
+        "elapsed": 29.99582226698327,
+        "fixedDt": 0.008074245563117437,
+        "cfl": 0.385508502065193,
+        "maxHeight": 0,
+        "maxSpeed": 0,
+        "heightEnergy": 0,
+        "meanHeight": 0,
+        "volume": 182.25000724196434,
+        "inputVolume": 0,
+        "returnDrainVolume": 0,
+        "massError": 0,
+        "droppedTime": 0,
+        "textureBytes": 16384,
+        "flowRate": 0,
+        "source": {
+          "point": [
+            0,
+            -3
+          ],
+          "direction": [
+            0,
+            1
+          ],
+          "width": 2,
+          "speed": 1.4,
+          "discharge": 0.224
+        }
+      },
+      {
+        "backend": "cpu-staggered-shallow-water",
+        "updateCpuMs": 3.479082000000062,
+        "averageUpdateCpuMs": 3.4541401300000008,
+        "renderWaveScale": 2,
+        "resolution": 64,
+        "elapsed": 39.99981251968403,
+        "fixedDt": 0.008074245563117437,
+        "cfl": 0.385508502065193,
+        "maxHeight": 0,
+        "maxSpeed": 0,
+        "heightEnergy": 0,
+        "meanHeight": 0,
+        "volume": 182.25000724196434,
+        "inputVolume": 0,
+        "returnDrainVolume": 0,
+        "massError": 0,
+        "droppedTime": 0,
+        "textureBytes": 16384,
+        "flowRate": 0,
+        "source": {
+          "point": [
+            0,
+            -3
+          ],
+          "direction": [
+            0,
+            1
+          ],
+          "width": 2,
+          "speed": 1.4,
+          "discharge": 0.224
+        }
+      },
+      {
+        "backend": "cpu-staggered-shallow-water",
+        "updateCpuMs": 3.1257909999999356,
+        "averageUpdateCpuMs": 3.4378873200000006,
+        "renderWaveScale": 2,
+        "resolution": 64,
+        "elapsed": 49.995728526820784,
+        "fixedDt": 0.008074245563117437,
+        "cfl": 0.385508502065193,
+        "maxHeight": 0,
+        "maxSpeed": 0,
+        "heightEnergy": 0,
+        "meanHeight": 0,
+        "volume": 182.25000724196434,
+        "inputVolume": 0,
+        "returnDrainVolume": 0,
+        "massError": 0,
+        "droppedTime": 0,
+        "textureBytes": 16384,
+        "flowRate": 0,
+        "source": {
+          "point": [
+            0,
+            -3
+          ],
+          "direction": [
+            0,
+            1
+          ],
+          "width": 2,
+          "speed": 1.4,
+          "discharge": 0.224
+        }
+      },
+      {
+        "backend": "cpu-staggered-shallow-water",
+        "updateCpuMs": 3.418043000000125,
+        "averageUpdateCpuMs": 3.4168563300000074,
+        "renderWaveScale": 2,
+        "resolution": 64,
+        "elapsed": 59.999718779520656,
+        "fixedDt": 0.008074245563117437,
+        "cfl": 0.385508502065193,
+        "maxHeight": 0,
+        "maxSpeed": 0,
+        "heightEnergy": 0,
+        "meanHeight": 0,
+        "volume": 182.25000724196434,
+        "inputVolume": 0,
+        "returnDrainVolume": 0,
+        "massError": 0,
+        "droppedTime": 0,
+        "textureBytes": 16384,
+        "flowRate": 0,
+        "source": {
+          "point": [
+            0,
+            -3
+          ],
+          "direction": [
+            0,
+            1
+          ],
+          "width": 2,
+          "speed": 1.4,
+          "discharge": 0.224
+        }
+      }
+    ]
+  },
+  {
+    "rate": 1,
+    "samples": [
+      {
+        "backend": "cpu-staggered-shallow-water",
+        "updateCpuMs": 3.1939619999998285,
+        "averageUpdateCpuMs": 3.5826291199999925,
+        "renderWaveScale": 2,
+        "resolution": 64,
+        "elapsed": 9.995916007139163,
+        "fixedDt": 0.008074245563117437,
+        "cfl": 0.385508502065193,
+        "maxHeight": 0.013048915192484856,
+        "maxSpeed": 0.0484953410923481,
+        "heightEnergy": 0.11868563814445973,
+        "meanHeight": 5.073934797694142e-11,
+        "volume": 182.25000724967038,
+        "inputVolume": 2.2408117954867475,
+        "returnDrainVolume": 2.2408117954867475,
+        "massError": 7.706038473997978e-9,
+        "droppedTime": 0,
+        "textureBytes": 16384,
+        "flowRate": 1,
+        "source": {
+          "point": [
+            0,
+            -3
+          ],
+          "direction": [
+            0,
+            1
+          ],
+          "width": 2,
+          "speed": 1.4,
+          "discharge": 0.224
+        }
+      },
+      {
+        "backend": "cpu-staggered-shallow-water",
+        "updateCpuMs": 3.4489589999998316,
+        "averageUpdateCpuMs": 3.4965908199999807,
+        "renderWaveScale": 2,
+        "resolution": 64,
+        "elapsed": 19.999906259842117,
+        "fixedDt": 0.008074245563117437,
+        "cfl": 0.385508502065193,
+        "maxHeight": 0.014420133084058762,
+        "maxSpeed": 0.05211816728115082,
+        "heightEnergy": 0.12878375340811948,
+        "meanHeight": -9.895695346827262e-11,
+        "volume": 182.25000722693525,
+        "inputVolume": 4.4880192973301,
+        "returnDrainVolume": 4.4880192973301,
+        "massError": -1.5029087307993905e-8,
+        "droppedTime": 0,
+        "textureBytes": 16384,
+        "flowRate": 1,
+        "source": {
+          "point": [
+            0,
+            -3
+          ],
+          "direction": [
+            0,
+            1
+          ],
+          "width": 2,
+          "speed": 1.4,
+          "discharge": 0.224
+        }
+      },
+      {
+        "backend": "cpu-staggered-shallow-water",
+        "updateCpuMs": 3.1979670000000624,
+        "averageUpdateCpuMs": 3.452243339999991,
+        "renderWaveScale": 2,
+        "resolution": 64,
+        "elapsed": 29.99582226698327,
+        "fixedDt": 0.008074245563117437,
+        "cfl": 0.385508502065193,
+        "maxHeight": 0.01628802716732025,
+        "maxSpeed": 0.05479322746396065,
+        "heightEnergy": 0.1331439134645403,
+        "meanHeight": 1.0498291728400085e-10,
+        "volume": 182.25000725790863,
+        "inputVolume": 6.7340374528390905,
+        "returnDrainVolume": 6.7340374528390905,
+        "massError": 1.594428056250763e-8,
+        "droppedTime": 0,
+        "textureBytes": 16384,
+        "flowRate": 1,
+        "source": {
+          "point": [
+            0,
+            -3
+          ],
+          "direction": [
+            0,
+            1
+          ],
+          "width": 2,
+          "speed": 1.4,
+          "discharge": 0.224
+        }
+      },
+      {
+        "backend": "cpu-staggered-shallow-water",
+        "updateCpuMs": 3.559252000000015,
+        "averageUpdateCpuMs": 3.4308831824999957,
+        "renderWaveScale": 2,
+        "resolution": 64,
+        "elapsed": 39.99981251968403,
+        "fixedDt": 0.008074245563117437,
+        "cfl": 0.385508502065193,
+        "maxHeight": 0.017776736989617348,
+        "maxSpeed": 0.05527431145310402,
+        "heightEnergy": 0.13481784191438473,
+        "meanHeight": -4.3667675785355296e-11,
+        "volume": 182.2500072353323,
+        "inputVolume": 8.976998946539863,
+        "returnDrainVolume": 8.976998946539863,
+        "massError": -6.632028259900835e-9,
+        "droppedTime": 0,
+        "textureBytes": 16384,
+        "flowRate": 1,
+        "source": {
+          "point": [
+            0,
+            -3
+          ],
+          "direction": [
+            0,
+            1
+          ],
+          "width": 2,
+          "speed": 1.4,
+          "discharge": 0.224
+        }
+      },
+      {
+        "backend": "cpu-staggered-shallow-water",
+        "updateCpuMs": 3.2558030000000144,
+        "averageUpdateCpuMs": 3.4216837539999863,
+        "renderWaveScale": 2,
+        "resolution": 64,
+        "elapsed": 49.995728526820784,
+        "fixedDt": 0.008074245563117437,
+        "cfl": 0.385508502065193,
+        "maxHeight": 0.01827763020992279,
+        "maxSpeed": 0.05442150682210922,
+        "heightEnergy": 0.13358503800679974,
+        "meanHeight": -1.6078182077897643e-10,
+        "volume": 182.2500072175456,
+        "inputVolume": 11.213676828527035,
+        "returnDrainVolume": 11.213676828527035,
+        "massError": -2.4418739030807046e-8,
+        "droppedTime": 0,
+        "textureBytes": 16384,
+        "flowRate": 1,
+        "source": {
+          "point": [
+            0,
+            -3
+          ],
+          "direction": [
+            0,
+            1
+          ],
+          "width": 2,
+          "speed": 1.4,
+          "discharge": 0.224
+        }
+      },
+      {
+        "backend": "cpu-staggered-shallow-water",
+        "updateCpuMs": 3.4509109999999055,
+        "averageUpdateCpuMs": 3.4099701233333213,
+        "renderWaveScale": 2,
+        "resolution": 64,
+        "elapsed": 59.999718779520656,
+        "fixedDt": 0.008074245563117437,
+        "cfl": 0.385508502065193,
+        "maxHeight": 0.01809561811387539,
+        "maxSpeed": 0.05301870033144951,
+        "heightEnergy": 0.13147390042154525,
+        "meanHeight": 5.3235616189654754e-11,
+        "volume": 182.2500072500495,
+        "inputVolume": 13.451120177669884,
+        "returnDrainVolume": 13.451120177669884,
+        "massError": 8.085159208803816e-9,
+        "droppedTime": 0,
+        "textureBytes": 16384,
+        "flowRate": 1,
+        "source": {
+          "point": [
+            0,
+            -3
+          ],
+          "direction": [
+            0,
+            1
+          ],
+          "width": 2,
+          "speed": 1.4,
+          "discharge": 0.224
+        }
+      }
+    ]
+  },
+  {
+    "rate": 2,
+    "samples": [
+      {
+        "backend": "cpu-staggered-shallow-water",
+        "updateCpuMs": 3.2021029999996244,
+        "averageUpdateCpuMs": 3.3569361999999727,
+        "renderWaveScale": 2,
+        "resolution": 64,
+        "elapsed": 9.995916007139163,
+        "fixedDt": 0.008074245563117437,
+        "cfl": 0.385508502065193,
+        "maxHeight": 0.02609783038496971,
+        "maxSpeed": 0.0969906821846962,
+        "heightEnergy": 0.4747425525778389,
+        "meanHeight": 1.0147869595388284e-10,
+        "volume": 182.2500072573764,
+        "inputVolume": 4.481623590973495,
+        "returnDrainVolume": 4.481623590973495,
+        "massError": 1.5412076947995956e-8,
+        "droppedTime": 0,
+        "textureBytes": 16384,
+        "flowRate": 2,
+        "source": {
+          "point": [
+            0,
+            -3
+          ],
+          "direction": [
+            0,
+            1
+          ],
+          "width": 2,
+          "speed": 1.4,
+          "discharge": 0.224
+        }
+      },
+      {
+        "backend": "cpu-staggered-shallow-water",
+        "updateCpuMs": 3.4381320000002233,
+        "averageUpdateCpuMs": 3.3550223450000067,
+        "renderWaveScale": 2,
+        "resolution": 64,
+        "elapsed": 19.999906259842117,
+        "fixedDt": 0.008074245563117437,
+        "cfl": 0.385508502065193,
+        "maxHeight": 0.028840266168117523,
+        "maxSpeed": 0.10423633456230164,
+        "heightEnergy": 0.5151350136324779,
+        "meanHeight": -1.9791390693654525e-10,
+        "volume": 182.25000721190617,
+        "inputVolume": 8.9760385946602,
+        "returnDrainVolume": 8.9760385946602,
+        "massError": -3.005817461598781e-8,
+        "droppedTime": 0,
+        "textureBytes": 16384,
+        "flowRate": 2,
+        "source": {
+          "point": [
+            0,
+            -3
+          ],
+          "direction": [
+            0,
+            1
+          ],
+          "width": 2,
+          "speed": 1.4,
+          "discharge": 0.224
+        }
+      },
+      {
+        "backend": "cpu-staggered-shallow-water",
+        "updateCpuMs": 5.350738999999521,
+        "averageUpdateCpuMs": 3.372360119999994,
+        "renderWaveScale": 2,
+        "resolution": 64,
+        "elapsed": 29.99582226698327,
+        "fixedDt": 0.008074245563117437,
+        "cfl": 0.385508502065193,
+        "maxHeight": 0.0325760543346405,
+        "maxSpeed": 0.1095864549279213,
+        "heightEnergy": 0.5325756538581612,
+        "meanHeight": 2.099658345680017e-10,
+        "volume": 182.2500072738529,
+        "inputVolume": 13.468074905678181,
+        "returnDrainVolume": 13.468074905678181,
+        "massError": 3.188856112501526e-8,
+        "droppedTime": 0,
+        "textureBytes": 16384,
+        "flowRate": 2,
+        "source": {
+          "point": [
+            0,
+            -3
+          ],
+          "direction": [
+            0,
+            1
+          ],
+          "width": 2,
+          "speed": 1.4,
+          "discharge": 0.224
+        }
+      },
+      {
+        "backend": "cpu-staggered-shallow-water",
+        "updateCpuMs": 3.460675999999694,
+        "averageUpdateCpuMs": 3.3622189199999912,
+        "renderWaveScale": 2,
+        "resolution": 64,
+        "elapsed": 39.99981251968403,
+        "fixedDt": 0.008074245563117437,
+        "cfl": 0.385508502065193,
+        "maxHeight": 0.035553473979234695,
+        "maxSpeed": 0.11054862290620804,
+        "heightEnergy": 0.5392713676575389,
+        "meanHeight": -8.733535157071059e-11,
+        "volume": 182.25000722870027,
+        "inputVolume": 17.953997893079727,
+        "returnDrainVolume": 17.953997893079727,
+        "massError": -1.326405651980167e-8,
+        "droppedTime": 0,
+        "textureBytes": 16384,
+        "flowRate": 2,
+        "source": {
+          "point": [
+            0,
+            -3
+          ],
+          "direction": [
+            0,
+            1
+          ],
+          "width": 2,
+          "speed": 1.4,
+          "discharge": 0.224
+        }
+      },
+      {
+        "backend": "cpu-staggered-shallow-water",
+        "updateCpuMs": 3.496649000000616,
+        "averageUpdateCpuMs": 3.4128586760000017,
+        "renderWaveScale": 2,
+        "resolution": 64,
+        "elapsed": 49.995728526820784,
+        "fixedDt": 0.008074245563117437,
+        "cfl": 0.385508502065193,
+        "maxHeight": 0.03655526041984558,
+        "maxSpeed": 0.10884301364421844,
+        "heightEnergy": 0.534340152027199,
+        "meanHeight": -3.2156364155795287e-10,
+        "volume": 182.25000719312686,
+        "inputVolume": 22.42735365705407,
+        "returnDrainVolume": 22.42735365705407,
+        "massError": -4.883747806161409e-8,
+        "droppedTime": 0,
+        "textureBytes": 16384,
+        "flowRate": 2,
+        "source": {
+          "point": [
+            0,
+            -3
+          ],
+          "direction": [
+            0,
+            1
+          ],
+          "width": 2,
+          "speed": 1.4,
+          "discharge": 0.224
+        }
+      },
+      {
+        "backend": "cpu-staggered-shallow-water",
+        "updateCpuMs": 3.681032000000414,
+        "averageUpdateCpuMs": 3.4209343183333325,
+        "renderWaveScale": 2,
+        "resolution": 64,
+        "elapsed": 59.999718779520656,
+        "fixedDt": 0.008074245563117437,
+        "cfl": 0.385508502065193,
+        "maxHeight": 0.03619123622775078,
+        "maxSpeed": 0.10603740066289902,
+        "heightEnergy": 0.525895601686181,
+        "meanHeight": 1.0647123237930951e-10,
+        "volume": 182.25000725813464,
+        "inputVolume": 26.902240355339767,
+        "returnDrainVolume": 26.902240355339767,
+        "massError": 1.6170318417607632e-8,
+        "droppedTime": 0,
+        "textureBytes": 16384,
+        "flowRate": 2,
+        "source": {
+          "point": [
+            0,
+            -3
+          ],
+          "direction": [
+            0,
+            1
+          ],
+          "width": 2,
+          "speed": 1.4,
+          "discharge": 0.224
+        }
+      }
+    ]
+  }
+]

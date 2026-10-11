@@ -220,25 +220,27 @@ function start(canvas: HTMLCanvasElement): void {
       water:
         debugEnabled &&
         (['v1', 'v2', 'v4'].includes(waterQuery ?? '') ||
-          ['v3', 'v4', 'v5', 'v6', 'v7'].includes(
+          ['v3', 'v4', 'v5', 'v6', 'v7', 'v8'].includes(
             candidateQuery.get('waterfall') ?? '',
           )),
       realistic:
         debugEnabled &&
         (waterQuery === 'v2' ||
           waterQuery === 'v4' ||
-          ['v3', 'v4', 'v5', 'v6', 'v7'].includes(
+          ['v3', 'v4', 'v5', 'v6', 'v7', 'v8'].includes(
             candidateQuery.get('waterfall') ?? '',
           )),
       mobile,
       realWater:
         debugEnabled &&
-        (['v6', 'v7'].includes(candidateQuery.get('waterfall') ?? '') ||
+        (['v6', 'v7', 'v8'].includes(candidateQuery.get('waterfall') ?? '') ||
           waterQuery === 'v4'),
       freeFall:
         debugEnabled &&
         ['v4', 'v5', 'v6'].includes(candidateQuery.get('waterfall') ?? ''),
-      continuous: debugEnabled && candidateQuery.get('waterfall') === 'v7',
+      continuous:
+        debugEnabled && ['v7', 'v8'].includes(candidateQuery.get('waterfall') ?? ''),
+      dynamics: debugEnabled && candidateQuery.get('waterfall') === 'v8',
       basinOnly:
         debugEnabled &&
         candidateQuery.get('basin') === 'excavated' &&
@@ -246,7 +248,7 @@ function start(canvas: HTMLCanvasElement): void {
       interaction: debugEnabled && candidateQuery.get('waterfall') === 'v5',
       waterfall:
         debugEnabled &&
-        ['v1', 'v2', 'v3', 'v4', 'v5', 'v6', 'v7'].includes(
+        ['v1', 'v2', 'v3', 'v4', 'v5', 'v6', 'v7', 'v8'].includes(
           candidateQuery.get('waterfall') ?? '',
         ),
     },
@@ -284,6 +286,11 @@ function start(canvas: HTMLCanvasElement): void {
                 ...loaded.placement,
                 position: { ...loaded.placement.position },
               });
+              invalidate();
+            },
+            reviewWaterFlow: (rate = 1) => {
+              const effects = loaded.waterEffects;
+              if (effects && 'setFlowRate' in effects) effects.setFlowRate(rate);
               invalidate();
             },
             reviewWaterStep: (seconds = 0.5) => {

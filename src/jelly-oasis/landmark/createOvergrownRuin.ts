@@ -432,7 +432,10 @@ export async function createOvergrownRuin(
       channelPath = makeChannel(
         attached.launch,
         pondHeight,
-        pond.geometry.boundingBox!.min.z + 1.4,
+        (waterOptions.dynamics
+          ? Math.min(...pondGuide.positions.map((p) => p[2]!))
+          : pond.geometry.boundingBox!.min.z) + 1.4,
+        waterOptions.dynamics,
       );
       const protectedZones = assets.layout.modules
         .filter((m) => /^(Ruin_|Root_|Crystal_)/.test(m.name))
