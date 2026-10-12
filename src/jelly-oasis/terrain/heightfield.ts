@@ -1,4 +1,4 @@
-/** World size and mesh density are independent; landmarks use normalized coordinates. */
+/** World coordinates are metres; mesh density and landmark scale remain independent. */
 export interface TerrainConfig {
   size: number;
   segments: number;
@@ -6,6 +6,9 @@ export interface TerrainConfig {
   seed: number;
   flatCenterRadius: number;
   flatCenterFeather: number;
+  /** Compact layout anchor; both coordinates must be supplied together. */
+  oasisX?: number;
+  oasisZ?: number;
 }
 export const DEFAULT_TERRAIN_CONFIG: TerrainConfig = {
   size: 320,
@@ -34,6 +37,18 @@ export function sampleTerrainHeight(
   z: number,
   config = DEFAULT_TERRAIN_CONFIG,
 ): number {
+  if (config.oasisX !== undefined && config.oasisZ !== undefined) {
+    const dx = x - config.oasisX,
+      dz = z - config.oasisZ;
+    // Translate the approved oasis ground without scaling it. Multiples of four
+    // preserve the old triangle grid and diagonal, including excavation samples.
+    const preserved = sampleTerrainHeight(dx + 70, dz + 58, DEFAULT_TERRAIN_CONFIG);
+    const { oasisX: _x, oasisZ: _z, ...outer } = config;
+    void _x;
+    void _z;
+    const blend = smoothstep(60, 80, Math.hypot(dx, dz));
+    return preserved * (1 - blend) + sampleTerrainHeight(x, z, outer) * blend;
+  }
   const u = x / config.size;
   const v = z / config.size;
   const north = mound(u, v, 0.03, -0.35, 0.48, 0.28);
@@ -59,6 +74,7 @@ export function sampleTerrainHeight(
 export function validateTerrainConfig(config: TerrainConfig): void {
   if (
     !Object.values(config).every(Number.isFinite) ||
+    (config.oasisX === undefined) !== (config.oasisZ === undefined) ||
     config.size <= 0 ||
     !Number.isInteger(config.segments) ||
     config.segments < 1 ||

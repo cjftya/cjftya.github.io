@@ -24,12 +24,24 @@ export function createLandmarkDebug(
   invalidate: () => void,
   setCamera: (view: LandmarkCamera) => void,
 ) {
+  // Compact terrain supports only the fully audited oasis site. Alternate
+  // old west/north sites cannot retain their metre footprint inside this world.
+  const candidates =
+    landmark.terrain.oasisX === undefined
+      ? LANDMARK_CANDIDATES
+      : [
+          {
+            ...LANDMARK_CANDIDATES[0],
+            position: { ...landmark.placement.position },
+            label: '중앙 오아시스',
+          },
+        ];
   const panel = document.createElement('details');
   panel.id = 'landmark-debug';
   panel.open = true;
   if (matchMedia('(max-width: 720px)').matches) panel.open = false;
   panel.innerHTML = `<summary>랜드마크 통합 검수</summary>
-    <label>후보 지역 <select id="landmark-site">${LANDMARK_CANDIDATES.map((c) => `<option value="${c.id}">${c.label}</option>`).join('')}</select></label>
+    <label>후보 지역 <select id="landmark-site">${candidates.map((c) => `<option value="${c.id}">${c.label}</option>`).join('')}</select></label>
     <label>방향 <input id="landmark-yaw" type="range" min="-180" max="180" step="5" value="${Math.round((landmark.placement.rotationY * 180) / Math.PI)}"><output id="landmark-transform"></output></label>
     <div class="debug-row"><label>X <input id="landmark-x" type="number" min="-110" max="110" value="${landmark.placement.position.x}"></label><label>Z <input id="landmark-z" type="number" min="-110" max="110" value="${landmark.placement.position.z}"></label></div>
     <label>개별 자산 <select id="landmark-isolate"><option value="">전체 blockout</option>${[...LANDMARK_FIRST_IMPORTS, 'Crystal_Blockout_A', 'Crystal_Blockout_B', 'Crystal_Blockout_C'].map((n) => `<option>${n}</option>`).join('')}</select></label>
@@ -80,7 +92,7 @@ export function createLandmarkDebug(
     transparent: true,
     opacity: 0.75,
   });
-  for (const candidate of LANDMARK_CANDIDATES) {
+  for (const candidate of candidates) {
     const points: Vector3[] = [];
     const corners = [
       [-40, -38],
@@ -190,6 +202,19 @@ export function createLandmarkDebug(
     const x = query<HTMLInputElement>('landmark-x').valueAsNumber,
       z = query<HTMLInputElement>('landmark-z').valueAsNumber;
     if (!Number.isFinite(x) || !Number.isFinite(z)) return;
+    if (landmark.terrain.oasisX !== undefined) {
+      // Prevent an unaudited debug transform from placing the grove beyond the edge.
+      query<HTMLInputElement>('landmark-x').value = String(
+        landmark.placement.position.x,
+      );
+      query<HTMLInputElement>('landmark-z').value = String(
+        landmark.placement.position.z,
+      );
+      query<HTMLInputElement>('landmark-yaw').value = String(
+        Math.round((landmark.placement.rotationY * 180) / Math.PI),
+      );
+      return;
+    }
     landmark.place({
       position: { x, z },
       rotationY:
@@ -212,7 +237,7 @@ export function createLandmarkDebug(
       const target = event.target as HTMLInputElement;
       switch (target.id) {
         case 'landmark-site': {
-          const candidate = LANDMARK_CANDIDATES.find((c) => c.id === target.value)!;
+          const candidate = candidates.find((c) => c.id === target.value)!;
           query<HTMLInputElement>('landmark-x').value = String(candidate.position.x);
           query<HTMLInputElement>('landmark-z').value = String(candidate.position.z);
           query<HTMLInputElement>('landmark-yaw').value = String(
@@ -264,6 +289,9 @@ export function createLandmarkDebug(
     },
     { signal: events.signal },
   );
+  if (landmark.terrain.oasisX !== undefined)
+    for (const id of ['landmark-x', 'landmark-z', 'landmark-yaw'])
+      query<HTMLInputElement>(id).disabled = true;
   refresh();
   return {
     dispose() {

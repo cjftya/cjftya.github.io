@@ -1,3 +1,4 @@
+import { worldLandmarkPlacement } from '../terrain/worldLayout';
 import { createLandscapeComposition } from '../composition/createLandscapeComposition';
 import type { CompositionVariant } from '../composition/compositionConfig';
 import { groundFootprints } from '../vegetation/vegetationPlacement';
@@ -22,7 +23,7 @@ import type { TerrainConfig } from '../terrain/heightfield';
 import { smoothstep } from '../terrain/heightfield';
 import { createTerrainSurface } from '../terrain/terrainSurface';
 import type { Matrix4, Object3D } from 'three';
-import { OVERGROWN_RUIN_CONFIG, LANDMARK_MODULE_OFFSETS } from './landmarkConfig';
+import { LANDMARK_MODULE_OFFSETS } from './landmarkConfig';
 import type { LandmarkPlacement, LayoutGuide } from './landmarkConfig';
 import { landmarkWorldPoint, sampleGround } from './landmarkPlacement';
 import {
@@ -71,10 +72,7 @@ export async function createOvergrownRuin(
   const content = new Group();
   content.name = 'LandmarkModules';
   root.add(content);
-  const placement: LandmarkPlacement = {
-    ...OVERGROWN_RUIN_CONFIG,
-    position: { ...OVERGROWN_RUIN_CONFIG.position },
-  };
+  const placement: LandmarkPlacement = worldLandmarkPlacement(terrain);
   const support = new Map<string, Vector3[]>();
   const contact: Record<string, { burial: number; supportCount: number; y: number }> =
     {};
