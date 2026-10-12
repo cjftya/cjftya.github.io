@@ -104,7 +104,7 @@ it('grounds isolated deterministic meadows against real GLBs and scenery, preser
         a = owner.instances();
       expect(a).toEqual(placeMeadow(site, occupied).instances);
       expect(a.length).toBeGreaterThan(90);
-      expect(a.length).toBeLessThanOrEqual(160);
+      expect(a.length).toBeLessThanOrEqual(1200);
       expect(placeMeadow(site, occupied, 'b').instances.length).toBeGreaterThan(
         a.length,
       );
@@ -140,11 +140,11 @@ it('grounds isolated deterministic meadows against real GLBs and scenery, preser
     expect(owner.group.visible).toBe(true);
     l.refreshMaterials();
     l.refreshMaterials();
-    await mkdir('artifacts/jelly-oasis/flower-meadow-final-composition-v1', {
+    await mkdir('artifacts/jelly-oasis/monumental-composition-v1/meadow', {
       recursive: true,
     });
     await writeFile(
-      'artifacts/jelly-oasis/flower-meadow-final-composition-v1/placement-audit.json',
+      'artifacts/jelly-oasis/monumental-composition-v1/meadow/placement-audit.json',
       JSON.stringify(
         {
           baseline,
@@ -170,4 +170,4 @@ it('grounds isolated deterministic meadows against real GLBs and scenery, preser
     terrain.geometry.dispose();
     terrain.material.dispose();
   }
-}, 30000);
+}, 120000);

@@ -4,6 +4,8 @@ import { exclusionReason, seededRandom } from '../vegetation/vegetationPlacement
 import type { VegetationSite } from '../vegetation/vegetationPlacement';
 import {
   SCENERY_KINDS,
+  SCENERY_SCALE,
+  scenerySeparation,
   SCENERY_SEED,
   SCENERY_SHAPES,
   SCENERY_ZONES,
@@ -43,7 +45,9 @@ export function placeScenery(
   if (variant === 'off') return { instances, rejected, requested, zoneCounts };
   for (const zone of zones) {
     zoneCounts[zone.id] = 0;
-    for (const kind of SCENERY_KINDS) {
+    for (const kind of [...SCENERY_KINDS].sort(
+      (a, b) => Number(b === 'ridge') - Number(a === 'ridge'),
+    )) {
       const target = Math.ceil((zone.counts[kind] ?? 0) * (variant === 'b' ? 1.5 : 1));
       requested[kind] = (requested[kind] ?? 0) + target;
       let hash = seed;
@@ -65,30 +69,38 @@ export function placeScenery(
             Math.sin(angle) * d;
         if (zone.basis === 'world') ({ x, z } = worldToLandmark(x, z, site));
         const scale =
-            (0.82 + random() * 0.32) /
+            ((0.82 + random() * 0.32) * SCENERY_SCALE[kind]) /
             (zone.basis === 'world' ? site.placement.scale : 1),
           radius = shape.radius * scale,
           rotation = random() * Math.PI * 2,
           tint = random();
         let reason = exclusionReason(x, z, radius, site);
         // Keep the hero silhouette and oasis sight lines free of new crowns.
-        if (!reason && tree && Math.hypot(x, z) < 48 + radius)
+        if (!reason && tree && Math.hypot(x, z) < 32 + radius)
           reason = 'hero-sightline';
         if (
           !reason &&
           [...occupied, ...instances].some(
-            (p) => Math.hypot(x - p.x, z - p.z) < radius + p.radius + 0.5,
+            (p) =>
+              Math.hypot(x - p.x, z - p.z) < scenerySeparation({ kind, radius }, p),
           )
         )
           reason = 'spacing';
+        // Rejected masks/spacing need no terrain probes.
+        if (reason) {
+          rejected[`${zone.id}:${reason}`] =
+            (rejected[`${zone.id}:${reason}`] ?? 0) + 1;
+          continue;
+        }
         const world = landmarkWorldPoint(x, z, site.placement),
           ground = sampleGround(world.x, world.z, site.terrain),
-          step = radius * site.placement.scale;
+          probeRadius = tree ? 0.6 * scale : radius,
+          step = probeRadius * site.placement.scale;
         const points: (readonly [number, number])[] = Array.from(
           { length: 8 },
           (_, i) => [
-            (Math.cos((i * Math.PI) / 4) * radius) / scale,
-            (Math.sin((i * Math.PI) / 4) * radius) / scale,
+            (Math.cos((i * Math.PI) / 4) * probeRadius) / scale,
+            (Math.sin((i * Math.PI) / 4) * probeRadius) / scale,
           ],
         );
         if (!tree) points.push(...(footprints[kind] ?? []));
@@ -123,7 +135,7 @@ export function placeScenery(
           zone: zone.id,
           x,
           z,
-          y: ((tree ? ground : base) - site.rootY - 0.04) / site.placement.scale,
+          y: (base - site.rootY - 0.04) / site.placement.scale,
           scale,
           rotation,
           tint,
