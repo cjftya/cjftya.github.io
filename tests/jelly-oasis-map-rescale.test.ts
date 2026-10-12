@@ -147,7 +147,7 @@ it('audits actual GLBs, pond, routes, placements and rebuild stability at all si
         expect(audit[key].clear).toBe(true);
       const v = l.vegetation.instances(),
         c = l.composition.instances();
-      expect(v.length).toBe(180);
+      expect(v.length).toBe(40);
       for (const p of [...v, ...c]) {
         const world = landmarkWorldPoint(p.x, p.z, l.placement);
         expect(

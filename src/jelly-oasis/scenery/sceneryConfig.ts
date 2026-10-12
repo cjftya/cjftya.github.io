@@ -18,61 +18,85 @@ export interface SceneryZone {
   radius: number;
   counts: Partial<Record<SceneryKind, number>>;
 }
+// Connected forest shoulders and a geological backdrop; no isolated pebble fields.
 export const SCENERY_ZONES: readonly SceneryZone[] = [
   {
     id: 'west-grove',
     basis: 'world',
-    centers: [[-0.25, 0.07]],
-    radius: 15,
-    counts: { broad: 4, spire: 2, young: 2, boulder: 3, pebble: 4 },
+    centers: [
+      [-0.31, 0.19],
+      [-0.37, 0.02],
+      [-0.22, -0.12],
+      [-0.24, 0.06],
+    ],
+    radius: 23,
+    counts: { broad: 32, spire: 16, young: 8, boulder: 5 },
   },
   {
     id: 'northwest-grove',
     basis: 'world',
-    centers: [[-0.19, -0.11]],
-    radius: 15,
-    counts: { broad: 3, spire: 3, young: 2, boulder: 3, pebble: 4 },
+    centers: [
+      [-0.34, -0.25],
+      [-0.23, -0.29],
+    ],
+    radius: 19,
+    counts: { broad: 18, spire: 12, young: 4, boulder: 4 },
   },
   {
     id: 'north-ridge',
     basis: 'world',
     centers: [
-      [-0.27, -0.31],
+      [-0.27, -0.32],
       [0.015, -0.4],
-      [0.27, -0.31],
+      [0.27, -0.32],
+      [0.38, -0.18],
     ],
-    radius: 8,
-    counts: { ridge: 3, boulder: 7, pebble: 3 },
+    radius: 14,
+    counts: { ridge: 12, boulder: 12 },
   },
   {
-    id: 'ruin-stones',
-    basis: 'landmark-local',
-    centers: [
-      [25, -18],
-      [25, 10],
-    ],
-    radius: 4,
-    counts: { pebble: 3, boulder: 2 },
-  },
-  {
-    id: 'meadow-stones',
+    id: 'east-shoulder',
     basis: 'world',
     centers: [
-      [-0.16, 0.3],
-      [0.19, 0.31],
-      [0.33, 0.2],
+      [0.39, 0.1],
+      [0.4, 0.24],
     ],
-    radius: 5,
-    counts: { boulder: 3, pebble: 4 },
+    radius: 15,
+    counts: { broad: 12, spire: 7, young: 3, ridge: 3, boulder: 4 },
   },
 ];
+export const SCENERY_SCALE = {
+  broad: 2.15,
+  spire: 1.9,
+  young: 2.1,
+  pebble: 1,
+  boulder: 2.4,
+  ridge: 1.8,
+};
+// Crowns may interlock inside a forest body; rock and route reservations stay complete.
+export function scenerySeparation(
+  a: { kind?: string; radius: number },
+  b: { kind?: string; radius: number },
+) {
+  const bothTrees =
+    a.kind &&
+    b.kind &&
+    TREE_KINDS.some((kind) => kind === a.kind) &&
+    TREE_KINDS.some((kind) => kind === b.kind);
+  const bothRocks =
+    a.kind &&
+    b.kind &&
+    ['ridge', 'boulder'].includes(a.kind) &&
+    ['ridge', 'boulder'].includes(b.kind);
+  return (a.radius + b.radius) * (bothTrees ? 0.48 : bothRocks ? 0.5 : 1) + 0.5;
+}
 export const SCENERY_SHAPES = {
-  broad: { radius: 3.05, height: 7.4, slope: 0.28 },
-  spire: { radius: 2.0, height: 9.0, slope: 0.28 },
-  young: { radius: 1.6, height: 4.2, slope: 0.28 },
+  broad: { radius: 4.6, height: 7.4, slope: 0.6 },
+  spire: { radius: 3.0, height: 9.0, slope: 0.6 },
+  young: { radius: 2.4, height: 4.2, slope: 0.6 },
   pebble: { radius: 0.85, height: 0.65, slope: 0.32 },
   boulder: { radius: 2.25, height: 2.45, slope: 0.38 },
-  ridge: { radius: 4.6, height: 3.4, slope: 0.38 },
+  ridge: { radius: 10.5, height: 12, slope: 0.55 },
 } satisfies Record<SceneryKind, { radius: number; height: number; slope: number }>;
 export function selectScenery(debug: boolean, query: string | null): SceneryVariant {
   return debug && (query === 'off' || query === 'b') ? query : 'a';

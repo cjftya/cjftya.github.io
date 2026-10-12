@@ -1,0 +1,14 @@
+{
+  "base": "6484393c04651883766c249a25eac1c39d75d427",
+  "tests": {
+    "files": 64,
+    "tests": 325,
+    "status": "PASS",
+    "command": "npm test -- --maxWorkers=2"
+  },
+  "lint": "PASS",
+  "build": "PASS",
+  "browser": "PASS",
+  "realDevicePerformance": "NOT_TESTED",
+  "art": "USER_REVIEW"
+}

@@ -17,6 +17,7 @@ import {
 } from '../src/jelly-oasis/vegetation/vegetationPlacement';
 import { createScenery } from '../src/jelly-oasis/scenery/createScenery';
 import {
+  scenerySeparation,
   SCENERY_KINDS,
   SCENERY_SHAPES,
   SCENERY_ZONES,
@@ -122,11 +123,11 @@ it('places deterministic grounded scenery on real compact terrain and GLBs, supp
       for (const p of a) {
         expect(exclusionReason(p.x, p.z, p.radius, site)).toBeNull();
         expect(p.slope).toBeLessThanOrEqual(SCENERY_SHAPES[p.kind].slope);
-        expect(p.height * placement.scale).toBeLessThan(11);
+        expect(p.height * placement.scale).toBeLessThan(27);
         for (const other of [...occupied, ...a])
           if (p !== other)
             expect(Math.hypot(p.x - other.x, p.z - other.z)).toBeGreaterThanOrEqual(
-              p.radius + other.radius + 0.5 - 1e-8,
+              scenerySeparation(p, other) - 1e-8,
             );
         const world = landmarkWorldPoint(p.x, p.z, placement),
           h = sampleGround(world.x, world.z, config),
@@ -178,11 +179,11 @@ it('places deterministic grounded scenery on real compact terrain and GLBs, supp
     l.isolate('');
     expect(owner.group.visible).toBe(true);
     l.refreshMaterials();
-    await mkdir('artifacts/jelly-oasis/tree-grove-rock-expansion-v1', {
+    await mkdir('artifacts/jelly-oasis/monumental-composition-v1/scenery', {
       recursive: true,
     });
     await writeFile(
-      'artifacts/jelly-oasis/tree-grove-rock-expansion-v1/placement-audit.json',
+      'artifacts/jelly-oasis/monumental-composition-v1/scenery/placement-audit.json',
       JSON.stringify(
         {
           terrain: config,

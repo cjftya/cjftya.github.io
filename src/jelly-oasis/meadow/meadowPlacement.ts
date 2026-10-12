@@ -53,7 +53,7 @@ export function placeMeadow(
           site,
         );
         const scale =
-          (kind === 'shrub' ? 0.65 + random() * 0.12 : 1.05 + random() * 0.4) /
+          (kind === 'shrub' ? 1.6 + random() * 0.4 : 2.7 + random() * 0.8) /
           site.placement.scale;
         const radius = shape.radius * scale,
           rotation = random() * Math.PI * 2,
@@ -66,6 +66,12 @@ export function placeMeadow(
           )
         )
           reason = 'spacing';
+        // Rejected masks/spacing need no terrain probes.
+        if (reason) {
+          rejected[`${patch.id}:${reason}`] =
+            (rejected[`${patch.id}:${reason}`] ?? 0) + 1;
+          continue;
+        }
         const world = landmarkWorldPoint(x, z, site.placement),
           h = sampleGround(world.x, world.z, site.terrain),
           step = Math.max(0.35, radius * site.placement.scale);

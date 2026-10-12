@@ -100,12 +100,12 @@ it('audits frozen production assets and the actual northern surface without weak
     };
     const vegetation = l.vegetation.instances(),
       composition = l.composition.instances();
-    expect(vegetation.length).toBe(180);
-    expect(composition.length).toBe(80);
+    expect(vegetation.length).toBe(40);
+    expect(composition.length).toBe(18);
     const placement = placeComposition(site, vegetation);
     expect(placement.instances).toEqual(composition);
-    expect(placement.zoneCounts['north-highland']).toBe(0);
-    expect(placement.rejected['north-highland:slope']).toBe(128);
+    expect(placement.zoneCounts['north-highland']).toBeUndefined();
+    expect(placement.rejected['north-highland:slope']).toBeUndefined();
     const grid = [];
     // Includes both 4m disks and a 4m nearby search margin. Query the excavated
     // production triangle surface, using the original placement footprint scales.

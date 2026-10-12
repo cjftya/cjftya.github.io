@@ -112,12 +112,12 @@ it('rebuilds real excavated placements with protected routes, stable seed, corre
         obstacles: groundFootprints(l.root, l.assets.modules, terrainConfig),
       };
       const a = l.vegetation.instances();
-      expect(a.length).toBeGreaterThan(90);
+      expect(a.length).toBeGreaterThan(30);
       expect(placeVegetation(site).instances).toEqual(a);
       expect(placeVegetation(site, 'density-a', 999).instances).not.toEqual(a);
       const stats = l.vegetation.snapshot();
       expect(stats.triangles).toBeLessThan(10000);
-      expect(stats.draws).toBe(3);
+      expect(stats.draws).toBe(2);
       expect(stats.instanceCount).toBeLessThanOrEqual(180);
       expect(
         l.vegetation.group.children.map((m) => (m as InstancedMesh).geometry),

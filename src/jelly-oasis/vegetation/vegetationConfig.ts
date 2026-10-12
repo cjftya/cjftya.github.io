@@ -3,8 +3,8 @@ export const VEGETATION_KINDS = ['grass', 'shrub', 'flower'] as const;
 export type VegetationKind = (typeof VEGETATION_KINDS)[number];
 export type VegetationDensity = 'density-a' | 'density-b' | 'off';
 export const VEGETATION_COUNTS = {
-  'density-a': { grass: 120, shrub: 24, flower: 36 },
-  'density-b': { grass: 210, shrub: 36, flower: 54 },
+  'density-a': { grass: 32, shrub: 8, flower: 0 },
+  'density-b': { grass: 48, shrub: 12, flower: 0 },
   off: { grass: 0, shrub: 0, flower: 0 },
 };
 // Radius encloses the entire source geometry, including its largest scale.

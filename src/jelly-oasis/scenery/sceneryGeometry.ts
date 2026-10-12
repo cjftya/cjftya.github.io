@@ -46,7 +46,7 @@ export function createSceneryGeometry(kind: SceneryKind) {
     shade: string,
   ) => {
     const g = new IcosahedronGeometry(1, 1);
-    g.scale(sx, sy, sz);
+    g.scale(sx * 1.5, sy, sz * 1.5);
     g.rotateY(0.37 + x);
     g.translate(x, y, z);
     parts.push(paint(g, shade));
@@ -72,7 +72,7 @@ export function createSceneryGeometry(kind: SceneryKind) {
     const p = g.attributes.position!;
     const size =
       kind === 'ridge'
-        ? [4.2, 3.4, 2.6]
+        ? [9, 12, 5]
         : kind === 'boulder'
           ? [2.1, 2.45, 1.7]
           : [0.8, 0.65, 0.62];
