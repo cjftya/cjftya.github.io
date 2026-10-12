@@ -1,3 +1,6 @@
+import { createWorldConfig, selectWorldSize } from './terrain/worldLayout';
+import { frameWorld } from './terrain/worldCamera';
+import { Box3 } from 'three';
 import { selectComposition } from './composition/compositionConfig';
 import { selectVegetation } from './vegetation/vegetationConfig';
 import { PerspectiveCamera, Scene, Vector3 } from 'three';
@@ -6,7 +9,6 @@ import { RendererManager } from '../core/renderer/RendererManager';
 import {
   createTerrain,
   createTerrainEdge,
-  DEFAULT_TERRAIN_CONFIG,
   sampleTerrainHeight,
 } from './terrain/createTerrain';
 import { EnvironmentController } from './environment/EnvironmentController';
@@ -24,7 +26,11 @@ import { createPondPanel } from './landmark/water/gpgpuPondPanel';
 import './styles.css';
 
 function start(canvas: HTMLCanvasElement): void {
-  const config = { ...DEFAULT_TERRAIN_CONFIG };
+  const debugEnabled =
+    import.meta.env.DEV || new URLSearchParams(location.search).has('debug');
+  const config = createWorldConfig(
+    selectWorldSize(debugEnabled, new URLSearchParams(location.search).get('world')),
+  );
   const scene = new Scene();
   const manager = new RendererManager(canvas);
   const renderer = manager.renderer;
@@ -34,7 +40,7 @@ function start(canvas: HTMLCanvasElement): void {
   controls.dampingFactor = 0.09;
   controls.screenSpacePanning = false;
   controls.minDistance = 35;
-  controls.maxDistance = 1050;
+  controls.maxDistance = Math.max(1050, config.size * 7);
   controls.minPolarAngle = 0.01;
   controls.maxPolarAngle = Math.PI - 0.01;
   controls.maxTargetRadius = Infinity;
@@ -52,8 +58,6 @@ function start(canvas: HTMLCanvasElement): void {
   const terrain = createTerrain(config, surface.material);
   const edge = createTerrainEdge(config);
   scene.add(terrain, edge);
-  const debugEnabled =
-    import.meta.env.DEV || new URLSearchParams(location.search).has('debug');
   let dirty = true;
   let disposed = false;
   let contextLost = false;
@@ -69,6 +73,7 @@ function start(canvas: HTMLCanvasElement): void {
   let reviewCamera = false;
   let groundCamera = false;
   let mediumCamera = false;
+  let overviewCamera = true;
   function setShadows(enabled: boolean): void {
     renderer.shadowMap.enabled = enabled;
     renderer.shadowMap.needsUpdate = true;
@@ -86,19 +91,17 @@ function start(canvas: HTMLCanvasElement): void {
   const resetButton = document.querySelector<HTMLButtonElement>('#reset-view')!;
 
   function resetView(): void {
+    overviewCamera = true;
     mediumCamera = false;
     reviewCamera = groundCamera = false;
     controls.minDistance = 35;
     controls.maxPolarAngle = Math.PI - 0.01;
     controls.maxTargetRadius = Infinity;
-    // Flush residual damping so reset also works during an active gesture.
-    controls.enableDamping = false;
-    controls.update();
-    controls.target.set(0, 0, 0);
-    const distanceScale = Math.max(1, 0.95 / camera.aspect);
-    camera.position.set(255, 235, 300).multiplyScalar(Math.min(distanceScale, 2.1));
-    controls.update();
-    controls.enableDamping = true;
+    frameWorld(
+      [terrain, edge, ...(landmark ? [...landmark.assets.modules.values()] : [])],
+      camera,
+      controls,
+    );
     dirty = true;
   }
   function resize(): void {
@@ -107,13 +110,14 @@ function start(canvas: HTMLCanvasElement): void {
     manager.resize(width, height);
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
-    if (mediumCamera && landmark) frameLandmark('medium', landmark, camera, controls);
+    if (overviewCamera) resetView();
+    else if (mediumCamera && landmark)
+      frameLandmark('medium', landmark, camera, controls);
     dirty = true;
   }
   const observer = new ResizeObserver(resize);
   observer.observe(canvas);
   resize();
-  resetView();
   resetButton.addEventListener('click', resetView);
   const invalidate = (): void => {
     dirty = true;
@@ -121,6 +125,7 @@ function start(canvas: HTMLCanvasElement): void {
   controls.addEventListener('change', invalidate);
   const releaseMediumCamera = (): void => {
     mediumCamera = false;
+    overviewCamera = false;
   };
   controls.addEventListener('start', releaseMediumCamera);
   const debugPanel = createEnvironmentPanel(
@@ -132,6 +137,7 @@ function start(canvas: HTMLCanvasElement): void {
     () => {
       // A high moon is outside the terrain-facing orbit's field of view.
       // The existing reset button returns this deliberate sky view to the land.
+      overviewCamera = false;
       reviewCamera = true;
       mediumCamera = false;
       groundCamera = false;
@@ -159,6 +165,7 @@ function start(canvas: HTMLCanvasElement): void {
       return;
     }
     if (!landmark) return;
+    overviewCamera = false;
     reviewCamera = true;
     groundCamera = view === 'ground';
     mediumCamera = view === 'medium';
@@ -244,6 +251,7 @@ function start(canvas: HTMLCanvasElement): void {
       }
       landmark = loaded;
       scene.add(loaded.root);
+      if (overviewCamera) resetView();
       landmarkStatus.hidden = true;
       if (debugEnabled) {
         landmarkDebug = createLandmarkDebug(loaded, invalidate, landmarkView);
@@ -252,6 +260,7 @@ function start(canvas: HTMLCanvasElement): void {
           __oasisLandmark: {
             audit: () => auditLandmark(loaded),
             reviewCamera: (position: number[], target: number[]) => {
+              overviewCamera = false;
               mediumCamera = false;
               reviewCamera = groundCamera = true;
               controls.enableDamping = false;
@@ -270,12 +279,10 @@ function start(canvas: HTMLCanvasElement): void {
                 world: loaded.root.localToWorld(new Vector3(p.x, p.y, p.z)).toArray(),
               })),
             reviewComposition: () =>
-              loaded.composition
-                .instances()
-                .map((p) => ({
-                  ...p,
-                  world: loaded.root.localToWorld(new Vector3(p.x, p.y, p.z)).toArray(),
-                })),
+              loaded.composition.instances().map((p) => ({
+                ...p,
+                world: loaded.root.localToWorld(new Vector3(p.x, p.y, p.z)).toArray(),
+              })),
             reviewRebuild: () => {
               loaded.place({
                 ...loaded.placement,
@@ -316,6 +323,27 @@ function start(canvas: HTMLCanvasElement): void {
               invalidate();
             },
             snapshot: () => ({
+              terrain: { ...config },
+              worldBounds: Object.fromEntries(
+                [...loaded.assets.modules].map(([name, object]) => {
+                  const b = new Box3().setFromObject(object);
+                  return [
+                    name,
+                    {
+                      min: b.min.toArray(),
+                      max: b.max.toArray(),
+                      margin:
+                        config.size / 2 -
+                        Math.max(
+                          Math.abs(b.min.x),
+                          Math.abs(b.max.x),
+                          Math.abs(b.min.z),
+                          Math.abs(b.max.z),
+                        ),
+                    },
+                  ];
+                }),
+              ),
               modules: loaded.assets.modules.size,
               vegetation: loaded.vegetation.snapshot(),
               composition: loaded.composition.snapshot(),
@@ -401,6 +429,7 @@ function start(canvas: HTMLCanvasElement): void {
         debugEnabled &&
         ['waterfall', 'pond-low', 'pond-top'].includes(candidateQuery.get('view') ?? '')
       ) {
+        overviewCamera = false;
         mediumCamera = false;
         reviewCamera = groundCamera = true;
         controls.enableDamping = false;
@@ -418,6 +447,13 @@ function start(canvas: HTMLCanvasElement): void {
           camera.position.set(82, 1, 93);
           controls.target.set(66, -3, 50);
         }
+        const offset = new Vector3(
+          loaded.placement.position.x - 70,
+          loaded.root.position.y - sampleTerrainHeight(70, 58),
+          loaded.placement.position.z - 58,
+        );
+        camera.position.add(offset);
+        controls.target.add(offset);
         controls.update();
         controls.enableDamping = true;
         environment.setTime(12);

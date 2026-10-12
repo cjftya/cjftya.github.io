@@ -64,7 +64,11 @@ export function placeComposition(
           d = Math.sqrt(random()) * zone.radius;
         let x = center[0] + Math.cos(a) * d,
           z = center[1] + Math.sin(a) * d;
-        if (zone.basis === 'world') ({ x, z } = worldToLandmark(x, z, site));
+        if (zone.basis === 'world') {
+          // World zones follow normalized outer hills; local detail retains metre offsets.
+          const ratio = site.terrain.oasisX === undefined ? 1 : site.terrain.size / 320;
+          ({ x, z } = worldToLandmark(x * ratio, z * ratio, site));
+        }
         const scale = kind === 'rock' ? 0.5 + random() * 0.45 : 0.7 + random() * 0.35;
         const radius = (kind === 'rock' ? 1 : VEGETATION_SHAPES[kind].radius) * scale;
         const rotation = random() * Math.PI * 2,
