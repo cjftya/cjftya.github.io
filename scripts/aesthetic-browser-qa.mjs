@@ -64,8 +64,8 @@ try {
     }
     const state = result.states[prefix + '-debug-medium'];
     assert.equal(state.modules, 16);
-    assert.equal(state.assetTriangles, 20786);
-    assert.equal(state.crystalDetail, false);
+    assert.equal(state.assetTriangles, 20894);
+    assert.equal(state.crystalDetail, true);
     if (width < 900) assert.equal(state.shadows, true);
     result.states[prefix + '-audit'] = await page.evaluate(() =>
       window.__oasisLandmark.audit(),

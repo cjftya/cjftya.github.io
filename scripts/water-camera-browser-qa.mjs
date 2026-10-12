@@ -193,7 +193,7 @@ try {
         console.log('capture', prefix, candidate, label);
         const s = await capture(p, `${prefix}-${candidate ? 'v1' : 'soft'}-${label}`);
         assert.equal(s.modules, 16);
-        assert.equal(s.assetTriangles, 20786);
+        assert.equal(s.assetTriangles, 20894);
         assert.equal(s.shadows, true);
         assert.deepEqual(s.shadow.mapSize, mobile ? [512, 512] : [1024, 1024]);
         assert.equal(time === 0 ? s.moon.castShadow : s.sun.castShadow, true);

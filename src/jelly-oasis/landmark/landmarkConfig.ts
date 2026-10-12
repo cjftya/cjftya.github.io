@@ -56,3 +56,9 @@ export interface LandmarkLayout {
   }[];
   guides: Record<string, LayoutGuide>;
 }
+
+// Keep the old crystal blockouts available for visual comparison without
+// allowing query parameters to override production assets.
+export function selectCrystalDetail(debugEnabled: boolean, variant: string | null): boolean {
+  return !(debugEnabled && variant === 'blockout');
+}
