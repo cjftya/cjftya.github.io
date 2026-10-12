@@ -1,0 +1,524 @@
+[
+  {
+    "device": "desktop",
+    "variant": "off",
+    "composition": {
+      "variant": "off",
+      "seed": 201660176,
+      "mobile": false,
+      "requested": {},
+      "rejected": {},
+      "zoneCounts": {},
+      "placed": {},
+      "instanceCount": 0,
+      "triangles": 0,
+      "draws": 0,
+      "resources": {
+        "geometries": 0,
+        "materials": 0
+      },
+      "visible": true
+    },
+    "vegetation": {
+      "seed": 173101570,
+      "density": "density-a",
+      "mobile": false,
+      "requested": {
+        "grass": 120,
+        "shrub": 24,
+        "flower": 36
+      },
+      "placed": {
+        "grass": 120,
+        "shrub": 24,
+        "flower": 36
+      },
+      "rejected": {
+        "obstacle": 78,
+        "loop": 110,
+        "approach": 55,
+        "spacing": 102
+      },
+      "triangles": 4812,
+      "instanceCount": 180,
+      "draws": 3,
+      "visible": true,
+      "sourceTriangles": {
+        "grass": 10,
+        "shrub": 80,
+        "flower": 47
+      }
+    },
+    "render": {
+      "calls": 40,
+      "triangles": 74185,
+      "geometries": 79,
+      "textures": 10
+    },
+    "camera": [
+      125,
+      41.76332418671941,
+      136
+    ],
+    "target": [
+      70,
+      -0.5758476257324219,
+      58
+    ]
+  },
+  {
+    "device": "mobile390",
+    "variant": "off",
+    "composition": {
+      "variant": "off",
+      "seed": 201660176,
+      "mobile": true,
+      "requested": {},
+      "rejected": {},
+      "zoneCounts": {},
+      "placed": {},
+      "instanceCount": 0,
+      "triangles": 0,
+      "draws": 0,
+      "resources": {
+        "geometries": 0,
+        "materials": 0
+      },
+      "visible": true
+    },
+    "vegetation": {
+      "seed": 173101570,
+      "density": "density-a",
+      "mobile": true,
+      "requested": {
+        "grass": 120,
+        "shrub": 24,
+        "flower": 36
+      },
+      "placed": {
+        "grass": 80,
+        "shrub": 16,
+        "flower": 24
+      },
+      "rejected": {
+        "obstacle": 78,
+        "loop": 110,
+        "approach": 55,
+        "spacing": 102
+      },
+      "triangles": 3208,
+      "instanceCount": 120,
+      "draws": 3,
+      "visible": true,
+      "sourceTriangles": {
+        "grass": 10,
+        "shrub": 80,
+        "flower": 47
+      }
+    },
+    "render": {
+      "calls": 42,
+      "triangles": 55039,
+      "geometries": 79,
+      "textures": 10
+    },
+    "camera": [
+      172.7077112041943,
+      78.4888693040506,
+      203.65820861685737
+    ],
+    "target": [
+      70,
+      -0.5758476257324219,
+      58
+    ]
+  },
+  {
+    "device": "desktop",
+    "variant": "a",
+    "composition": {
+      "variant": "a",
+      "seed": 201660176,
+      "mobile": false,
+      "requested": {
+        "rock": 24,
+        "grass": 48,
+        "shrub": 11,
+        "flower": 14
+      },
+      "rejected": {
+        "shore-transition:obstacle": 93,
+        "shore-transition:spacing": 48,
+        "tree-edge:spacing": 77,
+        "tree-edge:loop": 45,
+        "tree-edge:obstacle": 22,
+        "ruin-frame:obstacle": 171,
+        "ruin-frame:approach": 34,
+        "ruin-frame:loop": 3,
+        "ruin-frame:spacing": 8,
+        "meadow-transition:spacing": 2,
+        "west-hills:spacing": 1,
+        "north-highland:slope": 128
+      },
+      "zoneCounts": {
+        "shore-transition": 21,
+        "tree-edge": 20,
+        "ruin-frame": 12,
+        "meadow-transition": 19,
+        "west-hills": 8,
+        "north-highland": 0
+      },
+      "placed": {
+        "rock": 17,
+        "grass": 44,
+        "shrub": 6,
+        "flower": 13
+      },
+      "instanceCount": 80,
+      "triangles": 1871,
+      "draws": 4,
+      "resources": {
+        "geometries": 4,
+        "materials": 4
+      },
+      "visible": true
+    },
+    "vegetation": {
+      "seed": 173101570,
+      "density": "density-a",
+      "mobile": false,
+      "requested": {
+        "grass": 120,
+        "shrub": 24,
+        "flower": 36
+      },
+      "placed": {
+        "grass": 120,
+        "shrub": 24,
+        "flower": 36
+      },
+      "rejected": {
+        "obstacle": 78,
+        "loop": 110,
+        "approach": 55,
+        "spacing": 102
+      },
+      "triangles": 4812,
+      "instanceCount": 180,
+      "draws": 3,
+      "visible": true,
+      "sourceTriangles": {
+        "grass": 10,
+        "shrub": 80,
+        "flower": 47
+      }
+    },
+    "render": {
+      "calls": 48,
+      "triangles": 77927,
+      "geometries": 83,
+      "textures": 10
+    },
+    "camera": [
+      125,
+      41.76332418671941,
+      136
+    ],
+    "target": [
+      70,
+      -0.5758476257324219,
+      58
+    ]
+  },
+  {
+    "device": "mobile390",
+    "variant": "a",
+    "composition": {
+      "variant": "a",
+      "seed": 201660176,
+      "mobile": true,
+      "requested": {
+        "rock": 24,
+        "grass": 48,
+        "shrub": 11,
+        "flower": 14
+      },
+      "rejected": {
+        "shore-transition:obstacle": 93,
+        "shore-transition:spacing": 48,
+        "tree-edge:spacing": 77,
+        "tree-edge:loop": 45,
+        "tree-edge:obstacle": 22,
+        "ruin-frame:obstacle": 171,
+        "ruin-frame:approach": 34,
+        "ruin-frame:loop": 3,
+        "ruin-frame:spacing": 8,
+        "meadow-transition:spacing": 2,
+        "west-hills:spacing": 1,
+        "north-highland:slope": 128
+      },
+      "zoneCounts": {
+        "shore-transition": 21,
+        "tree-edge": 20,
+        "ruin-frame": 12,
+        "meadow-transition": 19,
+        "west-hills": 8,
+        "north-highland": 0
+      },
+      "placed": {
+        "rock": 12,
+        "grass": 30,
+        "shrub": 4,
+        "flower": 9
+      },
+      "instanceCount": 55,
+      "triangles": 1283,
+      "draws": 4,
+      "resources": {
+        "geometries": 4,
+        "materials": 4
+      },
+      "visible": true
+    },
+    "vegetation": {
+      "seed": 173101570,
+      "density": "density-a",
+      "mobile": true,
+      "requested": {
+        "grass": 120,
+        "shrub": 24,
+        "flower": 36
+      },
+      "placed": {
+        "grass": 80,
+        "shrub": 16,
+        "flower": 24
+      },
+      "rejected": {
+        "obstacle": 78,
+        "loop": 110,
+        "approach": 55,
+        "spacing": 102
+      },
+      "triangles": 3208,
+      "instanceCount": 120,
+      "draws": 3,
+      "visible": true,
+      "sourceTriangles": {
+        "grass": 10,
+        "shrub": 80,
+        "flower": 47
+      }
+    },
+    "render": {
+      "calls": 50,
+      "triangles": 57605,
+      "geometries": 83,
+      "textures": 10
+    },
+    "camera": [
+      172.7077112041943,
+      78.4888693040506,
+      203.65820861685737
+    ],
+    "target": [
+      70,
+      -0.5758476257324219,
+      58
+    ]
+  },
+  {
+    "device": "desktop",
+    "variant": "b",
+    "composition": {
+      "variant": "b",
+      "seed": 201660176,
+      "mobile": false,
+      "requested": {
+        "rock": 38,
+        "grass": 72,
+        "shrub": 18,
+        "flower": 22
+      },
+      "rejected": {
+        "shore-transition:obstacle": 327,
+        "shore-transition:spacing": 209,
+        "tree-edge:spacing": 154,
+        "tree-edge:loop": 106,
+        "tree-edge:obstacle": 57,
+        "ruin-frame:obstacle": 280,
+        "ruin-frame:approach": 53,
+        "ruin-frame:loop": 4,
+        "ruin-frame:spacing": 23,
+        "meadow-transition:spacing": 11,
+        "west-hills:spacing": 3,
+        "north-highland:slope": 208
+      },
+      "zoneCounts": {
+        "shore-transition": 24,
+        "tree-edge": 27,
+        "ruin-frame": 17,
+        "meadow-transition": 29,
+        "west-hills": 13,
+        "north-highland": 0
+      },
+      "placed": {
+        "rock": 25,
+        "grass": 65,
+        "shrub": 8,
+        "flower": 12
+      },
+      "instanceCount": 110,
+      "triangles": 2354,
+      "draws": 4,
+      "resources": {
+        "geometries": 4,
+        "materials": 4
+      },
+      "visible": true
+    },
+    "vegetation": {
+      "seed": 173101570,
+      "density": "density-a",
+      "mobile": false,
+      "requested": {
+        "grass": 120,
+        "shrub": 24,
+        "flower": 36
+      },
+      "placed": {
+        "grass": 120,
+        "shrub": 24,
+        "flower": 36
+      },
+      "rejected": {
+        "obstacle": 78,
+        "loop": 110,
+        "approach": 55,
+        "spacing": 102
+      },
+      "triangles": 4812,
+      "instanceCount": 180,
+      "draws": 3,
+      "visible": true,
+      "sourceTriangles": {
+        "grass": 10,
+        "shrub": 80,
+        "flower": 47
+      }
+    },
+    "render": {
+      "calls": 48,
+      "triangles": 78893,
+      "geometries": 83,
+      "textures": 10
+    },
+    "camera": [
+      125,
+      41.76332418671941,
+      136
+    ],
+    "target": [
+      70,
+      -0.5758476257324219,
+      58
+    ]
+  },
+  {
+    "device": "mobile390",
+    "variant": "b",
+    "composition": {
+      "variant": "b",
+      "seed": 201660176,
+      "mobile": true,
+      "requested": {
+        "rock": 38,
+        "grass": 72,
+        "shrub": 18,
+        "flower": 22
+      },
+      "rejected": {
+        "shore-transition:obstacle": 327,
+        "shore-transition:spacing": 209,
+        "tree-edge:spacing": 154,
+        "tree-edge:loop": 106,
+        "tree-edge:obstacle": 57,
+        "ruin-frame:obstacle": 280,
+        "ruin-frame:approach": 53,
+        "ruin-frame:loop": 4,
+        "ruin-frame:spacing": 23,
+        "meadow-transition:spacing": 11,
+        "west-hills:spacing": 3,
+        "north-highland:slope": 208
+      },
+      "zoneCounts": {
+        "shore-transition": 24,
+        "tree-edge": 27,
+        "ruin-frame": 17,
+        "meadow-transition": 29,
+        "west-hills": 13,
+        "north-highland": 0
+      },
+      "placed": {
+        "rock": 17,
+        "grass": 44,
+        "shrub": 6,
+        "flower": 8
+      },
+      "instanceCount": 75,
+      "triangles": 1636,
+      "draws": 4,
+      "resources": {
+        "geometries": 4,
+        "materials": 4
+      },
+      "visible": true
+    },
+    "vegetation": {
+      "seed": 173101570,
+      "density": "density-a",
+      "mobile": true,
+      "requested": {
+        "grass": 120,
+        "shrub": 24,
+        "flower": 36
+      },
+      "placed": {
+        "grass": 80,
+        "shrub": 16,
+        "flower": 24
+      },
+      "rejected": {
+        "obstacle": 78,
+        "loop": 110,
+        "approach": 55,
+        "spacing": 102
+      },
+      "triangles": 3208,
+      "instanceCount": 120,
+      "draws": 3,
+      "visible": true,
+      "sourceTriangles": {
+        "grass": 10,
+        "shrub": 80,
+        "flower": 47
+      }
+    },
+    "render": {
+      "calls": 50,
+      "triangles": 58311,
+      "geometries": 83,
+      "textures": 10
+    },
+    "camera": [
+      172.7077112041943,
+      78.4888693040506,
+      203.65820861685737
+    ],
+    "target": [
+      70,
+      -0.5758476257324219,
+      58
+    ]
+  }
+]

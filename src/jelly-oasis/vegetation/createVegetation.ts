@@ -16,6 +16,7 @@ import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js
 import type { LandmarkPlacement, LayoutGuide } from '../landmark/landmarkConfig';
 import type { TerrainConfig } from '../terrain/heightfield';
 import { groundFootprints, placeVegetation } from './vegetationPlacement';
+import type { Footprint } from './vegetationPlacement';
 import {
   VEGETATION_COUNTS,
   VEGETATION_KINDS,
@@ -176,7 +177,7 @@ export function createVegetation(
     quaternion = new Quaternion(),
     up = new Vector3(0, 1, 0),
     tint = new Color();
-  function refresh(placement: LandmarkPlacement) {
+  function refresh(placement: LandmarkPlacement, obstacles?: Footprint[]) {
     if (disposed) return;
     result = placeVegetation(
       {
@@ -185,7 +186,9 @@ export function createVegetation(
         terrain,
         pond,
         approach,
-        obstacles: density === 'off' ? [] : groundFootprints(root, modules, terrain),
+        obstacles:
+          obstacles ??
+          (density === 'off' ? [] : groundFootprints(root, modules, terrain)),
       },
       density,
     );
