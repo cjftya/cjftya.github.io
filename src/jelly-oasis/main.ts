@@ -223,56 +223,13 @@ function start(canvas: HTMLCanvasElement): void {
     crystalDetail,
     aesthetic,
     {
-      water:
-        debugEnabled &&
-        (['v1', 'v2', 'v4'].includes(waterQuery ?? '') ||
-          ['v3', 'v4', 'v5', 'v6', 'v7', 'v8'].includes(
-            candidateQuery.get('waterfall') ?? '',
-          )),
-      realistic:
-        debugEnabled &&
-        (waterQuery === 'v2' ||
-          waterQuery === 'v4' ||
-          ['v3', 'v4', 'v5', 'v6', 'v7', 'v8'].includes(
-            candidateQuery.get('waterfall') ?? '',
-          )),
+      pondOnly: true,
+      water: true,
+      waterfall: false,
       mobile,
-      realWater:
-        debugEnabled &&
-        (['v6', 'v7', 'v8'].includes(candidateQuery.get('waterfall') ?? '') ||
-          waterQuery === 'v4'),
-      freeFall:
-        debugEnabled &&
-        ['v4', 'v5', 'v6'].includes(candidateQuery.get('waterfall') ?? ''),
-      continuous:
-        debugEnabled && ['v7', 'v8'].includes(candidateQuery.get('waterfall') ?? ''),
-      renderer:
-        debugEnabled &&
-        candidateQuery.get('waterfall') === 'v8' &&
-        candidateQuery.get('surface') === 'gpgpu-proto'
-          ? renderer
-          : undefined,
-      gpgpuPrototype:
-        debugEnabled &&
-        candidateQuery.get('waterfall') === 'v8' &&
-        candidateQuery.get('surface') === 'gpgpu-proto',
-      fallingFlow:
-        debugEnabled &&
-        candidateQuery.get('waterfall') === 'v8' &&
-        candidateQuery.get('flow') === 'fall-v1',
-      flowPaths: debugEnabled && candidateQuery.get('paths') === '1',
-      gpuNeutral: candidateQuery.get('material') !== 'optics',
-      dynamics: debugEnabled && candidateQuery.get('waterfall') === 'v8',
-      basinOnly:
-        debugEnabled &&
-        candidateQuery.get('basin') === 'excavated' &&
-        candidateQuery.get('waterfall') === 'off',
-      interaction: debugEnabled && candidateQuery.get('waterfall') === 'v5',
-      waterfall:
-        debugEnabled &&
-        ['v1', 'v2', 'v3', 'v4', 'v5', 'v6', 'v7', 'v8'].includes(
-          candidateQuery.get('waterfall') ?? '',
-        ),
+      renderer,
+      gpuNeutral: debugEnabled && candidateQuery.get('material') === 'neutral',
+      forceCpu: debugEnabled && candidateQuery.get('surface') === 'cpu',
     },
     terrain,
   )
@@ -337,6 +294,8 @@ function start(canvas: HTMLCanvasElement): void {
                   Math.min(1 / 60, remaining),
                   environment.state.timeOfDay,
                   false,
+                  undefined,
+                  environment.profile.rainIntensity,
                 );
               invalidate();
             },
@@ -447,15 +406,14 @@ function start(canvas: HTMLCanvasElement): void {
       }
       if (
         debugEnabled &&
-        candidateQuery.get('waterfall') === 'v8' &&
-        candidateQuery.get('surface') === 'gpgpu-proto' &&
+        candidateQuery.get('panel') === 'pond' &&
         loaded.waterEffects &&
         'configurePond' in loaded.waterEffects
       ) {
         pondPanel = createPondPanel(
           loaded.waterEffects.configurePond,
           invalidate,
-          candidateQuery.get('material') !== 'optics',
+          candidateQuery.get('material') === 'neutral',
           loaded.waterEffects.snapshot().gpuError,
         );
       }
@@ -556,6 +514,7 @@ function start(canvas: HTMLCanvasElement): void {
         environment.state.timeOfDay,
         motionPreference.matches,
         `${environment.state.weather}:${environment.state.weatherBlend.toFixed(2)}`,
+        environment.profile.rainIntensity,
       )
     )
       dirty = true;
