@@ -1,3 +1,4 @@
+import { selectVegetation } from './vegetation/vegetationConfig';
 import { PerspectiveCamera, Scene, Vector3 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { RendererManager } from '../core/renderer/RendererManager';
@@ -232,6 +233,7 @@ function start(canvas: HTMLCanvasElement): void {
       forceCpu: debugEnabled && candidateQuery.get('surface') === 'cpu',
     },
     terrain,
+    selectVegetation(debugEnabled, candidateQuery.get('vegetation')),
   )
     .then((loaded) => {
       if (disposed) {
@@ -260,6 +262,13 @@ function start(canvas: HTMLCanvasElement): void {
               controls.enableDamping = true;
               invalidate();
             },
+            reviewVegetation: () =>
+              loaded.vegetation
+                .instances()
+                .map((p) => ({
+                  ...p,
+                  world: loaded.root.localToWorld(new Vector3(p.x, p.y, p.z)).toArray(),
+                })),
             reviewRebuild: () => {
               loaded.place({
                 ...loaded.placement,
@@ -301,6 +310,7 @@ function start(canvas: HTMLCanvasElement): void {
             },
             snapshot: () => ({
               modules: loaded.assets.modules.size,
+              vegetation: loaded.vegetation.snapshot(),
               cliffDetail,
               ruinDetail,
               treeDetail,
