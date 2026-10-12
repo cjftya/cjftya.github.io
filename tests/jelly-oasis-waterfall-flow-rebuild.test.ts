@@ -136,7 +136,7 @@ it('lands a narrow measured shelf film on the original channel, preserves seam/f
         cliff,
         makeChannel(
           attached.launch,
-          l.excavationSnapshot()!.inletPosition[1]!,
+          l.excavationSnapshot()!.inletPosition![1]!,
           l.excavationSnapshot()!.channelPath.at(-1)![2]!,
           true,
         ),

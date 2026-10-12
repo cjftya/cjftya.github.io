@@ -1,0 +1,210 @@
+{
+  "baseline": {
+    "calls": 81,
+    "triangles": 193788,
+    "geometries": 62,
+    "textures": 11,
+    "assetTriangles": 20894,
+    "renderCpuMs": 2.8000000002793968,
+    "reflection": {
+      "size": 768,
+      "version": 4,
+      "vertices": 26187,
+      "triangles": 52076,
+      "captures": 1,
+      "passes": 2,
+      "captured": true,
+      "impact": [
+        0,
+        0,
+        0
+      ],
+      "flowDirection": [
+        0,
+        1
+      ]
+    },
+    "compute": {
+      "active": true,
+      "n": 128,
+      "bounds": [
+        -11.5,
+        -3.0592594146728516,
+        23.711111068725586,
+        20.259260177612305
+      ],
+      "inlet": [
+        -0.25063439028338813,
+        0.12002819515775154
+      ],
+      "diagnosticPoint": [
+        0.35555553436279297,
+        7.070370674133301
+      ],
+      "steps": 0,
+      "computePasses": 0,
+      "maxSubsteps": 3,
+      "dropped": 0,
+      "updateCpuMs": 0,
+      "flowRate": 1,
+      "automaticInlet": true,
+      "paused": false,
+      "amplitude": 1,
+      "neutral": false,
+      "damping": 0.995,
+      "waveSpeed": 3.5,
+      "renderTargets": 2,
+      "targetBytes": 262144,
+      "shorelineFade": 0.8,
+      "channelFade": 1
+    }
+  },
+  "current": {
+    "calls": 73,
+    "triangles": 105644,
+    "geometries": 55,
+    "textures": 10,
+    "assetTriangles": 20894,
+    "renderCpuMs": 2.1000000000931323,
+    "reflection": {
+      "size": 768,
+      "version": 4,
+      "vertices": 13411,
+      "triangles": 26592,
+      "captures": 1,
+      "passes": 2,
+      "captured": true,
+      "impact": [
+        0,
+        0,
+        0
+      ],
+      "flowDirection": [
+        0,
+        1
+      ]
+    },
+    "compute": {
+      "active": true,
+      "n": 128,
+      "bounds": [
+        -11.5,
+        -3.0592594146728516,
+        23.711111068725586,
+        20.259260177612305
+      ],
+      "inlet": [
+        0,
+        0
+      ],
+      "diagnosticPoint": [
+        0.35555553436279297,
+        7.070370674133301
+      ],
+      "steps": 0,
+      "computePasses": 0,
+      "maxSubsteps": 3,
+      "dropped": 0,
+      "updateCpuMs": 0,
+      "flowRate": 1,
+      "automaticInlet": false,
+      "paused": false,
+      "amplitude": 1,
+      "neutral": false,
+      "damping": 0.995,
+      "waveSpeed": 3.5,
+      "renderTargets": 2,
+      "targetBytes": 262144,
+      "shorelineFade": 0.8,
+      "channelFade": 1
+    }
+  },
+  "wavePropagation": {
+    "start": {
+      "radius": 0.26288464153928537,
+      "mass": 1.2015495300292969,
+      "max": 0.10565185546875
+    },
+    "after08Seconds": {
+      "radius": 2.051438345650595,
+      "mass": 31.451497316360474,
+      "max": 0.04620361328125
+    }
+  },
+  "visibility": {
+    "hidden": {
+      "ambient": 0,
+      "rain": 0,
+      "dropped": 0,
+      "elapsed": 0.849966666666667,
+      "averageRate": 0,
+      "candidates": 9577,
+      "last": null
+    },
+    "after": {
+      "ambient": 0,
+      "rain": 0,
+      "dropped": 0,
+      "elapsed": 0.9998666666666672,
+      "averageRate": 0,
+      "candidates": 9577,
+      "last": null
+    }
+  },
+  "unsupported": {
+    "version": 1,
+    "flightDuration": 0,
+    "impact": null,
+    "path": [],
+    "pondOnly": true,
+    "water": true,
+    "waterfall": false,
+    "solver": "cpu-heightfield",
+    "gpuError": "Error: Float render targets or vertex textures unavailable",
+    "gpuPond": null,
+    "cpuPond": {
+      "n": 32,
+      "paused": false
+    },
+    "impulses": {
+      "ambient": 0,
+      "rain": 0,
+      "dropped": 0,
+      "elapsed": 1.9999999999999978,
+      "averageRate": 0,
+      "candidates": 597,
+      "last": null
+    },
+    "reflection": {
+      "size": 768,
+      "version": 4,
+      "vertices": 5379,
+      "triangles": 10597,
+      "captures": 2,
+      "passes": 2,
+      "captured": true,
+      "impact": [
+        0,
+        0,
+        0
+      ],
+      "flowDirection": [
+        0,
+        1
+      ]
+    },
+    "elapsed": 1.9999999999999978,
+    "rockFlowCount": 0,
+    "rockPaths": [],
+    "droplets": 0,
+    "ripples": 0,
+    "regions": [
+      "pond"
+    ],
+    "triangles": 0,
+    "fallingFlow": null,
+    "flowError": null,
+    "channelStates": [],
+    "fluid": null
+  }
+}

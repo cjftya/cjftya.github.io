@@ -168,7 +168,9 @@ export async function createOvergrownRuin(
             owner = owner.parent;
           const role = owner.userData.pond_role;
           if (
-            (waterOptions.continuous || waterOptions.basinOnly) &&
+            (waterOptions.pondOnly ||
+              waterOptions.continuous ||
+              waterOptions.basinOnly) &&
             ['shore', 'bank'].includes(role)
           ) {
             child.visible = false;
@@ -307,7 +309,7 @@ export async function createOvergrownRuin(
     // Baseline uses the original inspection level; excavation is opt-in.
     const shore = heightGuide.positions.slice(1).map((p) => localGround(p[0]!, p[2]!));
     pondHeight =
-      waterOptions.continuous || waterOptions.basinOnly
+      waterOptions.pondOnly || waterOptions.continuous || waterOptions.basinOnly
         ? Math.min(...pondGuide.positions.map((p) => localGround(p[0]!, p[2]!))) -
           0.12 / placement.scale
         : Math.max(...shore) + 0.025 / placement.scale;
@@ -421,22 +423,25 @@ export async function createOvergrownRuin(
     bank.userData.maxBankLift = maxBankLift;
     bank.userData.maxBankDisplacement = maxBankDisplacement;
     root.updateMatrixWorld(true);
-    if (waterOptions.continuous || waterOptions.basinOnly) {
+    if (waterOptions.pondOnly || waterOptions.continuous || waterOptions.basinOnly) {
       if (!terrainMesh)
         throw new Error('Excavation requires the rendered terrain mesh');
-      const attached = traceAttachedFlow(
-        root,
-        assets.modules.get('Cliff_Waterfall_A')!,
-      );
-      pond.geometry.computeBoundingBox();
-      channelPath = makeChannel(
-        attached.launch,
-        pondHeight,
-        (waterOptions.dynamics
-          ? Math.min(...pondGuide.positions.map((p) => p[2]!))
-          : pond.geometry.boundingBox!.min.z) + 1.4,
-        waterOptions.dynamics,
-      );
+      channelPath = [];
+      if (!waterOptions.pondOnly) {
+        const attached = traceAttachedFlow(
+          root,
+          assets.modules.get('Cliff_Waterfall_A')!,
+        );
+        pond.geometry.computeBoundingBox();
+        channelPath = makeChannel(
+          attached.launch,
+          pondHeight,
+          (waterOptions.dynamics
+            ? Math.min(...pondGuide.positions.map((p) => p[2]!))
+            : pond.geometry.boundingBox!.min.z) + 1.4,
+          waterOptions.dynamics,
+        );
+      }
       const protectedZones = assets.layout.modules
         .filter((m) => /^(Ruin_|Root_|Crystal_)/.test(m.name))
         .map((m) => m.bounds);
@@ -576,8 +581,11 @@ export async function createOvergrownRuin(
             channelFloorHeight: channelPath.map((s) =>
               localGround(s.point.x, s.point.z),
             ),
-            inletPosition: channelPath.at(-1)!.point.clone().setY(pondHeight).toArray(),
-            flowSegments: ['rock-flow', 'rock-foot', 'channel', 'pond-inlet'],
+            inletPosition:
+              channelPath.at(-1)?.point.clone().setY(pondHeight).toArray() ?? null,
+            flowSegments: waterOptions.pondOnly
+              ? ['pond']
+              : ['rock-flow', 'rock-foot', 'channel', 'pond-inlet'],
             shorelineContacts,
             shorelineContactTypes,
             shorelineGaps: shorelineContacts

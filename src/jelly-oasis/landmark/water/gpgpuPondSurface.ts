@@ -103,7 +103,7 @@ export function waveCoefficients(
   return requested;
 }
 
-/** Debug-only GPU resource owner. No readback in the frame loop. */
+/** GPU resource owner. No readback in the frame loop. */
 export class GPGPUPondSurface {
   readonly n: number;
   readonly bounds: Vector4;
@@ -134,8 +134,8 @@ export class GPGPUPondSurface {
   constructor(
     renderer: WebGLRenderer,
     geometry: BufferGeometry,
-    inlet: Vector2,
-    direction: Vector2,
+    inlet: Vector2 | undefined,
+    direction: Vector2 | undefined,
     ground: (x: number, z: number) => number,
     level: number,
     mobile: boolean,
@@ -148,16 +148,23 @@ export class GPGPUPondSurface {
     this.n = mobile ? 64 : 128;
     const domain = pondDomain(geometry);
     this.bounds = domain.bounds;
-    // Exclude the entire channel and fade for 1m beyond the welded inlet.
+    // Pond-only uses the full depth mask; legacy coupled callers retain inlet fading.
     this.maskAt = (x, z) => {
-      const t = Math.max(
-        0,
-        Math.min(1, (new Vector2(x, z).sub(inlet).dot(direction) - 0.15) / 1),
-      );
+      const t =
+        !inlet || !direction
+          ? 1
+          : Math.max(
+              0,
+              Math.min(1, (new Vector2(x, z).sub(inlet!).dot(direction!) - 0.15) / 1),
+            );
       const depth = Math.max(0, Math.min(1, (level - ground(x, z)) / 0.4));
       return domain.mask(x, z) * t * t * (3 - 2 * t) * depth * depth * (3 - 2 * depth);
     };
-    this.inlet = inlet.clone().addScaledVector(direction, 1.8);
+    this.inlet =
+      inlet && direction
+        ? inlet.clone().addScaledVector(direction, 1.8)
+        : new Vector2();
+    this.automaticInlet = !!inlet && !!direction;
     this.diagnosticPoint = new Vector2(
       this.bounds.x + this.bounds.z / 2,
       this.bounds.y + this.bounds.w / 2,
@@ -238,13 +245,22 @@ export class GPGPUPondSurface {
     }
   }
   impulse(point = this.diagnosticPoint, strength = 0.16, radius = 0.65) {
-    if (this.maskAt(point.x, point.y) < 0.5 || this.pending.length >= 4) return;
+    if (
+      this.disposed ||
+      !Number.isFinite(strength) ||
+      !Number.isFinite(radius) ||
+      radius <= 0 ||
+      this.maskAt(point.x, point.y) < 0.5 ||
+      this.pending.length >= 4
+    )
+      return false;
     this.pending.push(new Vector4(point.x, point.y, radius, strength));
+    return true;
   }
   configure(controls: PondControls) {
     if (controls.paused !== undefined) {
       this.paused = controls.paused;
-      this.accumulator = 0;
+      this.suspend();
     }
     if (controls.amplitude !== undefined && Number.isFinite(controls.amplitude))
       this.amplitude.value = Math.max(0.25, Math.min(2, controls.amplitude));
@@ -255,6 +271,10 @@ export class GPGPUPondSurface {
       this.speed = Math.max(1, Math.min(5, controls.waveSpeed));
     if (controls.reset) this.reset();
     if (controls.impulse) this.impulse();
+  }
+  suspend() {
+    this.pending = [];
+    this.accumulator = 0;
   }
   reset() {
     this.pending = [];
@@ -276,7 +296,7 @@ export class GPGPUPondSurface {
     const start = performance.now();
     // A resumed tab never catches up its stale elapsed time.
     if (dt > 0.15) {
-      this.accumulator = 0;
+      this.suspend();
       this.dropped++;
       return;
     }

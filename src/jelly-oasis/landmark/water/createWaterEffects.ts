@@ -16,6 +16,7 @@ import {
   Raycaster,
   Vector3,
 } from 'three';
+import { createPondWater } from './createPondWater';
 import { createRealWaterEffects } from './createRealWaterEffects';
 import { createReflectivePond } from './createReflectivePond';
 import { createWaterNormal, createFoamTexture } from './waterTextures';
@@ -23,6 +24,8 @@ import type { WebGLRenderer } from 'three';
 import type { LayoutGuide } from '../landmarkConfig';
 
 export interface WaterOptions {
+  pondOnly?: boolean;
+  forceCpu?: boolean;
   water: boolean;
   waterfall: boolean;
   realistic?: boolean;
@@ -153,6 +156,8 @@ export function createWaterEffects(
   ground: (x: number, z: number) => number,
   options: WaterOptions,
 ) {
+  if (options.pondOnly)
+    return createPondWater(root, content, pond, pondY, ground, options);
   if (options.realWater)
     return createRealWaterEffects(root, content, pond, cliff, pondY, ground, options);
   const clocks: { value: number }[] = [];

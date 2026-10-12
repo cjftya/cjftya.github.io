@@ -17,7 +17,7 @@ import { Reflector } from 'three/examples/jsm/objects/Reflector.js';
 import { Refractor } from 'three/examples/jsm/objects/Refractor.js';
 
 import { pondSurfaceGLSL } from './gpgpuPondShader';
-import type { GPGPUPondSurface } from './gpgpuPondSurface';
+import type { PondSurface } from './cpuPondSurface';
 import { flowNoiseGLSL } from './flowMaterial';
 import { shallowWaterGLSL } from './shallowWater';
 import type { ShallowWater } from './shallowWater';
@@ -33,7 +33,7 @@ export function createReflectivePond(
   realWater = false,
   excavated = false,
   fluid?: { value: ShallowWater | undefined },
-  gpu?: { value: GPGPUPondSurface | undefined },
+  gpu?: { value: PondSurface | undefined },
   subdivide = true,
 ) {
   if (realWater && subdivide) {
@@ -90,13 +90,15 @@ export function createReflectivePond(
   const gpuAmplitude = { value: gpu?.value?.amplitude.value ?? 1 };
   const gpuNeutral = { value: gpu?.value?.neutral.value ?? 0 };
   const heightGLSL = gpu
-    ? shallowWaterGLSL
-        .replace(/waterHeight/g, 'cpuWaterHeight')
-        .replace(/waterFoam/g, 'cpuWaterFoam') +
+    ? (fluid
+        ? shallowWaterGLSL
+            .replace(/waterHeight/g, 'cpuWaterHeight')
+            .replace(/waterFoam/g, 'cpuWaterFoam')
+        : '') +
       pondSurfaceGLSL +
       `
-    float waterHeight(vec2 p, float depth) { return gpuPondActive > 0.5 ? gpuPondHeight(p) : cpuWaterHeight(p, depth); }
-    float waterFoam(vec2 p, float depth) { return gpuPondActive > 0.5 ? 0.0 : cpuWaterFoam(p, depth); }
+    float waterHeight(vec2 p, float depth) { return gpuPondActive > 0.5 ? gpuPondHeight(p) : ${fluid ? 'cpuWaterHeight(p, depth)' : '0.0'}; }
+    float waterFoam(vec2 p, float depth) { return ${fluid ? 'gpuPondActive > 0.5 ? 0.0 : cpuWaterFoam(p, depth)' : '0.0'}; }
   `
     : shallowWaterGLSL;
   material.onBeforeCompile = (shader) => {
@@ -131,7 +133,7 @@ export function createReflectivePond(
       varying float waterThickness;
       varying vec4 waterReflectCoord, waterRefractCoord;
       uniform mat4 waterReflectionMatrix, waterRefractionMatrix;
-      ${realWater ? `uniform float waterTime; uniform vec3 waterImpact; uniform vec2 waterFlowDirection; ${fluid ? heightGLSL : realPondFieldGLSL}` : ''}`,
+      ${realWater ? `uniform float waterTime; uniform vec3 waterImpact; uniform vec2 waterFlowDirection; ${fluid || gpu ? heightGLSL : realPondFieldGLSL}` : ''}`,
       )
       .replace(
         '#include <begin_vertex>',
@@ -158,7 +160,7 @@ export function createReflectivePond(
       varying vec4 waterReflectCoord, waterRefractCoord;
       ${
         realWater
-          ? fluid
+          ? fluid || gpu
             ? heightGLSL
             : realPondFieldGLSL
           : `      float waterHeight(vec2 p) {

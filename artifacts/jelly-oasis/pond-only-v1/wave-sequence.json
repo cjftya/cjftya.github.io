@@ -1,0 +1,58 @@
+[
+  {
+    "impulses": {
+      "ambient": 0,
+      "rain": 0,
+      "dropped": 0,
+      "elapsed": 0.016666666666666666,
+      "averageRate": 0,
+      "candidates": 9577,
+      "last": null
+    },
+    "nonzero": 16428
+  },
+  {
+    "impulses": {
+      "ambient": 0,
+      "rain": 0,
+      "dropped": 0,
+      "elapsed": 1.0166666666666666,
+      "averageRate": 0,
+      "candidates": 9577,
+      "last": null
+    },
+    "nonzero": 21672
+  },
+  {
+    "impulses": {
+      "ambient": 0,
+      "rain": 0,
+      "dropped": 0,
+      "elapsed": 2.0166666666666617,
+      "averageRate": 0,
+      "candidates": 9577,
+      "last": null
+    },
+    "nonzero": 31512
+  },
+  {
+    "impulses": {
+      "ambient": 1,
+      "rain": 0,
+      "dropped": 0,
+      "elapsed": 4.016666666666655,
+      "averageRate": 0.24896265560166048,
+      "candidates": 9577,
+      "last": {
+        "source": "ambient",
+        "point": [
+          -0.29279515892267227,
+          3.1926216557621956
+        ],
+        "strength": 0.07246925089042634,
+        "radius": 0.6051271741976961
+      }
+    },
+    "nonzero": 36736
+  }
+]
