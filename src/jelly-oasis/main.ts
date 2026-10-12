@@ -15,7 +15,7 @@ import { createOvergrownRuin } from './landmark/createOvergrownRuin';
 import type { OvergrownRuin } from './landmark/createOvergrownRuin';
 import { createLandmarkDebug } from './landmark/landmarkDebug';
 import { frameLandmark } from './landmark/landmarkCamera';
-import type { LandmarkCamera } from './landmark/landmarkConfig';
+import { selectCrystalDetail, type LandmarkCamera } from './landmark/landmarkConfig';
 import { auditLandmark } from './landmark/landmarkAudit';
 import type { PondControls } from './landmark/water/gpgpuPondSurface';
 import { createPondPanel } from './landmark/water/gpgpuPondPanel';
@@ -183,8 +183,11 @@ function start(canvas: HTMLCanvasElement): void {
     : null;
   const pondDetail =
     pondQuery === 'blockout' ? false : pondQuery === 'detail' ? true : 'v2';
-  const crystalDetail =
-    debugEnabled && new URLSearchParams(location.search).get('crystal') === 'detail';
+  // Approved detailed crystals are the production default; blockout is debug-only.
+  const crystalDetail = selectCrystalDetail(
+    debugEnabled,
+    new URLSearchParams(location.search).get('crystal'),
+  );
   const candidateQuery = new URLSearchParams(location.search);
   const waterQuery = debugEnabled ? candidateQuery.get('water') : null;
   const refinedDefault = !(

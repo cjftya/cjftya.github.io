@@ -158,8 +158,8 @@ try {
     assert.equal(results.mobile[variant].shadows, true);
   }
   await mobile.close();
-  // Production query without debug must never opt into candidates.
-  for (const query of ['', '?crystal=detail']) {
+  // Production always loads the approved detail assets; query flags without debug cannot revert them.
+  for (const query of ['', '?crystal=blockout', '?crystal=detail']) {
     const p = await context.newPage(),
       assets = [];
     monitor(p);
@@ -172,8 +172,12 @@ try {
     assert.equal(await p.evaluate(() => '__oasisLandmark' in window), false);
     assert.equal(assets.length, 16);
     for (const name of names) {
-      assert.ok(assets.some((r) => r.url.endsWith('/' + name + '.glb')));
-      assert.ok(!assets.some((r) => r.url.endsWith('/' + name + '_Detail_v1.glb')));
+      assert.ok(
+        assets.some((r) =>
+          r.url.endsWith('/crystal-accent-detail-v1/' + name + '_Detail_v1.glb'),
+        ),
+      );
+      assert.ok(!assets.some((r) => r.url.endsWith('/' + name + '.glb')));
     }
     results.production[query || 'default'] = assets;
     await p.close();

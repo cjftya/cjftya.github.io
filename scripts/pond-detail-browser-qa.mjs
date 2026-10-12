@@ -92,7 +92,7 @@ try {
     assert.equal(result.variants[variant].snapshot.pondVariant, variant);
     assert.equal(
       result.variants[variant].snapshot.assetTriangles,
-      variant === 'detail-v2' ? 20786 : variant === 'detail' ? 20842 : 19802,
+      variant === 'detail-v2' ? 20894 : variant === 'detail' ? 20950 : 19910,
     );
     for (const k of ['loop', 'clearing', 'approach', 'passage'])
       assert.equal(result.variants[variant].audit[k].clear, true, k);

@@ -98,8 +98,8 @@ try {
         assert.equal(a[k].clear, true);
       results.states[name + '-audit'] = a;
       assert.equal(s.modules, 16);
-      assert.equal(s.assetTriangles, 20786);
-      assert.equal(s.crystalDetail, false);
+      assert.equal(s.assetTriangles, 20894);
+      assert.equal(s.crystalDetail, true);
       if (mobile) assert.equal(s.shadows, true);
       else {
         await env(page, 12, 'CLEAR');
@@ -134,7 +134,10 @@ try {
       assets.filter((s) => s.includes('aesthetic-improvement-v1')).length,
       3,
     );
-    assert.ok(assets.every((s) => !s.includes('crystal-accent-detail-v1')));
+    assert.equal(
+      assets.filter((s) => s.includes('/crystal-accent-detail-v1/')).length,
+      3,
+    );
     results.production[query || 'default'] = assets;
     await page.close();
   }

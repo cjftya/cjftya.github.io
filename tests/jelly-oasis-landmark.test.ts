@@ -11,6 +11,7 @@ import { createOvergrownRuin } from '../src/jelly-oasis/landmark/createOvergrown
 import {
   LANDMARK_CANDIDATES,
   OVERGROWN_RUIN_CONFIG,
+  selectCrystalDetail,
 } from '../src/jelly-oasis/landmark/landmarkConfig';
 import {
   landmarkWorldPoint,
@@ -45,6 +46,14 @@ afterEach(() => {
 });
 
 describe('landmark integration against real exported GLBs', () => {
+  it('uses detailed crystals in production and permits blockout only in debug', () => {
+    expect(selectCrystalDetail(false, null)).toBe(true);
+    expect(selectCrystalDetail(false, 'blockout')).toBe(true);
+    expect(selectCrystalDetail(false, 'detail')).toBe(true);
+    expect(selectCrystalDetail(true, null)).toBe(true);
+    expect(selectCrystalDetail(true, 'detail')).toBe(true);
+    expect(selectCrystalDetail(true, 'blockout')).toBe(false);
+  });
   it('preserves contact, shared water guide and routes for aesthetic candidates', async () => {
     await useLocalAssets();
     const before = await createOvergrownRuin(
@@ -113,7 +122,7 @@ describe('landmark integration against real exported GLBs', () => {
     }
     landmark.dispose();
   });
-  it('keeps crystal candidates opt-in, flat and grounded without changing other modules or routes', async () => {
+  it('keeps both crystal variants flat and grounded without changing other modules or routes', async () => {
     const load = await useLocalAssets();
     const before = await createOvergrownRuin(
       DEFAULT_TERRAIN_CONFIG,
