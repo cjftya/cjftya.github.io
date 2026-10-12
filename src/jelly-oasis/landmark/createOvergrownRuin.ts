@@ -1,3 +1,6 @@
+import { createLandscapeComposition } from '../composition/createLandscapeComposition';
+import type { CompositionVariant } from '../composition/compositionConfig';
+import { groundFootprints } from '../vegetation/vegetationPlacement';
 import { createVegetation } from '../vegetation/createVegetation';
 import type { VegetationDensity } from '../vegetation/vegetationConfig';
 import { basinPlacementData } from './basinPlacementData';
@@ -53,6 +56,7 @@ export async function createOvergrownRuin(
   waterOptions: WaterOptions = { water: false, waterfall: false },
   terrainMesh?: Mesh<BufferGeometry, MeshStandardMaterial>,
   vegetationDensity: VegetationDensity = 'density-a',
+  compositionVariant: CompositionVariant = 'a',
 ) {
   const assets = await loadLandmarkAssets(
     cliffDetail,
@@ -241,6 +245,12 @@ export async function createOvergrownRuin(
     pondGuide,
     assets.layout.guides.CreaturePaths_ArchApproach_6m!,
     vegetationDensity,
+    waterOptions.mobile,
+  );
+
+  const composition = createLandscapeComposition(
+    root,
+    compositionVariant,
     waterOptions.mobile,
   );
 
@@ -522,7 +532,22 @@ export async function createOvergrownRuin(
       root.updateMatrixWorld(true);
     }
     waterEffects?.rebuild();
-    vegetation.refresh(placement);
+    const obstacles =
+      vegetationDensity === 'off' && compositionVariant === 'off'
+        ? []
+        : groundFootprints(root, assets.modules, terrain);
+    vegetation.refresh(placement, obstacles);
+    composition.refresh(
+      {
+        placement,
+        rootY: root.position.y,
+        terrain,
+        pond: pondGuide,
+        approach: assets.layout.guides.CreaturePaths_ArchApproach_6m!,
+        obstacles,
+      },
+      vegetation.instances(),
+    );
   }
   place(placement);
   if (waterOptions.water || waterOptions.waterfall)
@@ -586,6 +611,7 @@ export async function createOvergrownRuin(
     pond,
     waterEffects,
     vegetation,
+    composition,
     localGround,
     excavationSnapshot: () =>
       excavation
@@ -626,9 +652,11 @@ export async function createOvergrownRuin(
       pond.visible = !name && !waterOptions.basinOnly;
       if (waterEffects) waterEffects.group.visible = !name;
       vegetation.group.visible = !name;
+      composition.group.visible = !name;
     },
     refreshMaterials() {
       vegetation.refreshMaterials();
+      composition.refreshMaterials();
       content.traverse((object) => {
         if (object instanceof Mesh)
           for (const material of Array.isArray(object.material)
@@ -641,6 +669,7 @@ export async function createOvergrownRuin(
       if (disposed) return;
       disposed = true;
       vegetation.dispose();
+      composition.dispose();
       waterEffects?.dispose();
       excavation?.dispose();
       root.removeFromParent();

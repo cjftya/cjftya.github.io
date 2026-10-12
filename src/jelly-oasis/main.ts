@@ -1,3 +1,4 @@
+import { selectComposition } from './composition/compositionConfig';
 import { selectVegetation } from './vegetation/vegetationConfig';
 import { PerspectiveCamera, Scene, Vector3 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
@@ -234,6 +235,7 @@ function start(canvas: HTMLCanvasElement): void {
     },
     terrain,
     selectVegetation(debugEnabled, candidateQuery.get('vegetation')),
+    selectComposition(debugEnabled, candidateQuery.get('composition')),
   )
     .then((loaded) => {
       if (disposed) {
@@ -263,7 +265,12 @@ function start(canvas: HTMLCanvasElement): void {
               invalidate();
             },
             reviewVegetation: () =>
-              loaded.vegetation
+              loaded.vegetation.instances().map((p) => ({
+                ...p,
+                world: loaded.root.localToWorld(new Vector3(p.x, p.y, p.z)).toArray(),
+              })),
+            reviewComposition: () =>
+              loaded.composition
                 .instances()
                 .map((p) => ({
                   ...p,
@@ -311,6 +318,7 @@ function start(canvas: HTMLCanvasElement): void {
             snapshot: () => ({
               modules: loaded.assets.modules.size,
               vegetation: loaded.vegetation.snapshot(),
+              composition: loaded.composition.snapshot(),
               cliffDetail,
               ruinDetail,
               treeDetail,
