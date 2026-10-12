@@ -159,4 +159,4 @@ it('lands a narrow measured shelf film on the original channel, preserves seam/f
     terrain.geometry.dispose();
     terrain.material.dispose();
   }
-}, 30000);
+}, 120000);

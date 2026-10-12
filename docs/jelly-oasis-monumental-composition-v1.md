@@ -44,6 +44,8 @@ Desktop: 80 supporting trees (48 broad, 22 spire, 10 young), 10 large ridge form
 
 Scenery adds five body draws and 25,664 triangles; meadow adds three body draws and 18,478 triangles, with no new textures. A desktop overview total renderer snapshot is 67 calls / 149,233 triangles including the existing reflection and other passes. Three rebuilds retain exactly 95 geometries, 8 textures and 98 scenery instances. These are renderer snapshots, not hardware FPS measurements. Browser QA: PASS, 23 captures, no page/console/shader errors. All four protected route audits pass at every viewport.
 
-Integration tests retain independent geometry/footprint bounds, actual flat rock-base contact, masks, transformed-placement determinism, mobile subsets, resource ownership and double disposal. Reduced decoration-count expectations are updated. Vitest allows 30 seconds for real-GLB tests on slower runners; the exhaustive meadow audit retains its explicit 120-second budget.
+Integration tests retain independent geometry/footprint bounds, actual flat rock-base contact, masks, transformed-placement determinism, mobile subsets, resource ownership and double disposal. Reduced decoration-count expectations are updated. Vitest allows 30 seconds for real-GLB tests on slower runners; the exhaustive meadow, multi-world rescale and legacy waterfall rebuild audits use explicit 120-second budgets.
 
 Final validation: lint PASS; TypeScript / production build PASS; complete Vitest suite **64 files / 325 tests PASS** using the repository default test timeout configuration.
+
+CI follow-up: the initial deploy attempt timed out only in the multi-world rescale and legacy waterfall rebuild audits (30 seconds). Both long-running real-GLB audits now use 120 seconds, without changing their assertions or production behavior.
