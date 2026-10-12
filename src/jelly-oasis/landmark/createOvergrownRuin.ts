@@ -1,3 +1,5 @@
+import { createMeadow } from '../meadow/createMeadow';
+import type { MeadowVariant } from '../meadow/meadowConfig';
 import { createScenery } from '../scenery/createScenery';
 import type { SceneryVariant } from '../scenery/sceneryConfig';
 import { worldLandmarkPlacement } from '../terrain/worldLayout';
@@ -61,6 +63,7 @@ export async function createOvergrownRuin(
   vegetationDensity: VegetationDensity = 'density-a',
   compositionVariant: CompositionVariant = 'a',
   sceneryVariant: SceneryVariant = 'a',
+  meadowVariant: MeadowVariant = 'a',
 ) {
   const assets = await loadLandmarkAssets(
     cliffDetail,
@@ -131,7 +134,7 @@ export async function createOvergrownRuin(
   const terrainBanks = new Set<Mesh>();
   let bankSurface: MeshStandardMaterial | undefined;
   const replacedMaterials = new Set<MeshStandardMaterial>();
-  const meadow = new Color('#89a875'),
+  const meadowColor = new Color('#89a875'),
     highland = new Color('#b5b68a'),
     basin = new Color('#688f80'),
     bankColor = new Color();
@@ -256,6 +259,7 @@ export async function createOvergrownRuin(
   );
 
   const scenery = createScenery(root, sceneryVariant, waterOptions.mobile);
+  const meadow = createMeadow(root, meadowVariant, waterOptions.mobile);
 
   function localGround(x: number, z: number): number {
     const p = landmarkWorldPoint(x, z, placement);
@@ -413,7 +417,7 @@ export async function createOvergrownRuin(
         if (terrainBanks.has(mesh)) {
           const height = root.position.y + ground * placement.scale;
           bankColor
-            .copy(meadow)
+            .copy(meadowColor)
             .lerp(highland, smoothstep(3, terrain.maxHeight, height));
           bankColor.lerp(basin, smoothstep(0, terrain.maxHeight * 0.2, -height));
           mesh.geometry.attributes.color!.setXYZ(
@@ -538,7 +542,8 @@ export async function createOvergrownRuin(
     const obstacles =
       vegetationDensity === 'off' &&
       compositionVariant === 'off' &&
-      sceneryVariant === 'off'
+      sceneryVariant === 'off' &&
+      meadowVariant === 'off'
         ? []
         : groundFootprints(root, assets.modules, terrain);
     vegetation.refresh(placement, obstacles);
@@ -563,6 +568,17 @@ export async function createOvergrownRuin(
         obstacles,
       },
       [...vegetation.instances(), ...composition.instances()],
+    );
+    meadow.refresh(
+      {
+        placement,
+        rootY: root.position.y,
+        terrain,
+        pond: pondGuide,
+        approach: assets.layout.guides.CreaturePaths_ArchApproach_6m!,
+        obstacles,
+      },
+      [...vegetation.instances(), ...composition.instances(), ...scenery.instances()],
     );
   }
   place(placement);
@@ -629,6 +645,7 @@ export async function createOvergrownRuin(
     vegetation,
     composition,
     scenery,
+    meadow,
     localGround,
     excavationSnapshot: () =>
       excavation
@@ -671,11 +688,13 @@ export async function createOvergrownRuin(
       vegetation.group.visible = !name;
       composition.group.visible = !name;
       scenery.group.visible = !name;
+      meadow.group.visible = !name;
     },
     refreshMaterials() {
       vegetation.refreshMaterials();
       composition.refreshMaterials();
       scenery.refreshMaterials();
+      meadow.refreshMaterials();
       content.traverse((object) => {
         if (object instanceof Mesh)
           for (const material of Array.isArray(object.material)
@@ -690,6 +709,7 @@ export async function createOvergrownRuin(
       vegetation.dispose();
       composition.dispose();
       scenery.dispose();
+      meadow.dispose();
       waterEffects?.dispose();
       excavation?.dispose();
       root.removeFromParent();

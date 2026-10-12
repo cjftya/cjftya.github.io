@@ -1,0 +1,9 @@
+{
+  "errors": [],
+  "expectedConsole": [
+    "Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "Jelly Oasis landmark load failed: Error: Landmark asset failed: Rock_Large_A.glb\n    at Fr (http://127.0.0.1:5181/assets/jellyOasis-DFY3n3j8.js:111:74161)\n    at async f (http://127.0.0.1:5181/assets/jellyOasis-DFY3n3j8.js:111:74706)\n    at async Lr (http://127.0.0.1:5181/assets/jellyOasis-DFY3n3j8.js:111:75684)\n    at async Ci (http://127.0.0.1:5181/assets/jellyOasis-DFY3n3j8.js:444:2447)"
+  ],
+  "statusText": "랜드마크를 불러오지 못했습니다. 페이지를 새로고침해 주세요.",
+  "status": "PASS"
+}
