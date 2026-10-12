@@ -185,7 +185,7 @@ export function createVegetation(
         terrain,
         pond,
         approach,
-        obstacles: groundFootprints(root, modules, terrain),
+        obstacles: density === 'off' ? [] : groundFootprints(root, modules, terrain),
       },
       density,
     );
