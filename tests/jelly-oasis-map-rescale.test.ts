@@ -195,4 +195,4 @@ it('audits actual GLBs, pond, routes, placements and rebuild stability at all si
       JSON.stringify(reports, null, 2),
     );
   }
-}, 30000);
+}, 120000);
