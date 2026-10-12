@@ -64,3 +64,7 @@ B는 요청한 관목 36개 중 33개만 배치했다. 목표의 최대 12배 �
 - [밤](../artifacts/jelly-oasis/vegetation-detail-v1/night.jpg), [비](../artifacts/jelly-oasis/vegetation-detail-v1/rain.jpg), [안개](../artifacts/jelly-oasis/vegetation-detail-v1/mist.jpg), mobile390/mobile360/landscape, production, Reset, restore 캡처 포함.
 
 브라우저 QA 재실행: `OASIS_QA_BROWSER=/path/to/chromium node scripts/vegetation-browser-qa.mjs` (`npm run build` 이후). 브라우저 경로가 없으면 Playwright 설치 경로 또는 `/tmp/chromium`을 사용한다. 브라우저 binary와 임시 전체 PNG는 커밋하지 않고 소형 JPEG와 JSON만 제출한다.
+
+## 원격 CI 보정
+
+첫 원격 실행은 313/314 통과 후 기존 opt-in waterfall-flow-rebuild 검사가 30초 제한으로 실패했다. 물 전용 fixture는 식생을 `off`로 명시하고, off refresh는 불필요한 GLB 접지 footprint 계산을 생략한다. 기존 물 검사 assertion과 30초 제한은 그대로 유지했다. 식생+기본 호수 조합은 새 실제 GLB 통합 테스트 및 GPGPU/CPU 브라우저 QA에서 계속 검사한다. 생산 기본 A와 렌더 결과는 변경하지 않았다.

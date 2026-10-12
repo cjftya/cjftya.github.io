@@ -66,6 +66,8 @@ it('lands a narrow measured shelf film on the original channel, preserves seam/f
       flowPaths: true,
     },
     terrain,
+    // Legacy falling-film isolation: vegetation/pond integration is covered separately.
+    'off',
   );
   try {
     const water = l.waterEffects!,
