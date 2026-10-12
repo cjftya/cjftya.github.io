@@ -1,3 +1,4 @@
+import { selectScenery } from './scenery/sceneryConfig';
 import { createWorldConfig, selectWorldSize } from './terrain/worldLayout';
 import { frameWorld } from './terrain/worldCamera';
 import { Box3 } from 'three';
@@ -243,6 +244,7 @@ function start(canvas: HTMLCanvasElement): void {
     terrain,
     selectVegetation(debugEnabled, candidateQuery.get('vegetation')),
     selectComposition(debugEnabled, candidateQuery.get('composition')),
+    selectScenery(debugEnabled, candidateQuery.get('scenery')),
   )
     .then((loaded) => {
       if (disposed) {
@@ -283,6 +285,22 @@ function start(canvas: HTMLCanvasElement): void {
                 ...p,
                 world: loaded.root.localToWorld(new Vector3(p.x, p.y, p.z)).toArray(),
               })),
+            reviewScenery: () =>
+              loaded.scenery.instances().map((p) => ({
+                ...p,
+                world: loaded.root.localToWorld(new Vector3(p.x, p.y, p.z)).toArray(),
+              })),
+            reviewSceneryShape: (kind: string) => {
+              loaded.isolate(kind ? 'scenery-prototype' : '');
+              loaded.scenery.group.visible = true;
+              for (const mesh of loaded.scenery.group.children)
+                mesh.visible = !kind || mesh.name === `Scenery_${kind}`;
+              invalidate();
+            },
+            reviewIsolate: (name: string) => {
+              loaded.isolate(name);
+              invalidate();
+            },
             reviewRebuild: () => {
               loaded.place({
                 ...loaded.placement,
@@ -347,6 +365,7 @@ function start(canvas: HTMLCanvasElement): void {
               modules: loaded.assets.modules.size,
               vegetation: loaded.vegetation.snapshot(),
               composition: loaded.composition.snapshot(),
+              scenery: loaded.scenery.snapshot(),
               cliffDetail,
               ruinDetail,
               treeDetail,
