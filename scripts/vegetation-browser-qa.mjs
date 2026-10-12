@@ -3,7 +3,8 @@ import { existsSync } from 'node:fs';
 import { mkdir, writeFile } from 'node:fs/promises';
 import assert from 'node:assert/strict';
 import { chromium } from '@playwright/test';
-const output = 'artifacts/jelly-oasis/vegetation-detail-v1';
+const output =
+  process.env.OASIS_QA_OUTPUT ?? 'artifacts/jelly-oasis/vegetation-detail-v1';
 await mkdir(output, { recursive: true });
 const browser = await chromium.launch({
   executablePath:

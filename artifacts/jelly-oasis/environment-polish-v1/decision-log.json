@@ -1,0 +1,156 @@
+{
+  "baselineSha": "9271637cd8f7487f07dae72eba2868293c384c24",
+  "productionChanges": [],
+  "decisions": [
+    {
+      "id": "T-01",
+      "decision": "KEEP",
+      "reason": "Exposed terminal branch geometry remains; no stable Blender/source candidate available.",
+      "evidence": [
+        "tree-under-noon.jpg",
+        "tree-under-night.jpg",
+        "tree-right-noon.jpg"
+      ],
+      "artStatus": "USER_REVIEW",
+      "assetChanged": false,
+      "candidateCreated": false,
+      "beforeAfter": "identical baseline; KEEP evidence only",
+      "originalSha256": "0c8dd328d248f8100a73d6d1fc0dc5b15bbdc8543f27951786fd544a7a08bbf4",
+      "finalSha256": "0c8dd328d248f8100a73d6d1fc0dc5b15bbdc8543f27951786fd544a7a08bbf4",
+      "model": "Tree_Landmark_Blockout",
+      "bounds": {
+        "min": [
+          34.78237760728125,
+          -3.687496879261822,
+          33.5591095601375
+        ],
+        "max": [
+          66.28514311494764,
+          24.312503120738178,
+          63.312245990601795
+        ]
+      }
+    },
+    {
+      "id": "C-01",
+      "decision": "KEEP",
+      "reason": "Repeated ledges remain visible; no validated better candidate; preserve selected faceted geometry.",
+      "evidence": [
+        "cliff-front-noon.jpg",
+        "cliff-side-sunset.jpg",
+        "cliff-front-night.jpg"
+      ],
+      "artStatus": "USER_REVIEW",
+      "assetChanged": false,
+      "candidateCreated": false,
+      "beforeAfter": "identical baseline; KEEP evidence only",
+      "originalSha256": "b2d101c2f9b45dcebf89db18c7262e366e9068799cd13968be7a7058ef58c6fb",
+      "finalSha256": "b2d101c2f9b45dcebf89db18c7262e366e9068799cd13968be7a7058ef58c6fb",
+      "model": "Cliff_Waterfall_A",
+      "bounds": {
+        "min": [
+          51.67108422233774,
+          -5.671586008893642,
+          36.786173066356106
+        ],
+        "max": [
+          75.6421995672683,
+          11.328413991106359,
+          57.20249563140494
+        ]
+      }
+    },
+    {
+      "id": "R-01",
+      "decision": "KEEP",
+      "reason": "Separated chamfered blocks are intentional; sampled passage remains clear.",
+      "evidence": [
+        "ruin-front-noon.jpg",
+        "ruin-side-noon.jpg"
+      ],
+      "artStatus": "USER_REVIEW",
+      "assetChanged": false,
+      "candidateCreated": false,
+      "beforeAfter": "identical baseline; KEEP evidence only",
+      "originalSha256": "e0957ece91c0ed103b6c5e9b846810c72e1601ac18544fee4a32383296490737",
+      "finalSha256": "e0957ece91c0ed103b6c5e9b846810c72e1601ac18544fee4a32383296490737",
+      "model": "Ruin_Arch_A",
+      "bounds": {
+        "min": [
+          75.5249762551478,
+          -5.780010499668335,
+          41.99526719034732
+        ],
+        "max": [
+          84.48941964004977,
+          3.71539420201161,
+          48.60594510931226
+        ]
+      }
+    },
+    {
+      "id": "S-01",
+      "decision": "KEEP",
+      "reason": "Warm visible bank transition is preserved; no new floating shoreline observed.",
+      "evidence": [
+        "pond-low-noon.jpg",
+        "pond-top-noon.jpg",
+        "shore-isolated.jpg"
+      ],
+      "artStatus": "USER_REVIEW",
+      "assetChanged": false,
+      "candidateCreated": false,
+      "beforeAfter": "identical baseline; KEEP evidence only",
+      "originalSha256": "56a347f99e67dfe0e48870a32dcac0eddc759259fe159eb276f26963435da4c9",
+      "finalSha256": "56a347f99e67dfe0e48870a32dcac0eddc759259fe159eb276f26963435da4c9",
+      "model": "PondEdge_Blockout",
+      "bounds": {
+        "min": [
+          57.44812840973805,
+          -6.630808457218659,
+          48.40909543220824
+        ],
+        "max": [
+          90.59655266574758,
+          -4.8087833667626505,
+          80.02146796528808
+        ]
+      }
+    },
+    {
+      "id": "N-01",
+      "decision": "KEEP_EMPTY",
+      "reason": "594 actual triangle-surface samples, zero eligible points at slope 0.22.",
+      "evidence": [
+        "north-noon.jpg",
+        "north-slope-grid.svg"
+      ],
+      "artStatus": "USER_REVIEW",
+      "assetChanged": false,
+      "candidateCreated": false,
+      "beforeAfter": "identical baseline; KEEP evidence only"
+    },
+    {
+      "id": "G-01",
+      "decision": "TECHNICAL_PASS",
+      "reason": "Unit, asset, surface, full browser matrix, fallback, restore and controls QA pass.",
+      "evidence": [
+        "390x844-medium-noon.jpg",
+        "844x390-medium-noon.jpg",
+        "landscape/restored.jpg",
+        "pond/cpu.png"
+      ],
+      "artStatus": "NOT_APPLICABLE",
+      "assetChanged": false,
+      "candidateCreated": false,
+      "beforeAfter": "identical baseline; KEEP evidence only"
+    }
+  ],
+  "artStatus": "USER_REVIEW",
+  "notTested": [
+    "Android/Fold hardware FPS and heat",
+    "Long duration GPU memory",
+    "Native device touch",
+    "Every possible view/self intersection"
+  ]
+}

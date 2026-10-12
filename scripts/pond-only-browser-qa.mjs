@@ -3,7 +3,8 @@ import { existsSync } from 'node:fs';
 import { chromium } from '@playwright/test';
 import { mkdir, writeFile } from 'node:fs/promises';
 import assert from 'node:assert/strict';
-const output = 'artifacts/jelly-oasis/pond-only-v1';
+import { DataUtils } from 'three';
+const output = process.env.POND_QA_OUTPUT ?? 'artifacts/jelly-oasis/pond-only-v1';
 await mkdir(output, { recursive: true });
 const browser = await chromium.launch({
   executablePath:
@@ -89,6 +90,8 @@ try {
     window.__oasisLandmark.reviewPond({ reset: true, impulse: true });
     window.__oasisLandmark.reviewWaterStep(1 / 60);
   });
+  const propagation = [];
+  const domain = (await snap(page)).waterEffects.gpuPond;
   for (const seconds of [0, 1, 2, 4]) {
     if (seconds)
       await page.evaluate(
@@ -99,7 +102,39 @@ try {
       document.querySelectorAll('details').forEach((e) => (e.open = false)),
     );
     await page.screenshot({ path: `${output}/clear-${seconds}s.png` });
+    const readback = await page.evaluate(() =>
+      window.__oasisLandmark.reviewPondHeights(),
+    );
+    let active = 0,
+      far = 0,
+      maxDistance = 0;
+    for (let y = 0; y < readback.n; y++)
+      for (let x = 0; x < readback.n; x++) {
+        const raw = readback.values[(y * readback.n + x) * 4];
+        const height = readback.halfFloat ? DataUtils.fromHalfFloat(raw) : raw;
+        assert(Number.isFinite(height));
+        if (Math.abs(height) <= 1e-5) continue;
+        active++;
+        const wx = domain.bounds[0] + ((x + 0.5) / readback.n) * domain.bounds[2];
+        const wz = domain.bounds[1] + ((y + 0.5) / readback.n) * domain.bounds[3];
+        const distance = Math.hypot(
+          wx - domain.diagnosticPoint[0],
+          wz - domain.diagnosticPoint[1],
+        );
+        if (distance > 1.5) far++;
+        maxDistance = Math.max(maxDistance, distance);
+      }
+    propagation.push({ seconds, active, far, maxDistance });
   }
+  assert(
+    propagation[1].far > propagation[0].far,
+    'wave must reach cells outside the impulse footprint',
+  );
+  assert(
+    propagation[1].maxDistance > propagation[0].maxDistance + 0.5,
+    'wave must spread beyond its initial support',
+  );
+  results.push({ name: 'numeric-propagation', propagation });
   const heights = await page.evaluate(() => window.__oasisLandmark.reviewPondHeights());
   assert(heights.values.some((x) => x !== 0));
   const before = await snap(page);
