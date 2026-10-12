@@ -1,0 +1,566 @@
+{
+  "status": "PASS",
+  "baseCommit": "55587e889a2a6a53aef6ec905b38fa72e0da477c",
+  "stageSize": 224,
+  "adopted": "a",
+  "art": "ART_USER_REVIEW",
+  "device": "NOT_TESTED",
+  "screenshotsGenerated": 65,
+  "logical": {
+    "off-1440x900": {
+      "variant": "off",
+      "mobile": false,
+      "seed": 57085970,
+      "requested": {},
+      "rejected": {},
+      "zoneCounts": {},
+      "placed": {},
+      "instanceCount": 0,
+      "draws": 0,
+      "triangles": 0,
+      "resources": {
+        "geometries": 0,
+        "materials": 0,
+        "textures": 0
+      },
+      "visible": true
+    },
+    "a-1440x900": {
+      "variant": "a",
+      "mobile": false,
+      "seed": 57085970,
+      "requested": {
+        "lilac": 57,
+        "cream": 37,
+        "grass": 39,
+        "shrub": 9
+      },
+      "rejected": {
+        "southwest-lilac:spacing": 1096,
+        "south-cream:spacing": 817,
+        "southeast-lilac:spacing": 535,
+        "west-edge:spacing": 3,
+        "northwest-edge:spacing": 3
+      },
+      "zoneCounts": {
+        "southwest-lilac": 32,
+        "south-cream": 30,
+        "southeast-lilac": 25,
+        "west-edge": 9,
+        "north-rock-edge": 6,
+        "northwest-edge": 7
+      },
+      "placed": {
+        "lilac": 53,
+        "cream": 22,
+        "grass": 30,
+        "shrub": 4
+      },
+      "instanceCount": 109,
+      "draws": 4,
+      "triangles": 4520,
+      "resources": {
+        "geometries": 4,
+        "materials": 4,
+        "textures": 0
+      },
+      "visible": true
+    },
+    "b-1440x900": {
+      "variant": "b",
+      "mobile": false,
+      "seed": 57085970,
+      "requested": {
+        "lilac": 87,
+        "cream": 57,
+        "grass": 61,
+        "shrub": 15
+      },
+      "rejected": {
+        "southwest-lilac:spacing": 1696,
+        "south-cream:spacing": 1253,
+        "southeast-lilac:spacing": 1174,
+        "west-edge:spacing": 15,
+        "north-rock-edge:spacing": 1,
+        "northwest-edge:spacing": 10
+      },
+      "zoneCounts": {
+        "southwest-lilac": 32,
+        "south-cream": 29,
+        "southeast-lilac": 26,
+        "west-edge": 14,
+        "north-rock-edge": 10,
+        "northwest-edge": 12
+      },
+      "placed": {
+        "lilac": 59,
+        "cream": 18,
+        "grass": 39,
+        "shrub": 7
+      },
+      "instanceCount": 123,
+      "draws": 4,
+      "triangles": 4954,
+      "resources": {
+        "geometries": 4,
+        "materials": 4,
+        "textures": 0
+      },
+      "visible": true
+    },
+    "off-390x844": {
+      "variant": "off",
+      "mobile": true,
+      "seed": 57085970,
+      "requested": {},
+      "rejected": {},
+      "zoneCounts": {},
+      "placed": {},
+      "instanceCount": 0,
+      "draws": 0,
+      "triangles": 0,
+      "resources": {
+        "geometries": 0,
+        "materials": 0,
+        "textures": 0
+      },
+      "visible": true
+    },
+    "a-390x844": {
+      "variant": "a",
+      "mobile": true,
+      "seed": 57085970,
+      "requested": {
+        "lilac": 57,
+        "cream": 37,
+        "grass": 39,
+        "shrub": 9
+      },
+      "rejected": {
+        "southwest-lilac:spacing": 1096,
+        "south-cream:spacing": 817,
+        "southeast-lilac:spacing": 535,
+        "west-edge:spacing": 3,
+        "northwest-edge:spacing": 3
+      },
+      "zoneCounts": {
+        "southwest-lilac": 32,
+        "south-cream": 30,
+        "southeast-lilac": 25,
+        "west-edge": 9,
+        "north-rock-edge": 6,
+        "northwest-edge": 7
+      },
+      "placed": {
+        "lilac": 36,
+        "cream": 15,
+        "grass": 20,
+        "shrub": 3
+      },
+      "instanceCount": 74,
+      "draws": 4,
+      "triangles": 3092,
+      "resources": {
+        "geometries": 4,
+        "materials": 4,
+        "textures": 0
+      },
+      "visible": true
+    },
+    "b-390x844": {
+      "variant": "b",
+      "mobile": true,
+      "seed": 57085970,
+      "requested": {
+        "lilac": 87,
+        "cream": 57,
+        "grass": 61,
+        "shrub": 15
+      },
+      "rejected": {
+        "southwest-lilac:spacing": 1696,
+        "south-cream:spacing": 1253,
+        "southeast-lilac:spacing": 1174,
+        "west-edge:spacing": 15,
+        "north-rock-edge:spacing": 1,
+        "northwest-edge:spacing": 10
+      },
+      "zoneCounts": {
+        "southwest-lilac": 32,
+        "south-cream": 29,
+        "southeast-lilac": 26,
+        "west-edge": 14,
+        "north-rock-edge": 10,
+        "northwest-edge": 12
+      },
+      "placed": {
+        "lilac": 40,
+        "cream": 12,
+        "grass": 26,
+        "shrub": 5
+      },
+      "instanceCount": 83,
+      "draws": 4,
+      "triangles": 3364,
+      "resources": {
+        "geometries": 4,
+        "materials": 4,
+        "textures": 0
+      },
+      "visible": true
+    },
+    "off-360x780": {
+      "variant": "off",
+      "mobile": true,
+      "seed": 57085970,
+      "requested": {},
+      "rejected": {},
+      "zoneCounts": {},
+      "placed": {},
+      "instanceCount": 0,
+      "draws": 0,
+      "triangles": 0,
+      "resources": {
+        "geometries": 0,
+        "materials": 0,
+        "textures": 0
+      },
+      "visible": true
+    },
+    "a-360x780": {
+      "variant": "a",
+      "mobile": true,
+      "seed": 57085970,
+      "requested": {
+        "lilac": 57,
+        "cream": 37,
+        "grass": 39,
+        "shrub": 9
+      },
+      "rejected": {
+        "southwest-lilac:spacing": 1096,
+        "south-cream:spacing": 817,
+        "southeast-lilac:spacing": 535,
+        "west-edge:spacing": 3,
+        "northwest-edge:spacing": 3
+      },
+      "zoneCounts": {
+        "southwest-lilac": 32,
+        "south-cream": 30,
+        "southeast-lilac": 25,
+        "west-edge": 9,
+        "north-rock-edge": 6,
+        "northwest-edge": 7
+      },
+      "placed": {
+        "lilac": 36,
+        "cream": 15,
+        "grass": 20,
+        "shrub": 3
+      },
+      "instanceCount": 74,
+      "draws": 4,
+      "triangles": 3092,
+      "resources": {
+        "geometries": 4,
+        "materials": 4,
+        "textures": 0
+      },
+      "visible": true
+    },
+    "b-360x780": {
+      "variant": "b",
+      "mobile": true,
+      "seed": 57085970,
+      "requested": {
+        "lilac": 87,
+        "cream": 57,
+        "grass": 61,
+        "shrub": 15
+      },
+      "rejected": {
+        "southwest-lilac:spacing": 1696,
+        "south-cream:spacing": 1253,
+        "southeast-lilac:spacing": 1174,
+        "west-edge:spacing": 15,
+        "north-rock-edge:spacing": 1,
+        "northwest-edge:spacing": 10
+      },
+      "zoneCounts": {
+        "southwest-lilac": 32,
+        "south-cream": 29,
+        "southeast-lilac": 26,
+        "west-edge": 14,
+        "north-rock-edge": 10,
+        "northwest-edge": 12
+      },
+      "placed": {
+        "lilac": 40,
+        "cream": 12,
+        "grass": 26,
+        "shrub": 5
+      },
+      "instanceCount": 83,
+      "draws": 4,
+      "triangles": 3364,
+      "resources": {
+        "geometries": 4,
+        "materials": 4,
+        "textures": 0
+      },
+      "visible": true
+    },
+    "off-844x390": {
+      "variant": "off",
+      "mobile": true,
+      "seed": 57085970,
+      "requested": {},
+      "rejected": {},
+      "zoneCounts": {},
+      "placed": {},
+      "instanceCount": 0,
+      "draws": 0,
+      "triangles": 0,
+      "resources": {
+        "geometries": 0,
+        "materials": 0,
+        "textures": 0
+      },
+      "visible": true
+    },
+    "a-844x390": {
+      "variant": "a",
+      "mobile": true,
+      "seed": 57085970,
+      "requested": {
+        "lilac": 57,
+        "cream": 37,
+        "grass": 39,
+        "shrub": 9
+      },
+      "rejected": {
+        "southwest-lilac:spacing": 1096,
+        "south-cream:spacing": 817,
+        "southeast-lilac:spacing": 535,
+        "west-edge:spacing": 3,
+        "northwest-edge:spacing": 3
+      },
+      "zoneCounts": {
+        "southwest-lilac": 32,
+        "south-cream": 30,
+        "southeast-lilac": 25,
+        "west-edge": 9,
+        "north-rock-edge": 6,
+        "northwest-edge": 7
+      },
+      "placed": {
+        "lilac": 36,
+        "cream": 15,
+        "grass": 20,
+        "shrub": 3
+      },
+      "instanceCount": 74,
+      "draws": 4,
+      "triangles": 3092,
+      "resources": {
+        "geometries": 4,
+        "materials": 4,
+        "textures": 0
+      },
+      "visible": true
+    },
+    "b-844x390": {
+      "variant": "b",
+      "mobile": true,
+      "seed": 57085970,
+      "requested": {
+        "lilac": 87,
+        "cream": 57,
+        "grass": 61,
+        "shrub": 15
+      },
+      "rejected": {
+        "southwest-lilac:spacing": 1696,
+        "south-cream:spacing": 1253,
+        "southeast-lilac:spacing": 1174,
+        "west-edge:spacing": 15,
+        "north-rock-edge:spacing": 1,
+        "northwest-edge:spacing": 10
+      },
+      "zoneCounts": {
+        "southwest-lilac": 32,
+        "south-cream": 29,
+        "southeast-lilac": 26,
+        "west-edge": 14,
+        "north-rock-edge": 10,
+        "northwest-edge": 12
+      },
+      "placed": {
+        "lilac": 40,
+        "cream": 12,
+        "grass": 26,
+        "shrub": 5
+      },
+      "instanceCount": 83,
+      "draws": 4,
+      "triangles": 3364,
+      "resources": {
+        "geometries": 4,
+        "materials": 4,
+        "textures": 0
+      },
+      "visible": true
+    }
+  },
+  "rendererSnapshots": {
+    "1440x900": {
+      "off": {
+        "calls": 69,
+        "triangles": 81875,
+        "geometries": 89,
+        "textures": 10
+      },
+      "a": {
+        "calls": 77,
+        "triangles": 90915,
+        "geometries": 93,
+        "textures": 10
+      },
+      "b": {
+        "calls": 77,
+        "triangles": 91783,
+        "geometries": 93,
+        "textures": 10
+      }
+    },
+    "390x844": {
+      "off": {
+        "calls": 127,
+        "triangles": 87032,
+        "geometries": 89,
+        "textures": 10
+      },
+      "a": {
+        "calls": 131,
+        "triangles": 90124,
+        "geometries": 93,
+        "textures": 10
+      },
+      "b": {
+        "calls": 131,
+        "triangles": 90396,
+        "geometries": 93,
+        "textures": 10
+      }
+    },
+    "360x780": {
+      "off": {
+        "calls": 76,
+        "triangles": 60007,
+        "geometries": 89,
+        "textures": 10
+      },
+      "a": {
+        "calls": 84,
+        "triangles": 66191,
+        "geometries": 93,
+        "textures": 10
+      },
+      "b": {
+        "calls": 131,
+        "triangles": 90396,
+        "geometries": 93,
+        "textures": 10
+      }
+    },
+    "844x390": {
+      "off": {
+        "calls": 69,
+        "triangles": 59656,
+        "geometries": 89,
+        "textures": 10
+      },
+      "a": {
+        "calls": 77,
+        "triangles": 65840,
+        "geometries": 93,
+        "textures": 10
+      },
+      "b": {
+        "calls": 77,
+        "triangles": 66384,
+        "geometries": 93,
+        "textures": 10
+      }
+    }
+  },
+  "rebuilds": [
+    {
+      "geometries": 95,
+      "textures": 8,
+      "instances": 109
+    },
+    {
+      "geometries": 95,
+      "textures": 8,
+      "instances": 109
+    },
+    {
+      "geometries": 95,
+      "textures": 8,
+      "instances": 109
+    }
+  ],
+  "glbSourceHashes": {
+    "/assets/jelly-oasis/landmarks/overgrown-ruin/Rock_Large_A.glb": "7691a0f1788b6a3258e180627a0c88f0fe3c76b0069134c2d477baa380c12f44",
+    "/assets/jelly-oasis/landmarks/overgrown-ruin/Ruin_Arch_A_Detail_v1.glb": "e0957ece91c0ed103b6c5e9b846810c72e1601ac18544fee4a32383296490737",
+    "/assets/jelly-oasis/landmarks/overgrown-ruin/aesthetic-improvement-v1/Cliff_Waterfall_A_Refined_v1.glb": "b2d101c2f9b45dcebf89db18c7262e366e9068799cd13968be7a7058ef58c6fb",
+    "/assets/jelly-oasis/landmarks/overgrown-ruin/Rock_Large_B.glb": "738648a0403b46bfad5676cd43b41538abda64213702b863446bf40cf5136697",
+    "/assets/jelly-oasis/landmarks/overgrown-ruin/Rock_Large_C.glb": "51abe046434b45e6988f49e374150f40e800896b0342420f1dbc7ada34d65376",
+    "/assets/jelly-oasis/landmarks/overgrown-ruin/Rock_Large_D.glb": "4c72463ea44e4ef156cf21b6401e4b3aaa8a78e87387aaa115e59e85cf8c9d9a",
+    "/assets/jelly-oasis/landmarks/overgrown-ruin/Rock_Large_E.glb": "470f5169117cade45427ab655b66c19b6cc1855c2eedb0de256f1e2d9d0db198",
+    "/assets/jelly-oasis/landmarks/overgrown-ruin/Ruin_Wall_A_Detail_v1.glb": "6ca3501de74d1c055ef9a4fec53039509d6bf789255f55aa96f81626a0ca06da",
+    "/assets/jelly-oasis/landmarks/overgrown-ruin/Ruin_BrokenWall_A_Detail_v1.glb": "101c21ad988811827305aa09a85508c2af8b58c123afa0b0e8c8f7af455484a6",
+    "/assets/jelly-oasis/landmarks/overgrown-ruin/aesthetic-improvement-v1/Tree_Landmark_Blockout_Refined_v1.glb": "0c8dd328d248f8100a73d6d1fc0dc5b15bbdc8543f27951786fd544a7a08bbf4",
+    "/assets/jelly-oasis/landmarks/overgrown-ruin/Root_Large_A_Detail_v1.glb": "472bd407499d7440c6a029425ce834b5bb39f8dc061aa2cf79f9fab212391fe1",
+    "/assets/jelly-oasis/landmarks/overgrown-ruin/Root_Tree_Base_Blockout_Detail_v1.glb": "62087eed9fe46c5c82eaf15a7e3ad6be8b6f35200c8858637c889c5a983dbb9a",
+    "/assets/jelly-oasis/landmarks/overgrown-ruin/aesthetic-improvement-v1/PondEdge_Blockout_Refined_v1.glb": "56a347f99e67dfe0e48870a32dcac0eddc759259fe159eb276f26963435da4c9",
+    "/assets/jelly-oasis/landmarks/overgrown-ruin/crystal-accent-detail-v1/Crystal_Blockout_A_Detail_v1.glb": "1cb6a8644c1ff62c83a937082fb169e143ac8936087a09bbceff1f469337a3ac",
+    "/assets/jelly-oasis/landmarks/overgrown-ruin/crystal-accent-detail-v1/Crystal_Blockout_B_Detail_v1.glb": "6214838f4cd9cad43352b065086516f3f3cbd57a4999c468e26a9c9a2e240355",
+    "/assets/jelly-oasis/landmarks/overgrown-ruin/crystal-accent-detail-v1/Crystal_Blockout_C_Detail_v1.glb": "35e253d34d250dc604e482156f6e336a6b59f355392f0a60690d675c124bd5d5"
+  },
+  "retainedImages": [
+    "a-1440x900-ground.jpg",
+    "a-1440x900-medium.jpg",
+    "a-1440x900-overview.jpg",
+    "a-1440x900-pond.jpg",
+    "a-360x780-medium.jpg",
+    "a-390x844-medium.jpg",
+    "a-844x390-medium.jpg",
+    "a-MIST.jpg",
+    "a-RAIN.jpg",
+    "a-hour0.jpg",
+    "a-hour18.jpg",
+    "a-south-cream-close.jpg",
+    "a-southeast-lilac-close.jpg",
+    "a-southwest-lilac-close.jpg",
+    "b-1440x900-medium.jpg",
+    "b-1440x900-overview.jpg",
+    "off-1440x900-medium.jpg",
+    "off-1440x900-overview.jpg",
+    "production-1440x900.jpg",
+    "production-360x780.jpg",
+    "production-390x844.jpg",
+    "production-844x390.jpg"
+  ],
+  "validation": {
+    "lint": "PASS",
+    "build": "PASS",
+    "tests": "64 files /325 tests PASS",
+    "browser": "PASS",
+    "lifecycle": "PASS",
+    "controls": "PASS",
+    "glb404": "PASS",
+    "pond": "PASS"
+  }
+}

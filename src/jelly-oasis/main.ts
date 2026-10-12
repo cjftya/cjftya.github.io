@@ -1,3 +1,4 @@
+import { selectMeadow } from './meadow/meadowConfig';
 import { selectScenery } from './scenery/sceneryConfig';
 import { createWorldConfig, selectWorldSize } from './terrain/worldLayout';
 import { frameWorld } from './terrain/worldCamera';
@@ -245,6 +246,7 @@ function start(canvas: HTMLCanvasElement): void {
     selectVegetation(debugEnabled, candidateQuery.get('vegetation')),
     selectComposition(debugEnabled, candidateQuery.get('composition')),
     selectScenery(debugEnabled, candidateQuery.get('scenery')),
+    selectMeadow(debugEnabled, candidateQuery.get('meadow')),
   )
     .then((loaded) => {
       if (disposed) {
@@ -285,6 +287,13 @@ function start(canvas: HTMLCanvasElement): void {
                 ...p,
                 world: loaded.root.localToWorld(new Vector3(p.x, p.y, p.z)).toArray(),
               })),
+            reviewMeadow: () =>
+              loaded.meadow
+                .instances()
+                .map((p) => ({
+                  ...p,
+                  world: loaded.root.localToWorld(new Vector3(p.x, p.y, p.z)).toArray(),
+                })),
             reviewScenery: () =>
               loaded.scenery.instances().map((p) => ({
                 ...p,
@@ -366,6 +375,7 @@ function start(canvas: HTMLCanvasElement): void {
               vegetation: loaded.vegetation.snapshot(),
               composition: loaded.composition.snapshot(),
               scenery: loaded.scenery.snapshot(),
+              meadow: loaded.meadow.snapshot(),
               cliffDetail,
               ruinDetail,
               treeDetail,
