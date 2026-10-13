@@ -67,7 +67,10 @@ export function auditLandmark(landmark: OvergrownRuin) {
       }
   }
   const vector = new Vector3();
-  for (const [name, object] of assets.modules)
+  const auditedObjects = new Map(assets.modules);
+  if (landmark.sanctuary)
+    auditedObjects.set('MagicalSanctuary', landmark.sanctuary.group);
+  for (const [name, object] of auditedObjects)
     object.traverse((child) => {
       if (!(child instanceof Mesh)) return;
       const geometry = child.geometry,

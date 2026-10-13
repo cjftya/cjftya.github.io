@@ -12,6 +12,11 @@ export interface ChannelSample {
   point: Vector3;
   width: number;
 }
+export interface PondBasinProfile {
+  depth: number;
+  shelfWidth: number;
+  deepWidth: number;
+}
 export function polygonDistance(x: number, z: number, boundary: number[][]) {
   let inside = false,
     distance = Infinity;
@@ -45,6 +50,7 @@ export function excavateTerrain(
   waterY: number,
   channel: ChannelSample[],
   protectedZones: { min: number[]; max: number[] }[] = [],
+  profile?: PondBasinProfile,
 ) {
   const original = mesh.geometry;
   const inverse = root.matrixWorld.clone().invert();
@@ -74,6 +80,7 @@ export function excavateTerrain(
     cells = new Map<string, number[]>();
   const color = new Color();
   let maxDepth = 0,
+    maxWaterDepth = 0,
     patchTriangles = 0,
     removedTriangles = 0;
   const local = new Vector3();
@@ -94,7 +101,12 @@ export function excavateTerrain(
     let y = local.y;
     if (d > 0) {
       const bankWidth = 1.1 + 0.23 * Math.sin(local.x * 0.71 + local.z * 0.31);
-      const bed = waterY - 0.08 - 1.85 * smoothstep(0, 3.8, d);
+      const bed = profile
+        ? waterY -
+          0.08 -
+          0.55 * smoothstep(0, profile.shelfWidth, d) -
+          (profile.depth - 0.63) * smoothstep(profile.shelfWidth, profile.deepWidth, d)
+        : waterY - 0.08 - 1.85 * smoothstep(0, 3.8, d);
       y = Math.min(y, local.y + (bed - local.y) * smoothstep(0, bankWidth, d));
     }
     for (let i = 0; i < channel.length - 1; i++) {
@@ -124,6 +136,7 @@ export function excavateTerrain(
       }
     }
     const worldY = root.position.y + y * root.scale.x;
+    if (d > 0) maxWaterDepth = Math.max(maxWaterDepth, (waterY - y) * root.scale.x);
     maxDepth = Math.max(maxDepth, base - worldY);
     return Math.min(base, worldY);
   }
@@ -225,6 +238,7 @@ export function excavateTerrain(
     snapshot: () => ({
       excavationBounds: { x0, x1, z0, z1 },
       excavationDepth: maxDepth,
+      maxWaterDepth,
       terrainPatchTriangles: patchTriangles,
       removedTerrainTriangles: removedTriangles,
       patchSpacing: fine,

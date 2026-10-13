@@ -1,4 +1,7 @@
 import { createMeadow } from '../meadow/createMeadow';
+import { expandSacredLake, pondArea, SACRED_LAKE_BASIN } from './sacredLake';
+import { createLakeEcology } from './createLakeEcology';
+import { createMagicalSanctuary } from './createMagicalSanctuary';
 import type { MeadowVariant } from '../meadow/meadowConfig';
 import { createScenery } from '../scenery/createScenery';
 import type { SceneryVariant } from '../scenery/sceneryConfig';
@@ -87,6 +90,13 @@ export async function createOvergrownRuin(
   let referenceRequest: Promise<Group | null> | null = null;
   let referenceVisible = false;
   const heightGuide = assets.layout.guides.Pond_Blockout!;
+  const originalPondArea = pondArea(assets.pondGuide ?? heightGuide);
+  if (aesthetic.sacred && assets.pondGuide) {
+    assets.pondGuide = expandSacredLake(
+      assets.pondGuide,
+      assets.modules.get('PondEdge_Blockout')!,
+    );
+  }
   const pondGuide = assets.pondGuide ?? heightGuide;
   const pond = new Mesh(
     guideGeometry(pondGuide),
@@ -260,6 +270,12 @@ export async function createOvergrownRuin(
 
   const scenery = createScenery(root, sceneryVariant, waterOptions.mobile);
   const meadow = createMeadow(root, meadowVariant, waterOptions.mobile);
+  const sanctuary = aesthetic.sacred
+    ? createMagicalSanctuary(content, assets.modules.get('Ruin_Arch_A')!)
+    : undefined;
+  const lakeEcology = aesthetic.sacred
+    ? createLakeEcology(content, assets.modules, pondGuide)
+    : undefined;
 
   function localGround(x: number, z: number): number {
     const p = landmarkWorldPoint(x, z, placement);
@@ -483,6 +499,7 @@ export async function createOvergrownRuin(
         pondHeight,
         channelPath,
         protectedZones,
+        aesthetic.sacred ? SACRED_LAKE_BASIN : undefined,
       );
       // Shift whole stone owners, including all material primitives, rigidly.
       const rockShifts = new Map<Object3D, number>();
@@ -538,6 +555,8 @@ export async function createOvergrownRuin(
       pond.visible = !waterOptions.basinOnly;
       root.updateMatrixWorld(true);
     }
+    sanctuary?.place(localGround);
+    lakeEcology?.place(localGround, pondHeight);
     waterEffects?.rebuild();
     const obstacles =
       vegetationDensity === 'off' &&
@@ -545,7 +564,10 @@ export async function createOvergrownRuin(
       sceneryVariant === 'off' &&
       meadowVariant === 'off'
         ? []
-        : groundFootprints(root, assets.modules, terrain);
+        : [
+            ...groundFootprints(root, assets.modules, terrain),
+            ...(sanctuary?.footprints() ?? []),
+          ];
     vegetation.refresh(placement, obstacles);
     composition.refresh(
       {
@@ -646,6 +668,19 @@ export async function createOvergrownRuin(
     composition,
     scenery,
     meadow,
+    sanctuary,
+    lakeEcology,
+    sacredLakeSnapshot: () =>
+      aesthetic.sacred
+        ? {
+            boundaryVersion: 3,
+            boundarySamples: pondGuide.positions.length,
+            originalArea: originalPondArea,
+            area: pondArea(pondGuide),
+            areaIncrease: pondArea(pondGuide) / originalPondArea - 1,
+            basin: SACRED_LAKE_BASIN,
+          }
+        : null,
     localGround,
     excavationSnapshot: () =>
       excavation
@@ -689,12 +724,17 @@ export async function createOvergrownRuin(
       composition.group.visible = !name;
       scenery.group.visible = !name;
       meadow.group.visible = !name;
+      if (sanctuary) sanctuary.group.visible = !name || name === 'MagicalSanctuary';
+      if (lakeEcology)
+        lakeEcology.group.visible = !name || name === 'SacredLakeEcology';
     },
     refreshMaterials() {
       vegetation.refreshMaterials();
       composition.refreshMaterials();
       scenery.refreshMaterials();
       meadow.refreshMaterials();
+      sanctuary?.refreshMaterials();
+      lakeEcology?.refreshMaterials();
       content.traverse((object) => {
         if (object instanceof Mesh)
           for (const material of Array.isArray(object.material)
@@ -706,6 +746,8 @@ export async function createOvergrownRuin(
     dispose() {
       if (disposed) return;
       disposed = true;
+      sanctuary?.dispose();
+      lakeEcology?.dispose();
       vegetation.dispose();
       composition.dispose();
       scenery.dispose();
