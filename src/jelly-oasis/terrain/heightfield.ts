@@ -1,3 +1,4 @@
+import { landscapeRelief } from './landscapeRelief';
 /** World coordinates are metres; mesh density and landmark scale remain independent. */
 export interface TerrainConfig {
   size: number;
@@ -9,6 +10,8 @@ export interface TerrainConfig {
   /** Compact layout anchor; both coordinates must be supplied together. */
   oasisX?: number;
   oasisZ?: number;
+  /** 0: legacy, 1: amphitheatre, 2: canyon inspection. */
+  artRelief?: number;
 }
 export const DEFAULT_TERRAIN_CONFIG: TerrainConfig = {
   size: 320,
@@ -47,7 +50,11 @@ export function sampleTerrainHeight(
     void _x;
     void _z;
     const blend = smoothstep(60, 80, Math.hypot(dx, dz));
-    return preserved * (1 - blend) + sampleTerrainHeight(x, z, outer) * blend;
+    return (
+      preserved * (1 - blend) +
+      sampleTerrainHeight(x, z, outer) * blend +
+      landscapeRelief(x, z, config.size, config.artRelief ?? 0)
+    );
   }
   const u = x / config.size;
   const v = z / config.size;

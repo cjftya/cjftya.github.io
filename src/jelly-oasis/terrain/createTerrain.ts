@@ -52,7 +52,7 @@ export function createTerrain(
   geometry.computeBoundingSphere();
   const terrain = new Mesh(
     geometry,
-    material ?? createTerrainSurface(config.maxHeight).material,
+    material ?? createTerrainSurface(config.maxHeight, config.size).material,
   );
   terrain.name = 'JellyOasisTerrain';
   terrain.receiveShadow = true;

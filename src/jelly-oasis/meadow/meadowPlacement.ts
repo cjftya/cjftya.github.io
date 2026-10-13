@@ -1,3 +1,4 @@
+import { meadowField } from './meadowField';
 import { landmarkWorldPoint, sampleGround } from '../landmark/landmarkPlacement';
 import { worldToLandmark } from '../composition/compositionPlacement';
 import { exclusionReason, seededRandom } from '../vegetation/vegetationPlacement';
@@ -53,12 +54,16 @@ export function placeMeadow(
           site,
         );
         const scale =
-          (kind === 'shrub' ? 1.6 + random() * 0.4 : 2.7 + random() * 0.8) /
+          (kind === 'shrub' ? 1.6 + random() * 0.4 : 1.6 + random() * 1.3) /
           site.placement.scale;
         const radius = shape.radius * scale,
           rotation = random() * Math.PI * 2,
           tint = random();
-        let reason = exclusionReason(x, z, radius, site);
+        const fieldWorld = landmarkWorldPoint(x, z, site.placement);
+        let reason =
+          meadowField(fieldWorld.x, fieldWorld.z, patch, site.terrain.size) < 0.08
+            ? 'field-edge'
+            : exclusionReason(x, z, radius, site);
         if (
           !reason &&
           [...occupied, ...instances].some(

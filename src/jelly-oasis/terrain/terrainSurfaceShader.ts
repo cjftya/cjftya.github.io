@@ -1,3 +1,4 @@
+import { meadowFieldGLSL } from '../meadow/meadowField';
 /** Extends StandardMaterial only; Three still owns lighting, shadows, fog and output. */
 export const surfaceVaryings = /* glsl */ `
 varying vec3 vTerrainWorld;
@@ -10,12 +11,14 @@ uniform vec3 terrainDirt;
 uniform vec3 terrainRock;
 uniform vec4 terrainSlopes;
 uniform float terrainHeight;
+uniform float terrainWorldSize;
 uniform float terrainScale;
 uniform float terrainMacro;
 uniform float terrainDebug;
 `;
 export const surfaceColor = /* glsl */ `
-vec3 surfaceNormal = normalize(vTerrainNormal);
+vec3 surfaceNormal = normalize(cross(dFdx(vTerrainWorld), dFdy(vTerrainWorld)));
+if (surfaceNormal.y < 0.) surfaceNormal = -surfaceNormal;
 float slope = clamp(1.0 - surfaceNormal.y, 0.0, 1.0);
 float macro = texture2D(terrainDetail, vTerrainWorld.xz / 384.0).a - 0.5;
 float highland = smoothstep(terrainHeight * 0.35, terrainHeight, vTerrainWorld.y);
@@ -36,8 +39,9 @@ float rockDetail = texture2D(terrainDetail, rockPosition.yz).b * projection.x
   + texture2D(terrainDetail, rockPosition.xz).b * projection.y
   + texture2D(terrainDetail, rockPosition.xy).b * projection.z;
 vec3 grass = terrainGrass * (1.0 + (grassDetail - 0.5) * 0.28);
+${meadowFieldGLSL}
 vec3 dirt = terrainDirt * (1.0 + (dirtDetail - 0.5) * 0.24);
-vec3 rock = terrainRock * (1.0 + (rockDetail - 0.5) * 0.32);
+vec3 rock = terrainRock * (1.0 + (rockDetail - 0.5) * 0.32) * (1.0 + .025*sin(vTerrainWorld.y*1.4));
 grass *= mix(vec3(1.0), vec3(0.82, 0.92, 0.98), basin * 0.5);
 vec3 surface = grass * weights.x + dirt * weights.y + rock * weights.z;
 // Preserve the old meadow / highland / basin colors as a restrained regional tint.

@@ -44,10 +44,26 @@ export function createMeadowGeometry(kind: MeadowKind): BufferGeometry {
       colors.push(color.r, color.g, color.b);
     }
   }
+  const tuftPositions: number[] = [],
+    tuftColors: number[] = [];
+  for (let tuft = 0; tuft < 5; tuft++) {
+    const scale = 0.56 + (tuft % 3) * 0.11,
+      angle = tuft * Math.PI * 0.5,
+      dx = tuft ? Math.cos(angle) * 0.37 : 0,
+      dz = tuft ? Math.sin(angle) * 0.37 : 0;
+    for (let i = 0; i < positions.length; i += 3) {
+      tuftPositions.push(
+        positions[i]! * scale + dx,
+        positions[i + 1]! * scale * 0.7,
+        positions[i + 2]! * scale + dz,
+      );
+      tuftColors.push(colors[i]!, colors[i + 1]!, colors[i + 2]!);
+    }
+  }
   source.dispose();
   const geometry = new BufferGeometry();
-  geometry.setAttribute('position', new Float32BufferAttribute(positions, 3));
-  geometry.setAttribute('color', new Float32BufferAttribute(colors, 3));
+  geometry.setAttribute('position', new Float32BufferAttribute(tuftPositions, 3));
+  geometry.setAttribute('color', new Float32BufferAttribute(tuftColors, 3));
   geometry.computeVertexNormals();
   geometry.computeBoundingBox();
   geometry.computeBoundingSphere();

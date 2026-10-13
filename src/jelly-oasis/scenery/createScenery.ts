@@ -9,7 +9,7 @@ import {
 } from 'three';
 import type { BufferGeometry } from 'three';
 import type { VegetationSite } from '../vegetation/vegetationPlacement';
-import { SCENERY_KINDS, SCENERY_SEED } from './sceneryConfig';
+import { SCENERY_KINDS, SCENERY_SEED, SCENERY_ZONES } from './sceneryConfig';
 import type { SceneryKind, SceneryVariant } from './sceneryConfig';
 import { createSceneryGeometry, projectedFootprint } from './sceneryGeometry';
 import { placeScenery } from './sceneryPlacement';
@@ -39,7 +39,13 @@ export function createScenery(
           flatShading: true,
           roughness: 1,
         }),
-        128,
+        Math.max(
+          1,
+          SCENERY_ZONES.reduce(
+            (sum, zone) => sum + Math.ceil((zone.counts[kind] ?? 0) * 1.5),
+            0,
+          ),
+        ),
       );
       mesh.name = `Scenery_${kind}`;
       mesh.count = 0;

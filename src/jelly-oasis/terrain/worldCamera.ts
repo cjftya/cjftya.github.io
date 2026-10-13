@@ -35,3 +35,16 @@ export function frameWorld(
   controls.enableDamping = true;
   return bounds;
 }
+
+/** Scenic reset; the separate overview button fits the entire stage. */
+export function frameLandscape(camera: PerspectiveCamera, controls: OrbitControls) {
+  const target = new Vector3(14, 8, 7),
+    outward = new Vector3(100, 82, 143).normalize();
+  const distance = camera.aspect < 1 ? 195 : 215;
+  controls.enableDamping = false;
+  controls.update();
+  controls.target.copy(target);
+  camera.position.copy(target).addScaledVector(outward, distance);
+  controls.update();
+  controls.enableDamping = true;
+}

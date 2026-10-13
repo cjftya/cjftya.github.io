@@ -19,7 +19,7 @@ const baseline = {
 };
 
 describe('Terrain Surface v2 regression and resource budget', () => {
-  it('preserves the complete terrain mesh while smoothing only its shading', () => {
+  it('preserves the complete terrain mesh with faceted shading', () => {
     const terrain = createTerrain();
     const edge = createTerrainEdge();
     for (const key of ['position', 'normal', 'index'] as const) {
@@ -36,7 +36,7 @@ describe('Terrain Surface v2 regression and resource budget', () => {
       terrain.geometry.index!.count / 3 + edge.geometry.attributes.position!.count / 3,
     ).toBe(13440);
     expect(terrain.children).toHaveLength(0);
-    expect(terrain.material.flatShading).toBe(false);
+    expect(terrain.material.flatShading).toBe(true);
     expect(terrain.material.displacementMap).toBeNull();
     expect(edge.material.name).not.toBe(terrain.material.name);
     terrain.geometry.dispose();

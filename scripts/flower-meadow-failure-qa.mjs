@@ -1,7 +1,11 @@
 import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
-import { writeFile } from 'node:fs/promises';
+import { mkdir, writeFile } from 'node:fs/promises';
 import { chromium } from '@playwright/test';
+const output =
+  process.env.OASIS_QA_OUTPUT ??
+  'artifacts/jelly-oasis/flower-meadow-final-composition-v1';
+await mkdir(output, { recursive: true });
 const server = spawn(process.execPath, [
   'node_modules/vite/bin/vite.js',
   'preview',
@@ -49,10 +53,7 @@ try {
   await context.close();
   result.status = 'PASS';
 } finally {
-  await writeFile(
-    'artifacts/jelly-oasis/flower-meadow-final-composition-v1/failure-qa.json',
-    JSON.stringify(result, null, 2),
-  );
+  await writeFile(`${output}/failure-qa.json`, JSON.stringify(result, null, 2));
   await browser.close();
   server.kill();
 }

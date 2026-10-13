@@ -1,7 +1,7 @@
 import { selectMeadow } from './meadow/meadowConfig';
 import { selectScenery } from './scenery/sceneryConfig';
 import { createWorldConfig, selectWorldSize } from './terrain/worldLayout';
-import { frameWorld } from './terrain/worldCamera';
+import { frameWorld, frameLandscape } from './terrain/worldCamera';
 import { Box3 } from 'three';
 import { selectComposition } from './composition/compositionConfig';
 import { selectVegetation } from './vegetation/vegetationConfig';
@@ -32,6 +32,7 @@ function start(canvas: HTMLCanvasElement): void {
     import.meta.env.DEV || new URLSearchParams(location.search).has('debug');
   const config = createWorldConfig(
     selectWorldSize(debugEnabled, new URLSearchParams(location.search).get('world')),
+    debugEnabled && new URLSearchParams(location.search).get('art') === 'b' ? 2 : 1,
   );
   const scene = new Scene();
   const manager = new RendererManager(canvas);
@@ -56,7 +57,7 @@ function start(canvas: HTMLCanvasElement): void {
     mobile,
     motionPreference.matches,
   );
-  const surface = createTerrainSurface(config.maxHeight);
+  const surface = createTerrainSurface(config.maxHeight, config.size);
   const terrain = createTerrain(config, surface.material);
   const edge = createTerrainEdge(config);
   scene.add(terrain, edge);
@@ -75,7 +76,8 @@ function start(canvas: HTMLCanvasElement): void {
   let reviewCamera = false;
   let groundCamera = false;
   let mediumCamera = false;
-  let overviewCamera = true;
+  let overviewCamera = false;
+  let presentationCamera = true;
   function setShadows(enabled: boolean): void {
     renderer.shadowMap.enabled = enabled;
     renderer.shadowMap.needsUpdate = true;
@@ -92,18 +94,21 @@ function start(canvas: HTMLCanvasElement): void {
   const previousTarget = new Vector3();
   const resetButton = document.querySelector<HTMLButtonElement>('#reset-view')!;
 
-  function resetView(): void {
-    overviewCamera = true;
+  function resetView(overview = false): void {
+    overviewCamera = overview;
+    presentationCamera = !overview;
     mediumCamera = false;
     reviewCamera = groundCamera = false;
     controls.minDistance = 35;
     controls.maxPolarAngle = Math.PI - 0.01;
     controls.maxTargetRadius = Infinity;
-    frameWorld(
-      [terrain, edge, ...(landmark ? [...landmark.assets.modules.values()] : [])],
-      camera,
-      controls,
-    );
+    if (overview)
+      frameWorld(
+        [terrain, edge, ...(landmark ? [...landmark.assets.modules.values()] : [])],
+        camera,
+        controls,
+      );
+    else frameLandscape(camera, controls);
     dirty = true;
   }
   function resize(): void {
@@ -112,7 +117,8 @@ function start(canvas: HTMLCanvasElement): void {
     manager.resize(width, height);
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
-    if (overviewCamera) resetView();
+    if (overviewCamera) resetView(true);
+    else if (presentationCamera) resetView();
     else if (mediumCamera && landmark)
       frameLandmark('medium', landmark, camera, controls);
     dirty = true;
@@ -120,7 +126,8 @@ function start(canvas: HTMLCanvasElement): void {
   const observer = new ResizeObserver(resize);
   observer.observe(canvas);
   resize();
-  resetButton.addEventListener('click', resetView);
+  const resetPresentation = () => resetView();
+  resetButton.addEventListener('click', resetPresentation);
   const invalidate = (): void => {
     dirty = true;
   };
@@ -128,6 +135,7 @@ function start(canvas: HTMLCanvasElement): void {
   const releaseMediumCamera = (): void => {
     mediumCamera = false;
     overviewCamera = false;
+    presentationCamera = false;
   };
   controls.addEventListener('start', releaseMediumCamera);
   const debugPanel = createEnvironmentPanel(
@@ -140,6 +148,7 @@ function start(canvas: HTMLCanvasElement): void {
       // A high moon is outside the terrain-facing orbit's field of view.
       // The existing reset button returns this deliberate sky view to the land.
       overviewCamera = false;
+      presentationCamera = false;
       reviewCamera = true;
       mediumCamera = false;
       groundCamera = false;
@@ -163,11 +172,12 @@ function start(canvas: HTMLCanvasElement): void {
     : null;
   function landmarkView(view: LandmarkCamera): void {
     if (view === 'overview') {
-      resetView();
+      resetView(true);
       return;
     }
     if (!landmark) return;
     overviewCamera = false;
+    presentationCamera = false;
     reviewCamera = true;
     groundCamera = view === 'ground';
     mediumCamera = view === 'medium';
@@ -255,7 +265,12 @@ function start(canvas: HTMLCanvasElement): void {
       }
       landmark = loaded;
       scene.add(loaded.root);
-      if (overviewCamera) resetView();
+      if (overviewCamera || presentationCamera) resetView(overviewCamera);
+      if (debugEnabled && candidateQuery.has('blockout')) {
+        loaded.vegetation.group.visible = false;
+        loaded.composition.group.visible = false;
+        loaded.meadow.group.visible = false;
+      }
       landmarkStatus.hidden = true;
       if (debugEnabled) {
         landmarkDebug = createLandmarkDebug(loaded, invalidate, landmarkView);
@@ -265,6 +280,7 @@ function start(canvas: HTMLCanvasElement): void {
             audit: () => auditLandmark(loaded),
             reviewCamera: (position: number[], target: number[]) => {
               overviewCamera = false;
+              presentationCamera = false;
               mediumCamera = false;
               reviewCamera = groundCamera = true;
               controls.enableDamping = false;
@@ -288,12 +304,10 @@ function start(canvas: HTMLCanvasElement): void {
                 world: loaded.root.localToWorld(new Vector3(p.x, p.y, p.z)).toArray(),
               })),
             reviewMeadow: () =>
-              loaded.meadow
-                .instances()
-                .map((p) => ({
-                  ...p,
-                  world: loaded.root.localToWorld(new Vector3(p.x, p.y, p.z)).toArray(),
-                })),
+              loaded.meadow.instances().map((p) => ({
+                ...p,
+                world: loaded.root.localToWorld(new Vector3(p.x, p.y, p.z)).toArray(),
+              })),
             reviewScenery: () =>
               loaded.scenery.instances().map((p) => ({
                 ...p,
@@ -459,6 +473,7 @@ function start(canvas: HTMLCanvasElement): void {
         ['waterfall', 'pond-low', 'pond-top'].includes(candidateQuery.get('view') ?? '')
       ) {
         overviewCamera = false;
+        presentationCamera = false;
         mediumCamera = false;
         reviewCamera = groundCamera = true;
         controls.enableDamping = false;
@@ -652,7 +667,7 @@ function start(canvas: HTMLCanvasElement): void {
     debugPanel?.dispose();
     motionPreference.removeEventListener('change', motionChanged);
     manager.dispose();
-    resetButton.removeEventListener('click', resetView);
+    resetButton.removeEventListener('click', resetPresentation);
     controls.removeEventListener('start', releaseMediumCamera);
     window.removeEventListener('keydown', keydown);
     document.removeEventListener('visibilitychange', visibility);
