@@ -16,72 +16,71 @@ import {
   stoneHull,
 } from './sanctuaryGeometry';
 
-// East of the protected circulation annulus. The low trail crosses it at grade;
-// the raised terrace and steps start beyond its outer edge.
-export const SANCTUARY_SITE = { x: 47, z: 9, yaw: -Math.PI / 3 };
+// The raised precinct sits outside the existing circulation loop. Its entrance
+// faces the lake; the side arcades describe a real open hall, not a single gate.
+export const SANCTUARY_SITE = { x: 40, z: 38, yaw: -Math.PI / 3 };
+const HALF_WIDTH = 18;
+const HALF_DEPTH = 15;
 
 export function createMagicalSanctuary(content: Group, originalArch: Group) {
   const group = new Group();
   group.name = 'MagicalSanctuary';
   content.add(group);
   const palette: Color[] = [];
-  // Explicit names in the source GLB define warm/light/shadow order.
   originalArch.traverse((child) => {
     if (!(child instanceof Mesh)) return;
-    for (const material of Array.isArray(child.material)
-      ? child.material
-      : [child.material]) {
-      if (!(material instanceof MeshStandardMaterial)) continue;
-      const index = material.name.includes('WarmGray')
-        ? 0
-        : material.name.includes('LightStone')
-          ? 1
-          : 2;
-      palette[index] = material.color.clone();
+    for (const m of Array.isArray(child.material) ? child.material : [child.material]) {
+      if (!(m instanceof MeshStandardMaterial)) continue;
+      palette[m.name.includes('WarmGray') ? 0 : m.name.includes('LightStone') ? 1 : 2] =
+        m.color.clone();
     }
   });
   const material = new MeshStandardMaterial({
     color: 'white',
     vertexColors: true,
     flatShading: true,
-    roughness: 0.85,
+    roughness: 0.9,
     metalness: 0,
   });
   material.name = 'JO_Sanctuary_ExistingRuinPalette';
-  let disposed = false;
-  let deckHeight = 0;
-  let mainArchHeight = 0;
-  let structureDimensions: number[] = [];
   const owned = new Set<BufferGeometry>();
+  let disposed = false,
+    deckHeight = 0,
+    mainArchHeight = 0;
+  let structureDimensions: number[] = [];
   const c = Math.cos(SANCTUARY_SITE.yaw),
     s = Math.sin(SANCTUARY_SITE.yaw);
   const transform = (x: number, z: number) => ({
     x: SANCTUARY_SITE.x + x * c + z * s,
     z: SANCTUARY_SITE.z - x * s + z * c,
   });
-  const inverse = (x: number, z: number) => ({
-    x: (x - SANCTUARY_SITE.x) * c - (z - SANCTUARY_SITE.z) * s,
-    z: (x - SANCTUARY_SITE.x) * s + (z - SANCTUARY_SITE.z) * c,
-  });
   function clear() {
     group.clear();
-    owned.forEach((geometry) => geometry.dispose());
+    owned.forEach((g) => g.dispose());
     owned.clear();
   }
   function place(ground: (x: number, z: number) => number) {
     if (disposed) return;
     clear();
+    mainArchHeight = 0;
     group.position.set(SANCTUARY_SITE.x, 0, SANCTUARY_SITE.z);
     group.rotation.y = SANCTUARY_SITE.yaw;
+    const floorAt = (x: number, z: number) => {
+      const p = transform(x, z);
+      return ground(p.x, p.z);
+    };
     const heights: number[] = [];
-    for (let x = -11; x <= 11; x += 2.2)
-      for (let z = -6; z <= 6; z += 2) {
-        const p = transform(x, z);
-        heights.push(ground(p.x, p.z));
-      }
-    deckHeight = Math.max(...heights) + 0.48;
+    for (let x = -HALF_WIDTH; x <= HALF_WIDTH; x += 3)
+      for (let z = -HALF_DEPTH; z <= HALF_DEPTH; z += 3) heights.push(floorAt(x, z));
+    deckHeight = Math.max(...heights) + 0.45;
     const parts: BufferGeometry[] = [];
-    const add = (g: BufferGeometry) => parts.push(paintFaces(g, palette));
+    let ordinal = 0;
+    const add = (g: BufferGeometry, moss = false) => {
+      const tint = 0.94 + Math.sin(++ordinal * 7.13) * 0.055;
+      const colors = palette.map((p) => p.clone().multiplyScalar(tint));
+      if (moss) colors[1]!.lerp(new Color('#76836a'), 0.46);
+      parts.push(paintFaces(g, colors));
+    };
     const block = (
       x: number,
       y: number,
@@ -90,184 +89,253 @@ export function createMagicalSanctuary(content: Group, originalArch: Group) {
       h: number,
       d: number,
       seed = 0,
-    ) => add(stoneBlock(x, y, z, w, h, d, seed));
-    // Eight deep retaining faces follow the real slope down into the ground.
-    const outline = [
-      [-8, -6],
-      [8, -6],
-      [11, -3],
-      [11, 3],
-      [8, 6],
-      [-8, 6],
-      [-11, 3],
-      [-11, -3],
-    ];
-    const bottom = outline.map(([x, z]) => {
-      const p = transform(x!, z!);
-      return ground(p.x, p.z) - 0.2;
-    });
-    for (let i = 0; i < outline.length; i++) {
-      const a = outline[i]!,
-        b = outline[(i + 1) % outline.length]!;
-      const corners = [
-        new Vector3(0, Math.min(...bottom), 0),
-        new Vector3(a[0], bottom[i], a[1]),
-        new Vector3(b[0], bottom[(i + 1) % bottom.length], b[1]),
-        new Vector3(0, Math.min(...bottom), 0.05),
-        new Vector3(0, deckHeight - 0.2, 0),
-        new Vector3(a[0], deckHeight - 0.2, a[1]),
-        new Vector3(b[0], deckHeight - 0.2, b[1]),
-        new Vector3(0, deckHeight - 0.2, 0.05),
-      ];
-      // Convex closed sector with a narrow central spine; sectors meet beneath
-      // the floor rather than hiding unsupported edges behind a floating plane.
-      add(stoneHull(corners, 0.015));
-    }
-    // Large slabs, offset joints, no grid of tiny pavement blocks.
-    for (let row = 0; row < 3; row++)
-      for (let col = 0; col < 4; col++) {
-        const x = -7.8 + col * 5.2 + (row === 1 ? 0.16 : 0),
-          z = -3.75 + row * 3.75;
-        const width = col === 0 || col === 3 ? 4.1 : 5.1;
-        block(x, deckHeight - 0.14, z, width, 0.36, 3.66, row * 4 + col);
-      }
-    const base = deckHeight + 0.07;
-    // Broad footings, slightly tapering courses, thick segmental voussoirs.
-    for (const side of [-1, 1]) {
-      block(side * 6.3, base + 0.35, -1.2, 3.9, 0.7, 4.1, side + 4);
-      for (let row = 0; row < 3; row++)
+      moss = false,
+    ) => add(stoneBlock(x, y, z, w, h, d, seed), moss);
+    // Full-depth masonry cells follow the ground; no overlapping perimeter
+    // skin, which would produce coplanar flicker on the retaining faces.
+    for (let row = 0; row < 6; row++)
+      for (let col = 0; col < 6; col++) {
+        const x = -15 + col * 6,
+          z = -12.5 + row * 5;
+        const bottom =
+          Math.min(floorAt(x - 3, z - 2.5), floorAt(x + 3, z + 2.5), floorAt(x, z)) -
+          0.2;
         block(
-          side * (6.25 - row * 0.09),
-          base + 0.72 + row * 2.3 + 1.12,
-          -1.2,
-          2.85 - row * 0.1,
-          2.24,
-          3.05,
-          row + (side + 1) * 3,
+          x,
+          (bottom + deckHeight) / 2,
+          z,
+          5.96,
+          deckHeight - bottom,
+          4.96,
+          ordinal,
+          (row + col) % 7 === 0,
         );
-      block(side * 6.08, base + 7.78, -1.2, 3.35, 0.55, 3.65, side + 7);
+      }
+    const base = deckHeight + 0.08;
+    // Pier courses use believable masonry scale, with larger footings/capitals.
+    const pier = (x: number, z: number, h: number, w = 3.5, d = 4.4) => {
+      block(x, base + 0.45, z, w + 1.6, 0.9, d + 1.6, ordinal, true);
+      const rows = Math.ceil((h - 1.5) / 1.65),
+        course = (h - 1.5) / rows;
+      for (let row = 0; row < rows; row++) {
+        const taper = 1 - (0.07 * row) / rows;
+        // Bonded seams alternate in the thick masonry, not floating thin plates.
+        for (const side of [-1, 1])
+          block(
+            x + (side * w * taper) / 4,
+            base + 0.9 + (row + 0.5) * course,
+            z,
+            (w * taper) / 2 - 0.035,
+            course - 0.045,
+            d * (row % 2 ? 0.98 : 1),
+            ordinal,
+          );
+      }
+      block(x, base + h - 0.3, z, w + 0.7, 0.6, d + 0.8, ordinal);
+    };
+    const arch = (
+      cx: number,
+      z: number,
+      spring: number,
+      inner: number,
+      thickness: number,
+      depth: number,
+      yaw = 0,
+      broken = false,
+    ) => {
+      const n = 19,
+        outer = inner + thickness;
+      for (let i = 0; i < n; i++) {
+        if (broken && i > 6) continue;
+        const a = (i * Math.PI) / n + 0.0015,
+          b = ((i + 1) * Math.PI) / n - 0.0015;
+        const corners: Vector3[] = [];
+        for (const zz of [-depth / 2, depth / 2])
+          for (const [r, t] of [
+            [inner, a],
+            [outer, a],
+            [outer, b],
+            [inner, b],
+          ]) {
+            const xx = Math.cos(t!) * r!;
+            corners.push(
+              new Vector3(
+                cx + xx * Math.cos(yaw) + zz * Math.sin(yaw),
+                base + spring + Math.sin(t!) * r!,
+                z - xx * Math.sin(yaw) + zz * Math.cos(yaw),
+              ),
+            );
+          }
+        add(stoneHull(corners, broken && i === 6 ? 0.13 : 0.022 + (i % 4) * 0.006));
+      }
+    };
+    // Tall sanctuary end: deep main vault ring and two massive buttressed piers.
+    const rear = -10.5;
+    for (const side of [-1, 1]) {
+      pier(side * 10.25, rear, 17.1, 4.5, 5.3);
+      for (let row = 0; row < (side === -1 ? 9 : 8); row++) {
+        const h = 1.85,
+          w = 4.1 - row * 0.22;
+        block(
+          side * 14.1,
+          base + (row + 0.5) * h,
+          rear + 0.9,
+          w,
+          h - 0.05,
+          6.6 - row * 0.34,
+          ordinal,
+          row === 0,
+        );
+      }
     }
-    const spring = base + 7.64;
-    for (let i = 0; i < 15; i++) {
-      const a = (i * Math.PI) / 15 + 0.004,
-        b = ((i + 1) * Math.PI) / 15 - 0.004;
-      const outer = 7.45 + (i === 9 ? -0.36 : i === 2 ? 0.14 : 0);
-      const corners: Vector3[] = [];
-      for (const z of [-2.76, 0.34])
-        for (const [r, t] of [
-          [5.15, a],
-          [outer, a],
-          [outer, b],
-          [5.15, b],
-        ])
-          corners.push(new Vector3(Math.cos(t!) * r!, spring + Math.sin(t!) * r!, z));
-      const archStone = stoneHull(corners, i === 9 ? 0.09 : 0.035);
-      archStone.computeBoundingBox();
-      mainArchHeight = Math.max(
-        mainArchHeight,
-        archStone.boundingBox!.max.y - deckHeight,
+    arch(0, rear, 17.0, 8.0, 4.2, 5.3);
+    mainArchHeight = 29.2;
+    block(-14.1, base + 16.8, rear, 4.7, 0.85, 4.3, 41);
+    // A broken clerestory survives on the left wing, anchored on the pier.
+    for (let row = 0; row < 4; row++) {
+      block(
+        -13.9,
+        base + 17.0 + (row + 0.5) * 2.0,
+        rear,
+        4.6 - row * 0.45,
+        1.95,
+        3.8,
+        ordinal,
       );
-      add(archStone);
     }
-    // Altar pedestal; a small inlay is reserved without adding glow or lights.
-    block(0, base + 0.22, 2.15, 4.8, 0.44, 3.8, 13);
-    block(0, base + 0.7, 2.15, 3.4, 0.52, 2.7, 14);
-    block(0, base + 1.42, 2.15, 2.0, 0.95, 1.7, 15);
-    block(0, base + 2.12, 2.15, 3.7, 0.5, 2.75, 16);
-    block(-1.34, base + 2.47, 2.15, 0.4, 0.2, 2.15, 20);
-    block(1.34, base + 2.47, 2.15, 0.4, 0.2, 2.15, 21);
-    block(0, base + 2.47, 1.27, 2.35, 0.2, 0.4, 22);
-    block(0, base + 2.47, 3.03, 2.35, 0.2, 0.4, 23);
-    const inlay = stoneBlock(0, base + 2.38, 2.15, 2.13, 0.05, 1.32, 24);
-    const inlayColor = palette[2]!.clone().lerp(new Color('#687c76'), 0.65);
-    parts.push(paintFaces(inlay, [inlayColor, inlayColor, inlayColor]));
-    for (const [x, z, h] of [
-      [-9.1, 3.65, 5.2],
-      [8.8, 2.9, 2.5],
-    ]) {
-      block(x!, base + 0.3, z!, 2.8, 0.6, 2.65, 17);
-      for (let row = 0; row < Math.ceil(h! / 1.7); row++)
-        block(x!, base + 0.6 + row * 1.7 + 0.78, z!, 1.75, 1.56, 1.8, row + 18);
+    block(-14.6, base + 25.9, rear, 2.9, 1.65, 3.5, 31, true);
+    // Lower entrance with enough open sky to see the high rear arch and altar.
+    for (const side of [-1, 1]) pier(side * 9.25, 10.7, 11.8, 3.5, 3.8);
+    arch(0, 10.7, 11.6, 7.5, 3.5, 3.8);
+    // Two side bays form the nave. One bay is broken, with its fallen masonry
+    // grounded beside it, making the silhouette asymmetric without random noise.
+    for (const side of [-1, 1]) {
+      for (const z of [-10.5, 0.1, 10.7]) {
+        if (z !== -10.5)
+          pier(side * 14.2, z, side === 1 && z === 10.7 ? 7.5 : 12.4, 2.5, 3.2);
+      }
+      arch(side * 14.2, -5.2, 12.2, 3.8, 1.75, 2.65, Math.PI / 2);
+      arch(side * 14.2, 5.4, 12.2, 3.8, 1.75, 2.65, Math.PI / 2, side === 1);
+      // Partial side enclosure, large staggered stones, visibly ruined top edge.
+      for (let row = 0; row < 3; row++)
+        for (let bay = 0; bay < 4; bay++) {
+          if (side === 1 && bay > 1 && row > 0) continue;
+          block(
+            side * 16,
+            base + 0.8 + row * 1.58,
+            -8 + bay * 5.4,
+            2.5,
+            1.52,
+            5.28,
+            ordinal,
+            row === 2,
+          );
+        }
     }
-    // Wide steps start outside the six-metre loop; each has deep terrain support.
-    for (let step = 0; step < 4; step++) {
-      const z = 6.15 + step * 0.75,
-        p = transform(0, z),
-        floor = ground(p.x, p.z) - 0.14;
-      const top = deckHeight - (step + 1) * 0.22;
-      block(0, (floor + top) / 2, z, 5.2, Math.max(0.22, top - floor), 0.82, step + 24);
+    // Broad stepped dais and a substantial stone altar at the end of the hall.
+    for (let i = 0; i < 3; i++)
+      block(0, base + 0.3 + i * 0.55, -5.5, 12 - i * 1.4, 0.58, 9 - i * 1.2, ordinal);
+    block(0, base + 2.15, -5.5, 5.2, 1.6, 3.5, ordinal);
+    block(0, base + 3.17, -5.5, 7.2, 0.55, 4.9, ordinal);
+    const inlay = stoneBlock(0, base + 3.46, -5.5, 4.9, 0.055, 2.7, 21);
+    const jade = new Color('#5e8279');
+    parts.push(paintFaces(inlay, [jade, jade, jade]));
+    // Fallen sections rest on the deck, kept away from the central aisle.
+    for (let i = 0; i < 7; i++) {
+      const stone = stoneBlock(
+        10.5 + (i % 2) * 2.3,
+        base + 0.8,
+        2.5 + i * 1.18,
+        2.4,
+        1.55,
+        2.0,
+        i + 3,
+      );
+      stone
+        .translate(-11.5, -base, -6)
+        .rotateY(i * 0.47)
+        .translate(11.5, base, 6);
+      add(stone, i % 3 === 0);
+    }
+    // Wide descending flight: each tread has full terrain support. Its final
+    // tread meets the local ground, not an arbitrary staircase height.
+    const stairEnd = 22,
+      stairFloor = floorAt(0, stairEnd) + 0.09;
+    const rise = Math.max(0.4, deckHeight - stairFloor),
+      steps = Math.max(8, Math.ceil(rise / 0.3));
+    for (let i = 0; i < steps; i++) {
+      const z = 15 + ((i + 0.5) * 7) / steps,
+        top = deckHeight - (rise * (i + 1)) / steps;
+      const bottom = Math.min(floorAt(-6, z), floorAt(6, z), floorAt(0, z)) - 0.2;
+      block(
+        0,
+        (top + bottom) / 2,
+        z,
+        12 + (i > steps - 3 ? 2 : 0),
+        Math.max(0.2, top - bottom),
+        7 / steps + 0.015,
+        ordinal,
+      );
     }
     const structureBounds = new Box3();
-    for (const part of parts) {
-      part.computeBoundingBox();
-      structureBounds.union(part.boundingBox!);
+    for (const p of parts) {
+      p.computeBoundingBox();
+      structureBounds.union(p.boundingBox!);
     }
     structureDimensions = structureBounds.getSize(new Vector3()).toArray();
-    // Curve around Rock_Large_C. The tops query the same rendered terrain
-    // sampler at a 0.3m spacing, so slabs do not clip into sloping ground.
-    const end = transform(0, 9.6);
-    const path = [
-      [13.7, 12.2],
-      [19.5, 13.6],
-      [28, 13.6],
-      [end.x, end.z],
-    ];
-    const trailPositions: number[] = [];
-    const face = (a: number[], b: number[], d: number[]) =>
-      trailPositions.push(...a, ...b, ...d);
-    for (let i = 0; i < 13; i++) {
-      const progress = (i / 12) * (path.length - 1),
-        span = Math.min(path.length - 2, Math.floor(progress)),
-        t = progress - span;
-      const a = path[span]!,
-        b = path[span + 1]!,
-        dx = b[0]! - a[0]!,
-        dz = b[1]! - a[1]!,
-        len = Math.hypot(dx, dz);
-      const centerX = a[0]! + dx * t,
-        centerZ = a[1]! + dz * t;
-      for (const side of [-1, 1]) {
-        const offset = side * 0.95;
-        const vertex = (u: number, v: number) => {
-          const x = centerX + (dx / len) * v - (dz / len) * (u + offset),
-            z = centerZ + (dz / len) * v + (dx / len) * (u + offset);
-          const local = inverse(x, z);
-          return [local.x, ground(x, z) + 0.028, local.z];
-        };
-        const n = 6;
-        for (let j = 0; j < n; j++)
-          for (let k = 0; k < n; k++) {
-            const u = -0.86 + (j * 1.72) / n,
-              v = -0.85 + (k * 1.7) / n;
-            const p = vertex(u, v),
-              q = vertex(u + 1.72 / n, v),
-              r = vertex(u + 1.72 / n, v + 1.7 / n),
-              s = vertex(u, v + 1.7 / n);
-            face(p, q, s);
-            face(q, r, s);
-          }
-        for (let edge = 0; edge < 4; edge++) {
-          const corners = [
-            [-0.86, -0.85],
-            [0.86, -0.85],
-            [0.86, 0.85],
-            [-0.86, 0.85],
-          ];
-          const a = corners[edge]!,
-            b = corners[(edge + 1) % 4]!;
-          const p = vertex(a[0]!, a[1]!),
-            q = vertex(b[0]!, b[1]!),
-            r = [q[0]!, q[1]! - 0.23, q[2]!],
-            s = [p[0]!, p[1]! - 0.23, p[2]!];
-          face(p, q, r);
-          face(p, r, s);
+    // Low broad approach stones grounded at their corners. Avoid the old
+    // bright double row of paving dots. This crosses the loop at ground level.
+    const end = transform(0, 23);
+    for (let i = 0; i < 12; i++) {
+      const t = i / 11,
+        wx = 18 + (end.x - 18) * t,
+        wz = 17 + (end.z - 17) * t;
+      const lx = (wx - SANCTUARY_SITE.x) * c - (wz - SANCTUARY_SITE.z) * s;
+      const lz = (wx - SANCTUARY_SITE.x) * s + (wz - SANCTUARY_SITE.z) * c;
+      const vertices: number[] = [];
+      const point = (x: number, z: number, lower = false) => [
+        x,
+        floorAt(x, z) + (lower ? -0.23 : 0.025),
+        z,
+      ];
+      const triangle = (a: number[], b: number[], c: number[]) =>
+        vertices.push(...a, ...b, ...c);
+      const n = 12;
+      for (let j = 0; j < n; j++)
+        for (let k = 0; k < n; k++) {
+          const x = lx - 1.7 + (j * 3.4) / n,
+            z = lz - 1.2 + (k * 2.4) / n;
+          const a = point(x, z),
+            b = point(x + 3.4 / n, z),
+            c = point(x + 3.4 / n, z + 2.4 / n),
+            d = point(x, z + 2.4 / n);
+          triangle(a, d, b);
+          triangle(b, d, c);
+        }
+      for (const [ax, az, bx, bz] of [
+        [-1.7, -1.2, 1.7, -1.2],
+        [1.7, -1.2, 1.7, 1.2],
+        [1.7, 1.2, -1.7, 1.2],
+        [-1.7, 1.2, -1.7, -1.2],
+      ]) {
+        for (let k = 0; k < n; k++) {
+          const x1 = lx + ax! + ((bx! - ax!) * k) / n,
+            z1 = lz + az! + ((bz! - az!) * k) / n;
+          const x2 = lx + ax! + ((bx! - ax!) * (k + 1)) / n,
+            z2 = lz + az! + ((bz! - az!) * (k + 1)) / n;
+          const a = point(x1, z1),
+            b = point(x2, z2),
+            c = point(x2, z2, true),
+            d = point(x1, z1, true);
+          triangle(a, b, c);
+          triangle(a, c, d);
         }
       }
+      const slab = new BufferGeometry();
+      slab.setAttribute('position', new Float32BufferAttribute(vertices, 3));
+      slab.computeVertexNormals();
+      add(slab, true);
     }
-    const trail = new BufferGeometry();
-    trail.setAttribute('position', new Float32BufferAttribute(trailPositions, 3));
-    trail.computeVertexNormals();
-    add(trail);
     const geometry = mergeStoneParts(parts);
     owned.add(geometry);
     const mesh = new Mesh(geometry, material);
@@ -277,9 +345,22 @@ export function createMagicalSanctuary(content: Group, originalArch: Group) {
     group.updateMatrixWorld(true);
   }
   function footprints(): Footprint[] {
+    const corners = [
+      transform(-19, -16),
+      transform(19, -16),
+      transform(-19, 23),
+      transform(19, 23),
+    ];
     return [
-      { minX: 34.9, maxX: 59, minZ: -4, maxZ: 22.5 },
-      { minX: 13, maxX: 39.5, minZ: 10, maxZ: 16 },
+      {
+        minX: Math.min(...corners.map((p) => p.x)),
+        maxX: Math.max(...corners.map((p) => p.x)),
+        minZ: Math.min(...corners.map((p) => p.z)),
+        maxZ: Math.max(...corners.map((p) => p.z)),
+      },
+      // Keep the foreground sightline open, including tree canopy radii.
+      { minX: 34, maxX: 70, minZ: 36, maxZ: 66 },
+      { minX: 17, maxX: 42, minZ: 14, maxZ: 23 },
     ];
   }
   return {
@@ -294,8 +375,8 @@ export function createMagicalSanctuary(content: Group, originalArch: Group) {
         worldBounds: { min: bounds.min.toArray(), max: bounds.max.toArray() },
         structureDimensions: [...structureDimensions],
         mainArchHeightAboveDeck: mainArchHeight,
-        terraceFootprint: [22, 12],
-        archOpening: 10.3,
+        terraceFootprint: [36, 30],
+        archOpening: 16,
         triangles: [...owned].reduce((n, g) => n + g.attributes.position!.count / 3, 0),
         materials: 1,
         palette: palette.map((c) => c.toArray()),

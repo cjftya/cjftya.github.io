@@ -71,11 +71,12 @@ export function excavateTerrain(
     half;
   const z1 =
     Math.ceil((Math.max(...area.map((p) => p.z)) + margin + half) / step) * step - half;
-  const divisions = 8,
+  const divisions = profile ? 16 : 8,
     fine = step / divisions;
   const positions: number[] = [],
     indices: number[] = [],
-    colors: number[] = [];
+    colors: number[] = [],
+    basinWeights: number[] = [];
   const ids = new Map<string, number>(),
     cells = new Map<string, number[]>();
   const color = new Color();
@@ -87,26 +88,38 @@ export function excavateTerrain(
   function height(x: number, z: number) {
     const base = sampleOriginalGround(x, z, config);
     local.set(x, base, z).applyMatrix4(inverse);
-    if (
-      protectedZones.some(
-        (zone) =>
-          local.x >= zone.min[0]! - 0.35 &&
-          local.x <= zone.max[0]! + 0.35 &&
-          local.z >= zone.min[2]! - 0.35 &&
-          local.z <= zone.max[2]! + 0.35,
-      )
-    )
-      return base;
+    // Keep the established clearing level while grading the adjacent shore.
+    let protection = profile
+      ? smoothstep(8.5, 10.5, Math.hypot(local.x, local.z - 27))
+      : 1;
+    for (const zone of protectedZones) {
+      const distance = Math.hypot(
+        Math.max(zone.min[0]! - 0.35 - local.x, 0, local.x - zone.max[0]! - 0.35),
+        Math.max(zone.min[2]! - 0.35 - local.z, 0, local.z - zone.max[2]! - 0.35),
+      );
+      if (distance === 0) return base;
+      if (profile) protection = Math.min(protection, smoothstep(0, 2.8, distance));
+    }
     const d = polygonDistance(local.x, local.z, guide.positions);
     let y = local.y;
-    if (d > 0) {
+    if (profile && d > -3.2) {
+      // Grade a real dry shoulder into the waterline. The previous sharp cut
+      // inside d=0 made grid-aligned teeth and a repeated steep brown rim.
+      const shelf =
+        profile.shelfWidth * (1 + 0.27 * Math.sin(local.x * 0.19 + local.z * 0.23));
+      const deep =
+        profile.deepWidth * (1 + 0.12 * Math.cos(local.x * 0.23 - local.z * 0.17));
+      const bed =
+        d < 0
+          ? waterY + 0.025 + 0.12 * -d
+          : waterY +
+            0.025 -
+            0.655 * smoothstep(0, shelf, d) -
+            (profile.depth - 0.63) * smoothstep(shelf, deep, d);
+      y = Math.min(y, local.y + (bed - local.y) * smoothstep(-3.2, -0.25, d));
+    } else if (!profile && d > 0) {
       const bankWidth = 1.1 + 0.23 * Math.sin(local.x * 0.71 + local.z * 0.31);
-      const bed = profile
-        ? waterY -
-          0.08 -
-          0.55 * smoothstep(0, profile.shelfWidth, d) -
-          (profile.depth - 0.63) * smoothstep(profile.shelfWidth, profile.deepWidth, d)
-        : waterY - 0.08 - 1.85 * smoothstep(0, 3.8, d);
+      const bed = waterY - 0.08 - 1.85 * smoothstep(0, 3.8, d);
       y = Math.min(y, local.y + (bed - local.y) * smoothstep(0, bankWidth, d));
     }
     for (let i = 0; i < channel.length - 1; i++) {
@@ -135,6 +148,7 @@ export function excavateTerrain(
         y = Math.min(y, local.y + (bed - local.y) * blend);
       }
     }
+    y = local.y + (y - local.y) * protection;
     const worldY = root.position.y + y * root.scale.x;
     if (d > 0) maxWaterDepth = Math.max(maxWaterDepth, (waterY - y) * root.scale.x);
     maxDepth = Math.max(maxDepth, base - worldY);
@@ -155,6 +169,14 @@ export function excavateTerrain(
     ids.set(key, id);
     positions.push(x, y, z);
     sampleTerrainColor(x, z, y, config, color, base - y);
+    if (profile && excavated) {
+      local.set(x, y, z).applyMatrix4(inverse);
+      const d = polygonDistance(local.x, local.z, guide.positions);
+      const blend = smoothstep(-3.2, 0.3, d);
+      const submerged = smoothstep(0, 1.5, waterY - local.y);
+      color.lerp(new Color('#858e75'), submerged * 0.62);
+      basinWeights.push(blend);
+    } else basinWeights.push(0);
     color.toArray(colors, id * 3);
     return id;
   }
@@ -200,6 +222,7 @@ export function excavateTerrain(
   const geometry = new BufferGeometry();
   geometry.setAttribute('position', new Float32BufferAttribute(positions, 3));
   geometry.setAttribute('color', new Float32BufferAttribute(colors, 3));
+  geometry.setAttribute('terrainBasin', new Float32BufferAttribute(basinWeights, 1));
   geometry.setIndex(indices);
   // Keep the pond sampler indexed into the pre-clip Float32 positions. Clipping
   // only subdivides retained triangles, so their interpolated heights agree.

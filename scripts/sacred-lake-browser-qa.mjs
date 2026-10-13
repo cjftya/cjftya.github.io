@@ -83,16 +83,64 @@ try {
     );
     await environment(page);
     await capture(page, `${width}-presentation`);
+    const getDistance = () =>
+      page.evaluate(() => {
+        const s = window.__oasisLandmark.snapshot();
+        return {
+          distance: Math.hypot(...s.camera.map((v, i) => v - s.target[i])),
+          min: s.minDistance,
+        };
+      });
+    assert.equal((await getDistance()).min, 1.5);
     if (width === 1280) {
-      await capture(page, 'medium-day', [74, 50, 97], [14, 0, 14]);
+      await page.mouse.move(620, 410);
+      await page.mouse.wheel(0, -12000);
+      await page.waitForTimeout(500);
+      assert.ok(
+        (await getDistance()).distance < 5,
+        JSON.stringify(await getDistance()),
+      );
+      result.states[`${width}-zoom`] = await getDistance();
+      await page.click('#reset-view');
+      assert.equal((await getDistance()).min, 1.5);
+    } else {
+      const cdp = await context.newCDPSession(page);
+      const touch = (x, y, id) => ({ x, y, id });
+      for (let gesture = 0; gesture < 2; gesture++) {
+        await cdp.send('Input.dispatchTouchEvent', {
+          type: 'touchStart',
+          touchPoints: [touch(180, 410, 1), touch(210, 410, 2)],
+        });
+        for (let i = 1; i <= 8; i++)
+          await cdp.send('Input.dispatchTouchEvent', {
+            type: 'touchMove',
+            touchPoints: [touch(180 - i * 15, 410, 1), touch(210 + i * 15, 410, 2)],
+          });
+        await cdp.send('Input.dispatchTouchEvent', {
+          type: 'touchEnd',
+          touchPoints: [],
+        });
+      }
+      await page.waitForTimeout(300);
+      assert.ok(
+        (await getDistance()).distance < 35,
+        JSON.stringify(await getDistance()),
+      );
+      result.states[`${width}-zoom`] = await getDistance();
+      await page.click('#reset-view');
+      assert.equal((await getDistance()).min, 1.5);
+      await cdp.detach();
+    }
+    if (width === 1280) {
+      await capture(page, 'medium-day', [106, 65, 121], [32, 5, 19]);
       await capture(page, 'overview-day', [175, 175, 220], [10, 0, 10]);
       await capture(page, 'lake-day', [34, 13, 42], [18, -6, 20]);
-      await capture(page, 'sanctuary-day', [45, 18, 58], [58, 2, 0]);
+      await capture(page, 'sanctuary-day', [102, 32, 87], [66, 10, 27]);
       await page.evaluate(() => window.__oasisLandmark.reviewRebuild());
       await page.waitForTimeout(200);
       result.audits.desktop = await page.evaluate(() => window.__oasisLandmark.audit());
       await environment(page, 0);
-      await capture(page, 'medium-night', [74, 50, 97], [14, 0, 14]);
+      await capture(page, 'medium-night', [106, 65, 121], [32, 5, 19]);
       await environment(page, 12, 'RAIN');
       await capture(page, 'lake-rain', [34, 13, 42], [18, -6, 20]);
     } else {
@@ -107,7 +155,7 @@ try {
     JSON.stringify(result, null, 2),
   );
   assert.equal(result.errors.length, 0, JSON.stringify(result.errors));
-  for (const state of Object.values(result.states)) {
+  for (const state of Object.values(result.states).filter((s) => s.modules)) {
     assert.equal(state.modules, 16);
     assert.equal(state.sacredLake.boundarySamples, 57);
     assert.ok(
@@ -120,20 +168,22 @@ try {
     JSON.stringify({
       errors: result.errors,
       states: Object.fromEntries(
-        Object.entries(result.states).map(([k, s]) => [
-          k,
-          {
-            lake: s.sacredLake,
-            depth: s.excavation.maxWaterDepth,
-            sanctuary: s.sanctuary,
-            ecology: {
-              rocks: s.lakeEcology.rocks,
-              pads: s.lakeEcology.pads,
-              plantTriangles: s.lakeEcology.plantTriangles,
+        Object.entries(result.states)
+          .filter(([, s]) => s.modules)
+          .map(([k, s]) => [
+            k,
+            {
+              lake: s.sacredLake,
+              depth: s.excavation.maxWaterDepth,
+              sanctuary: s.sanctuary,
+              ecology: {
+                rocks: s.lakeEcology.rocks,
+                pads: s.lakeEcology.pads,
+                plantTriangles: s.lakeEcology.plantTriangles,
+              },
+              solver: s.waterEffects.solver,
             },
-            solver: s.waterEffects.solver,
-          },
-        ]),
+          ]),
       ),
     }),
   );
