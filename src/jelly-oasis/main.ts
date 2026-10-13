@@ -24,6 +24,7 @@ import { frameLandmark } from './landmark/landmarkCamera';
 import { selectCrystalDetail, type LandmarkCamera } from './landmark/landmarkConfig';
 import { auditLandmark } from './landmark/landmarkAudit';
 import type { PondControls } from './landmark/water/gpgpuPondSurface';
+import type { WeatherPreset } from './environment/weather';
 import { createPondPanel } from './landmark/water/gpgpuPondPanel';
 import './styles.css';
 
@@ -108,7 +109,14 @@ function start(canvas: HTMLCanvasElement): void {
         camera,
         controls,
       );
-    else frameLandscape(camera, controls);
+    else
+      frameLandscape(
+        camera,
+        controls,
+        landmark?.sanctuary
+          ? [...landmark.assets.modules.values(), landmark.sanctuary.group]
+          : [],
+      );
     dirty = true;
   }
   function resize(): void {
@@ -215,6 +223,7 @@ function start(canvas: HTMLCanvasElement): void {
     debugEnabled && candidateQuery.get('aesthetic') === 'baseline'
   );
   const aesthetic = {
+    sacred: !(debugEnabled && candidateQuery.get('sacred') === 'baseline'),
     tree:
       (refinedDefault && !(debugEnabled && candidateQuery.get('tree') === 'detail')) ||
       (debugEnabled && candidateQuery.get('tree') === 'refined'),
@@ -278,6 +287,21 @@ function start(canvas: HTMLCanvasElement): void {
         Object.assign(window, {
           __oasisLandmark: {
             audit: () => auditLandmark(loaded),
+            reviewEnvironment: (hour: number, weather: WeatherPreset = 'CLEAR') => {
+              environment.setAutoWeather(false);
+              environment.setPlaying(false);
+              environment.setTime(hour);
+              environment.setWeather(weather);
+              for (let i = 0; i < 60; i++)
+                environment.update(
+                  0.1,
+                  camera,
+                  camera.position.distanceTo(controls.target),
+                  renderer.getPixelRatio(),
+                );
+              loaded.waterEffects?.invalidate();
+              invalidate();
+            },
             reviewCamera: (position: number[], target: number[]) => {
               overviewCamera = false;
               presentationCamera = false;
@@ -386,6 +410,9 @@ function start(canvas: HTMLCanvasElement): void {
                 }),
               ),
               modules: loaded.assets.modules.size,
+              sacredLake: loaded.sacredLakeSnapshot(),
+              sanctuary: loaded.sanctuary?.snapshot() ?? null,
+              lakeEcology: loaded.lakeEcology?.snapshot() ?? null,
               vegetation: loaded.vegetation.snapshot(),
               composition: loaded.composition.snapshot(),
               scenery: loaded.scenery.snapshot(),
