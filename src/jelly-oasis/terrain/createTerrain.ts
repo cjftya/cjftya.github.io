@@ -13,6 +13,7 @@ import {
 } from './heightfield';
 import type { TerrainConfig } from './heightfield';
 import { createTerrainSurface } from './terrainSurface';
+import { clipTerrainOutline, terrainBoundary } from './terrainOutline';
 import { sampleTerrainColor } from './terrainColor';
 export { DEFAULT_TERRAIN_CONFIG, sampleTerrainHeight } from './heightfield';
 export type { TerrainConfig } from './heightfield';
@@ -21,6 +22,17 @@ export function createTerrain(
   config: TerrainConfig = DEFAULT_TERRAIN_CONFIG,
   material?: MeshStandardMaterial,
 ): Mesh<PlaneGeometry, MeshStandardMaterial> {
+  const geometry = createTerrainGeometry(config);
+  const terrain = new Mesh(
+    geometry,
+    material ?? createTerrainSurface(config.maxHeight, config.size).material,
+  );
+  terrain.name = 'JellyOasisTerrain';
+  terrain.receiveShadow = true;
+  return terrain;
+}
+
+function createTerrainGeometry(config: TerrainConfig) {
   validateTerrainConfig(config);
   const geometry = new PlaneGeometry(
     config.size,
@@ -49,20 +61,16 @@ export function createTerrain(
     color.toArray(colors, index * 3);
   }
   geometry.setAttribute('color', new Float32BufferAttribute(colors, 3));
+  clipTerrainOutline(geometry, config);
   geometry.computeVertexNormals();
   geometry.computeBoundingBox();
   geometry.computeBoundingSphere();
-  const terrain = new Mesh(
-    geometry,
-    material ?? createTerrainSurface(config.maxHeight, config.size).material,
-  );
-  terrain.name = 'JellyOasisTerrain';
-  terrain.receiveShadow = true;
-  return terrain;
+  return geometry;
 }
-/** Close cut edges without adding environment objects: 640 extra triangles. */
+/** Close the terrain perimeter with a continuous earthen cut face. */
 export function createTerrainEdge(
   config = DEFAULT_TERRAIN_CONFIG,
+  surface?: BufferGeometry,
 ): Mesh<BufferGeometry, MeshStandardMaterial> {
   validateTerrainConfig(config);
   const vertices: number[] = [];
@@ -74,18 +82,16 @@ export function createTerrainEdge(
     [half, half],
     [-half, half],
   ] as const;
-  for (let side = 0; side < 4; side += 1) {
-    const a = corners[side]!;
-    const b = corners[(side + 1) % 4]!;
-    for (let i = 0; i < config.segments; i += 1) {
-      const t0 = i / config.segments;
-      const t1 = (i + 1) / config.segments;
-      const x0 = a[0] + (b[0] - a[0]) * t0;
-      const z0 = a[1] + (b[1] - a[1]) * t0;
-      const x1 = a[0] + (b[0] - a[0]) * t1;
-      const z1 = a[1] + (b[1] - a[1]) * t1;
-      const y0 = sampleTerrainHeight(x0, z0, config);
-      const y1 = sampleTerrainHeight(x1, z1, config);
+  if (config.cornerRadius) {
+    const top = surface ?? createTerrainGeometry(config);
+    const p = top.attributes.position!;
+    for (const [a, b] of terrainBoundary(top)) {
+      const x0 = p.getX(b),
+        y0 = p.getY(b),
+        z0 = p.getZ(b);
+      const x1 = p.getX(a),
+        y1 = p.getY(a),
+        z1 = p.getZ(a);
       vertices.push(
         x0,
         y0,
@@ -107,7 +113,42 @@ export function createTerrainEdge(
         z0,
       );
     }
-  }
+    if (!surface) top.dispose();
+  } else
+    for (let side = 0; side < 4; side += 1) {
+      const a = corners[side]!;
+      const b = corners[(side + 1) % 4]!;
+      for (let i = 0; i < config.segments; i += 1) {
+        const t0 = i / config.segments;
+        const t1 = (i + 1) / config.segments;
+        const x0 = a[0] + (b[0] - a[0]) * t0;
+        const z0 = a[1] + (b[1] - a[1]) * t0;
+        const x1 = a[0] + (b[0] - a[0]) * t1;
+        const z1 = a[1] + (b[1] - a[1]) * t1;
+        const y0 = sampleTerrainHeight(x0, z0, config);
+        const y1 = sampleTerrainHeight(x1, z1, config);
+        vertices.push(
+          x0,
+          y0,
+          z0,
+          x1,
+          y1,
+          z1,
+          x0,
+          floor,
+          z0,
+          x1,
+          y1,
+          z1,
+          x1,
+          floor,
+          z1,
+          x0,
+          floor,
+          z0,
+        );
+      }
+    }
   const geometry = new BufferGeometry();
   geometry.setAttribute('position', new Float32BufferAttribute(vertices, 3));
   geometry.computeVertexNormals();

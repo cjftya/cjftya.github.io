@@ -59,7 +59,7 @@ function start(canvas: HTMLCanvasElement): void {
   );
   const surface = createTerrainSurface(config.maxHeight, config.size);
   const terrain = createTerrain(config, surface.material);
-  const edge = createTerrainEdge(config);
+  const edge = createTerrainEdge(config, terrain.geometry);
   scene.add(terrain, edge);
   let dirty = true;
   let disposed = false;

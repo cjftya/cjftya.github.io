@@ -12,6 +12,8 @@ export interface TerrainConfig {
   oasisZ?: number;
   /** 0: legacy, 1: amphitheatre, 2: canyon inspection. */
   artRelief?: number;
+  /** Radius of the faceted outer corners; omitted for the legacy square. */
+  cornerRadius?: number;
 }
 export const DEFAULT_TERRAIN_CONFIG: TerrainConfig = {
   size: 320,
@@ -83,6 +85,8 @@ export function validateTerrainConfig(config: TerrainConfig): void {
     !Object.values(config).every(Number.isFinite) ||
     (config.oasisX === undefined) !== (config.oasisZ === undefined) ||
     config.size <= 0 ||
+    (config.cornerRadius ?? 0) < 0 ||
+    (config.cornerRadius ?? 0) >= config.size / 2 ||
     !Number.isInteger(config.segments) ||
     config.segments < 1 ||
     config.segments > 256 ||
