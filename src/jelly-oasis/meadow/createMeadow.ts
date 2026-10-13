@@ -43,7 +43,9 @@ export function createMeadow(
       );
       mesh.name = `Meadow_${kind}`;
       mesh.count = 0;
-      mesh.castShadow = false;
+      // Meadow tufts are merged and instanced, so enabling the mesh adds one
+      // shadow draw per visible kind rather than one draw per flower cluster.
+      mesh.castShadow = true;
       mesh.receiveShadow = true;
       meshes.set(kind, mesh);
       group.add(mesh);

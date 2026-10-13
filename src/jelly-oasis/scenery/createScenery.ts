@@ -49,7 +49,10 @@ export function createScenery(
       );
       mesh.name = `Scenery_${kind}`;
       mesh.count = 0;
-      mesh.castShadow = false;
+      // The monumental grove is assembled from these low-poly instances.
+      // Keep them in the active sun/moon shadow pass so the added trees are
+      // grounded against the terrain instead of appearing uniformly lit.
+      mesh.castShadow = true;
       mesh.receiveShadow = true;
       meshes.set(kind, mesh);
       group.add(mesh);
