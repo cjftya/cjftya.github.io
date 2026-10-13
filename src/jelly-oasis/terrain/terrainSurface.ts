@@ -1,5 +1,6 @@
 import { Color, MeshStandardMaterial, Vector4 } from 'three';
 import { createTerrainDetail } from './terrainDetail';
+import { TERRAIN_PALETTE } from './terrainColor';
 import {
   surfaceColor,
   surfaceDebug,
@@ -23,9 +24,9 @@ export function createTerrainSurface(maxHeight: number, worldSize = 224) {
   const config = TERRAIN_SURFACE_CONFIG;
   const uniforms = {
     terrainDetail: { value: detail },
-    terrainGrass: { value: new Color('#729578') },
-    terrainDirt: { value: new Color('#918773') },
-    terrainRock: { value: new Color('#898b85') },
+    terrainGrass: { value: new Color(TERRAIN_PALETTE.oasis) },
+    terrainDirt: { value: new Color(TERRAIN_PALETTE.dirt) },
+    terrainRock: { value: new Color(TERRAIN_PALETTE.rock) },
     terrainSlopes: {
       value: new Vector4(
         config.dirtStart,
@@ -45,8 +46,8 @@ export function createTerrainSurface(maxHeight: number, worldSize = 224) {
     roughness: 1,
     flatShading: true,
   });
-  material.name = 'OasisTerrainSurfaceV2';
-  material.customProgramCacheKey = () => 'oasis-terrain-surface-v2';
+  material.name = 'OasisTerrainColorV1';
+  material.customProgramCacheKey = () => 'oasis-terrain-color-v1';
   material.onBeforeCompile = (shader) => {
     Object.assign(shader.uniforms, uniforms);
     shader.vertexShader = shader.vertexShader

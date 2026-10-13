@@ -9,11 +9,11 @@ import {
 import {
   DEFAULT_TERRAIN_CONFIG,
   sampleTerrainHeight,
-  smoothstep,
   validateTerrainConfig,
 } from './heightfield';
 import type { TerrainConfig } from './heightfield';
 import { createTerrainSurface } from './terrainSurface';
+import { sampleTerrainColor } from './terrainColor';
 export { DEFAULT_TERRAIN_CONFIG, sampleTerrainHeight } from './heightfield';
 export type { TerrainConfig } from './heightfield';
 
@@ -31,9 +31,6 @@ export function createTerrain(
   geometry.rotateX(-Math.PI / 2);
   const positions = geometry.attributes.position!;
   const colors = new Float32Array(positions.count * 3);
-  const meadow = new Color('#89a875');
-  const highland = new Color('#b5b68a');
-  const basin = new Color('#688f80');
   const color = new Color();
   for (let index = 0; index < positions.count; index += 1) {
     const height = sampleTerrainHeight(
@@ -42,8 +39,13 @@ export function createTerrain(
       config,
     );
     positions.setY(index, height);
-    color.copy(meadow).lerp(highland, smoothstep(3, config.maxHeight, height));
-    color.lerp(basin, smoothstep(0, config.maxHeight * 0.2, -height));
+    sampleTerrainColor(
+      positions.getX(index),
+      positions.getZ(index),
+      height,
+      config,
+      color,
+    );
     color.toArray(colors, index * 3);
   }
   geometry.setAttribute('color', new Float32BufferAttribute(colors, 3));
