@@ -5,6 +5,7 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import assert from 'node:assert/strict';
 import { DataUtils } from 'three';
 const output = process.env.POND_QA_OUTPUT ?? 'artifacts/jelly-oasis/pond-only-v1';
+const weatherTimeout = Number(process.env.POND_QA_TIMEOUT ?? 30000);
 await mkdir(output, { recursive: true });
 const browser = await chromium.launch({
   executablePath:
@@ -50,13 +51,18 @@ async function setup(
       '/projects/jelly-oasis/' +
       query,
   );
-  await page.waitForFunction(() => window.__oasisLandmark?.snapshot().waterEffects, {
-    timeout: 30000,
-  });
+  await page.waitForFunction(
+    () => window.__oasisLandmark?.snapshot().waterEffects,
+    undefined,
+    {
+      timeout: weatherTimeout,
+    },
+  );
   return { context, page, errors };
 }
 const snap = (p) => p.evaluate(() => window.__oasisLandmark.snapshot());
 async function weather(page, w, h = 12) {
+  const started = Date.now();
   await page.evaluate(
     ({ w, h }) => {
       const time = document.getElementById('environment-time');
@@ -74,8 +80,9 @@ async function weather(page, w, h = 12) {
       return s.weather === w && s.weatherBlend === 1;
     },
     w,
-    { timeout: 30000 },
+    { timeout: weatherTimeout },
   );
+  console.log('weather', w, 'settled', Date.now() - started, 'ms');
 }
 try {
   const { context, page, errors } = await setup('?debug&view=pond-low');

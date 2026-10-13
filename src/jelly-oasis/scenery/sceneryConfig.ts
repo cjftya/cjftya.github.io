@@ -16,6 +16,7 @@ export interface SceneryZone {
   // World centres are fractions of the adopted stage width, local centres are metres.
   centers: readonly (readonly [number, number])[];
   radius: number;
+  ribbon?: boolean;
   counts: Partial<Record<SceneryKind, number>>;
 }
 // Connected forest shoulders and a geological backdrop; no isolated pebble fields.
@@ -23,46 +24,81 @@ export const SCENERY_ZONES: readonly SceneryZone[] = [
   {
     id: 'west-grove',
     basis: 'world',
+    ribbon: true,
     centers: [
-      [-0.31, 0.19],
-      [-0.37, 0.02],
-      [-0.22, -0.12],
-      [-0.24, 0.06],
+      [-0.3, 0.28],
+      [-0.3, 0.13],
+      [-0.26, -0.03],
+      [-0.22, -0.19],
+      [-0.29, -0.3],
     ],
-    radius: 23,
-    counts: { broad: 32, spire: 16, young: 8, boulder: 5 },
+    radius: 22,
+    counts: { broad: 40, spire: 20, young: 20 },
+  },
+  {
+    id: 'southwest-frame',
+    basis: 'world',
+    ribbon: true,
+    centers: [
+      [-0.33, 0.19],
+      [-0.29, 0.32],
+      [-0.14, 0.38],
+    ],
+    radius: 16,
+    counts: { broad: 14, spire: 8, young: 12 },
   },
   {
     id: 'northwest-grove',
     basis: 'world',
+    ribbon: true,
     centers: [
-      [-0.34, -0.25],
-      [-0.23, -0.29],
+      [-0.37, -0.08],
+      [-0.36, -0.25],
+      [-0.23, -0.36],
+      [-0.07, -0.36],
     ],
-    radius: 19,
-    counts: { broad: 18, spire: 12, young: 4, boulder: 4 },
+    radius: 16,
+    counts: { broad: 22, spire: 18, young: 10 },
   },
   {
     id: 'north-ridge',
     basis: 'world',
+    ribbon: true,
     centers: [
-      [-0.27, -0.32],
-      [0.015, -0.4],
-      [0.27, -0.32],
-      [0.38, -0.18],
+      [-0.13, -0.19],
+      [0, -0.23],
+      [0.17, -0.25],
+      [0.27, -0.22],
     ],
     radius: 14,
-    counts: { ridge: 12, boulder: 12 },
+    counts: { broad: 16, spire: 12, young: 14 },
+  },
+  {
+    id: 'ridge-crowns',
+    basis: 'world',
+    ribbon: true,
+    centers: [
+      [-0.26, -0.28],
+      [-0.11, -0.36],
+      [0.04, -0.36],
+      [0.16, -0.38],
+      [0.28, -0.26],
+    ],
+    radius: 18,
+    counts: { broad: 18, spire: 26, young: 16 },
   },
   {
     id: 'east-shoulder',
     basis: 'world',
+    ribbon: true,
     centers: [
-      [0.39, 0.1],
-      [0.4, 0.24],
+      [0.33, -0.17],
+      [0.35, 0],
+      [0.34, 0.15],
+      [0.33, 0.28],
     ],
-    radius: 15,
-    counts: { broad: 12, spire: 7, young: 3, ridge: 3, boulder: 4 },
+    radius: 16,
+    counts: { broad: 18, spire: 12, young: 18 },
   },
 ];
 export const SCENERY_SCALE = {
@@ -88,12 +124,12 @@ export function scenerySeparation(
     b.kind &&
     ['ridge', 'boulder'].includes(a.kind) &&
     ['ridge', 'boulder'].includes(b.kind);
-  return (a.radius + b.radius) * (bothTrees ? 0.48 : bothRocks ? 0.5 : 1) + 0.5;
+  return (a.radius + b.radius) * (bothTrees ? 0.32 : bothRocks ? 0.5 : 1) + 0.5;
 }
 export const SCENERY_SHAPES = {
-  broad: { radius: 4.6, height: 7.4, slope: 0.6 },
-  spire: { radius: 3.0, height: 9.0, slope: 0.6 },
-  young: { radius: 2.4, height: 4.2, slope: 0.6 },
+  broad: { radius: 4.6, height: 7.4, slope: 0.75 },
+  spire: { radius: 3.0, height: 9.0, slope: 0.75 },
+  young: { radius: 2.4, height: 4.2, slope: 0.75 },
   pebble: { radius: 0.85, height: 0.65, slope: 0.32 },
   boulder: { radius: 2.25, height: 2.45, slope: 0.38 },
   ridge: { radius: 10.5, height: 12, slope: 0.55 },

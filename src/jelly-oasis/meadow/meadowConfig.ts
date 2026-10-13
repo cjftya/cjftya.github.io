@@ -6,21 +6,16 @@ export type MeadowVariant = 'off' | 'a' | 'b';
 export const MEADOW_PATCHES = [
   {
     id: 'southwest-lilac',
-    center: [-0.22, 0.3],
-    radius: 21,
-    counts: [210, 35, 90, 12],
+    center: [-0.25, 0.22],
+    radius: 28,
+    counts: [85, 15, 35, 12],
   },
-  { id: 'south-cream', center: [0.16, 0.31], radius: 22, counts: [35, 230, 100, 14] },
-  {
-    id: 'southeast-lilac',
-    center: [0.31, 0.24],
-    radius: 19,
-    counts: [190, 30, 85, 10],
-  },
+  { id: 'south-cream', center: [0.08, 0.35], radius: 34, counts: [15, 90, 35, 14] },
+  { id: 'southeast-lilac', center: [0.31, 0.22], radius: 26, counts: [75, 15, 30, 10] },
 ] as const;
 export const MEADOW_SHAPES = {
-  lilac: { radius: 0.29, slope: 0.28 },
-  cream: { radius: 0.29, slope: 0.28 },
+  lilac: { radius: 0.58, slope: 0.28 },
+  cream: { radius: 0.58, slope: 0.28 },
   grass: { radius: 0.18, slope: 0.3 },
   shrub: { radius: 0.53, slope: 0.26 },
 };

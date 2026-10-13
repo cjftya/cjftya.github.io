@@ -140,11 +140,11 @@ it('grounds isolated deterministic meadows against real GLBs and scenery, preser
     expect(owner.group.visible).toBe(true);
     l.refreshMaterials();
     l.refreshMaterials();
-    await mkdir('artifacts/jelly-oasis/monumental-composition-v1/meadow', {
+    await mkdir('artifacts/jelly-oasis/monumental-art-v2/meadow', {
       recursive: true,
     });
     await writeFile(
-      'artifacts/jelly-oasis/monumental-composition-v1/meadow/placement-audit.json',
+      'artifacts/jelly-oasis/monumental-art-v2/meadow/placement-audit.json',
       JSON.stringify(
         {
           baseline,

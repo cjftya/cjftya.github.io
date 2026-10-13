@@ -179,11 +179,11 @@ it('places deterministic grounded scenery on real compact terrain and GLBs, supp
     l.isolate('');
     expect(owner.group.visible).toBe(true);
     l.refreshMaterials();
-    await mkdir('artifacts/jelly-oasis/monumental-composition-v1/scenery', {
+    await mkdir('artifacts/jelly-oasis/monumental-art-v2/scenery', {
       recursive: true,
     });
     await writeFile(
-      'artifacts/jelly-oasis/monumental-composition-v1/scenery/placement-audit.json',
+      'artifacts/jelly-oasis/monumental-art-v2/scenery/placement-audit.json',
       JSON.stringify(
         {
           terrain: config,

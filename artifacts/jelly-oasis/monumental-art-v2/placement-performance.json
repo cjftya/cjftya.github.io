@@ -1,0 +1,27 @@
+{
+  "environment": "Node CPU, 224m, same GLB fixtures, one warmup, five placement calls; not a device FPS benchmark",
+  "cases": {
+    "baseline": {
+      "ms": [
+        372.40723099999923,
+        281.7581389999996,
+        256.5527940000002,
+        274.2560599999997,
+        314.321457
+      ],
+      "medianMs": 281.7581389999996,
+      "count": 98
+    },
+    "candidate": {
+      "ms": [
+        878.551723999999,
+        704.3321489999998,
+        707.6237830000009,
+        825.6088330000002,
+        855.0158910000009
+      ],
+      "medianMs": 825.6088330000002,
+      "count": 227
+    }
+  }
+}

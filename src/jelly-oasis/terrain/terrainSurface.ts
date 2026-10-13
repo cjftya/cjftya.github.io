@@ -18,7 +18,7 @@ export const TERRAIN_SURFACE_CONFIG = {
   macroStrength: 1,
 } as const;
 
-export function createTerrainSurface(maxHeight: number) {
+export function createTerrainSurface(maxHeight: number, worldSize = 224) {
   const detail = createTerrainDetail();
   const config = TERRAIN_SURFACE_CONFIG;
   const uniforms = {
@@ -35,6 +35,7 @@ export function createTerrainSurface(maxHeight: number) {
       ),
     },
     terrainHeight: { value: maxHeight },
+    terrainWorldSize: { value: worldSize },
     terrainScale: { value: Number(config.textureScale) },
     terrainMacro: { value: Number(config.macroStrength) },
     terrainDebug: { value: 0 },
@@ -42,7 +43,7 @@ export function createTerrainSurface(maxHeight: number) {
   const material = new MeshStandardMaterial({
     vertexColors: true,
     roughness: 1,
-    flatShading: false,
+    flatShading: true,
   });
   material.name = 'OasisTerrainSurfaceV2';
   material.customProgramCacheKey = () => 'oasis-terrain-surface-v2';

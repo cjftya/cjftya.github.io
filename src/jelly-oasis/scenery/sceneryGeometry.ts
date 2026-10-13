@@ -1,5 +1,8 @@
 import {
   Color,
+  ConeGeometry,
+  Quaternion,
+  Vector3,
   CylinderGeometry,
   Float32BufferAttribute,
   IcosahedronGeometry,
@@ -32,7 +35,12 @@ export function createSceneryGeometry(kind: SceneryKind) {
       dz = bz - az;
     const g = new CylinderGeometry(width * 0.55, width, Math.hypot(dx, dy, dz), 6, 1);
     // This geometry is rotated about Z for lateral boughs; their bases overlap the trunk.
-    g.rotateZ(-Math.atan2(dx, dy));
+    g.applyQuaternion(
+      new Quaternion().setFromUnitVectors(
+        new Vector3(0, 1, 0),
+        new Vector3(dx, dy, dz).normalize(),
+      ),
+    );
     g.translate((ax + bx) / 2, (ay + by) / 2, (az + bz) / 2);
     parts.push(paint(g, '#786047'));
   };
@@ -52,21 +60,25 @@ export function createSceneryGeometry(kind: SceneryKind) {
     parts.push(paint(g, shade));
   };
   if (kind === 'broad') {
-    branch(0, -0.1, 0, 0, 5.3, 0, 0.28);
-    branch(0, 3.3, 0, -1.2, 5.0, 0, 0.17);
-    branch(0, 3.7, 0, 1.15, 5.5, 0, 0.15);
-    crown(-1.0, 5.5, 0.2, 1.9, 1.65, 1.8, '#6b8050');
-    crown(1.0, 5.85, -0.25, 1.8, 1.6, 1.6, '#809363');
-    crown(0.05, 6.45, 0.15, 1.7, 1.0, 1.7, '#899b6b');
-    crown(0.1, 5.15, 1.0, 1.7, 1.4, 1.7, '#718657');
+    branch(0, 0, 0, 0.2, 4.9, 0.1, 0.43);
+    branch(0, 2.6, 0, -1.4, 4.9, 0.3, 0.24);
+    branch(0.1, 3.1, 0, 1.35, 5.4, -0.5, 0.23);
+    crown(-1.0, 5.3, 0.2, 1.9, 1.4, 1.8, '#536f40');
+    crown(1.0, 5.85, -0.35, 1.8, 1.35, 1.6, '#768d51');
+    crown(0.05, 6.3, 0.15, 1.7, 0.95, 1.7, '#8a9e60');
+    crown(0.1, 4.9, 1, 1.7, 1.2, 1.7, '#607d47');
   } else if (kind === 'spire') {
-    branch(0, -0.1, 0, 0, 7.3, 0, 0.23);
-    crown(-0.1, 5.0, 0.1, 1.75, 2.1, 1.6, '#667d54');
-    crown(0.25, 6.7, -0.05, 1.35, 2.3, 1.3, '#7f9567');
+    branch(0, 0, 0, 0, 7.3, 0, 0.32);
+    for (let i = 0; i < 4; i++) {
+      const g = new ConeGeometry(2.65 - i * 0.54, 3.3 - i * 0.2, 7, 1);
+      g.rotateY(i * 0.63);
+      g.translate(0.12 * Math.sin(i), 3.2 + i * 1.42, 0);
+      parts.push(paint(g, ['#365d42', '#4b7150', '#638753', '#86a367'][i]!));
+    }
   } else if (kind === 'young') {
-    branch(0, -0.1, 0, 0, 3.2, 0, 0.14);
-    crown(-0.25, 2.8, 0, 1.2, 1.1, 1.1, '#819763');
-    crown(0.2, 3.4, 0, 1.15, 0.8, 1.1, '#92a572');
+    branch(0, 0, 0, 0.15, 2.5, 0, 0.23);
+    crown(-0.3, 2.4, 0, 1.15, 0.9, 1.05, '#75944e');
+    crown(0.25, 3.15, 0, 1.2, 0.9, 1.1, '#9cac62');
   } else {
     const g = new IcosahedronGeometry(1, kind === 'ridge' ? 1 : 0);
     const p = g.attributes.position!;
@@ -99,6 +111,9 @@ export function createSceneryGeometry(kind: SceneryKind) {
   }
   const result = mergeGeometries(parts, false)!;
   parts.forEach((g) => g.dispose());
+  const positions = result.attributes.position!;
+  for (let i = 0; i < positions.count; i++)
+    positions.setY(i, Math.max(-0.04, positions.getY(i)));
   result.computeVertexNormals();
   result.computeBoundingBox();
   result.computeBoundingSphere();

@@ -9,7 +9,10 @@ export function selectWorldSize(debug: boolean, query: string | null): number {
     ? Number(query)
     : FINAL_TERRAIN_SIZE;
 }
-export function createWorldConfig(size = FINAL_TERRAIN_SIZE): TerrainConfig {
+export function createWorldConfig(
+  size = FINAL_TERRAIN_SIZE,
+  artRelief = 1,
+): TerrainConfig {
   if (![320, 224, 192].includes(size)) throw new Error('Unsupported world size');
   return size === 320
     ? { ...DEFAULT_TERRAIN_CONFIG }
@@ -19,6 +22,7 @@ export function createWorldConfig(size = FINAL_TERRAIN_SIZE): TerrainConfig {
         segments: size / 4,
         oasisX: 14,
         oasisZ: 14,
+        artRelief,
       };
 }
 export function worldLandmarkPlacement(config: TerrainConfig) {

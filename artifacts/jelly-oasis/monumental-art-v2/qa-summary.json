@@ -1,0 +1,159 @@
+{
+  "status": "TECHNICAL_PASS_ART_NEEDS_REVISION",
+  "art_self_review": "NEEDS_REVISION",
+  "ART_USER_REVIEW": "PENDING",
+  "base_commit": "1a74835b614097afb8fe7d358a1b93afd5791e23",
+  "implementation_commit": "ad1113f0ceeba1fbe1e432a64a51daacf912f83e",
+  "branch": "feat/jelly-oasis-monumental-art-v2",
+  "publication": "NOT_PUSHED_AUTO_REVIEW_BLOCKED",
+  "master": "NOT_MERGED_ART_GATE_FAILED",
+  "CI": "NOT_RUN_NO_REMOTE_COMMIT",
+  "selection": "A — continuous amphitheatre; B retained as debug comparison",
+  "checks": {
+    "scene": "PASS",
+    "lifecycle": "PASS",
+    "camera": "PASS",
+    "rescale": "PASS",
+    "rescale_lifecycle": "PASS",
+    "missing_assets": "PASS",
+    "pond": "PASS"
+  },
+  "tests": {
+    "existing_files": 64,
+    "existing_passed": 325,
+    "new_files": 1,
+    "new_passed": 3
+  },
+  "lint": "PASS",
+  "build": "PASS",
+  "source_hashes_unchanged": {
+    "/assets/jelly-oasis/landmarks/overgrown-ruin/Rock_Large_A.glb": "7691a0f1788b6a3258e180627a0c88f0fe3c76b0069134c2d477baa380c12f44",
+    "/assets/jelly-oasis/landmarks/overgrown-ruin/Ruin_Arch_A_Detail_v1.glb": "e0957ece91c0ed103b6c5e9b846810c72e1601ac18544fee4a32383296490737",
+    "/assets/jelly-oasis/landmarks/overgrown-ruin/aesthetic-improvement-v1/Cliff_Waterfall_A_Refined_v1.glb": "b2d101c2f9b45dcebf89db18c7262e366e9068799cd13968be7a7058ef58c6fb",
+    "/assets/jelly-oasis/landmarks/overgrown-ruin/Rock_Large_B.glb": "738648a0403b46bfad5676cd43b41538abda64213702b863446bf40cf5136697",
+    "/assets/jelly-oasis/landmarks/overgrown-ruin/Rock_Large_C.glb": "51abe046434b45e6988f49e374150f40e800896b0342420f1dbc7ada34d65376",
+    "/assets/jelly-oasis/landmarks/overgrown-ruin/Rock_Large_D.glb": "4c72463ea44e4ef156cf21b6401e4b3aaa8a78e87387aaa115e59e85cf8c9d9a",
+    "/assets/jelly-oasis/landmarks/overgrown-ruin/Rock_Large_E.glb": "470f5169117cade45427ab655b66c19b6cc1855c2eedb0de256f1e2d9d0db198",
+    "/assets/jelly-oasis/landmarks/overgrown-ruin/Ruin_Wall_A_Detail_v1.glb": "6ca3501de74d1c055ef9a4fec53039509d6bf789255f55aa96f81626a0ca06da",
+    "/assets/jelly-oasis/landmarks/overgrown-ruin/Ruin_BrokenWall_A_Detail_v1.glb": "101c21ad988811827305aa09a85508c2af8b58c123afa0b0e8c8f7af455484a6",
+    "/assets/jelly-oasis/landmarks/overgrown-ruin/Root_Large_A_Detail_v1.glb": "472bd407499d7440c6a029425ce834b5bb39f8dc061aa2cf79f9fab212391fe1",
+    "/assets/jelly-oasis/landmarks/overgrown-ruin/aesthetic-improvement-v1/Tree_Landmark_Blockout_Refined_v1.glb": "0c8dd328d248f8100a73d6d1fc0dc5b15bbdc8543f27951786fd544a7a08bbf4",
+    "/assets/jelly-oasis/landmarks/overgrown-ruin/Root_Tree_Base_Blockout_Detail_v1.glb": "62087eed9fe46c5c82eaf15a7e3ad6be8b6f35200c8858637c889c5a983dbb9a",
+    "/assets/jelly-oasis/landmarks/overgrown-ruin/aesthetic-improvement-v1/PondEdge_Blockout_Refined_v1.glb": "56a347f99e67dfe0e48870a32dcac0eddc759259fe159eb276f26963435da4c9",
+    "/assets/jelly-oasis/landmarks/overgrown-ruin/crystal-accent-detail-v1/Crystal_Blockout_A_Detail_v1.glb": "1cb6a8644c1ff62c83a937082fb169e143ac8936087a09bbceff1f469337a3ac",
+    "/assets/jelly-oasis/landmarks/overgrown-ruin/crystal-accent-detail-v1/Crystal_Blockout_B_Detail_v1.glb": "6214838f4cd9cad43352b065086516f3f3cbd57a4999c468e26a9c9a2e240355",
+    "/assets/jelly-oasis/landmarks/overgrown-ruin/crystal-accent-detail-v1/Crystal_Blockout_C_Detail_v1.glb": "35e253d34d250dc604e482156f6e336a6b59f355392f0a60690d675c124bd5d5"
+  },
+  "metrics": [
+    [
+      "보조 나무",
+      80,
+      227
+    ],
+    [
+      "독립 ridge / boulder",
+      "10 / 8",
+      "0 / 0"
+    ],
+    [
+      "초원 인스턴스",
+      445,
+      142
+    ],
+    [
+      "Draw calls",
+      67,
+      65
+    ],
+    [
+      "렌더 삼각형",
+      149233,
+      210705
+    ],
+    [
+      "Geometry / texture",
+      "93 / 10",
+      "93 / 10"
+    ],
+    [
+      "CPU 배치 중앙값 (ms)",
+      281.8,
+      825.6
+    ]
+  ],
+  "rebuilds": [
+    {
+      "geometries": 95,
+      "textures": 8,
+      "instances": 227
+    },
+    {
+      "geometries": 95,
+      "textures": 8,
+      "instances": 227
+    },
+    {
+      "geometries": 95,
+      "textures": 8,
+      "instances": 227
+    }
+  ],
+  "performance": {
+    "environment": "Node CPU, 224m, same GLB fixtures, one warmup, five placement calls; not a device FPS benchmark",
+    "cases": {
+      "baseline": {
+        "ms": [
+          372.40723099999923,
+          281.7581389999996,
+          256.5527940000002,
+          274.2560599999997,
+          314.321457
+        ],
+        "medianMs": 281.7581389999996,
+        "count": 98
+      },
+      "candidate": {
+        "ms": [
+          878.551723999999,
+          704.3321489999998,
+          707.6237830000009,
+          825.6088330000002,
+          855.0158910000009
+        ],
+        "medianMs": 825.6088330000002,
+        "count": 227
+      }
+    }
+  },
+  "limitations": [
+    "North fixed inspection camera is dominated by the new cliff face.",
+    "Long, repetitive east-facing slopes remain; broad connected relief is not sufficient for art approval.",
+    "Technical full-stage overview still makes the sanctuary small.",
+    "Galaxy Fold / real-device FPS, heat, long-duration GPU memory NOT_TESTED.",
+    "Missing Korean fonts in headless QA are separate from scene art."
+  ],
+  "weather_transitions": [
+    "initial gpgpu-heightfield null",
+    "weather CLEAR settled 489 ms",
+    "weather RAIN settled 27141 ms",
+    "weather MIST settled 31749 ms",
+    "weather OVERCAST settled 28856 ms",
+    "weather PARTLY_CLOUDY settled 35917 ms",
+    "weather CLEAR settled 35014 ms",
+    "weather CLEAR settled 9 ms",
+    "weather RAIN settled 33255 ms",
+    "weather RAIN settled 22274 ms",
+    "weather RAIN settled 10574 ms",
+    "weather RAIN settled 10045 ms",
+    "weather RAIN settled 13739 ms",
+    "Pond-only browser QA passed"
+  ],
+  "integration_authorization": {
+    "date": "2026-10-13",
+    "target": "cjftya/cjftya.github.io master",
+    "request": "마스터에 넣어줘",
+    "resume_constraint": "이미지 인코딩 및 전송 제외",
+    "publication_scope": "source, tests, QA scripts, Markdown review, summary and performance JSON only",
+    "historical_fields": "Existing publication/master/CI values describe the pre-integration review snapshot; art self-review remains NEEDS_REVISION."
+  }
+}

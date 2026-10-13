@@ -1,6 +1,10 @@
 import { landmarkWorldPoint, sampleGround } from '../landmark/landmarkPlacement';
 import { worldToLandmark } from '../composition/compositionPlacement';
-import { exclusionReason, seededRandom } from '../vegetation/vegetationPlacement';
+import {
+  exclusionReason,
+  seededRandom,
+  segmentDistance,
+} from '../vegetation/vegetationPlacement';
 import type { VegetationSite } from '../vegetation/vegetationPlacement';
 import {
   SCENERY_KINDS,
@@ -45,31 +49,52 @@ export function placeScenery(
   if (variant === 'off') return { instances, rejected, requested, zoneCounts };
   for (const zone of zones) {
     zoneCounts[zone.id] = 0;
-    for (const kind of [...SCENERY_KINDS].sort(
-      (a, b) => Number(b === 'ridge') - Number(a === 'ridge'),
-    )) {
-      const target = Math.ceil((zone.counts[kind] ?? 0) * (variant === 'b' ? 1.5 : 1));
+    const quotas = Object.fromEntries(
+      SCENERY_KINDS.map((kind) => [
+        kind,
+        Math.ceil((zone.counts[kind] ?? 0) * (variant === 'b' ? 1.5 : 1)),
+      ]),
+    );
+    const slots = Array.from(
+      { length: Math.max(...Object.values(quotas)) },
+      (_, round) => SCENERY_KINDS.filter((kind) => round < quotas[kind]!),
+    ).flat();
+    for (const [ordinal, kind] of slots.entries()) {
+      const target = 1;
       requested[kind] = (requested[kind] ?? 0) + target;
       let hash = seed;
-      for (const c of `${zone.id}:${kind}`)
+      for (const c of `${zone.id}:${kind}:${ordinal}`)
         hash = Math.imul(hash ^ c.charCodeAt(0), 16777619);
       const random = seededRandom(hash),
         shape = SCENERY_SHAPES[kind],
         tree = TREE_KINDS.includes(kind);
       let placed = 0;
       for (let attempt = 0; placed < target && attempt < target * 32; attempt++) {
-        const center = zone.centers[Math.floor(random() * zone.centers.length)]!;
+        const section = Math.floor(
+          random() * (zone.ribbon ? zone.centers.length - 1 : zone.centers.length),
+        );
+        const start = zone.centers[section]!,
+          end = zone.centers[section + 1] ?? start,
+          along = zone.ribbon ? random() : 0;
+        const center = [
+          start[0] + (end[0] - start[0]) * along,
+          start[1] + (end[1] - start[1]) * along,
+        ];
         const angle = random() * Math.PI * 2,
-          d = Math.sqrt(random()) * zone.radius;
+          d =
+            Math.sqrt(random()) *
+            zone.radius *
+            (0.78 + 0.22 * Math.sin(section * 2.7 + along * 4.5));
         let x =
-            center[0] * (zone.basis === 'world' ? site.terrain.size : 1) +
+            center[0]! * (zone.basis === 'world' ? site.terrain.size : 1) +
             Math.cos(angle) * d,
           z =
-            center[1] * (zone.basis === 'world' ? site.terrain.size : 1) +
+            center[1]! * (zone.basis === 'world' ? site.terrain.size : 1) +
             Math.sin(angle) * d;
         if (zone.basis === 'world') ({ x, z } = worldToLandmark(x, z, site));
         const scale =
-            ((0.82 + random() * 0.32) * SCENERY_SCALE[kind]) /
+            ((tree ? 0.64 + random() * 0.62 : 0.82 + random() * 0.32) *
+              SCENERY_SCALE[kind]) /
             (zone.basis === 'world' ? site.placement.scale : 1),
           radius = shape.radius * scale,
           rotation = random() * Math.PI * 2,
@@ -78,6 +103,16 @@ export function placeScenery(
         // Keep the hero silhouette and oasis sight lines free of new crowns.
         if (!reason && tree && Math.hypot(x, z) < 32 + radius)
           reason = 'hero-sightline';
+        // A western entry glade divides the canopy into two irregular banks.
+        if (!reason && tree) {
+          const p = landmarkWorldPoint(x, z, site.placement),
+            s = site.terrain.size / 224;
+          if (
+            segmentDistance(p.x, p.z, -95 * s, 65 * s, -62 * s, 22 * s) <
+            6 + radius * site.placement.scale
+          )
+            reason = 'western-glade';
+        }
         if (
           !reason &&
           [...occupied, ...instances].some(

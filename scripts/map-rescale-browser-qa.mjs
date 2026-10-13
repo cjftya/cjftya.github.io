@@ -75,6 +75,7 @@ try {
         e.dispatchEvent(new Event('input', { bubbles: true }));
         document.querySelectorAll('details').forEach((e) => (e.open = false));
       });
+      const presentation = await snap(p);
       const capture = async (view) => {
         await p.waitForTimeout(100);
         await p.screenshot({
@@ -138,11 +139,7 @@ try {
         }
       await p.click('#reset-view');
       const reset = await snap(p);
-      assert(
-        reset.camera.every(
-          (v, i) => Math.abs(v - result.states[`${prefix}-overview`].camera[i]) < 1e-8,
-        ),
-      );
+      assert(reset.camera.every((v, i) => Math.abs(v - presentation.camera[i]) < 1e-8));
       const memories = [];
       for (let i = 0; i < 3; i++) {
         await p.evaluate(() => window.__oasisLandmark.reviewRebuild());
