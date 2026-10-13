@@ -15,6 +15,7 @@ export interface AestheticVariants {
   pond?: boolean;
   cliff?: boolean;
   water?: 'deep' | 'soft';
+  sacred?: boolean;
 }
 export function disposeLandmarkResources(roots: Iterable<Object3D>): void {
   const geometries = new Set<BufferGeometry>(),
