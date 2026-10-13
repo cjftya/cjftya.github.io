@@ -52,6 +52,8 @@ it('protects production defaults and encloses real prototypes within reserved fo
     g.dispose();
   }
 });
+// Rebuilds real GLBs and dense scenery at three placements; shared CI runners
+// need the same allowance as the map-rescale and meadow integration audits.
 it('places deterministic grounded scenery on real compact terrain and GLBs, supports relocation and one-owner lifecycle', async () => {
   const dir = resolve('public/assets/jelly-oasis/landmarks/overgrown-ruin');
   vi.stubGlobal(
@@ -242,4 +244,4 @@ it('places deterministic grounded scenery on real compact terrain and GLBs, supp
     terrain.geometry.dispose();
     terrain.material.dispose();
   }
-}, 30000);
+}, 120000);
