@@ -3,6 +3,7 @@ import type { Group, Object3D } from 'three';
 import type { LandmarkPlacement, LayoutGuide } from '../landmark/landmarkConfig';
 import { landmarkWorldPoint, sampleGround } from '../landmark/landmarkPlacement';
 import type { TerrainConfig } from '../terrain/heightfield';
+import { insideTerrain } from '../terrain/terrainOutline';
 import { polygonDistance } from '../terrain/excavateTerrain';
 import {
   VEGETATION_COUNTS,
@@ -115,9 +116,7 @@ export function exclusionReason(
     return 'obstacle';
   const world = landmarkWorldPoint(x, z, site.placement);
   if (
-    Math.max(Math.abs(world.x), Math.abs(world.z)) +
-      (radius + 1) * site.placement.scale >=
-    site.terrain.size / 2
+    !insideTerrain(world.x, world.z, site.terrain, (radius + 1) * site.placement.scale)
   )
     return 'boundary';
   return null;

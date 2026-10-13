@@ -23,6 +23,7 @@ export function createWorldConfig(
         oasisX: 14,
         oasisZ: 14,
         artRelief,
+        cornerRadius: size * 0.34,
       };
 }
 export function worldLandmarkPlacement(config: TerrainConfig) {

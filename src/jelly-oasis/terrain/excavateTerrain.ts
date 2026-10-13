@@ -5,6 +5,7 @@ import { sampleOriginalGround } from '../landmark/landmarkPlacement';
 import { smoothstep } from './heightfield';
 import type { TerrainConfig } from './heightfield';
 import { setTerrainSampler } from './terrainSampling';
+import { clipTerrainOutline, insideTerrain } from './terrainOutline';
 import { sampleTerrainColor } from './terrainColor';
 
 export interface ChannelSample {
@@ -187,14 +188,18 @@ export function excavateTerrain(
   geometry.setAttribute('position', new Float32BufferAttribute(positions, 3));
   geometry.setAttribute('color', new Float32BufferAttribute(colors, 3));
   geometry.setIndex(indices);
+  // Keep the pond sampler indexed into the pre-clip Float32 positions. Clipping
+  // only subdivides retained triangles, so their interpolated heights agree.
+  const p = geometry.attributes.position!;
+  clipTerrainOutline(geometry, config);
   geometry.computeVertexNormals();
   geometry.computeBoundingBox();
   geometry.computeBoundingSphere();
   mesh.geometry = geometry;
   // Query Float32 positions, exactly as uploaded to the GPU, not the analytic bed.
-  const p = geometry.attributes.position!;
   function sample(x: number, z: number) {
-    if (x < x0 || x > x1 || z < z0 || z > z1) return undefined;
+    if (!insideTerrain(x, z, config) || x < x0 || x > x1 || z < z0 || z > z1)
+      return undefined;
     const ix = Math.min(config.segments - 1, Math.floor((x + half) / step)),
       iz = Math.min(config.segments - 1, Math.floor((z + half) / step));
     for (const k of cells.get(`${ix},${iz}`) ?? []) {
