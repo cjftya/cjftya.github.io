@@ -43,6 +43,13 @@ it('keeps production A and allocates nothing for off', () => {
   expect(owner.snapshot().resources.geometries).toBe(0);
   owner.dispose();
   owner.dispose();
+  const visible = createMeadow(new Group());
+  expect(visible.group.children.length).toBe(MEADOW_KINDS.length);
+  for (const mesh of visible.group.children as InstancedMesh[]) {
+    expect(mesh.castShadow).toBe(true);
+    expect(mesh.receiveShadow).toBe(true);
+  }
+  visible.dispose();
 });
 it('grounds isolated deterministic meadows against real GLBs and scenery, preserving previous owners and lifecycle', async () => {
   const dir = resolve('public/assets/jelly-oasis/landmarks/overgrown-ruin');

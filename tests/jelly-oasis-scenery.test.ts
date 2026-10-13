@@ -51,6 +51,13 @@ it('protects production defaults and encloses real prototypes within reserved fo
     expect(g.attributes.color!.count).toBe(p.count);
     g.dispose();
   }
+  const owner = createScenery(new Group());
+  expect(owner.group.children.length).toBe(SCENERY_KINDS.length);
+  for (const mesh of owner.group.children as InstancedMesh[]) {
+    expect(mesh.castShadow).toBe(true);
+    expect(mesh.receiveShadow).toBe(true);
+  }
+  owner.dispose();
 });
 // Rebuilds real GLBs and dense scenery at three placements; shared CI runners
 // need the same allowance as the map-rescale and meadow integration audits.
