@@ -61,6 +61,10 @@ function createTerrainGeometry(config: TerrainConfig) {
     color.toArray(colors, index * 3);
   }
   geometry.setAttribute('color', new Float32BufferAttribute(colors, 3));
+  geometry.setAttribute(
+    'terrainBasin',
+    new Float32BufferAttribute(new Float32Array(positions.count), 1),
+  );
   clipTerrainOutline(geometry, config);
   geometry.computeVertexNormals();
   geometry.computeBoundingBox();

@@ -86,9 +86,9 @@ export function createLakeEcology(
       let count = 0;
       for (let i = 0; i < 16; i++) {
         const a = i * 2.399 + colony,
-          r = 0.25 + Math.sqrt(i / 16) * 1.5;
+          r = 0.3 + Math.sqrt(i / 16) * (colony === 0 ? 2.7 : 2.0);
         const x = cx! + Math.cos(a) * r,
-          z = cz! + Math.sin(a) * r,
+          z = cz! + Math.sin(a) * r * 0.65,
           d = polygonDistance(x, z, guide.positions);
         const floor = ground(x, z),
           depth = waterY - floor;
@@ -101,7 +101,7 @@ export function createLakeEcology(
             floor - 0.025,
             z,
             a + leaf * 1.7,
-            Math.min(depth + 0.2, 0.9 + (i % 4) * 0.18),
+            Math.min(depth + (i % 3 === 0 ? 0.35 : -0.12), 0.75 + (i % 4) * 0.2),
             0.15 + (i % 3) * 0.04,
             0.35,
           );

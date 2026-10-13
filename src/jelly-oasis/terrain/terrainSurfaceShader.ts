@@ -1,6 +1,7 @@
 import { meadowFieldGLSL } from '../meadow/meadowField';
 /** Extends StandardMaterial only; Three still owns lighting, shadows, fog and output. */
 export const surfaceVaryings = /* glsl */ `
+varying float vTerrainBasin;
 varying vec3 vTerrainWorld;
 varying vec3 vTerrainNormal;
 `;
@@ -27,6 +28,10 @@ float exposure = max(0.0, slope + macro * terrainMacro * 0.025);
 float soil = smoothstep(terrainSlopes.x, terrainSlopes.y, exposure);
 float stone = smoothstep(terrainSlopes.z, terrainSlopes.w, exposure);
 soil = clamp(soil + highland * 0.14, 0.0, 1.0);
+// Underwater sediment retains its regional colour instead of acquiring the
+// mountain's alternating dirt/rock bands on every small change of bed slope.
+soil *= 1.0 - vTerrainBasin * 0.92;
+stone *= 1.0 - vTerrainBasin * 0.98;
 vec3 weights = vec3((1.0 - soil) * (1.0 - stone), soil * (1.0 - stone), stone);
 // Six fetches total: macro + grass + dirt + three rock projections.
 float grassDetail = texture2D(terrainDetail, vTerrainWorld.xz / (9.0 * terrainScale)).r;

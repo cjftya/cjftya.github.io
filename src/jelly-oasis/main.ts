@@ -38,17 +38,18 @@ function start(canvas: HTMLCanvasElement): void {
   const scene = new Scene();
   const manager = new RendererManager(canvas);
   const renderer = manager.renderer;
-  const camera = new PerspectiveCamera(42, 1, 0.5, 1800);
+  const camera = new PerspectiveCamera(42, 1, 0.1, 1800);
   const controls = new OrbitControls(camera, canvas);
   controls.enableDamping = true;
   controls.dampingFactor = 0.09;
   controls.screenSpacePanning = false;
-  controls.minDistance = 35;
+  controls.minDistance = 1.5;
   controls.maxDistance = Math.max(1050, config.size * 7);
   controls.minPolarAngle = 0.01;
   controls.maxPolarAngle = Math.PI - 0.01;
   controls.maxTargetRadius = Infinity;
   controls.zoomSpeed = 0.8;
+  controls.zoomToCursor = true;
   const mobile =
     matchMedia('(pointer: coarse)').matches ||
     (navigator.hardwareConcurrency ?? 8) <= 4;
@@ -100,7 +101,7 @@ function start(canvas: HTMLCanvasElement): void {
     presentationCamera = !overview;
     mediumCamera = false;
     reviewCamera = groundCamera = false;
-    controls.minDistance = 35;
+    controls.minDistance = 1.5;
     controls.maxPolarAngle = Math.PI - 0.01;
     controls.maxTargetRadius = Infinity;
     if (overview)
@@ -491,6 +492,7 @@ function start(canvas: HTMLCanvasElement): void {
               visible: loaded.root.visible,
               camera: camera.position.toArray(),
               target: controls.target.toArray(),
+              minDistance: controls.minDistance,
             }),
           },
         });

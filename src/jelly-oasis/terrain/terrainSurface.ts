@@ -47,14 +47,18 @@ export function createTerrainSurface(maxHeight: number, worldSize = 224) {
     flatShading: true,
   });
   material.name = 'OasisTerrainColorV1';
-  material.customProgramCacheKey = () => 'oasis-terrain-color-v1';
+  material.customProgramCacheKey = () => 'oasis-terrain-basin-v2';
   material.onBeforeCompile = (shader) => {
     Object.assign(shader.uniforms, uniforms);
     shader.vertexShader = shader.vertexShader
-      .replace('#include <common>', `#include <common>\n${surfaceVaryings}`)
+      .replace(
+        '#include <common>',
+        `#include <common>\nattribute float terrainBasin;\n${surfaceVaryings}`,
+      )
       .replace(
         '#include <project_vertex>',
         `#include <project_vertex>
+        vTerrainBasin = terrainBasin;
         vTerrainWorld = (modelMatrix * vec4(transformed, 1.0)).xyz;
         vTerrainNormal = inverseTransformDirection(transformedNormal, viewMatrix);`,
       );
