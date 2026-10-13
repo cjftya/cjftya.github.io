@@ -5,6 +5,7 @@ import { sampleOriginalGround } from '../landmark/landmarkPlacement';
 import { smoothstep } from './heightfield';
 import type { TerrainConfig } from './heightfield';
 import { setTerrainSampler } from './terrainSampling';
+import { sampleTerrainColor } from './terrainColor';
 
 export interface ChannelSample {
   point: Vector3;
@@ -70,11 +71,7 @@ export function excavateTerrain(
     colors: number[] = [];
   const ids = new Map<string, number>(),
     cells = new Map<string, number[]>();
-  const color = new Color(),
-    meadow = new Color('#89a875'),
-    highland = new Color('#b5b68a'),
-    wet = new Color('#566f62'),
-    basinColor = new Color('#688f80');
+  const color = new Color();
   let maxDepth = 0,
     patchTriangles = 0,
     removedTriangles = 0;
@@ -143,9 +140,7 @@ export function excavateTerrain(
     const id = positions.length / 3;
     ids.set(key, id);
     positions.push(x, y, z);
-    color.copy(meadow).lerp(highland, smoothstep(3, config.maxHeight, y));
-    color.lerp(basinColor, smoothstep(0, config.maxHeight * 0.2, -y));
-    color.lerp(wet, smoothstep(0.02, 0.4, base - y) * 0.62);
+    sampleTerrainColor(x, z, y, config, color, base - y);
     color.toArray(colors, id * 3);
     return id;
   }

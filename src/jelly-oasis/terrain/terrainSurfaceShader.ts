@@ -22,7 +22,6 @@ if (surfaceNormal.y < 0.) surfaceNormal = -surfaceNormal;
 float slope = clamp(1.0 - surfaceNormal.y, 0.0, 1.0);
 float macro = texture2D(terrainDetail, vTerrainWorld.xz / 384.0).a - 0.5;
 float highland = smoothstep(terrainHeight * 0.35, terrainHeight, vTerrainWorld.y);
-float basin = 1.0 - smoothstep(-terrainHeight * 0.18, 0.0, vTerrainWorld.y);
 // Broad, continuous thresholds calibrated against the actual gentle heightfield.
 float exposure = max(0.0, slope + macro * terrainMacro * 0.025);
 float soil = smoothstep(terrainSlopes.x, terrainSlopes.y, exposure);
@@ -38,17 +37,18 @@ vec3 rockPosition = vTerrainWorld / (18.0 * terrainScale);
 float rockDetail = texture2D(terrainDetail, rockPosition.yz).b * projection.x
   + texture2D(terrainDetail, rockPosition.xz).b * projection.y
   + texture2D(terrainDetail, rockPosition.xy).b * projection.z;
-vec3 grass = terrainGrass * (1.0 + (grassDetail - 0.5) * 0.28);
-${meadowFieldGLSL}
-vec3 dirt = terrainDirt * (1.0 + (dirtDetail - 0.5) * 0.24);
-vec3 rock = terrainRock * (1.0 + (rockDetail - 0.5) * 0.32) * (1.0 + .025*sin(vTerrainWorld.y*1.4));
-grass *= mix(vec3(1.0), vec3(0.82, 0.92, 0.98), basin * 0.5);
-vec3 surface = grass * weights.x + dirt * weights.y + rock * weights.z;
-// Preserve the old meadow / highland / basin colors as a restrained regional tint.
+// Vertex colour is the regional base, not a clamped tint on uniform grass.
+// Pond-bank meshes without vertex colours retain the material's green fallback.
+vec3 regional = terrainGrass;
 #ifdef USE_COLOR
-surface *= mix(vec3(1.0), clamp(vColor.rgb / vec3(0.2502, 0.3916, 0.1779), vec3(0.7), vec3(1.3)), 0.18);
+regional = vColor.rgb;
 #endif
-surface *= 1.0 + macro * terrainMacro * 0.22;
+vec3 grass = regional * (1.0 + (grassDetail - 0.5) * 0.12);
+${meadowFieldGLSL}
+vec3 dirt = mix(terrainDirt, regional, 0.12) * (1.0 + (dirtDetail - 0.5) * 0.16);
+vec3 rock = mix(terrainRock, regional, 0.08) * (1.0 + (rockDetail - 0.5) * 0.20) * (1.0 + .025*sin(vTerrainWorld.y*1.4));
+vec3 surface = grass * weights.x + dirt * weights.y + rock * weights.z;
+surface *= 1.0 + macro * terrainMacro * 0.12;
 diffuseColor.rgb *= surface;
 `;
 export const surfaceRoughness = /* glsl */ `

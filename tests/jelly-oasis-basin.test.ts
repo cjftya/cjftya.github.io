@@ -63,6 +63,34 @@ it('replaces the original floor, stitches a manifold terrain and queries its exa
   const index = terrain.geometry.index!,
     p = terrain.geometry.attributes.position!,
     edges = new Map<string, number>();
+  // Excavation rebuilds the entire mesh. It must retain the regional palette
+  // on untouched vertices instead of silently restoring the old green colours.
+  const originalPositions = original.attributes.position!;
+  const originalColors = original.attributes.color!;
+  const colors = terrain.geometry.attributes.color!;
+  const originalVertices = new Map<string, number>();
+  for (let i = 0; i < originalPositions.count; i++)
+    originalVertices.set(
+      `${originalPositions.getX(i)},${originalPositions.getZ(i)}`,
+      i,
+    );
+  let preservedColors = 0;
+  let maxColorDifference = 0;
+  for (let i = 0; i < p.count; i++) {
+    const old = originalVertices.get(`${p.getX(i)},${p.getZ(i)}`);
+    if (old === undefined || Math.abs(p.getY(i) - originalPositions.getY(old)) > 1e-6)
+      continue;
+    preservedColors++;
+    for (let channel = 0; channel < 3; channel++)
+      maxColorDifference = Math.max(
+        maxColorDifference,
+        Math.abs(
+          colors.array[i * 3 + channel]! - originalColors.array[old * 3 + channel]!,
+        ),
+      );
+  }
+  expect(preservedColors).toBeGreaterThan(originalPositions.count * 0.7);
+  expect(maxColorDifference).toBeLessThan(1e-5);
   for (let i = 0; i < index.count; i += 3) {
     const a = index.getX(i),
       b = index.getX(i + 1),
