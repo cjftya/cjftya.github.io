@@ -15,10 +15,9 @@ export function frameLandmark(
   const visible = [
     ...landmark.assets.modules.values(),
     ...(landmark.worldTree ? [landmark.worldTree.group] : []),
-    ...(landmark.sanctuary ? [landmark.sanctuary.group] : []),
   ].filter((o) => o.visible);
   const isolated = visible.length === 1 ? visible[0] : undefined;
-  const targetX = ground ? 15 : (isolated?.position.x ?? (landmark.sanctuary ? 14 : 0));
+  const targetX = ground ? 15 : (isolated?.position.x ?? 0);
   const targetZ = ground ? -6 : (isolated?.position.z ?? 0);
   const target = landmarkWorldPoint(targetX, targetZ, landmark.placement);
   const eye = ground

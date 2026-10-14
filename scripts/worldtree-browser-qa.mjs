@@ -138,7 +138,7 @@ try {
       await capture(page, 'worldtree-roots', [-44, 17, 35], [-10, 2, 2]);
       await capture(page, 'overview-day', [175, 175, 220], [10, 0, 10]);
       await capture(page, 'lake-day', [34, 13, 42], [18, -6, 20]);
-      await capture(page, 'sanctuary-day', [102, 32, 87], [66, 10, 27]);
+      await capture(page, 'cleared-east-grove', [102, 32, 87], [66, 10, 27]);
       await page.evaluate(() => window.__oasisLandmark.reviewRebuild());
       await page.waitForTimeout(200);
       result.audits.desktop = await page.evaluate(() => window.__oasisLandmark.audit());
@@ -160,6 +160,7 @@ try {
   assert.equal(result.errors.length, 0, JSON.stringify(result.errors));
   for (const state of Object.values(result.states).filter((s) => s.modules)) {
     assert.equal(state.modules, 16);
+    assert.equal(state.sanctuary, null);
     assert.equal(state.sacredLake.boundarySamples, 57);
     assert.ok(
       state.sacredLake.areaIncrease > 0.15 && state.sacredLake.areaIncrease < 0.25,
