@@ -4,7 +4,7 @@ import {
   Color,
   Float32BufferAttribute,
   Group,
-  IcosahedronGeometry,
+  Raycaster,
   Mesh,
   MeshStandardMaterial,
   Vector3,
@@ -15,21 +15,30 @@ import {
   stoneBlock,
   stoneHull,
 } from './sanctuaryGeometry';
+import { foliageCrown, leafBlade } from './treeFoliage';
+import { createPrecinctGarden } from './createPrecinctGarden';
+import type { LayoutGuide } from './landmarkConfig';
 import type { Footprint } from '../vegetation/vegetationPlacement';
 
 // Landmark-local coordinates. The open southeast sector keeps the lake and
 // existing approach clear; the ruined enclosure occupies the wooded hillside.
 const segments = [
-  { angle: 2.85, radius: 36, length: 15, height: 9 },
-  { angle: 3.48, radius: 28, length: 15, height: 13 },
-  { angle: 4.08, radius: 30, length: 17, height: 10 },
-  { angle: 4.73, radius: 29, length: 16, height: 15 },
-  { angle: 5.36, radius: 38, length: 12, height: 10 },
-  { angle: 2.22, radius: 23, length: 10, height: 6 },
+  { angle: 2.85, radius: 36, length: 15, height: 4 },
+  { angle: 3.48, radius: 28, length: 15, height: 5 },
+  { angle: 4.08, radius: 30, length: 17, height: 4 },
+  { angle: 4.73, radius: 29, length: 16, height: 5 },
+  { angle: 5.36, radius: 38, length: 12, height: 4 },
+  { angle: 2.22, radius: 23, length: 10, height: 3 },
 ];
 const tx = -12,
   tz = -18;
-export function createWorldTree(content: Group, modules: Map<string, Group>) {
+export function createWorldTree(
+  content: Group,
+  modules: Map<string, Group>,
+  pond: LayoutGuide,
+  approach: LayoutGuide,
+  mobile = false,
+) {
   const group = new Group();
   group.name = 'WorldTreePrecinct';
   content.add(group);
@@ -74,15 +83,15 @@ export function createWorldTree(content: Group, modules: Map<string, Group>) {
     const base = ground(tx, tz) - 0.5;
     const wood: BufferGeometry[] = [],
       leaves: BufferGeometry[] = [],
-      stones: BufferGeometry[] = [];
-    const bark = [new Color('#66513d'), new Color('#857052'), new Color('#493f33')];
-    const canopy = [new Color('#577b3a'), new Color('#83a655'), new Color('#3f6135')];
+      stones: BufferGeometry[] = [],
+      vines: BufferGeometry[] = [];
+    const bark = [new Color('#8b704d'), new Color('#a78c61'), new Color('#68563d')];
     // Variable-radius swept rings give branches a continuous taper, avoiding
     // cylinder joints. Every face is flat; no external textures or subdivision.
     function limb(points: Vector3[], radii: number[], into = wood, seed = 0) {
       const curve = new CatmullRomCurve3(points),
-        rings = Math.max(12, points.length * 5),
-        sides = 9;
+        rings = Math.max(12, points.length * (radii[0]! > 4 ? 9 : 5)),
+        sides = radii[0]! > 4 ? 24 : radii[0]! > 1 ? 14 : 6;
       const frames = curve.computeFrenetFrames(rings, false);
       const positions: number[] = [],
         ring: Vector3[][] = [];
@@ -96,10 +105,10 @@ export function createWorldTree(content: Group, modules: Map<string, Group>) {
         const radius = radii[j]! + (radii[j + 1]! - radii[j]!) * (f - j);
         ring.push(
           Array.from({ length: sides }, (_, k) => {
-            const a = (k * Math.PI * 2) / sides;
+            const a = (k * Math.PI * 2) / sides + 0.16 * Math.sin(t * 5 + seed);
             const r =
               radius *
-              (1 + 0.12 * Math.sin(k * 2.7 + seed) + 0.035 * Math.sin(i * 0.8 + k));
+              (1 + 0.16 * Math.sin(k * 2.7 + seed) + 0.055 * Math.sin(i * 0.55 + k));
             return p
               .clone()
               .addScaledVector(right, Math.cos(a) * r)
@@ -122,52 +131,80 @@ export function createWorldTree(content: Group, modules: Map<string, Group>) {
       const g = new BufferGeometry();
       g.setAttribute('position', new Float32BufferAttribute(positions, 3));
       g.computeVertexNormals();
-      into.push(paintFaces(g, bark));
+      paintFaces(g, bark);
+      if (into === wood) {
+        const v = g.attributes.position!,
+          colors = g.attributes.color!;
+        for (let i = 0; i < v.count; i += 3) {
+          const x = (v.getX(i) + v.getX(i + 1) + v.getX(i + 2)) / 3,
+            y = (v.getY(i) + v.getY(i + 1) + v.getY(i + 2)) / 3,
+            z = (v.getZ(i) + v.getZ(i + 1) + v.getZ(i + 2)) / 3;
+          const shade =
+            0.95 +
+            0.12 * Math.sin(x * 2.4 + z * 1.9 + y * 0.16) +
+            0.045 * Math.sin(y * 1.7 + seed);
+          for (let j = i; j < i + 3; j++)
+            colors.setXYZ(
+              j,
+              colors.getX(j) * shade,
+              colors.getY(j) * shade,
+              colors.getZ(j) * shade,
+            );
+        }
+      }
+      into.push(g);
     }
     const p = (x: number, y: number, z: number) =>
       new Vector3(tx + x, base + y, tz + z);
     limb(
       [p(0, 0, 0), p(-1, 12, 1), p(1, 26, 0), p(-2, 39, 0), p(1, 53, -2), p(0, 64, -1)],
-      [5.7, 4.8, 3.6, 2.5, 1.4, 0.25],
+      [7, 5.7, 4, 2.7, 1.4, 0.25],
     );
-    function crown(x: number, y: number, z: number, width: number, seed: number) {
-      // Overlapping asymmetric lobes form a broad layered canopy, with small
-      // peripheral clusters breaking the silhouette instead of a stack of balls.
-      for (let j = 0; j < 8; j++) {
-        const a = j * 2.399 + seed,
-          r = j ? width * (0.5 + (j % 3) * 0.09) : 0;
-        const g = new IcosahedronGeometry(1, 1);
-        const v = g.attributes.position!;
-        for (let k = 0; k < v.count; k++) {
-          const xx = v.getX(k),
-            yy = v.getY(k),
-            zz = v.getZ(k);
-          const d = 1 + 0.12 * Math.sin(xx * 7 + zz * 9 + seed);
-          v.setXYZ(k, xx * d, yy * d, zz * d);
-        }
-        const w = width * (j ? 0.47 + (j % 3) * 0.065 : 0.75);
-        g.scale(w, w * (0.35 + 0.06 * (j % 3)), w * 0.83);
-        g.rotateY(a);
-        g.translate(
-          tx + x + Math.cos(a) * r,
-          base + y + Math.sin(j * 4 + seed) * 1.8,
-          tz + z + Math.sin(a) * r,
-        );
-        g.computeVertexNormals();
-        leaves.push(
-          paintFaces(
-            g,
-            canopy.map((c) =>
-              c.clone().multiplyScalar(0.93 + 0.08 * Math.sin(seed + j)),
+    function trailingVine(start: Vector3, length: number, seed: number) {
+      const points = Array.from({ length: 6 }, (_, i) =>
+        start
+          .clone()
+          .add(
+            new Vector3(
+              Math.sin(i * 0.8 + seed) * 0.55,
+              (-length * i) / 5,
+              Math.cos(i * 0.9 + seed) * 0.45,
             ),
           ),
+      );
+      limb(points, [0.085, 0.06, 0.035, 0.012], vines, seed);
+      const curve = new CatmullRomCurve3(points),
+        count = Math.ceil(length * 2.3);
+      for (let i = 0; i < count; i++)
+        for (const side of [-1, 1])
+          leaves.push(
+            leafBlade(
+              curve.getPoint(i / count),
+              seed + side * 1.3,
+              1.05 + 0.35 * Math.sin(i * 2.7 + seed),
+              new Color(i % 3 ? '#6e8c42' : '#92a754'),
+            ),
+          );
+    }
+    function crown(x: number, y: number, z: number, width: number, seed: number) {
+      leaves.push(...foliageCrown(p(x, y, z), width, seed, mobile));
+      for (let i = 0; i < 3; i++) {
+        const a = seed + i * 2.399;
+        trailingVine(
+          p(
+            x + Math.cos(a) * width * 0.65,
+            y - width * 0.24,
+            z + Math.sin(a) * width * 0.65,
+          ),
+          7 + ((seed + i) % 8),
+          seed + i,
         );
       }
     }
     for (let i = 0; i < 11; i++) {
       const a = i * 2.399,
         reach = 23 + (i % 3) * 3.5,
-        height = 37 + (i % 4) * 6;
+        height = 35 + (i % 4) * 6;
       const dx = Math.cos(a),
         dz = Math.sin(a);
       limb(
@@ -196,7 +233,7 @@ export function createWorldTree(content: Group, modules: Map<string, Group>) {
         );
       }
     }
-    crown(0, 64, 0, 17, 17);
+    crown(0, 62, 0, 17, 17);
     for (let i = 0; i < 5; i++) {
       const a = (i * Math.PI * 2) / 5 + 0.4;
       const x = Math.cos(a) * 15,
@@ -208,6 +245,14 @@ export function createWorldTree(content: Group, modules: Map<string, Group>) {
         i + 30,
       );
       crown(x, 59 + (i % 2) * 2, z, 13.5, i + 22);
+    }
+    for (let i = 0; i < 6; i++) {
+      const a = i * 2.399;
+      trailingVine(
+        p(Math.cos(a) * 4.4, 22 + (i % 3) * 2, Math.sin(a) * 4.4),
+        12 + (i % 4),
+        i + 40,
+      );
     }
     for (let i = 0; i < segments.length; i++) {
       const seg = segments[i]!,
@@ -253,6 +298,18 @@ export function createWorldTree(content: Group, modules: Map<string, Group>) {
         stones.push(paintFaces(g, palette));
       }
       const wallTop = floor + Math.max(2, rows - 1) * 1.5;
+      for (let v = 0; v < 3; v++) {
+        const along = (v - 1) * seg.length * 0.23;
+        trailingVine(
+          new Vector3(
+            cx - dz * along + dx * 1.35,
+            wallTop - 1.5,
+            cz + dx * along + dz * 1.35,
+          ),
+          Math.max(3, seg.height - 3),
+          i + v,
+        );
+      }
       const point = (r: number, y: number, bend = 0) =>
         new Vector3(tx + dx * r - dz * bend, y, tz + dz * r + dx * bend);
       const inner = seg.radius - 5,
@@ -271,10 +328,31 @@ export function createWorldTree(content: Group, modules: Map<string, Group>) {
             1,
           ),
         ],
-        [3.5, 2.6, 1.9, 1.45, 1.25, 0.65, 0.08],
+        [2.2, 1.5, 0.95, 0.7, 0.55, 0.3, 0.04],
         wood,
         i,
       );
+      for (const side of [-1, 1]) {
+        const r = seg.radius * 0.55,
+          x = tx + dx * r,
+          z = tz + dz * r,
+          ex = x - dz * side * 5 + dx * 5,
+          ez = z + dx * side * 5 + dz * 5;
+        limb(
+          [
+            new Vector3(x, ground(x, z) + 0.7, z),
+            new Vector3(
+              (x + ex) / 2,
+              ground((x + ex) / 2, (z + ez) / 2) + 0.4,
+              (z + ez) / 2,
+            ),
+            new Vector3(ex, ground(ex, ez) - 0.2, ez),
+          ],
+          [0.8, 0.4, 0.04],
+          wood,
+          i + side,
+        );
+      }
       footprints.push({
         minX: cx - (Math.abs(dz) * seg.length) / 2 - 4,
         maxX: cx + (Math.abs(dz) * seg.length) / 2 + 4,
@@ -361,11 +439,64 @@ export function createWorldTree(content: Group, modules: Map<string, Group>) {
         stones.splice(i, 1);
       }
     }
+    // Attach foliage to the actual rock surface, rather than burying it inside the cliff.
+    content.updateWorldMatrix(true, true);
+    const cliff = modules.get('Cliff_Waterfall_A')!,
+      ray = new Raycaster(),
+      down = new Vector3(0, -1, 0);
+    for (const [x, z, width] of [
+      [-5, -12, 3.8],
+      [1, -10, 4],
+      [6, -13, 3],
+      [-7, -16, 3],
+    ] as const) {
+      ray.set(content.localToWorld(new Vector3(x, ground(x, z) + 35, z)), down);
+      const hit = ray.intersectObject(cliff, true)[0];
+      if (hit) {
+        const pos = content.worldToLocal(hit.point.clone());
+        leaves.push(
+          ...foliageCrown(pos.add(new Vector3(0, width * 0.2, 0)), width, x + z, true),
+        );
+      }
+    }
+    const front = new Vector3(0, 0, -1).transformDirection(content.matrixWorld);
+    for (let col = 0; col < 7; col++) {
+      const x = -7 + col * 2,
+        points: Vector3[] = [];
+      for (let row = 0; row < 14; row++) {
+        const y = ground(x, -10) + 14 - row * 0.85;
+        ray.set(
+          content.localToWorld(new Vector3(x + 0.25 * Math.sin(row + col), y, 5)),
+          front,
+        );
+        const hit = ray.intersectObject(cliff, true)[0];
+        if (!hit) continue;
+        const pos = content
+          .worldToLocal(hit.point.clone())
+          .add(new Vector3(0, 0, 0.12));
+        points.push(pos);
+        if ((row + col) % 3 !== 0)
+          leaves.push(leafBlade(pos, col + row * 2.399, 0.9, new Color('#849f50')));
+      }
+      if (points.length > 2) limb(points, [0.065, 0.04, 0.01], vines, col);
+    }
+    const garden = createPrecinctGarden(ground, pond, approach, mobile);
+    footprints.push(...garden.footprints);
+    for (const vine of vines)
+      paintFaces(vine, [
+        new Color('#586644'),
+        new Color('#65794b'),
+        new Color('#47573b'),
+      ]);
     for (const [name, parts] of [
       ['WorldTreeWood', wood],
       ['WorldTreeCanopy', leaves],
       ['WorldTreeRuins', stones],
+      ['WorldTreeVines', vines],
+      ['PrecinctPlants', garden.plants],
+      ['PrecinctStones', garden.stones],
     ] as const) {
+      if (!parts.length) continue;
       const g = mergeStoneParts(parts);
       owned.push(g);
       const mesh = new Mesh(g, material);
