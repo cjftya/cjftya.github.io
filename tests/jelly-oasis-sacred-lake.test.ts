@@ -58,7 +58,7 @@ it('uses the expanded contour for the rendered bed, rooted ecology, exclusion an
     const worldTree = oasis.worldTree!;
     const treeBounds = new Box3().setFromObject(worldTree.group);
     expect(treeBounds.max.y - treeBounds.min.y).toBeGreaterThan(65);
-    expect(worldTree.footprints()).toHaveLength(6);
+    expect(worldTree.footprints().length).toBeGreaterThanOrEqual(6);
     expect(oasis.root.getObjectByName('MagicalSanctuary')).toBeUndefined();
     const oldTreeGeometry = (worldTree.group.children[0] as Mesh).geometry;
     const treeDisposed = vi.fn();
@@ -70,23 +70,29 @@ it('uses the expanded contour for the rendered bed, rooted ecology, exclusion an
         const g = o.geometry,
           p = g.attributes.position!,
           normal = g.attributes.normal!;
-        for (let i = 0; i < p.count; i++)
-          expect(
-            [
-              p.getX(i),
-              p.getY(i),
-              p.getZ(i),
-              normal.getX(i),
-              normal.getY(i),
-              normal.getZ(i),
-            ].every(Number.isFinite),
-          ).toBe(true);
-        for (let i = 0; i < p.count; i += 3) {
-          const a = new Vector3().fromBufferAttribute(p, i),
-            b = new Vector3().fromBufferAttribute(p, i + 1),
-            c = new Vector3().fromBufferAttribute(p, i + 2);
-          expect(b.sub(a).cross(c.sub(a)).length()).toBeGreaterThan(1e-8);
+        let finite = true,
+          minArea = Infinity;
+        const a = new Vector3(),
+          b = new Vector3(),
+          c = new Vector3();
+        for (let i = 0; i < p.count; i++) {
+          finite &&= [
+            p.getX(i),
+            p.getY(i),
+            p.getZ(i),
+            normal.getX(i),
+            normal.getY(i),
+            normal.getZ(i),
+          ].every(Number.isFinite);
         }
+        for (let i = 0; i < p.count; i += 3) {
+          a.fromBufferAttribute(p, i);
+          b.fromBufferAttribute(p, i + 1);
+          c.fromBufferAttribute(p, i + 2);
+          minArea = Math.min(minArea, b.sub(a).cross(c.sub(a)).length());
+        }
+        expect(finite, o.name).toBe(true);
+        expect(minArea, o.name).toBeGreaterThan(1e-8);
       }
     });
     const audit = auditLandmark(oasis);

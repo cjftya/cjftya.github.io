@@ -271,7 +271,13 @@ export async function createOvergrownRuin(
   const scenery = createScenery(root, sceneryVariant, waterOptions.mobile);
   const meadow = createMeadow(root, meadowVariant, waterOptions.mobile);
   const worldTree = aesthetic.sacred
-    ? createWorldTree(content, assets.modules)
+    ? createWorldTree(
+        content,
+        assets.modules,
+        pondGuide,
+        assets.layout.guides.CreaturePaths_ArchApproach_6m!,
+        waterOptions.mobile,
+      )
     : undefined;
   const lakeEcology = aesthetic.sacred
     ? createLakeEcology(content, assets.modules, pondGuide)
