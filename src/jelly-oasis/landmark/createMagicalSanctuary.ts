@@ -72,7 +72,7 @@ export function createMagicalSanctuary(content: Group, originalArch: Group) {
     const heights: number[] = [];
     for (let x = -HALF_WIDTH; x <= HALF_WIDTH; x += 3)
       for (let z = -HALF_DEPTH; z <= HALF_DEPTH; z += 3) heights.push(floorAt(x, z));
-    deckHeight = Math.max(...heights) + 0.45;
+    deckHeight = Math.min(...heights) + 0.15;
     const parts: BufferGeometry[] = [];
     let ordinal = 0;
     const add = (g: BufferGeometry, moss = false) => {
@@ -91,26 +91,6 @@ export function createMagicalSanctuary(content: Group, originalArch: Group) {
       seed = 0,
       moss = false,
     ) => add(stoneBlock(x, y, z, w, h, d, seed), moss);
-    // Full-depth masonry cells follow the ground; no overlapping perimeter
-    // skin, which would produce coplanar flicker on the retaining faces.
-    for (let row = 0; row < 6; row++)
-      for (let col = 0; col < 6; col++) {
-        const x = -15 + col * 6,
-          z = -12.5 + row * 5;
-        const bottom =
-          Math.min(floorAt(x - 3, z - 2.5), floorAt(x + 3, z + 2.5), floorAt(x, z)) -
-          0.2;
-        block(
-          x,
-          (bottom + deckHeight) / 2,
-          z,
-          5.96,
-          deckHeight - bottom,
-          4.96,
-          ordinal,
-          (row + col) % 7 === 0,
-        );
-      }
     const base = deckHeight + 0.08;
     // Pier courses use believable masonry scale, with larger footings/capitals.
     const pier = (x: number, z: number, h: number, w = 3.5, d = 4.4) => {
@@ -257,26 +237,6 @@ export function createMagicalSanctuary(content: Group, originalArch: Group) {
         .translate(11.5, base, 6);
       add(stone, i % 3 === 0);
     }
-    // Wide descending flight: each tread has full terrain support. Its final
-    // tread meets the local ground, not an arbitrary staircase height.
-    const stairEnd = 22,
-      stairFloor = floorAt(0, stairEnd) + 0.09;
-    const rise = Math.max(0.4, deckHeight - stairFloor),
-      steps = Math.max(8, Math.ceil(rise / 0.3));
-    for (let i = 0; i < steps; i++) {
-      const z = 15 + ((i + 0.5) * 7) / steps,
-        top = deckHeight - (rise * (i + 1)) / steps;
-      const bottom = Math.min(floorAt(-6, z), floorAt(6, z), floorAt(0, z)) - 0.2;
-      block(
-        0,
-        (top + bottom) / 2,
-        z,
-        12 + (i > steps - 3 ? 2 : 0),
-        Math.max(0.2, top - bottom),
-        7 / steps + 0.015,
-        ordinal,
-      );
-    }
     const structureBounds = new Box3();
     for (const p of parts) {
       p.computeBoundingBox();
@@ -375,7 +335,7 @@ export function createMagicalSanctuary(content: Group, originalArch: Group) {
         worldBounds: { min: bounds.min.toArray(), max: bounds.max.toArray() },
         structureDimensions: [...structureDimensions],
         mainArchHeightAboveDeck: mainArchHeight,
-        terraceFootprint: [36, 30],
+        terraceFootprint: [0, 0],
         archOpening: 16,
         triangles: [...owned].reduce((n, g) => n + g.attributes.position!.count / 3, 0),
         materials: 1,

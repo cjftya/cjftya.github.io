@@ -49,7 +49,8 @@ export function frameLandscape(
     const bounds = new Box3();
     const boxes = landmarks.map((object) => new Box3().setFromObject(object));
     for (const box of boxes) bounds.union(box);
-    target.x = (bounds.min.x + bounds.max.x) / 2;
+    bounds.getCenter(target);
+    distance = 160;
     const right = new Vector3().crossVectors(camera.up, outward).normalize();
     const up = new Vector3().crossVectors(outward, right).normalize();
     const vertical = Math.tan((camera.fov * Math.PI) / 360),

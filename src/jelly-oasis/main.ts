@@ -115,7 +115,11 @@ function start(canvas: HTMLCanvasElement): void {
         camera,
         controls,
         landmark?.sanctuary
-          ? [...landmark.assets.modules.values(), landmark.sanctuary.group]
+          ? [
+              ...landmark.assets.modules.values(),
+              landmark.sanctuary.group,
+              ...(landmark.worldTree ? [landmark.worldTree.group] : []),
+            ]
           : [],
       );
     dirty = true;

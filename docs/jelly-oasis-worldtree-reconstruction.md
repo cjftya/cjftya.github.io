@@ -1,0 +1,14 @@
+# World tree and ruined enclosure
+
+Reconstructed from the requested world-tree composition on master `7fa3f48`.
+The earlier local-only commit `29f85be` was unavailable; this is a new implementation.
+
+- Continuous tapered, faceted trunk and branching structure; broad, asymmetric layered foliage. No external textures, subdivision, or extra lights.
+- Six irregular masonry sections using the existing ruin palette and chipped stone geometry, plus an arch and fallen masonry.
+- Large roots cross the wall coping and return to terrain. The circulation ring remains open: roots pass beneath its soil, and masonry crossing the route is omitted.
+- Existing original tree/root assets remain loaded for resource ownership but their render children are hidden in the sacred composition.
+- Existing lake contour, water solver, ecology, terrain and weather remain in place.
+- Removed the large sanctuary terrace and entry staircase; seated the surviving hall into the surveyed ground.
+- Included the new precinct in vegetation exclusions, material refresh, isolation, disposal, framing and route audits. Portrait framing now centers the actual landmark bounds.
+
+Validation: full suite 67 files / 330 tests passed before the final circulation correction; the affected sacred-lake integration test is rerun after that correction. Build, lint and browser QA cover desktop/portrait, wheel/pinch, day/night/rain and rebuild. The world-tree QA script adds front, left, rear and root views. Actual phone GPU performance is not measured. Browser screenshots in this environment may lack Korean fonts.
