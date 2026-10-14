@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { afterEach, expect, it, vi } from 'vitest';
-import { Mesh, Vector3 } from 'three';
+import { Box3, Mesh, Vector3 } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { createOvergrownRuin } from '../src/jelly-oasis/landmark/createOvergrownRuin';
 import { auditLandmark } from '../src/jelly-oasis/landmark/landmarkAudit';
@@ -56,32 +56,41 @@ it('uses the expanded contour for the rendered bed, rooted ecology, exclusion an
       if (p.kind === 'plant') expect(p.y).toBeCloseTo(oasis.localGround(p.x, p.z), 5);
     }
     const sanctuary = oasis.sanctuary!;
-    sanctuary.group.traverse((o) => {
-      if (o instanceof Mesh) {
-        expect(o.castShadow).toBe(true);
-        expect(o.receiveShadow).toBe(true);
-        const g = o.geometry,
-          p = g.attributes.position!,
-          normal = g.attributes.normal!;
-        for (let i = 0; i < p.count; i++)
-          expect(
-            [
-              p.getX(i),
-              p.getY(i),
-              p.getZ(i),
-              normal.getX(i),
-              normal.getY(i),
-              normal.getZ(i),
-            ].every(Number.isFinite),
-          ).toBe(true);
-        for (let i = 0; i < p.count; i += 3) {
-          const a = new Vector3().fromBufferAttribute(p, i),
-            b = new Vector3().fromBufferAttribute(p, i + 1),
-            c = new Vector3().fromBufferAttribute(p, i + 2);
-          expect(b.sub(a).cross(c.sub(a)).length()).toBeGreaterThan(1e-8);
+    const worldTree = oasis.worldTree!;
+    const treeBounds = new Box3().setFromObject(worldTree.group);
+    expect(treeBounds.max.y - treeBounds.min.y).toBeGreaterThan(65);
+    expect(worldTree.footprints()).toHaveLength(6);
+    expect(sanctuary.snapshot().terraceFootprint).toEqual([0, 0]);
+    const oldTreeGeometry = (worldTree.group.children[0] as Mesh).geometry;
+    const treeDisposed = vi.fn();
+    oldTreeGeometry.addEventListener('dispose', treeDisposed);
+    for (const subject of [sanctuary.group, worldTree.group])
+      subject.traverse((o) => {
+        if (o instanceof Mesh) {
+          expect(o.castShadow).toBe(true);
+          expect(o.receiveShadow).toBe(true);
+          const g = o.geometry,
+            p = g.attributes.position!,
+            normal = g.attributes.normal!;
+          for (let i = 0; i < p.count; i++)
+            expect(
+              [
+                p.getX(i),
+                p.getY(i),
+                p.getZ(i),
+                normal.getX(i),
+                normal.getY(i),
+                normal.getZ(i),
+              ].every(Number.isFinite),
+            ).toBe(true);
+          for (let i = 0; i < p.count; i += 3) {
+            const a = new Vector3().fromBufferAttribute(p, i),
+              b = new Vector3().fromBufferAttribute(p, i + 1),
+              c = new Vector3().fromBufferAttribute(p, i + 2);
+            expect(b.sub(a).cross(c.sub(a)).length()).toBeGreaterThan(1e-8);
+          }
         }
-      }
-    });
+      });
     const audit = auditLandmark(oasis);
     for (const key of ['loop', 'clearing', 'approach', 'passage'] as const)
       expect(audit[key].clear, JSON.stringify(audit[key])).toBe(true);
@@ -92,6 +101,8 @@ it('uses the expanded contour for the rendered bed, rooted ecology, exclusion an
     for (let i = 0; i < 2; i++)
       oasis.place({ ...oasis.placement, position: { ...oasis.placement.position } });
     expect(disposed).toHaveBeenCalledTimes(1);
+    expect(treeDisposed).toHaveBeenCalledTimes(1);
+    expect(new Box3().setFromObject(worldTree.group)).toEqual(treeBounds);
     expect(Array.from(terrain.geometry.attributes.position!.array)).toEqual(before);
     expect(oasis.lakeEcology!.snapshot()).toEqual(originalEcology);
     const water = oasis.waterEffects!.snapshot();

@@ -14,6 +14,7 @@ export function frameLandmark(
   const ground = view === 'ground';
   const visible = [
     ...landmark.assets.modules.values(),
+    ...(landmark.worldTree ? [landmark.worldTree.group] : []),
     ...(landmark.sanctuary ? [landmark.sanctuary.group] : []),
   ].filter((o) => o.visible);
   const isolated = visible.length === 1 ? visible[0] : undefined;
