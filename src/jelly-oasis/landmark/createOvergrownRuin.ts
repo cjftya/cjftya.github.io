@@ -2,7 +2,6 @@ import { createWorldTree } from './createWorldTree';
 import { createMeadow } from '../meadow/createMeadow';
 import { expandSacredLake, pondArea, SACRED_LAKE_BASIN } from './sacredLake';
 import { createLakeEcology } from './createLakeEcology';
-import { createMagicalSanctuary } from './createMagicalSanctuary';
 import type { MeadowVariant } from '../meadow/meadowConfig';
 import { createScenery } from '../scenery/createScenery';
 import type { SceneryVariant } from '../scenery/sceneryConfig';
@@ -271,9 +270,6 @@ export async function createOvergrownRuin(
 
   const scenery = createScenery(root, sceneryVariant, waterOptions.mobile);
   const meadow = createMeadow(root, meadowVariant, waterOptions.mobile);
-  const sanctuary = aesthetic.sacred
-    ? createMagicalSanctuary(content, assets.modules.get('Ruin_Arch_A')!)
-    : undefined;
   const worldTree = aesthetic.sacred
     ? createWorldTree(content, assets.modules)
     : undefined;
@@ -559,7 +555,6 @@ export async function createOvergrownRuin(
       pond.visible = !waterOptions.basinOnly;
       root.updateMatrixWorld(true);
     }
-    sanctuary?.place(localGround);
     worldTree?.place(localGround);
     lakeEcology?.place(localGround, pondHeight);
     waterEffects?.rebuild();
@@ -571,7 +566,6 @@ export async function createOvergrownRuin(
         ? []
         : [
             ...groundFootprints(root, assets.modules, terrain),
-            ...(sanctuary?.footprints() ?? []),
             ...(worldTree?.footprints() ?? []),
           ];
     vegetation.refresh(placement, obstacles);
@@ -674,7 +668,6 @@ export async function createOvergrownRuin(
     composition,
     scenery,
     meadow,
-    sanctuary,
     worldTree,
     lakeEcology,
     sacredLakeSnapshot: () =>
@@ -732,7 +725,6 @@ export async function createOvergrownRuin(
       scenery.group.visible = !name;
       meadow.group.visible = !name;
       if (worldTree) worldTree.group.visible = !name || name === 'WorldTreePrecinct';
-      if (sanctuary) sanctuary.group.visible = !name || name === 'MagicalSanctuary';
       if (lakeEcology)
         lakeEcology.group.visible = !name || name === 'SacredLakeEcology';
     },
@@ -741,7 +733,6 @@ export async function createOvergrownRuin(
       composition.refreshMaterials();
       scenery.refreshMaterials();
       meadow.refreshMaterials();
-      sanctuary?.refreshMaterials();
       worldTree?.refreshMaterials();
       lakeEcology?.refreshMaterials();
       content.traverse((object) => {
@@ -755,7 +746,6 @@ export async function createOvergrownRuin(
     dispose() {
       if (disposed) return;
       disposed = true;
-      sanctuary?.dispose();
       worldTree?.dispose();
       lakeEcology?.dispose();
       vegetation.dispose();

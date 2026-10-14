@@ -12,3 +12,17 @@ The earlier local-only commit `29f85be` was unavailable; this is a new implement
 - Included the new precinct in vegetation exclusions, material refresh, isolation, disposal, framing and route audits. Portrait framing now centers the actual landmark bounds.
 
 Validation: full suite 67 files / 330 tests passed before the final circulation correction; the affected sacred-lake integration test is rerun after that correction. Build, lint and browser QA cover desktop/portrait, wheel/pinch, day/night/rain and rebuild. The world-tree QA script adds front, left, rear and root views. Actual phone GPU performance is not measured. Browser screenshots in this environment may lack Korean fonts.
+
+## Follow-up: remove the competing hall
+
+The detached monumental hall, altar, plinths and all twelve approach paving stones
+are removed from the scene and source. Its broad vegetation exclusion zones are
+also removed so the existing planting system can populate that area naturally.
+The world-tree enclosure, its small arches and original low ruins remain.
+Camera framing now follows the remaining landmarks independently of the removed
+hall; debug isolation offers the world-tree precinct instead.
+
+Validation for this removal: build/lint, sacred-lake and pond-only integration,
+plus desktop and portrait browser checks (including wheel/pinch and rebuild).
+This change removes the competing architecture; it is not the complete foliage,
+bark and ground-detail redesign discussed against the reference image.

@@ -68,8 +68,6 @@ export function auditLandmark(landmark: OvergrownRuin) {
   }
   const vector = new Vector3();
   const auditedObjects = new Map(assets.modules);
-  if (landmark.sanctuary)
-    auditedObjects.set('MagicalSanctuary', landmark.sanctuary.group);
   if (landmark.worldTree)
     auditedObjects.set('WorldTreePrecinct', landmark.worldTree.group);
   for (const [name, object] of auditedObjects)

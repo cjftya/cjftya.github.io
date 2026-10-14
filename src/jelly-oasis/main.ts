@@ -114,10 +114,9 @@ function start(canvas: HTMLCanvasElement): void {
       frameLandscape(
         camera,
         controls,
-        landmark?.sanctuary
+        landmark
           ? [
               ...landmark.assets.modules.values(),
-              landmark.sanctuary.group,
               ...(landmark.worldTree ? [landmark.worldTree.group] : []),
             ]
           : [],
@@ -416,7 +415,7 @@ function start(canvas: HTMLCanvasElement): void {
               ),
               modules: loaded.assets.modules.size,
               sacredLake: loaded.sacredLakeSnapshot(),
-              sanctuary: loaded.sanctuary?.snapshot() ?? null,
+              sanctuary: null,
               lakeEcology: loaded.lakeEcology?.snapshot() ?? null,
               vegetation: loaded.vegetation.snapshot(),
               composition: loaded.composition.snapshot(),
