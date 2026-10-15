@@ -4,6 +4,7 @@ import { worldToLandmark } from '../composition/compositionPlacement';
 import { exclusionReason, seededRandom } from '../vegetation/vegetationPlacement';
 import type { VegetationSite } from '../vegetation/vegetationPlacement';
 import type { Occupied } from '../scenery/sceneryPlacement';
+import { TREE_KINDS } from '../scenery/sceneryConfig';
 import {
   MEADOW_KINDS,
   MEADOW_PATCHES,
@@ -23,6 +24,20 @@ export interface MeadowInstance {
   radius: number;
   slope: number;
 }
+// Low plants can share a canopy footprint, while a trunk collar stays clear.
+// Paths, water, ruin footprints and other low plants keep their full reservations.
+export function meadowSeparation(
+  plant: { radius: number; kind?: string },
+  other: { radius: number; kind?: string },
+) {
+  if (plant.kind === 'shrub' && other.kind === 'shrub')
+    return (plant.radius + other.radius) * 0.78 + 0.12;
+  return (
+    plant.radius +
+    other.radius * (TREE_KINDS.some((kind) => kind === other.kind) ? 0.24 : 1) +
+    0.12
+  );
+}
 export function placeMeadow(
   site: VegetationSite,
   occupied: readonly Occupied[],
@@ -36,7 +51,9 @@ export function placeMeadow(
   if (variant === 'off') return { instances, rejected, requested, zoneCounts };
   for (const patch of MEADOW_PATCHES) {
     zoneCounts[patch.id] = 0;
-    for (const [index, kind] of MEADOW_KINDS.entries()) {
+    // Establish the shrub masses before filling the remaining gaps with flowers.
+    for (const index of [3, 0, 1, 2]) {
+      const kind = MEADOW_KINDS[index]!;
       const target = Math.ceil(patch.counts[index]! * (variant === 'b' ? 1.5 : 1));
       requested[kind] = (requested[kind] ?? 0) + target;
       let hash = seed;
@@ -54,7 +71,7 @@ export function placeMeadow(
           site,
         );
         const scale =
-          (kind === 'shrub' ? 1.6 + random() * 0.4 : 1.6 + random() * 1.3) /
+          (kind === 'shrub' ? 2.1 + random() * 1.4 : 1.8 + random() * 1.3) /
           site.placement.scale;
         const radius = shape.radius * scale,
           rotation = random() * Math.PI * 2,
@@ -67,7 +84,7 @@ export function placeMeadow(
         if (
           !reason &&
           [...occupied, ...instances].some(
-            (p) => Math.hypot(x - p.x, z - p.z) < radius + p.radius + 0.12,
+            (p) => Math.hypot(x - p.x, z - p.z) < meadowSeparation({ kind, radius }, p),
           )
         )
           reason = 'spacing';

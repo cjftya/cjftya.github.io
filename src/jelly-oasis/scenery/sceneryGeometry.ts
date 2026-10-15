@@ -79,15 +79,41 @@ export function createSceneryGeometry(kind: SceneryKind) {
     branch(0, 0, 0, 0.15, 2.5, 0, 0.23);
     crown(-0.3, 2.4, 0, 1.15, 0.9, 1.05, '#75944e');
     crown(0.25, 3.15, 0, 1.2, 0.9, 1.1, '#9cac62');
+  } else if (kind === 'ridge') {
+    // Three joined strata form a low outcrop with asymmetric planting shelves.
+    // The lower bodies overlap; no detached slabs or floating flat bases.
+    for (const [x, z, width, depth, bottom, height, yaw] of [
+      [-0.5, 0, 4.7, 3.3, 0, 2.3, 0.1],
+      [-1.3, -0.65, 3.1, 2.5, 1.4, 2.5, 0.32],
+      [3.0, 0.7, 2.8, 2.4, 0, 1.4, -0.3],
+    ]) {
+      const source = new IcosahedronGeometry(1, 1),
+        vertices = source.attributes.position!;
+      for (let i = 0; i < vertices.count; i++) {
+        const px = vertices.getX(i),
+          py = vertices.getY(i),
+          pz = vertices.getZ(i);
+        vertices.setXYZ(
+          i,
+          px * (1 + 0.12 * pz) + Math.max(0, py) * 0.15,
+          Math.min(0.72 + px * 0.08, Math.max(0, py)) / 0.8,
+          pz * (1 - 0.09 * px),
+        );
+      }
+      source.scale(width!, height!, depth!).rotateY(yaw!).translate(x!, bottom!, z!);
+      source.computeVertexNormals();
+      const g = paint(source, '#8c9080'),
+        n = g.attributes.normal!,
+        c = g.attributes.color!,
+        moss = new Color('#879568');
+      for (let i = 0; i < c.count; i++)
+        if (n.getY(i) > 0.65) c.setXYZ(i, moss.r, moss.g, moss.b);
+      parts.push(g);
+    }
   } else {
-    const g = new IcosahedronGeometry(1, kind === 'ridge' ? 1 : 0);
+    const g = new IcosahedronGeometry(1, 0);
     const p = g.attributes.position!;
-    const size =
-      kind === 'ridge'
-        ? [9, 12, 5]
-        : kind === 'boulder'
-          ? [2.1, 2.45, 1.7]
-          : [0.8, 0.65, 0.62];
+    const size = kind === 'boulder' ? [2.1, 2.45, 1.7] : [0.8, 0.65, 0.62];
     for (let i = 0; i < p.count; i++) {
       const x = p.getX(i),
         y = p.getY(i),
@@ -102,12 +128,7 @@ export function createSceneryGeometry(kind: SceneryKind) {
     }
     g.deleteAttribute('normal');
     g.computeVertexNormals();
-    parts.push(
-      paint(
-        g,
-        kind === 'pebble' ? '#a2a08b' : kind === 'boulder' ? '#949484' : '#838a7c',
-      ),
-    );
+    parts.push(paint(g, kind === 'pebble' ? '#a2a08b' : '#949484'));
   }
   const result = mergeGeometries(parts, false)!;
   parts.forEach((g) => g.dispose());

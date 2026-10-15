@@ -101,9 +101,10 @@ export function createLakeEcology(
             floor - 0.025,
             z,
             a + leaf * 1.7,
-            Math.min(depth + (i % 3 === 0 ? 0.35 : -0.12), 0.75 + (i % 4) * 0.2),
-            0.15 + (i % 3) * 0.04,
-            0.35,
+            // Alternate emergent leaves with submerged fans in the same colony.
+            Math.min(depth + (i % 3 === 0 ? 0.9 : 0.15), 1.25 + (i % 4) * 0.3),
+            0.22 + (i % 3) * 0.06,
+            0.55,
           );
         if (depth < 0.8 && i % 3 === 0) {
           // A thick, connected reed leaf rises from the same rooted colony.

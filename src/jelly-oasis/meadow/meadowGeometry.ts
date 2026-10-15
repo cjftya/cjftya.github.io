@@ -1,8 +1,37 @@
-import { BufferGeometry, Color, Float32BufferAttribute } from 'three';
+import {
+  BufferGeometry,
+  Color,
+  Float32BufferAttribute,
+  IcosahedronGeometry,
+} from 'three';
+import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { createVegetationGeometry } from '../vegetation/createVegetation';
 import type { MeadowKind } from './meadowConfig';
 export function createMeadowGeometry(kind: MeadowKind): BufferGeometry {
-  if (kind === 'grass' || kind === 'shrub') return createVegetationGeometry(kind);
+  if (kind === 'grass') return createVegetationGeometry(kind);
+  if (kind === 'shrub') {
+    // A readable middle layer, built from three solid faceted lobes (240 faces).
+    // Reuses the meadow instance/material owner; no alpha cards or new draws.
+    const parts = Array.from({ length: 3 }, (_, i) => {
+      const g = new IcosahedronGeometry(1, 1);
+      g.scale(i ? 0.85 : 1.1, i ? 0.65 : 0.9, 0.86)
+        .rotateY(i * 2.399)
+        .translate(i ? (i === 1 ? -0.65 : 0.65) : 0, i ? 0.45 : 0.65, i ? 0.1 : -0.18);
+      const c = new Color(['#65804b', '#809653', '#718b50'][i]!);
+      const colors = Array.from({ length: g.attributes.position!.count }, () => [
+        c.r,
+        c.g,
+        c.b,
+      ]).flat();
+      g.setAttribute('color', new Float32BufferAttribute(colors, 3));
+      return g;
+    });
+    const g = mergeGeometries(parts, false)!;
+    parts.forEach((p) => p.dispose());
+    g.computeBoundingBox();
+    g.computeBoundingSphere();
+    return g;
+  }
   const source = createVegetationGeometry('flower'),
     p = source.attributes.position!,
     c = source.attributes.color!;
@@ -54,7 +83,7 @@ export function createMeadowGeometry(kind: MeadowKind): BufferGeometry {
     for (let i = 0; i < positions.length; i += 3) {
       tuftPositions.push(
         positions[i]! * scale + dx,
-        positions[i + 1]! * scale * 0.7,
+        positions[i + 1]! * scale,
         positions[i + 2]! * scale + dz,
       );
       tuftColors.push(colors[i]!, colors[i + 1]!, colors[i + 2]!);

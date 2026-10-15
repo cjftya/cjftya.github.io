@@ -18,6 +18,7 @@ import {
   landmarkWorldPoint,
 } from '../src/jelly-oasis/landmark/landmarkPlacement';
 import { placeMeadow } from '../src/jelly-oasis/meadow/meadowPlacement';
+import { TREE_KINDS } from '../src/jelly-oasis/scenery/sceneryConfig';
 import { createMeadow } from '../src/jelly-oasis/meadow/createMeadow';
 import { selectMeadow } from '../src/jelly-oasis/meadow/meadowConfig';
 afterEach(() => {
@@ -125,7 +126,11 @@ it('grounds isolated deterministic meadows against real GLBs and scenery, preser
         for (const q of [...occupied, ...a])
           if (q !== p)
             expect(Math.hypot(p.x - q.x, p.z - q.z)).toBeGreaterThanOrEqual(
-              p.radius + q.radius + 0.12 - 1e-8,
+              (p.kind === 'shrub' && q.kind === 'shrub' ? 0.78 : 1) *
+                (p.radius +
+                  q.radius * (TREE_KINDS.some((k) => k === q.kind) ? 0.24 : 1)) +
+                0.12 -
+                1e-8,
             );
       }
       const mobile = createMeadow(l.root, 'a', true);

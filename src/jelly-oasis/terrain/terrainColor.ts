@@ -21,11 +21,14 @@ const palette = Object.fromEntries(
 ) as Record<keyof typeof TERRAIN_PALETTE, Color>;
 
 // Follow the existing forest ribbons, rather than inventing unrelated patches.
-const groveSegments = SCENERY_ZONES.filter((zone) => zone.basis === 'world').flatMap(
+const groveSegments = SCENERY_ZONES.filter(
   (zone) =>
-    zone.centers
-      .slice(0, -1)
-      .map((a, i) => ({ a, b: zone.centers[i + 1]!, radius: zone.radius })),
+    zone.basis === 'world' &&
+    (zone.counts.broad ?? 0) + (zone.counts.spire ?? 0) + (zone.counts.young ?? 0) > 0,
+).flatMap((zone) =>
+  zone.centers
+    .slice(0, -1)
+    .map((a, i) => ({ a, b: zone.centers[i + 1]!, radius: zone.radius })),
 );
 function groveInfluence(x: number, z: number, size: number) {
   let influence = 0;
@@ -77,7 +80,11 @@ export function sampleTerrainColor(
     groveInfluence(x, z, config.size) * (1 - oasis * 0.65) * 0.85,
   );
   const highland = smoothstep(config.maxHeight * 0.18, config.maxHeight * 0.82, height);
-  target.lerp(palette.shoulder, highland * (1 - oasis * 0.7));
+  // Shelf tops retain forest soil; steep rock exposure is still normal-driven.
+  target.lerp(
+    palette.shoulder,
+    highland * (1 - oasis * 0.7) * (1 - groveInfluence(x, z, config.size) * 0.62),
+  );
   // Damp colour follows low ground near the oasis and real excavation depth.
   // Low outer corners therefore do not acquire an unrelated wet fringe.
   const lowBasin = (1 - smoothstep(-config.maxHeight * 0.13, 0.5, height)) * oasis;

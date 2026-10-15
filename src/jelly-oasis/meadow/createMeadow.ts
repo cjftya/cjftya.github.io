@@ -10,7 +10,7 @@ import {
 } from 'three';
 import type { BufferGeometry } from 'three';
 import type { VegetationSite } from '../vegetation/vegetationPlacement';
-import { MEADOW_KINDS, MEADOW_SEED } from './meadowConfig';
+import { MEADOW_KINDS, MEADOW_SEED, MEADOW_PATCHES } from './meadowConfig';
 import type { MeadowKind, MeadowVariant } from './meadowConfig';
 import { createMeadowGeometry } from './meadowGeometry';
 import { placeMeadow } from './meadowPlacement';
@@ -39,7 +39,10 @@ export function createMeadow(
           flatShading: true,
           roughness: 1,
         }),
-        256,
+        MEADOW_PATCHES.reduce(
+          (n, p) => n + Math.ceil(p.counts[MEADOW_KINDS.indexOf(kind)]! * 1.5),
+          0,
+        ),
       );
       mesh.name = `Meadow_${kind}`;
       mesh.count = 0;

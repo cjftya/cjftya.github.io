@@ -94,7 +94,8 @@ export function placeScenery(
         if (zone.basis === 'world') ({ x, z } = worldToLandmark(x, z, site));
         const scale =
             ((tree ? 0.64 + random() * 0.62 : 0.82 + random() * 0.32) *
-              SCENERY_SCALE[kind]) /
+              SCENERY_SCALE[kind] *
+              (zone.scale ?? 1)) /
             (zone.basis === 'world' ? site.placement.scale : 1),
           radius = shape.radius * scale,
           rotation = random() * Math.PI * 2,

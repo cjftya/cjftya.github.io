@@ -19,7 +19,10 @@ it('preserves the sanctuary and cut edges in both art alternatives', () => {
           const before = sampleTerrainHeight(x, z, legacy),
             after = sampleTerrainHeight(x, z, config);
           expect(Number.isFinite(after)).toBe(true);
-          expect(after).toBeGreaterThanOrEqual(before);
+          // Production may lower the old outer mound to avoid stacking cliffs.
+          // Canyon remains the additive inspection alternative.
+          if (variant === 2) expect(after).toBeGreaterThanOrEqual(before);
+          expect(after).toBeGreaterThan(-config.maxHeight);
           if (
             Math.hypot(x - 14, z - 14) <= 60 ||
             Math.max(Math.abs(x), Math.abs(z)) === size / 2

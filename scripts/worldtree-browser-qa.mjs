@@ -3,13 +3,14 @@ import { spawn } from 'node:child_process';
 import { mkdir, writeFile } from 'node:fs/promises';
 import assert from 'node:assert/strict';
 const output = process.env.OASIS_QA_OUTPUT ?? '/tmp/oasis-worldtree';
+const port = process.env.OASIS_QA_PORT ?? '5183';
 await mkdir(output, { recursive: true });
 const server = spawn(process.execPath, [
   'node_modules/vite/bin/vite.js',
   '--host',
   '127.0.0.1',
   '--port',
-  '5183',
+  port,
   '--strictPort',
 ]);
 await new Promise((r, j) => {
@@ -24,7 +25,7 @@ const browser = await chromium.launch({
   headless: true,
   args: ['--no-sandbox', '--use-angle=swiftshader', '--enable-unsafe-swiftshader'],
 });
-const result = { errors: [], states: {}, audits: {} };
+const result = { errors: [], states: {}, views: {}, audits: {} };
 async function environment(page, time = 12, weather = 'CLEAR') {
   await page.evaluate(
     ({ time, weather }) => {
@@ -59,6 +60,17 @@ async function capture(page, name, eye, target) {
     );
   await page.waitForTimeout(150);
   await page.screenshot({ path: `${output}/${name}.png` });
+  const s = await page.evaluate(() => window.__oasisLandmark.snapshot());
+  result.views[name] = {
+    calls: s.calls,
+    triangles: s.triangles,
+    geometries: s.geometries,
+    textures: s.textures,
+    camera: s.camera,
+    target: s.target,
+    scenery: s.scenery,
+    meadow: s.meadow,
+  };
 }
 try {
   for (const width of [1280, 390]) {
@@ -75,7 +87,7 @@ try {
     page.on('console', (m) => {
       if (m.type() === 'error') result.errors.push(m.text());
     });
-    await page.goto('http://127.0.0.1:5183/projects/jelly-oasis/?debug');
+    await page.goto(`http://127.0.0.1:${port}/projects/jelly-oasis/?debug`);
     await page.waitForFunction(
       () => window.__oasisLandmark?.snapshot().calls > 10,
       undefined,
