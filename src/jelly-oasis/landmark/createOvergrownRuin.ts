@@ -1,3 +1,4 @@
+import { createFantasySanctuary } from './createFantasySanctuary';
 import { createWorldTree } from './createWorldTree';
 import { createMeadow } from '../meadow/createMeadow';
 import { expandSacredLake, pondArea, SACRED_LAKE_BASIN } from './sacredLake';
@@ -283,6 +284,11 @@ export async function createOvergrownRuin(
     ? createLakeEcology(content, assets.modules, pondGuide)
     : undefined;
 
+  const fantasy =
+    aesthetic.sacred && crystalDetail
+      ? createFantasySanctuary(content, pondGuide, waterOptions.mobile)
+      : undefined;
+
   function localGround(x: number, z: number): number {
     const p = landmarkWorldPoint(x, z, placement);
     return (sampleGround(p.x, p.z, terrain) - root.position.y) / placement.scale;
@@ -563,6 +569,7 @@ export async function createOvergrownRuin(
     }
     worldTree?.place(localGround);
     lakeEcology?.place(localGround, pondHeight);
+    fantasy?.place(localGround, pondHeight);
     waterEffects?.rebuild();
     const obstacles =
       vegetationDensity === 'off' &&
@@ -573,6 +580,7 @@ export async function createOvergrownRuin(
         : [
             ...groundFootprints(root, assets.modules, terrain),
             ...(worldTree?.footprints() ?? []),
+            ...(fantasy?.footprints() ?? []),
           ];
     vegetation.refresh(placement, obstacles);
     composition.refresh(
@@ -676,6 +684,7 @@ export async function createOvergrownRuin(
     meadow,
     worldTree,
     lakeEcology,
+    fantasy,
     sacredLakeSnapshot: () =>
       aesthetic.sacred
         ? {
@@ -731,6 +740,7 @@ export async function createOvergrownRuin(
       scenery.group.visible = !name;
       meadow.group.visible = !name;
       if (worldTree) worldTree.group.visible = !name || name === 'WorldTreePrecinct';
+      if (fantasy) fantasy.group.visible = !name || name === 'FantasySanctuary';
       if (lakeEcology)
         lakeEcology.group.visible = !name || name === 'SacredLakeEcology';
     },
@@ -754,6 +764,7 @@ export async function createOvergrownRuin(
       disposed = true;
       worldTree?.dispose();
       lakeEcology?.dispose();
+      fantasy?.dispose();
       vegetation.dispose();
       composition.dispose();
       scenery.dispose();

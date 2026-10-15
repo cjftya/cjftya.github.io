@@ -1,3 +1,4 @@
+import { createSanctuaryBloom } from './environment/createSanctuaryBloom';
 import { selectMeadow } from './meadow/meadowConfig';
 import { selectScenery } from './scenery/sceneryConfig';
 import { createWorldConfig, selectWorldSize } from './terrain/worldLayout';
@@ -38,6 +39,15 @@ function start(canvas: HTMLCanvasElement): void {
   const scene = new Scene();
   const manager = new RendererManager(canvas);
   const renderer = manager.renderer;
+  if (debugEnabled)
+    renderer.debug.onShaderError = (gl, program, vertex, fragment) => {
+      console.error(
+        'Oasis shader compilation failed',
+        gl.getProgramInfoLog(program),
+        gl.getShaderInfoLog(vertex),
+        gl.getShaderInfoLog(fragment),
+      );
+    };
   const camera = new PerspectiveCamera(42, 1, 0.1, 1800);
   const controls = new OrbitControls(camera, canvas);
   controls.enableDamping = true;
@@ -53,6 +63,7 @@ function start(canvas: HTMLCanvasElement): void {
   const mobile =
     matchMedia('(pointer: coarse)').matches ||
     (navigator.hardwareConcurrency ?? 8) <= 4;
+  const bloom = createSanctuaryBloom(renderer, scene, camera, mobile);
   const motionPreference = matchMedia('(prefers-reduced-motion: reduce)');
   const environment = new EnvironmentController(
     scene,
@@ -127,6 +138,7 @@ function start(canvas: HTMLCanvasElement): void {
     const width = Math.max(canvas.clientWidth, 1);
     const height = Math.max(canvas.clientHeight, 1);
     manager.resize(width, height);
+    bloom.resize(width, height);
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
     if (overviewCamera) resetView(true);
@@ -417,6 +429,7 @@ function start(canvas: HTMLCanvasElement): void {
               sacredLake: loaded.sacredLakeSnapshot(),
               sanctuary: null,
               lakeEcology: loaded.lakeEcology?.snapshot() ?? null,
+              fantasy: loaded.fantasy?.snapshot() ?? null,
               vegetation: loaded.vegetation.snapshot(),
               composition: loaded.composition.snapshot(),
               scenery: loaded.scenery.snapshot(),
@@ -648,9 +661,18 @@ function start(canvas: HTMLCanvasElement): void {
       )
     )
       dirty = true;
+    if (
+      landmark?.fantasy?.update(
+        seconds,
+        environment.state.timeOfDay,
+        motionPreference.matches,
+        canvas.clientHeight * renderer.getPixelRatio(),
+      )
+    )
+      dirty = true;
     if (!dirty) return;
     const renderStart = debugEnabled ? performance.now() : 0;
-    renderer.render(scene, camera);
+    bloom.render(landmark?.fantasy?.night ?? 0);
     if (debugEnabled) {
       const end = performance.now();
       renderCpuMs = end - renderStart;
@@ -698,6 +720,7 @@ function start(canvas: HTMLCanvasElement): void {
     pondPanel?.remove();
     debugPanel?.dispose();
     motionPreference.removeEventListener('change', motionChanged);
+    bloom.dispose();
     manager.dispose();
     resetButton.removeEventListener('click', resetPresentation);
     controls.removeEventListener('start', releaseMediumCamera);
