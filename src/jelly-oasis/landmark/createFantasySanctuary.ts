@@ -14,6 +14,7 @@ import {
   Object3D,
   PlaneGeometry,
   PointLight,
+  SpotLight,
   Points,
   ShaderMaterial,
 } from 'three';
@@ -24,12 +25,66 @@ import type { LayoutGuide } from './landmarkConfig';
 
 // Asymmetric colonies frame the lake; the arch opening stays unobstructed.
 export const CRYSTAL_COLONIES = [
-  { x: -22, z: 11, height: 7.8, radius: 3.7, count: 9, palette: 0 },
-  { x: 22, z: -16, height: 5.8, radius: 3.0, count: 7, palette: 1 },
-  { x: -29, z: -23, height: 5.3, radius: 2.8, count: 7, palette: 0 },
-  { x: 18, z: 20, height: 4.1, radius: 2.6, count: 6, palette: 0 },
-  { x: -42, z: 5, height: 3.6, radius: 2.4, count: 5, palette: 1 },
-  { x: 12, z: -37, height: 4.6, radius: 2.7, count: 6, palette: 1 },
+  {
+    x: -24,
+    z: 8,
+    height: 8.4,
+    radius: 3.8,
+    count: 9,
+    palette: 0,
+    rotation: 0.3,
+    burial: 0.055,
+  },
+  {
+    x: 23,
+    z: -18,
+    height: 5.5,
+    radius: 3.1,
+    count: 7,
+    palette: 1,
+    rotation: 1.4,
+    burial: 0.1,
+  },
+  {
+    x: -31,
+    z: -26,
+    height: 4.6,
+    radius: 2.7,
+    count: 7,
+    palette: 0,
+    rotation: 2.5,
+    burial: 0.13,
+  },
+  {
+    x: 21,
+    z: 17,
+    height: 2.9,
+    radius: 2.0,
+    count: 6,
+    palette: 0,
+    rotation: 0.8,
+    burial: 0.12,
+  },
+  {
+    x: -40,
+    z: -1,
+    height: 3.0,
+    radius: 2.2,
+    count: 5,
+    palette: 1,
+    rotation: 3.8,
+    burial: 0.14,
+  },
+  {
+    x: 3,
+    z: -40,
+    height: 3.4,
+    radius: 2.5,
+    count: 6,
+    palette: 1,
+    rotation: 5.1,
+    burial: 0.16,
+  },
 ] as const;
 const palettes = ['#a582e2', '#65d0c7'];
 const fract = (n: number) => n - Math.floor(n);
@@ -168,7 +223,11 @@ export function createFantasySanctuary(
         blending: AdditiveBlending,
       }),
   );
-  const treeLight = new PointLight('#97cbd7', 0, 52, 2);
+  // A distant, softly feathered moon bounce avoids point-light hotspots inside
+  // the canopy. The cone favours the branch forks over the ground and backdrop.
+  // It replaces the existing unshadowed light on both quality tiers.
+  const treeLight = new SpotLight('#bdd4ed', 0, 180, 0.55, 1, 0);
+  treeLight.name = 'WorldTreeMoonBounce';
   const crystalLight = mobile ? null : new PointLight('#b19ade', 0, 24, 2);
   const mistMaterial = new ShaderMaterial({
     uniforms: { elapsed: { value: 0 }, opacity: { value: 0 } },
@@ -220,14 +279,15 @@ export function createFantasySanctuary(
       anchors.push({ x, y, z, height });
       const tint = new Color(palettes[palette]);
       for (let j = 0; j < count; j++) {
-        const angle = j * 2.39996 + index * 0.83;
+        const angle = j * 2.39996 + colony.rotation;
         const r = j === 0 ? 0 : radius * (0.45 + noise(j + index * 13) * 0.55);
         const px = x + Math.cos(angle) * r,
           pz = z + Math.sin(angle) * r * 0.7;
         const h = height * (j === 0 ? 1 : 0.24 + noise(j * 7 + index) * 0.4);
         const width = h * (0.19 + noise(j * 4 + index) * 0.055);
         const floor = ground(px, pz);
-        dummy.position.set(px, floor - 0.22, pz);
+        const buried = 0.16 + h * colony.burial;
+        dummy.position.set(px, floor - buried, pz);
         dummy.rotation.set(
           Math.cos(angle) * (j ? 0.22 : 0.06),
           angle,
@@ -237,7 +297,7 @@ export function createFantasySanctuary(
         dummy.updateMatrix();
         shards[palette]!.push(source.clone().applyMatrix4(dummy.matrix));
         if (j < 3) {
-          glowPositions.push(px, floor + h * 0.65, pz);
+          glowPositions.push(px, floor - buried + h * 0.65, pz);
           glowSizes.push(h * 1.2);
           glowColors.push(tint.r, tint.g, tint.b);
         }
@@ -249,7 +309,8 @@ export function createFantasySanctuary(
           pz = z + Math.sin(a) * r * 0.8;
         dummy.position.set(px, ground(px, pz) - 0.1, pz);
         dummy.rotation.set(j * 0.7, a, 0.2);
-        const s = 0.45 + noise(j * 3 + index) * 0.65;
+        // A few larger host stones conceal the base; smaller debris trails off.
+        const s = (0.45 + noise(j * 3 + index) * 0.65) * (j < 3 ? 1.65 : 1);
         dummy.scale.set(s * 1.4, s * 0.65, s);
         dummy.updateMatrix();
         rocks.push(dummy.matrix.clone());
@@ -260,7 +321,9 @@ export function createFantasySanctuary(
       }
       for (let j = 0; j < (mobile ? 24 : 40); j++) {
         const a = j * 2.399,
-          r = radius + 0.8 + noise(j + index * 43) * 2.6;
+          r =
+            (radius + 0.8 + noise(j + index * 43) * 2.6) *
+            (0.65 + 0.35 * Math.sin(a * 2 + colony.rotation) ** 2);
         const px = x + Math.cos(a) * r,
           pz = z + Math.sin(a) * r * 0.7;
         if (polygonDistance(px, pz, pond.positions) > -0.6) continue;
@@ -351,10 +414,13 @@ export function createFantasySanctuary(
       colors.push(tint.r, tint.g, tint.b);
     }
     points('SanctuaryFireflies', positions, sizes, colors, particleMaterials[0]!);
-    treeLight.position.set(-12, ground(-12, -18) + 14, 3);
-    group.add(treeLight);
+    const treeGround = ground(-12, -18);
+    treeLight.position.set(-38, treeGround + 70, 70);
+    treeLight.target.position.set(-12, treeGround + 34, -18);
+    group.add(treeLight, treeLight.target);
     if (crystalLight) {
-      crystalLight.position.set(-22, ground(-22, 11) + 3.2, 11);
+      const hero = CRYSTAL_COLONIES[0];
+      crystalLight.position.set(hero.x, ground(hero.x, hero.z) + 3.2, hero.z);
       group.add(crystalLight);
     }
     const mistGeometry = new PlaneGeometry(14, 5);
@@ -397,7 +463,7 @@ export function createFantasySanctuary(
           : 0.94 + 0.06 * Math.sin(elapsed * 0.55 + i * 2.1);
         m.emissiveIntensity = MathUtils.lerp(0.26, i === 0 ? 3.0 : 2.2, night) * pulse;
       });
-      treeLight.intensity = night * 80;
+      treeLight.intensity = night * 1.1;
       if (crystalLight) crystalLight.intensity = night * 18;
       mistMaterial.uniforms.elapsed!.value = elapsed;
       mistMaterial.uniforms.opacity!.value = night * 0.1;
@@ -429,6 +495,8 @@ export function createFantasySanctuary(
         mistMaterial,
         ...particleMaterials,
       ].forEach((m) => m.dispose());
+      treeLight.dispose();
+      crystalLight?.dispose();
       group.removeFromParent();
     },
   };

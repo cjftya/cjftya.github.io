@@ -57,7 +57,7 @@ export function foliageCrown(
   seed: number,
   mobile: boolean,
 ) {
-  const palette = ['#6e9147', '#95ad56', '#466e44'].map((c) => new Color(c));
+  const palette = ['#578745', '#87a85b', '#365e43'].map((c) => new Color(c));
   const parts: BufferGeometry[] = [];
   const count = mobile ? 28 : 42;
   for (let i = 0; i < count; i++) {

@@ -9,10 +9,10 @@ import type { TerrainConfig } from './heightfield';
 export const TERRAIN_PALETTE = {
   meadow: '#929f68',
   dry: '#b3a17e',
-  oasis: '#6f9475',
+  oasis: '#65937b',
   grove: '#7b8963',
   damp: '#547b72',
-  shoulder: '#a39b87',
+  shoulder: '#95988a',
   dirt: '#aa9378',
   rock: '#98968d',
 } as const;

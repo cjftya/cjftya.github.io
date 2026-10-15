@@ -24,7 +24,8 @@ float slope = clamp(1.0 - surfaceNormal.y, 0.0, 1.0);
 float macro = texture2D(terrainDetail, vTerrainWorld.xz / 384.0).a - 0.5;
 float highland = smoothstep(terrainHeight * 0.35, terrainHeight, vTerrainWorld.y);
 // Broad, continuous thresholds calibrated against the actual gentle heightfield.
-float exposure = max(0.0, slope + macro * terrainMacro * 0.025);
+// Existing macro sample breaks up the long exposed hillside into broad pockets.
+float exposure = max(0.0, slope + macro * terrainMacro * 0.055);
 float soil = smoothstep(terrainSlopes.x, terrainSlopes.y, exposure);
 float stone = smoothstep(terrainSlopes.z, terrainSlopes.w, exposure);
 soil = clamp(soil + highland * 0.14, 0.0, 1.0);
@@ -57,6 +58,8 @@ grass = mix(grass, mix(regional,terrainDirt,.33), dryPatch*.35);
 ${meadowFieldGLSL}
 vec3 dirt = mix(terrainDirt, regional, 0.12) * (1.0 + (dirtDetail - 0.5) * 0.16);
 vec3 rock = mix(terrainRock, regional, 0.08) * (1.0 + (rockDetail - 0.5) * 0.20) * (1.0 + .025*sin(vTerrainWorld.y*1.4));
+float rockMoss = smoothstep(.43,.63,grassDetail + macro*.2) * (1.-smoothstep(.14,.3,slope)) * (1.-vTerrainBasin);
+rock = mix(rock, mix(terrainRock, regional * vec3(.78,.94,.84), .62), rockMoss * .32);
 vec3 surface = grass * weights.x + dirt * weights.y + rock * weights.z;
 surface *= 1.0 + macro * terrainMacro * 0.12;
 diffuseColor.rgb *= surface;

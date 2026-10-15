@@ -97,6 +97,28 @@ export const SCENERY_ZONES: readonly SceneryZone[] = [
     counts: { broad: 10, young: 10, spire: 3 },
   },
   {
+    // Unequal pockets on the shelf faces, leaving the ridge tops and hero clear.
+    id: 'east-shelf-understory',
+    basis: 'world',
+    centers: [
+      [0.26, -0.25],
+      [0.32, -0.12],
+    ],
+    radius: 8,
+    scale: 0.55,
+    priority: true,
+    counts: { young: 12, boulder: 8, ridge: 3 },
+  },
+  {
+    id: 'west-shelf-understory',
+    basis: 'world',
+    centers: [[-0.28, -0.23]],
+    radius: 9,
+    scale: 0.5,
+    priority: true,
+    counts: { young: 7, boulder: 5, ridge: 2 },
+  },
+  {
     id: 'foreground-rock-banks',
     basis: 'world',
     centers: [

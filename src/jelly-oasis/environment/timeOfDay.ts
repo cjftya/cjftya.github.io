@@ -46,7 +46,7 @@ const KEYS = [
   key(4, 0, 0.68, 1, 0x222c50, 0x646584, 0xabbcf0),
   key(5.5, 0.12, 0.85, 0.3, 0x697b9e, 0xe0b6b0, 0xffb27a),
   key(7, 1.75, 1.2, 0, 0x80b6cc, 0xede1c5, 0xffd09a),
-  key(12, 2.5, 1.65, 0, 0x69a9c7, 0xdce7d6, 0xffefd0),
+  key(12, 2.5, 1.5, 0, 0x69a9c7, 0xdce7d6, 0xfff4e4),
   key(16, 2.0, 1.45, 0, 0x8ab4c8, 0xe9dbc2, 0xffdbb0),
   key(18, 1.1, 1.02, 0, 0x777ca7, 0xe9b39a, 0xffa461),
   key(19.5, 0, 0.73, 0.65, 0x393c67, 0x9c8096, 0xd2a9d8),
