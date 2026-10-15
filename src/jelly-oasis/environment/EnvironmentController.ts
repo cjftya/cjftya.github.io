@@ -38,9 +38,9 @@ export class EnvironmentController {
   private readonly timeFrame = createTimeFrame();
   private readonly overcastZenith = new Color('#85949f');
   private readonly overcastHorizon = new Color('#bac5c0');
-  private readonly dayAmbient = new Color('#f2edd6');
+  private readonly dayAmbient = new Color('#e2eeeb');
   private readonly nightAmbient = new Color('#afc2e9');
-  private readonly dayGround = new Color('#687359');
+  private readonly dayGround = new Color('#637664');
   private readonly nightGround = new Color('#5f698e');
   private readonly cloudDay = new Color('#fff3de');
   private readonly cloudNight = new Color('#818cab');
@@ -220,7 +220,11 @@ export class EnvironmentController {
     this.rain.mesh.position.copy(camera.position);
     this.sky.starMaterial.uniforms.pixelRatio!.value = pixelRatio;
     // Camera-relative fog preserves the terrain at both close and overview zoom.
-    this.fog.near = Math.max(25, distance - 140);
+    // Keep the focal basin clear in fair weather; mist/rain retain their veil.
+    this.fog.near = Math.max(
+      25,
+      distance - MathUtils.lerp(75, 140, this.profile.fogStrength),
+    );
     this.fog.far = distance + 600 - this.profile.fogStrength * 390;
     this.scene.fog = this.fogEnabled ? this.fog : null;
     const needsUpdate = this.changed || advancing || transitioning;
