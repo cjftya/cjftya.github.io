@@ -1,0 +1,929 @@
+{
+  "errors": [],
+  "views": {
+    "desktop-day": {
+      "fantasy": {
+        "colonies": [
+          {
+            "x": -22,
+            "y": 2.4621407233079546,
+            "z": 11,
+            "height": 7.8
+          },
+          {
+            "x": 22,
+            "y": 2.9380086883697225,
+            "z": -16,
+            "height": 5.8
+          },
+          {
+            "x": -29,
+            "y": 5.459947683298618,
+            "z": -23,
+            "height": 5.3
+          },
+          {
+            "x": 18,
+            "y": 2.269692076146202,
+            "z": 20,
+            "height": 4.1
+          },
+          {
+            "x": -42,
+            "y": 5.367946964984597,
+            "z": 5,
+            "height": 3.6
+          },
+          {
+            "x": 12,
+            "y": 5.319992175863556,
+            "z": -37,
+            "height": 4.6
+          }
+        ],
+        "shards": 40,
+        "particles": 144,
+        "night": 0,
+        "elapsed": 0
+      },
+      "water": {
+        "version": 1,
+        "flightDuration": 0,
+        "impact": null,
+        "path": [],
+        "pondOnly": true,
+        "water": true,
+        "waterfall": false,
+        "solver": "gpgpu-heightfield",
+        "gpuError": null,
+        "gpuPond": {
+          "active": true,
+          "n": 128,
+          "bounds": [
+            -13.34000015258789,
+            -4.065185546875,
+            25.551111221313477,
+            22.285184860229492
+          ],
+          "inlet": [
+            0,
+            0
+          ],
+          "diagnosticPoint": [
+            -0.5644445419311523,
+            7.077406883239746
+          ],
+          "steps": 0,
+          "computePasses": 0,
+          "maxSubsteps": 3,
+          "dropped": 0,
+          "updateCpuMs": 0,
+          "flowRate": 1,
+          "automaticInlet": false,
+          "paused": false,
+          "amplitude": 1,
+          "neutral": false,
+          "damping": 0.995,
+          "waveSpeed": 3.5,
+          "renderTargets": 2,
+          "targetBytes": 262144,
+          "shorelineFade": 0.8,
+          "channelFade": 1
+        },
+        "cpuPond": null,
+        "impulses": {
+          "ambient": 0,
+          "rain": 0,
+          "dropped": 0,
+          "elapsed": 0,
+          "averageRate": 0,
+          "candidates": 9586,
+          "last": null
+        },
+        "reflection": {
+          "size": 768,
+          "version": 4,
+          "vertices": 16764,
+          "triangles": 33268,
+          "captures": 2,
+          "passes": 2,
+          "captured": true,
+          "impact": [
+            0,
+            0,
+            0
+          ],
+          "flowDirection": [
+            0,
+            1
+          ]
+        },
+        "elapsed": 0,
+        "rockFlowCount": 0,
+        "rockPaths": [],
+        "droplets": 0,
+        "ripples": 0,
+        "regions": [
+          "pond"
+        ],
+        "triangles": 0,
+        "fallingFlow": null,
+        "flowError": null,
+        "channelStates": [],
+        "fluid": null
+      },
+      "camera": {
+        "polar": 1.1648601086173116,
+        "azimuth": 0.6102564808556273,
+        "minPolar": 0.01,
+        "maxPolar": 3.1315926535897933
+      }
+    },
+    "desktop-dusk": {
+      "fantasy": {
+        "colonies": [
+          {
+            "x": -22,
+            "y": 2.4621407233079546,
+            "z": 11,
+            "height": 7.8
+          },
+          {
+            "x": 22,
+            "y": 2.9380086883697225,
+            "z": -16,
+            "height": 5.8
+          },
+          {
+            "x": -29,
+            "y": 5.459947683298618,
+            "z": -23,
+            "height": 5.3
+          },
+          {
+            "x": 18,
+            "y": 2.269692076146202,
+            "z": 20,
+            "height": 4.1
+          },
+          {
+            "x": -42,
+            "y": 5.367946964984597,
+            "z": 5,
+            "height": 3.6
+          },
+          {
+            "x": 12,
+            "y": 5.319992175863556,
+            "z": -37,
+            "height": 4.6
+          }
+        ],
+        "shards": 40,
+        "particles": 144,
+        "night": 0.48148148148148145,
+        "elapsed": 0
+      },
+      "water": {
+        "version": 1,
+        "flightDuration": 0,
+        "impact": null,
+        "path": [],
+        "pondOnly": true,
+        "water": true,
+        "waterfall": false,
+        "solver": "gpgpu-heightfield",
+        "gpuError": null,
+        "gpuPond": {
+          "active": true,
+          "n": 128,
+          "bounds": [
+            -13.34000015258789,
+            -4.065185546875,
+            25.551111221313477,
+            22.285184860229492
+          ],
+          "inlet": [
+            0,
+            0
+          ],
+          "diagnosticPoint": [
+            -0.5644445419311523,
+            7.077406883239746
+          ],
+          "steps": 0,
+          "computePasses": 0,
+          "maxSubsteps": 3,
+          "dropped": 0,
+          "updateCpuMs": 0,
+          "flowRate": 1,
+          "automaticInlet": false,
+          "paused": false,
+          "amplitude": 1,
+          "neutral": false,
+          "damping": 0.995,
+          "waveSpeed": 3.5,
+          "renderTargets": 2,
+          "targetBytes": 262144,
+          "shorelineFade": 0.8,
+          "channelFade": 1
+        },
+        "cpuPond": null,
+        "impulses": {
+          "ambient": 0,
+          "rain": 0,
+          "dropped": 0,
+          "elapsed": 0,
+          "averageRate": 0,
+          "candidates": 9586,
+          "last": null
+        },
+        "reflection": {
+          "size": 768,
+          "version": 4,
+          "vertices": 16764,
+          "triangles": 33268,
+          "captures": 3,
+          "passes": 2,
+          "captured": true,
+          "impact": [
+            0,
+            0,
+            0
+          ],
+          "flowDirection": [
+            0,
+            1
+          ]
+        },
+        "elapsed": 0,
+        "rockFlowCount": 0,
+        "rockPaths": [],
+        "droplets": 0,
+        "ripples": 0,
+        "regions": [
+          "pond"
+        ],
+        "triangles": 0,
+        "fallingFlow": null,
+        "flowError": null,
+        "channelStates": [],
+        "fluid": null
+      },
+      "camera": {
+        "polar": 1.1648601086173116,
+        "azimuth": 0.6102564808556273,
+        "minPolar": 0.01,
+        "maxPolar": 3.1315926535897933
+      }
+    },
+    "desktop-night": {
+      "fantasy": {
+        "colonies": [
+          {
+            "x": -22,
+            "y": 2.4621407233079546,
+            "z": 11,
+            "height": 7.8
+          },
+          {
+            "x": 22,
+            "y": 2.9380086883697225,
+            "z": -16,
+            "height": 5.8
+          },
+          {
+            "x": -29,
+            "y": 5.459947683298618,
+            "z": -23,
+            "height": 5.3
+          },
+          {
+            "x": 18,
+            "y": 2.269692076146202,
+            "z": 20,
+            "height": 4.1
+          },
+          {
+            "x": -42,
+            "y": 5.367946964984597,
+            "z": 5,
+            "height": 3.6
+          },
+          {
+            "x": 12,
+            "y": 5.319992175863556,
+            "z": -37,
+            "height": 4.6
+          }
+        ],
+        "shards": 40,
+        "particles": 144,
+        "night": 1,
+        "elapsed": 0
+      },
+      "water": {
+        "version": 1,
+        "flightDuration": 0,
+        "impact": null,
+        "path": [],
+        "pondOnly": true,
+        "water": true,
+        "waterfall": false,
+        "solver": "gpgpu-heightfield",
+        "gpuError": null,
+        "gpuPond": {
+          "active": true,
+          "n": 128,
+          "bounds": [
+            -13.34000015258789,
+            -4.065185546875,
+            25.551111221313477,
+            22.285184860229492
+          ],
+          "inlet": [
+            0,
+            0
+          ],
+          "diagnosticPoint": [
+            -0.5644445419311523,
+            7.077406883239746
+          ],
+          "steps": 0,
+          "computePasses": 0,
+          "maxSubsteps": 3,
+          "dropped": 0,
+          "updateCpuMs": 0,
+          "flowRate": 1,
+          "automaticInlet": false,
+          "paused": false,
+          "amplitude": 1,
+          "neutral": false,
+          "damping": 0.995,
+          "waveSpeed": 3.5,
+          "renderTargets": 2,
+          "targetBytes": 262144,
+          "shorelineFade": 0.8,
+          "channelFade": 1
+        },
+        "cpuPond": null,
+        "impulses": {
+          "ambient": 0,
+          "rain": 0,
+          "dropped": 0,
+          "elapsed": 0,
+          "averageRate": 0,
+          "candidates": 9586,
+          "last": null
+        },
+        "reflection": {
+          "size": 768,
+          "version": 4,
+          "vertices": 16764,
+          "triangles": 33268,
+          "captures": 4,
+          "passes": 2,
+          "captured": true,
+          "impact": [
+            0,
+            0,
+            0
+          ],
+          "flowDirection": [
+            0,
+            1
+          ]
+        },
+        "elapsed": 0,
+        "rockFlowCount": 0,
+        "rockPaths": [],
+        "droplets": 0,
+        "ripples": 0,
+        "regions": [
+          "pond"
+        ],
+        "triangles": 0,
+        "fallingFlow": null,
+        "flowError": null,
+        "channelStates": [],
+        "fluid": null
+      },
+      "camera": {
+        "polar": 1.1648601086173116,
+        "azimuth": 0.6102564808556273,
+        "minPolar": 0.01,
+        "maxPolar": 3.1315926535897933
+      }
+    },
+    "mobile-day": {
+      "fantasy": {
+        "colonies": [
+          {
+            "x": -22,
+            "y": 2.4621407233079546,
+            "z": 11,
+            "height": 7.8
+          },
+          {
+            "x": 22,
+            "y": 2.9380086883697225,
+            "z": -16,
+            "height": 5.8
+          },
+          {
+            "x": -29,
+            "y": 5.459947683298618,
+            "z": -23,
+            "height": 5.3
+          },
+          {
+            "x": 18,
+            "y": 2.269692076146202,
+            "z": 20,
+            "height": 4.1
+          },
+          {
+            "x": -42,
+            "y": 5.367946964984597,
+            "z": 5,
+            "height": 3.6
+          },
+          {
+            "x": 12,
+            "y": 5.319992175863556,
+            "z": -37,
+            "height": 4.6
+          }
+        ],
+        "shards": 40,
+        "particles": 72,
+        "night": 0,
+        "elapsed": 0
+      },
+      "water": {
+        "version": 1,
+        "flightDuration": 0,
+        "impact": null,
+        "path": [],
+        "pondOnly": true,
+        "water": true,
+        "waterfall": false,
+        "solver": "gpgpu-heightfield",
+        "gpuError": null,
+        "gpuPond": {
+          "active": true,
+          "n": 64,
+          "bounds": [
+            -13.34000015258789,
+            -4.065185546875,
+            25.551111221313477,
+            22.285184860229492
+          ],
+          "inlet": [
+            0,
+            0
+          ],
+          "diagnosticPoint": [
+            -0.5644445419311523,
+            7.077406883239746
+          ],
+          "steps": 0,
+          "computePasses": 0,
+          "maxSubsteps": 3,
+          "dropped": 0,
+          "updateCpuMs": 0,
+          "flowRate": 1,
+          "automaticInlet": false,
+          "paused": false,
+          "amplitude": 1,
+          "neutral": false,
+          "damping": 0.995,
+          "waveSpeed": 3.5,
+          "renderTargets": 2,
+          "targetBytes": 65536,
+          "shorelineFade": 0.8,
+          "channelFade": 1
+        },
+        "cpuPond": null,
+        "impulses": {
+          "ambient": 0,
+          "rain": 0,
+          "dropped": 0,
+          "elapsed": 0,
+          "averageRate": 0,
+          "candidates": 2397,
+          "last": null
+        },
+        "reflection": {
+          "size": 256,
+          "version": 4,
+          "vertices": 6614,
+          "triangles": 13057,
+          "captures": 2,
+          "passes": 2,
+          "captured": true,
+          "impact": [
+            0,
+            0,
+            0
+          ],
+          "flowDirection": [
+            0,
+            1
+          ]
+        },
+        "elapsed": 0,
+        "rockFlowCount": 0,
+        "rockPaths": [],
+        "droplets": 0,
+        "ripples": 0,
+        "regions": [
+          "pond"
+        ],
+        "triangles": 0,
+        "fallingFlow": null,
+        "flowError": null,
+        "channelStates": [],
+        "fluid": null
+      },
+      "camera": {
+        "polar": 1.1648601086173116,
+        "azimuth": 0.6102564808556272,
+        "minPolar": 0.01,
+        "maxPolar": 3.1315926535897933
+      }
+    },
+    "mobile-dusk": {
+      "fantasy": {
+        "colonies": [
+          {
+            "x": -22,
+            "y": 2.4621407233079546,
+            "z": 11,
+            "height": 7.8
+          },
+          {
+            "x": 22,
+            "y": 2.9380086883697225,
+            "z": -16,
+            "height": 5.8
+          },
+          {
+            "x": -29,
+            "y": 5.459947683298618,
+            "z": -23,
+            "height": 5.3
+          },
+          {
+            "x": 18,
+            "y": 2.269692076146202,
+            "z": 20,
+            "height": 4.1
+          },
+          {
+            "x": -42,
+            "y": 5.367946964984597,
+            "z": 5,
+            "height": 3.6
+          },
+          {
+            "x": 12,
+            "y": 5.319992175863556,
+            "z": -37,
+            "height": 4.6
+          }
+        ],
+        "shards": 40,
+        "particles": 72,
+        "night": 0.48148148148148145,
+        "elapsed": 0
+      },
+      "water": {
+        "version": 1,
+        "flightDuration": 0,
+        "impact": null,
+        "path": [],
+        "pondOnly": true,
+        "water": true,
+        "waterfall": false,
+        "solver": "gpgpu-heightfield",
+        "gpuError": null,
+        "gpuPond": {
+          "active": true,
+          "n": 64,
+          "bounds": [
+            -13.34000015258789,
+            -4.065185546875,
+            25.551111221313477,
+            22.285184860229492
+          ],
+          "inlet": [
+            0,
+            0
+          ],
+          "diagnosticPoint": [
+            -0.5644445419311523,
+            7.077406883239746
+          ],
+          "steps": 0,
+          "computePasses": 0,
+          "maxSubsteps": 3,
+          "dropped": 0,
+          "updateCpuMs": 0,
+          "flowRate": 1,
+          "automaticInlet": false,
+          "paused": false,
+          "amplitude": 1,
+          "neutral": false,
+          "damping": 0.995,
+          "waveSpeed": 3.5,
+          "renderTargets": 2,
+          "targetBytes": 65536,
+          "shorelineFade": 0.8,
+          "channelFade": 1
+        },
+        "cpuPond": null,
+        "impulses": {
+          "ambient": 0,
+          "rain": 0,
+          "dropped": 0,
+          "elapsed": 0,
+          "averageRate": 0,
+          "candidates": 2397,
+          "last": null
+        },
+        "reflection": {
+          "size": 256,
+          "version": 4,
+          "vertices": 6614,
+          "triangles": 13057,
+          "captures": 3,
+          "passes": 2,
+          "captured": true,
+          "impact": [
+            0,
+            0,
+            0
+          ],
+          "flowDirection": [
+            0,
+            1
+          ]
+        },
+        "elapsed": 0,
+        "rockFlowCount": 0,
+        "rockPaths": [],
+        "droplets": 0,
+        "ripples": 0,
+        "regions": [
+          "pond"
+        ],
+        "triangles": 0,
+        "fallingFlow": null,
+        "flowError": null,
+        "channelStates": [],
+        "fluid": null
+      },
+      "camera": {
+        "polar": 1.1648601086173116,
+        "azimuth": 0.6102564808556272,
+        "minPolar": 0.01,
+        "maxPolar": 3.1315926535897933
+      }
+    },
+    "mobile-night": {
+      "fantasy": {
+        "colonies": [
+          {
+            "x": -22,
+            "y": 2.4621407233079546,
+            "z": 11,
+            "height": 7.8
+          },
+          {
+            "x": 22,
+            "y": 2.9380086883697225,
+            "z": -16,
+            "height": 5.8
+          },
+          {
+            "x": -29,
+            "y": 5.459947683298618,
+            "z": -23,
+            "height": 5.3
+          },
+          {
+            "x": 18,
+            "y": 2.269692076146202,
+            "z": 20,
+            "height": 4.1
+          },
+          {
+            "x": -42,
+            "y": 5.367946964984597,
+            "z": 5,
+            "height": 3.6
+          },
+          {
+            "x": 12,
+            "y": 5.319992175863556,
+            "z": -37,
+            "height": 4.6
+          }
+        ],
+        "shards": 40,
+        "particles": 72,
+        "night": 1,
+        "elapsed": 0
+      },
+      "water": {
+        "version": 1,
+        "flightDuration": 0,
+        "impact": null,
+        "path": [],
+        "pondOnly": true,
+        "water": true,
+        "waterfall": false,
+        "solver": "gpgpu-heightfield",
+        "gpuError": null,
+        "gpuPond": {
+          "active": true,
+          "n": 64,
+          "bounds": [
+            -13.34000015258789,
+            -4.065185546875,
+            25.551111221313477,
+            22.285184860229492
+          ],
+          "inlet": [
+            0,
+            0
+          ],
+          "diagnosticPoint": [
+            -0.5644445419311523,
+            7.077406883239746
+          ],
+          "steps": 0,
+          "computePasses": 0,
+          "maxSubsteps": 3,
+          "dropped": 0,
+          "updateCpuMs": 0,
+          "flowRate": 1,
+          "automaticInlet": false,
+          "paused": false,
+          "amplitude": 1,
+          "neutral": false,
+          "damping": 0.995,
+          "waveSpeed": 3.5,
+          "renderTargets": 2,
+          "targetBytes": 65536,
+          "shorelineFade": 0.8,
+          "channelFade": 1
+        },
+        "cpuPond": null,
+        "impulses": {
+          "ambient": 0,
+          "rain": 0,
+          "dropped": 0,
+          "elapsed": 0,
+          "averageRate": 0,
+          "candidates": 2397,
+          "last": null
+        },
+        "reflection": {
+          "size": 256,
+          "version": 4,
+          "vertices": 6614,
+          "triangles": 13057,
+          "captures": 4,
+          "passes": 2,
+          "captured": true,
+          "impact": [
+            0,
+            0,
+            0
+          ],
+          "flowDirection": [
+            0,
+            1
+          ]
+        },
+        "elapsed": 0,
+        "rockFlowCount": 0,
+        "rockPaths": [],
+        "droplets": 0,
+        "ripples": 0,
+        "regions": [
+          "pond"
+        ],
+        "triangles": 0,
+        "fallingFlow": null,
+        "flowError": null,
+        "channelStates": [],
+        "fluid": null
+      },
+      "camera": {
+        "polar": 1.1648601086173116,
+        "azimuth": 0.6102564808556272,
+        "minPolar": 0.01,
+        "maxPolar": 3.1315926535897933
+      }
+    }
+  },
+  "interactions": {
+    "desktop": {
+      "fantasy": {
+        "colonies": [
+          {
+            "x": -22,
+            "y": 2.4621407233079546,
+            "z": 11,
+            "height": 7.8
+          },
+          {
+            "x": 22,
+            "y": 2.9380086883697225,
+            "z": -16,
+            "height": 5.8
+          },
+          {
+            "x": -29,
+            "y": 5.459947683298618,
+            "z": -23,
+            "height": 5.3
+          },
+          {
+            "x": 18,
+            "y": 2.269692076146202,
+            "z": 20,
+            "height": 4.1
+          },
+          {
+            "x": -42,
+            "y": 5.367946964984597,
+            "z": 5,
+            "height": 3.6
+          },
+          {
+            "x": 12,
+            "y": 5.319992175863556,
+            "z": -37,
+            "height": 4.6
+          }
+        ],
+        "shards": 40,
+        "particles": 144,
+        "night": 1,
+        "elapsed": 0.21670000000000073
+      },
+      "weather": "RAIN"
+    },
+    "mobile": {
+      "fantasy": {
+        "colonies": [
+          {
+            "x": -22,
+            "y": 2.4621407233079546,
+            "z": 11,
+            "height": 7.8
+          },
+          {
+            "x": 22,
+            "y": 2.9380086883697225,
+            "z": -16,
+            "height": 5.8
+          },
+          {
+            "x": -29,
+            "y": 5.459947683298618,
+            "z": -23,
+            "height": 5.3
+          },
+          {
+            "x": 18,
+            "y": 2.269692076146202,
+            "z": 20,
+            "height": 4.1
+          },
+          {
+            "x": -42,
+            "y": 5.367946964984597,
+            "z": 5,
+            "height": 3.6
+          },
+          {
+            "x": 12,
+            "y": 5.319992175863556,
+            "z": -37,
+            "height": 4.6
+          }
+        ],
+        "shards": 40,
+        "particles": 72,
+        "night": 1,
+        "elapsed": 0.2001000000000004
+      },
+      "weather": "RAIN"
+    }
+  }
+}

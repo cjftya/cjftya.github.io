@@ -49,6 +49,11 @@ vec3 regional = terrainGrass;
 regional = vColor.rgb;
 #endif
 vec3 grass = regional * (1.0 + (grassDetail - 0.5) * 0.12);
+// Reuse existing samples for soft moss/soil mottling without another fetch.
+float mossPatch = smoothstep(.40,.64,grassDetail + macro*.22) * (1.-stone) * (1.-vTerrainBasin);
+grass = mix(grass, regional * vec3(.80,.94,.87), mossPatch * .42);
+float dryPatch = smoothstep(.55,.72,dirtDetail - macro*.12) * (1.-vTerrainBasin);
+grass = mix(grass, mix(regional,terrainDirt,.33), dryPatch*.35);
 ${meadowFieldGLSL}
 vec3 dirt = mix(terrainDirt, regional, 0.12) * (1.0 + (dirtDetail - 0.5) * 0.16);
 vec3 rock = mix(terrainRock, regional, 0.08) * (1.0 + (rockDetail - 0.5) * 0.20) * (1.0 + .025*sin(vTerrainWorld.y*1.4));
