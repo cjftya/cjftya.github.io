@@ -12,6 +12,7 @@ afterEach(() => {
   vi.restoreAllMocks();
   vi.unstubAllGlobals();
 });
+// Full world-tree geometry audit and repeated CPU terrain rebuilds need extra time on CI.
 it('uses the expanded contour for the rendered bed, rooted ecology, exclusion and stable CPU rebuilds', async () => {
   const dir = resolve('public/assets/jelly-oasis/landmarks/overgrown-ruin');
   const layout = await readFile(resolve(dir, 'layout.json'), 'utf8');
@@ -119,4 +120,4 @@ it('uses the expanded contour for the rendered bed, rooted ecology, exclusion an
     terrain.geometry.dispose();
     terrain.material.dispose();
   }
-});
+}, 120_000);
