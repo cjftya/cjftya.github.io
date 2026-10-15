@@ -63,6 +63,9 @@ export function createScenery(
     q = new Quaternion(),
     up = new Vector3(0, 1, 0),
     color = new Color();
+  const priorityZones = new Set(
+    SCENERY_ZONES.filter((z) => z.priority).map((z) => z.id),
+  );
   function refresh(site: VegetationSite, occupied: readonly Occupied[]) {
     if (disposed) return;
     placement = placeScenery(site, occupied, footprints, variant);
@@ -70,8 +73,14 @@ export function createScenery(
       let count = 0,
         ordinal = 0;
       for (const p of placement.instances.filter((p) => p.kind === kind)) {
-        // Stable subset of the same placements, retain the three ridge silhouettes.
-        if (mobile && kind !== 'ridge' && ordinal++ % 4 === 3) continue;
+        // Keep connecting groves and rock shoulders; thin only the outer filling.
+        if (
+          mobile &&
+          kind !== 'ridge' &&
+          !priorityZones.has(p.zone) &&
+          ordinal++ % 4 === 3
+        )
+          continue;
         matrix.compose(
           new Vector3(p.x, p.y, p.z),
           q.setFromAxisAngle(up, p.rotation),

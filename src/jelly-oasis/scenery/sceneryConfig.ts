@@ -17,10 +17,96 @@ export interface SceneryZone {
   centers: readonly (readonly [number, number])[];
   radius: number;
   ribbon?: boolean;
+  /** Smaller transition trees, kept in the mobile silhouette as well. */
+  scale?: number;
+  priority?: boolean;
   counts: Partial<Record<SceneryKind, number>>;
 }
 // Connected forest shoulders and a geological backdrop; no isolated pebble fields.
 export const SCENERY_ZONES: readonly SceneryZone[] = [
+  {
+    id: 'wooded-rock-shoulders',
+    basis: 'world',
+    ribbon: true,
+    centers: [
+      [-0.25, -0.1],
+      [-0.19, -0.22],
+      [0.02, -0.24],
+      [0.22, -0.18],
+      [0.29, -0.04],
+    ],
+    radius: 10,
+    scale: 0.65,
+    priority: true,
+    counts: { ridge: 9, boulder: 12 },
+  },
+  {
+    id: 'backdrop-shelves',
+    basis: 'world',
+    centers: [
+      [-0.24, -0.2],
+      [-0.04, -0.27],
+      [0.16, -0.25],
+      [0.28, -0.1],
+    ],
+    radius: 12,
+    scale: 0.72,
+    priority: true,
+    counts: { broad: 10, young: 18, spire: 4 },
+  },
+  {
+    id: 'west-inner-grove',
+    basis: 'world',
+    ribbon: true,
+    centers: [
+      [-0.25, 0.12],
+      [-0.2, 0.03],
+      [-0.17, -0.1],
+    ],
+    radius: 11,
+    scale: 0.85,
+    priority: true,
+    counts: { broad: 10, young: 10, spire: 3 },
+  },
+  {
+    id: 'east-inner-grove',
+    basis: 'world',
+    ribbon: true,
+    centers: [
+      [0.3, 0.19],
+      [0.26, 0.08],
+      [0.24, -0.06],
+    ],
+    radius: 12,
+    scale: 0.82,
+    priority: true,
+    counts: { broad: 10, young: 10, spire: 3 },
+  },
+  {
+    id: 'rear-inner-grove',
+    basis: 'world',
+    ribbon: true,
+    centers: [
+      [-0.15, -0.22],
+      [0.03, -0.19],
+      [0.22, -0.19],
+    ],
+    radius: 11,
+    scale: 0.78,
+    priority: true,
+    counts: { broad: 10, young: 10, spire: 3 },
+  },
+  {
+    id: 'foreground-rock-banks',
+    basis: 'world',
+    centers: [
+      [-0.16, 0.32],
+      [0.28, 0.29],
+    ],
+    radius: 12,
+    scale: 0.72,
+    counts: { boulder: 10, pebble: 12, young: 8 },
+  },
   {
     id: 'west-grove',
     basis: 'world',
@@ -33,7 +119,7 @@ export const SCENERY_ZONES: readonly SceneryZone[] = [
       [-0.29, -0.3],
     ],
     radius: 22,
-    counts: { broad: 40, spire: 20, young: 20 },
+    counts: { broad: 25, spire: 14, young: 12 },
   },
   {
     id: 'southwest-frame',
@@ -45,7 +131,7 @@ export const SCENERY_ZONES: readonly SceneryZone[] = [
       [-0.14, 0.38],
     ],
     radius: 16,
-    counts: { broad: 14, spire: 8, young: 12 },
+    counts: { broad: 12, spire: 6, young: 8 },
   },
   {
     id: 'northwest-grove',
@@ -58,7 +144,7 @@ export const SCENERY_ZONES: readonly SceneryZone[] = [
       [-0.07, -0.36],
     ],
     radius: 16,
-    counts: { broad: 22, spire: 18, young: 10 },
+    counts: { broad: 14, spire: 12, young: 8 },
   },
   {
     id: 'north-ridge',
@@ -71,7 +157,7 @@ export const SCENERY_ZONES: readonly SceneryZone[] = [
       [0.27, -0.22],
     ],
     radius: 14,
-    counts: { broad: 16, spire: 12, young: 14 },
+    counts: { broad: 10, spire: 8, young: 8 },
   },
   {
     id: 'ridge-crowns',
@@ -85,7 +171,7 @@ export const SCENERY_ZONES: readonly SceneryZone[] = [
       [0.28, -0.26],
     ],
     radius: 18,
-    counts: { broad: 18, spire: 26, young: 16 },
+    counts: { broad: 8, spire: 16, young: 8 },
   },
   {
     id: 'east-shoulder',
@@ -98,7 +184,7 @@ export const SCENERY_ZONES: readonly SceneryZone[] = [
       [0.33, 0.28],
     ],
     radius: 16,
-    counts: { broad: 18, spire: 12, young: 18 },
+    counts: { broad: 14, spire: 9, young: 12 },
   },
 ];
 export const SCENERY_SCALE = {
@@ -132,7 +218,7 @@ export const SCENERY_SHAPES = {
   young: { radius: 2.4, height: 4.2, slope: 0.75 },
   pebble: { radius: 0.85, height: 0.65, slope: 0.32 },
   boulder: { radius: 2.25, height: 2.45, slope: 0.38 },
-  ridge: { radius: 10.5, height: 12, slope: 0.55 },
+  ridge: { radius: 6.2, height: 5.3, slope: 0.55 },
 } satisfies Record<SceneryKind, { radius: number; height: number; slope: number }>;
 export function selectScenery(debug: boolean, query: string | null): SceneryVariant {
   return debug && (query === 'off' || query === 'b') ? query : 'a';

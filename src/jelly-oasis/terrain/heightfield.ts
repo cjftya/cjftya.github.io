@@ -52,9 +52,24 @@ export function sampleTerrainHeight(
     void _x;
     void _z;
     const blend = smoothstep(60, 80, Math.hypot(dx, dz));
+    // The old northern mound and added ridge used to stack into a single wall.
+    // Lower only that outer foundation; the lake/ruin reservation stays exact.
+    const outerHeight =
+      sampleTerrainHeight(x, z, outer) *
+      (config.artRelief === 1
+        ? 1 -
+          0.45 *
+            (1 - smoothstep(-5, 20, z)) *
+            (1 -
+              smoothstep(
+                config.size / 2 - 12,
+                config.size / 2,
+                Math.max(Math.abs(x), Math.abs(z)),
+              ))
+        : 1);
     return (
       preserved * (1 - blend) +
-      sampleTerrainHeight(x, z, outer) * blend +
+      outerHeight * blend +
       landscapeRelief(x, z, config.size, config.artRelief ?? 0)
     );
   }

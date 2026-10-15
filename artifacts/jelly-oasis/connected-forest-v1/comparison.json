@@ -1,0 +1,181 @@
+{
+  "baselineCommit": "01f5d73718c72a93cff71ab859b43820e1fc73d4",
+  "renderer": "Chromium 133 / SwiftShader; software rendering; not phone FPS",
+  "views": {
+    "1280-presentation": {
+      "before": {
+        "calls": 90,
+        "triangles": 720586,
+        "geometries": 94,
+        "textures": 10
+      },
+      "after": {
+        "calls": 96,
+        "triangles": 718082,
+        "geometries": 94,
+        "textures": 10
+      }
+    },
+    "worldtree-front": {
+      "before": {
+        "calls": 90,
+        "triangles": 720586,
+        "geometries": 94,
+        "textures": 10
+      },
+      "after": {
+        "calls": 96,
+        "triangles": 718082,
+        "geometries": 94,
+        "textures": 10
+      }
+    },
+    "worldtree-left": {
+      "before": {
+        "calls": 90,
+        "triangles": 720586,
+        "geometries": 94,
+        "textures": 10
+      },
+      "after": {
+        "calls": 96,
+        "triangles": 718082,
+        "geometries": 94,
+        "textures": 10
+      }
+    },
+    "worldtree-rear": {
+      "before": {
+        "calls": 90,
+        "triangles": 720586,
+        "geometries": 94,
+        "textures": 10
+      },
+      "after": {
+        "calls": 96,
+        "triangles": 718082,
+        "geometries": 94,
+        "textures": 10
+      }
+    },
+    "worldtree-roots": {
+      "before": {
+        "calls": 68,
+        "triangles": 682966,
+        "geometries": 94,
+        "textures": 10
+      },
+      "after": {
+        "calls": 78,
+        "triangles": 717182,
+        "geometries": 94,
+        "textures": 10
+      }
+    },
+    "overview-day": {
+      "before": {
+        "calls": 90,
+        "triangles": 720586,
+        "geometries": 94,
+        "textures": 10
+      },
+      "after": {
+        "calls": 96,
+        "triangles": 718082,
+        "geometries": 94,
+        "textures": 10
+      }
+    },
+    "lake-day": {
+      "before": {
+        "calls": 86,
+        "triangles": 683866,
+        "geometries": 94,
+        "textures": 10
+      },
+      "after": {
+        "calls": 96,
+        "triangles": 718082,
+        "geometries": 94,
+        "textures": 10
+      }
+    },
+    "cleared-east-grove": {
+      "before": {
+        "calls": 86,
+        "triangles": 683866,
+        "geometries": 94,
+        "textures": 10
+      },
+      "after": {
+        "calls": 96,
+        "triangles": 718082,
+        "geometries": 94,
+        "textures": 10
+      }
+    },
+    "medium-night": {
+      "before": {
+        "calls": 92,
+        "triangles": 720586,
+        "geometries": 95,
+        "textures": 10
+      },
+      "after": {
+        "calls": 98,
+        "triangles": 718082,
+        "geometries": 95,
+        "textures": 10
+      }
+    },
+    "lake-rain": {
+      "before": {
+        "calls": 88,
+        "triangles": 683866,
+        "geometries": 96,
+        "textures": 10
+      },
+      "after": {
+        "calls": 98,
+        "triangles": 718082,
+        "geometries": 96,
+        "textures": 10
+      }
+    },
+    "390-presentation": {
+      "before": {
+        "calls": 90,
+        "triangles": 555787,
+        "geometries": 94,
+        "textures": 10
+      },
+      "after": {
+        "calls": 96,
+        "triangles": 565055,
+        "geometries": 94,
+        "textures": 10
+      }
+    },
+    "390-presentation-night": {
+      "before": {
+        "calls": 92,
+        "triangles": 555787,
+        "geometries": 95,
+        "textures": 10
+      },
+      "after": {
+        "calls": 98,
+        "triangles": 565055,
+        "geometries": 95,
+        "textures": 10
+      }
+    }
+  },
+  "errors": [],
+  "routes": {
+    "loop": true,
+    "clearing": true,
+    "approach": true,
+    "passage": true
+  }
+}
