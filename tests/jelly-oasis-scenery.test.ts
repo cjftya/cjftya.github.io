@@ -26,6 +26,7 @@ import {
 } from '../src/jelly-oasis/scenery/sceneryConfig';
 import {
   createSceneryGeometry,
+  sceneryShapeCount,
   projectedFootprint,
 } from '../src/jelly-oasis/scenery/sceneryGeometry';
 import { placeScenery } from '../src/jelly-oasis/scenery/sceneryPlacement';
@@ -39,20 +40,21 @@ it('protects production defaults and encloses real prototypes within reserved fo
     expect(selectScenery(false, value)).toBe('a');
   expect(selectScenery(true, 'off')).toBe('off');
   expect(selectScenery(true, 'b')).toBe('b');
-  for (const kind of SCENERY_KINDS) {
-    const g = createSceneryGeometry(kind),
-      p = g.attributes.position!,
-      s = SCENERY_SHAPES[kind];
-    for (let i = 0; i < p.count; i++) {
-      expect(Math.hypot(p.getX(i), p.getZ(i))).toBeLessThanOrEqual(s.radius);
-      expect(p.getY(i)).toBeLessThanOrEqual(s.height + 0.05);
-      expect(p.getY(i)).toBeGreaterThanOrEqual(-0.11);
+  for (const kind of SCENERY_KINDS)
+    for (let shape = 0; shape < sceneryShapeCount(kind); shape++) {
+      const g = createSceneryGeometry(kind, shape),
+        p = g.attributes.position!,
+        s = SCENERY_SHAPES[kind];
+      for (let i = 0; i < p.count; i++) {
+        expect(Math.hypot(p.getX(i), p.getZ(i))).toBeLessThanOrEqual(s.radius);
+        expect(p.getY(i)).toBeLessThanOrEqual(s.height + 0.05);
+        expect(p.getY(i)).toBeGreaterThanOrEqual(-0.11);
+      }
+      expect(g.attributes.color!.count).toBe(p.count);
+      g.dispose();
     }
-    expect(g.attributes.color!.count).toBe(p.count);
-    g.dispose();
-  }
   const owner = createScenery(new Group());
-  expect(owner.group.children.length).toBe(SCENERY_KINDS.length);
+  expect(owner.group.children.length).toBe(9);
   for (const mesh of owner.group.children as InstancedMesh[]) {
     expect(mesh.castShadow).toBe(true);
     expect(mesh.receiveShadow).toBe(true);
@@ -122,10 +124,10 @@ it('places deterministic grounded scenery on real compact terrain and GLBs, supp
       expect(placeScenery(site, occupied, footprints, 'a', 123).instances).not.toEqual(
         a,
       );
-      expect(owner.snapshot().draws).toBeLessThanOrEqual(6);
+      expect(owner.snapshot().draws).toBeLessThanOrEqual(9);
       expect(owner.snapshot().resources).toEqual({
-        geometries: 6,
-        materials: 6,
+        geometries: 9,
+        materials: 9,
         textures: 0,
       });
       expect(a.length).toBeGreaterThan(30);

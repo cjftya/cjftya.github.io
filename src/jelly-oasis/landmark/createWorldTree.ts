@@ -52,6 +52,10 @@ export function createWorldTree(
           m.name.includes('WarmGray') ? 0 : m.name.includes('LightStone') ? 1 : 2
         ] = m.color.clone();
   });
+  // Patchy weathering on selected enclosure blocks; the arch material stays intact.
+  const mossPalette = palette.map((color, i) =>
+    color.clone().lerp(new Color('#74805a'), i === 1 ? 0.3 : 0.12),
+  );
   const material = new MeshStandardMaterial({
     color: 'white',
     vertexColors: true,
@@ -274,25 +278,28 @@ export function createWorldTree(
           const along = (col - (cols - 1) / 2) * 3 + (row % 2 ? 0.28 : -0.15);
           const x = cx - dz * along,
             z = cz + dx * along;
+          const seed = i * 31 + row * 7 + col * 13;
+          const exposed = row === top - 1;
           const g = stoneBlock(
             0,
             0,
             0,
-            2.94,
+            2.86 + 0.08 * Math.sin(seed),
             1.44,
-            2.5 + (row === 0 ? 0.6 : 0),
-            i * 19 + row + col,
+            2.5 + (row === 0 ? 0.6 : 0) + 0.16 * Math.cos(seed),
+            seed,
+            exposed ? 0.045 : 0.015,
           );
-          g.rotateY(-seg.angle - Math.PI / 2);
+          g.rotateY(-seg.angle - Math.PI / 2 + (exposed ? 0.025 * Math.sin(seed) : 0));
           g.translate(x, floor + (row + 0.5) * 1.5, z);
-          stones.push(paintFaces(g, palette));
+          stones.push(paintFaces(g, (col + i) % 3 === 0 ? mossPalette : palette));
         }
       }
       // Grounded rubble at the broken ends, away from the open lake sector.
       for (let j = 0; j < 4; j++) {
         const x = cx - dz * (seg.length / 2 + j * 0.7) + dx * 2,
           z = cz + dx * (seg.length / 2 + j * 0.7) + dz * 2;
-        const g = stoneBlock(0, 0, 0, 2.3, 1.3, 1.8, j);
+        const g = stoneBlock(0, 0, 0, 2.3, 1.3, 1.8, i * 7 + j, 0.07);
         g.rotateY(j * 0.7);
         g.translate(x, ground(x, z) + 0.45, z);
         stones.push(paintFaces(g, palette));

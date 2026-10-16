@@ -17,7 +17,11 @@ export function paintFaces(geometry: BufferGeometry, palette: Color[]): BufferGe
 
 /** Closed, selectively chipped stone. Corner cuts have the same broad scale
  * as the approved ruin; no smooth normals, texture or subdivision modifier. */
-export function stoneHull(corners: Vector3[], cut = 0.07): BufferGeometry {
+export function stoneHull(
+  corners: Vector3[],
+  cut = 0.07,
+  wearSeed?: number,
+): BufferGeometry {
   const points: Vector3[] = [];
   const edges = [
     [0, 1],
@@ -33,9 +37,13 @@ export function stoneHull(corners: Vector3[], cut = 0.07): BufferGeometry {
     [2, 6],
     [3, 7],
   ];
+  const cornerCut = (i: number) =>
+    wearSeed === undefined
+      ? cut
+      : cut * (0.45 + 1.55 * (0.5 + 0.5 * Math.sin(wearSeed * 1.73 + i * 2.39)));
   for (const [a, b] of edges) {
-    points.push(corners[a!]!.clone().lerp(corners[b!]!, cut));
-    points.push(corners[b!]!.clone().lerp(corners[a!]!, cut));
+    points.push(corners[a!]!.clone().lerp(corners[b!]!, cornerCut(a!)));
+    points.push(corners[b!]!.clone().lerp(corners[a!]!, cornerCut(b!)));
   }
   return new ConvexGeometry(points);
 }
@@ -48,6 +56,7 @@ export function stoneBlock(
   height: number,
   depth: number,
   seed = 0,
+  wear = 0,
 ): BufferGeometry {
   const corners: Vector3[] = [];
   for (const yy of [-1, 1])
@@ -66,7 +75,11 @@ export function stoneBlock(
         ),
       );
     }
-  return stoneHull(corners, 0.04 + (seed % 3) * 0.01);
+  return stoneHull(
+    corners,
+    0.04 + (seed % 3) * 0.01 + wear,
+    wear > 0 ? seed : undefined,
+  );
 }
 
 export function mergeStoneParts(parts: BufferGeometry[]): BufferGeometry {

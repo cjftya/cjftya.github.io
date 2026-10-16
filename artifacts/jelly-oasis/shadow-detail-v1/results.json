@@ -1,0 +1,1985 @@
+{
+  "errors": [],
+  "views": {
+    "desktop-day": {
+      "fantasy": {
+        "colonies": [
+          {
+            "x": -24,
+            "y": 2.7079075669252846,
+            "z": 8,
+            "height": 8.4
+          },
+          {
+            "x": 23,
+            "y": 3.271949535212829,
+            "z": -18,
+            "height": 5.5
+          },
+          {
+            "x": -31,
+            "y": 5.844531948317266,
+            "z": -26,
+            "height": 4.6
+          },
+          {
+            "x": 21,
+            "y": 2.3954224579290644,
+            "z": 17,
+            "height": 2.9
+          },
+          {
+            "x": -40,
+            "y": 5.260972607862252,
+            "z": -1,
+            "height": 3
+          },
+          {
+            "x": 3,
+            "y": 5.6687023390719995,
+            "z": -40,
+            "height": 3.4
+          }
+        ],
+        "shards": 40,
+        "particles": 144,
+        "night": 0,
+        "elapsed": 0
+      },
+      "water": {
+        "version": 1,
+        "flightDuration": 0,
+        "impact": null,
+        "path": [],
+        "pondOnly": true,
+        "water": true,
+        "waterfall": false,
+        "solver": "gpgpu-heightfield",
+        "gpuError": null,
+        "gpuPond": {
+          "active": true,
+          "n": 128,
+          "bounds": [
+            -13.34000015258789,
+            -4.065185546875,
+            25.551111221313477,
+            22.285184860229492
+          ],
+          "inlet": [
+            0,
+            0
+          ],
+          "diagnosticPoint": [
+            -0.5644445419311523,
+            7.077406883239746
+          ],
+          "steps": 0,
+          "computePasses": 0,
+          "maxSubsteps": 3,
+          "dropped": 0,
+          "updateCpuMs": 0,
+          "flowRate": 1,
+          "automaticInlet": false,
+          "paused": false,
+          "amplitude": 1,
+          "neutral": false,
+          "damping": 0.995,
+          "waveSpeed": 3.5,
+          "renderTargets": 2,
+          "targetBytes": 262144,
+          "shorelineFade": 0.8,
+          "channelFade": 1
+        },
+        "cpuPond": null,
+        "impulses": {
+          "ambient": 0,
+          "rain": 0,
+          "dropped": 0,
+          "elapsed": 0,
+          "averageRate": 0,
+          "candidates": 9586,
+          "last": null
+        },
+        "reflection": {
+          "size": 768,
+          "version": 4,
+          "vertices": 16764,
+          "triangles": 33268,
+          "captures": 2,
+          "passes": 2,
+          "captured": true,
+          "impact": [
+            0,
+            0,
+            0
+          ],
+          "flowDirection": [
+            0,
+            1
+          ]
+        },
+        "elapsed": 0,
+        "rockFlowCount": 0,
+        "rockPaths": [],
+        "droplets": 0,
+        "ripples": 0,
+        "regions": [
+          "pond"
+        ],
+        "triangles": 0,
+        "fallingFlow": null,
+        "flowError": null,
+        "channelStates": [],
+        "fluid": null
+      },
+      "camera": [
+        83.79555213326746,
+        85.70339585474872,
+        132.37017821139352
+      ],
+      "target": [
+        0.607695154586736,
+        23.312503120738178,
+        13.411542731880104
+      ],
+      "scenery": {
+        "variant": "a",
+        "mobile": false,
+        "seed": 40308754,
+        "requested": {
+          "boulder": 35,
+          "ridge": 14,
+          "broad": 123,
+          "spire": 78,
+          "young": 131,
+          "pebble": 12
+        },
+        "rejected": {
+          "wooded-rock-shoulders:slope": 138,
+          "wooded-rock-shoulders:spacing": 98,
+          "wooded-rock-shoulders:burial": 3,
+          "wooded-rock-shoulders:obstacle": 3,
+          "backdrop-shelves:spacing": 377,
+          "backdrop-shelves:slope": 301,
+          "west-inner-grove:obstacle": 223,
+          "west-inner-grove:western-glade": 72,
+          "west-inner-grove:spacing": 35,
+          "east-inner-grove:spacing": 113,
+          "east-inner-grove:loop": 53,
+          "rear-inner-grove:obstacle": 125,
+          "rear-inner-grove:spacing": 320,
+          "rear-inner-grove:slope": 16,
+          "east-shelf-understory:slope": 342,
+          "east-shelf-understory:spacing": 326,
+          "west-shelf-understory:spacing": 250,
+          "west-shelf-understory:slope": 16,
+          "foreground-rock-banks:spacing": 199,
+          "foreground-rock-banks:slope": 1,
+          "foreground-rock-banks:burial": 1,
+          "west-grove:western-glade": 157,
+          "west-grove:spacing": 221,
+          "west-grove:obstacle": 30,
+          "west-grove:slope": 47,
+          "southwest-frame:western-glade": 60,
+          "southwest-frame:spacing": 197,
+          "northwest-grove:spacing": 131,
+          "northwest-grove:slope": 61,
+          "north-ridge:obstacle": 79,
+          "north-ridge:slope": 192,
+          "north-ridge:spacing": 423,
+          "ridge-crowns:slope": 142,
+          "ridge-crowns:spacing": 222,
+          "east-shoulder:spacing": 300,
+          "east-shoulder:slope": 15
+        },
+        "zoneCounts": {
+          "wooded-rock-shoulders": 19,
+          "backdrop-shelves": 16,
+          "west-inner-grove": 16,
+          "east-inner-grove": 22,
+          "rear-inner-grove": 11,
+          "east-shelf-understory": 5,
+          "west-shelf-understory": 8,
+          "foreground-rock-banks": 27,
+          "west-grove": 46,
+          "southwest-frame": 22,
+          "northwest-grove": 33,
+          "north-ridge": 6,
+          "ridge-crowns": 28,
+          "east-shoulder": 31
+        },
+        "placed": {
+          "broad": 78,
+          "spire": 67,
+          "young": 106,
+          "pebble": 12,
+          "boulder": 19,
+          "ridge": 8
+        },
+        "instanceCount": 290,
+        "draws": 9,
+        "triangles": 58292,
+        "resources": {
+          "geometries": 9,
+          "materials": 9,
+          "textures": 0
+        },
+        "visible": true
+      },
+      "textures": 23,
+      "shadow": {
+        "bias": -0.0001,
+        "normalBias": 0.08,
+        "mapSize": [
+          2048,
+          2048
+        ],
+        "allocated": true,
+        "bounds": [
+          -184,
+          184,
+          10,
+          700
+        ]
+      },
+      "sun": {
+        "direction": [
+          0.3387379202452915,
+          0.9408807689542256,
+          0
+        ],
+        "allocated": true,
+        "intensity": 2.5,
+        "castShadow": true
+      },
+      "moon": {
+        "direction": [
+          -0.3387379202452915,
+          -0.9408807689542256,
+          0
+        ],
+        "visibility": 0,
+        "intensity": 0,
+        "castShadow": false,
+        "allocated": false
+      }
+    },
+    "desktop-dusk": {
+      "fantasy": {
+        "colonies": [
+          {
+            "x": -24,
+            "y": 2.7079075669252846,
+            "z": 8,
+            "height": 8.4
+          },
+          {
+            "x": 23,
+            "y": 3.271949535212829,
+            "z": -18,
+            "height": 5.5
+          },
+          {
+            "x": -31,
+            "y": 5.844531948317266,
+            "z": -26,
+            "height": 4.6
+          },
+          {
+            "x": 21,
+            "y": 2.3954224579290644,
+            "z": 17,
+            "height": 2.9
+          },
+          {
+            "x": -40,
+            "y": 5.260972607862252,
+            "z": -1,
+            "height": 3
+          },
+          {
+            "x": 3,
+            "y": 5.6687023390719995,
+            "z": -40,
+            "height": 3.4
+          }
+        ],
+        "shards": 40,
+        "particles": 144,
+        "night": 0.48148148148148145,
+        "elapsed": 0
+      },
+      "water": {
+        "version": 1,
+        "flightDuration": 0,
+        "impact": null,
+        "path": [],
+        "pondOnly": true,
+        "water": true,
+        "waterfall": false,
+        "solver": "gpgpu-heightfield",
+        "gpuError": null,
+        "gpuPond": {
+          "active": true,
+          "n": 128,
+          "bounds": [
+            -13.34000015258789,
+            -4.065185546875,
+            25.551111221313477,
+            22.285184860229492
+          ],
+          "inlet": [
+            0,
+            0
+          ],
+          "diagnosticPoint": [
+            -0.5644445419311523,
+            7.077406883239746
+          ],
+          "steps": 0,
+          "computePasses": 0,
+          "maxSubsteps": 3,
+          "dropped": 0,
+          "updateCpuMs": 0,
+          "flowRate": 1,
+          "automaticInlet": false,
+          "paused": false,
+          "amplitude": 1,
+          "neutral": false,
+          "damping": 0.995,
+          "waveSpeed": 3.5,
+          "renderTargets": 2,
+          "targetBytes": 262144,
+          "shorelineFade": 0.8,
+          "channelFade": 1
+        },
+        "cpuPond": null,
+        "impulses": {
+          "ambient": 0,
+          "rain": 0,
+          "dropped": 0,
+          "elapsed": 0,
+          "averageRate": 0,
+          "candidates": 9586,
+          "last": null
+        },
+        "reflection": {
+          "size": 768,
+          "version": 4,
+          "vertices": 16764,
+          "triangles": 33268,
+          "captures": 3,
+          "passes": 2,
+          "captured": true,
+          "impact": [
+            0,
+            0,
+            0
+          ],
+          "flowDirection": [
+            0,
+            1
+          ]
+        },
+        "elapsed": 0,
+        "rockFlowCount": 0,
+        "rockPaths": [],
+        "droplets": 0,
+        "ripples": 0,
+        "regions": [
+          "pond"
+        ],
+        "triangles": 0,
+        "fallingFlow": null,
+        "flowError": null,
+        "channelStates": [],
+        "fluid": null
+      },
+      "camera": [
+        83.79555213326746,
+        85.70339585474872,
+        132.37017821139352
+      ],
+      "target": [
+        0.607695154586736,
+        23.312503120738178,
+        13.411542731880104
+      ],
+      "scenery": {
+        "variant": "a",
+        "mobile": false,
+        "seed": 40308754,
+        "requested": {
+          "boulder": 35,
+          "ridge": 14,
+          "broad": 123,
+          "spire": 78,
+          "young": 131,
+          "pebble": 12
+        },
+        "rejected": {
+          "wooded-rock-shoulders:slope": 138,
+          "wooded-rock-shoulders:spacing": 98,
+          "wooded-rock-shoulders:burial": 3,
+          "wooded-rock-shoulders:obstacle": 3,
+          "backdrop-shelves:spacing": 377,
+          "backdrop-shelves:slope": 301,
+          "west-inner-grove:obstacle": 223,
+          "west-inner-grove:western-glade": 72,
+          "west-inner-grove:spacing": 35,
+          "east-inner-grove:spacing": 113,
+          "east-inner-grove:loop": 53,
+          "rear-inner-grove:obstacle": 125,
+          "rear-inner-grove:spacing": 320,
+          "rear-inner-grove:slope": 16,
+          "east-shelf-understory:slope": 342,
+          "east-shelf-understory:spacing": 326,
+          "west-shelf-understory:spacing": 250,
+          "west-shelf-understory:slope": 16,
+          "foreground-rock-banks:spacing": 199,
+          "foreground-rock-banks:slope": 1,
+          "foreground-rock-banks:burial": 1,
+          "west-grove:western-glade": 157,
+          "west-grove:spacing": 221,
+          "west-grove:obstacle": 30,
+          "west-grove:slope": 47,
+          "southwest-frame:western-glade": 60,
+          "southwest-frame:spacing": 197,
+          "northwest-grove:spacing": 131,
+          "northwest-grove:slope": 61,
+          "north-ridge:obstacle": 79,
+          "north-ridge:slope": 192,
+          "north-ridge:spacing": 423,
+          "ridge-crowns:slope": 142,
+          "ridge-crowns:spacing": 222,
+          "east-shoulder:spacing": 300,
+          "east-shoulder:slope": 15
+        },
+        "zoneCounts": {
+          "wooded-rock-shoulders": 19,
+          "backdrop-shelves": 16,
+          "west-inner-grove": 16,
+          "east-inner-grove": 22,
+          "rear-inner-grove": 11,
+          "east-shelf-understory": 5,
+          "west-shelf-understory": 8,
+          "foreground-rock-banks": 27,
+          "west-grove": 46,
+          "southwest-frame": 22,
+          "northwest-grove": 33,
+          "north-ridge": 6,
+          "ridge-crowns": 28,
+          "east-shoulder": 31
+        },
+        "placed": {
+          "broad": 78,
+          "spire": 67,
+          "young": 106,
+          "pebble": 12,
+          "boulder": 19,
+          "ridge": 8
+        },
+        "instanceCount": 290,
+        "draws": 9,
+        "triangles": 58292,
+        "resources": {
+          "geometries": 9,
+          "materials": 9,
+          "textures": 0
+        },
+        "visible": true
+      },
+      "textures": 23,
+      "shadow": {
+        "bias": -0.0001,
+        "normalBias": 0.08,
+        "mapSize": [
+          2048,
+          2048
+        ],
+        "allocated": true,
+        "bounds": [
+          -184,
+          184,
+          10,
+          700
+        ]
+      },
+      "sun": {
+        "direction": [
+          -0.25344151278773164,
+          -0.2027872953565122,
+          0.9458566024709333
+        ],
+        "allocated": true,
+        "intensity": 0.2851851851851852,
+        "castShadow": true
+      },
+      "moon": {
+        "direction": [
+          0.25344151278773164,
+          0.2027872953565122,
+          -0.9458566024709333
+        ],
+        "visibility": 0.473100615817396,
+        "intensity": 0.3075154002813074,
+        "castShadow": false,
+        "allocated": false
+      }
+    },
+    "desktop-night": {
+      "fantasy": {
+        "colonies": [
+          {
+            "x": -24,
+            "y": 2.7079075669252846,
+            "z": 8,
+            "height": 8.4
+          },
+          {
+            "x": 23,
+            "y": 3.271949535212829,
+            "z": -18,
+            "height": 5.5
+          },
+          {
+            "x": -31,
+            "y": 5.844531948317266,
+            "z": -26,
+            "height": 4.6
+          },
+          {
+            "x": 21,
+            "y": 2.3954224579290644,
+            "z": 17,
+            "height": 2.9
+          },
+          {
+            "x": -40,
+            "y": 5.260972607862252,
+            "z": -1,
+            "height": 3
+          },
+          {
+            "x": 3,
+            "y": 5.6687023390719995,
+            "z": -40,
+            "height": 3.4
+          }
+        ],
+        "shards": 40,
+        "particles": 144,
+        "night": 1,
+        "elapsed": 0
+      },
+      "water": {
+        "version": 1,
+        "flightDuration": 0,
+        "impact": null,
+        "path": [],
+        "pondOnly": true,
+        "water": true,
+        "waterfall": false,
+        "solver": "gpgpu-heightfield",
+        "gpuError": null,
+        "gpuPond": {
+          "active": true,
+          "n": 128,
+          "bounds": [
+            -13.34000015258789,
+            -4.065185546875,
+            25.551111221313477,
+            22.285184860229492
+          ],
+          "inlet": [
+            0,
+            0
+          ],
+          "diagnosticPoint": [
+            -0.5644445419311523,
+            7.077406883239746
+          ],
+          "steps": 0,
+          "computePasses": 0,
+          "maxSubsteps": 3,
+          "dropped": 0,
+          "updateCpuMs": 0,
+          "flowRate": 1,
+          "automaticInlet": false,
+          "paused": false,
+          "amplitude": 1,
+          "neutral": false,
+          "damping": 0.995,
+          "waveSpeed": 3.5,
+          "renderTargets": 2,
+          "targetBytes": 262144,
+          "shorelineFade": 0.8,
+          "channelFade": 1
+        },
+        "cpuPond": null,
+        "impulses": {
+          "ambient": 0,
+          "rain": 0,
+          "dropped": 0,
+          "elapsed": 0,
+          "averageRate": 0,
+          "candidates": 9586,
+          "last": null
+        },
+        "reflection": {
+          "size": 768,
+          "version": 4,
+          "vertices": 16764,
+          "triangles": 33268,
+          "captures": 4,
+          "passes": 2,
+          "captured": true,
+          "impact": [
+            0,
+            0,
+            0
+          ],
+          "flowDirection": [
+            0,
+            1
+          ]
+        },
+        "elapsed": 0,
+        "rockFlowCount": 0,
+        "rockPaths": [],
+        "droplets": 0,
+        "ripples": 0,
+        "regions": [
+          "pond"
+        ],
+        "triangles": 0,
+        "fallingFlow": null,
+        "flowError": null,
+        "channelStates": [],
+        "fluid": null
+      },
+      "camera": [
+        83.79555213326746,
+        85.70339585474872,
+        132.37017821139352
+      ],
+      "target": [
+        0.607695154586736,
+        23.312503120738178,
+        13.411542731880104
+      ],
+      "scenery": {
+        "variant": "a",
+        "mobile": false,
+        "seed": 40308754,
+        "requested": {
+          "boulder": 35,
+          "ridge": 14,
+          "broad": 123,
+          "spire": 78,
+          "young": 131,
+          "pebble": 12
+        },
+        "rejected": {
+          "wooded-rock-shoulders:slope": 138,
+          "wooded-rock-shoulders:spacing": 98,
+          "wooded-rock-shoulders:burial": 3,
+          "wooded-rock-shoulders:obstacle": 3,
+          "backdrop-shelves:spacing": 377,
+          "backdrop-shelves:slope": 301,
+          "west-inner-grove:obstacle": 223,
+          "west-inner-grove:western-glade": 72,
+          "west-inner-grove:spacing": 35,
+          "east-inner-grove:spacing": 113,
+          "east-inner-grove:loop": 53,
+          "rear-inner-grove:obstacle": 125,
+          "rear-inner-grove:spacing": 320,
+          "rear-inner-grove:slope": 16,
+          "east-shelf-understory:slope": 342,
+          "east-shelf-understory:spacing": 326,
+          "west-shelf-understory:spacing": 250,
+          "west-shelf-understory:slope": 16,
+          "foreground-rock-banks:spacing": 199,
+          "foreground-rock-banks:slope": 1,
+          "foreground-rock-banks:burial": 1,
+          "west-grove:western-glade": 157,
+          "west-grove:spacing": 221,
+          "west-grove:obstacle": 30,
+          "west-grove:slope": 47,
+          "southwest-frame:western-glade": 60,
+          "southwest-frame:spacing": 197,
+          "northwest-grove:spacing": 131,
+          "northwest-grove:slope": 61,
+          "north-ridge:obstacle": 79,
+          "north-ridge:slope": 192,
+          "north-ridge:spacing": 423,
+          "ridge-crowns:slope": 142,
+          "ridge-crowns:spacing": 222,
+          "east-shoulder:spacing": 300,
+          "east-shoulder:slope": 15
+        },
+        "zoneCounts": {
+          "wooded-rock-shoulders": 19,
+          "backdrop-shelves": 16,
+          "west-inner-grove": 16,
+          "east-inner-grove": 22,
+          "rear-inner-grove": 11,
+          "east-shelf-understory": 5,
+          "west-shelf-understory": 8,
+          "foreground-rock-banks": 27,
+          "west-grove": 46,
+          "southwest-frame": 22,
+          "northwest-grove": 33,
+          "north-ridge": 6,
+          "ridge-crowns": 28,
+          "east-shoulder": 31
+        },
+        "placed": {
+          "broad": 78,
+          "spire": 67,
+          "young": 106,
+          "pebble": 12,
+          "boulder": 19,
+          "ridge": 8
+        },
+        "instanceCount": 290,
+        "draws": 9,
+        "triangles": 58292,
+        "resources": {
+          "geometries": 9,
+          "materials": 9,
+          "textures": 0
+        },
+        "visible": true
+      },
+      "textures": 23,
+      "shadow": {
+        "bias": -0.0001,
+        "normalBias": 0.08,
+        "mapSize": [
+          2048,
+          2048
+        ],
+        "allocated": false,
+        "bounds": [
+          -184,
+          184,
+          10,
+          700
+        ]
+      },
+      "sun": {
+        "direction": [
+          -0.3387379202452915,
+          -0.9408807689542256,
+          -4.148343097782277e-17
+        ],
+        "allocated": false,
+        "intensity": 0,
+        "castShadow": false
+      },
+      "moon": {
+        "direction": [
+          0.3387379202452915,
+          0.9408807689542256,
+          4.148343097782277e-17
+        ],
+        "visibility": 1,
+        "intensity": 0.65,
+        "castShadow": true,
+        "allocated": true
+      }
+    },
+    "mobile-day": {
+      "fantasy": {
+        "colonies": [
+          {
+            "x": -24,
+            "y": 2.7079075669252846,
+            "z": 8,
+            "height": 8.4
+          },
+          {
+            "x": 23,
+            "y": 3.271949535212829,
+            "z": -18,
+            "height": 5.5
+          },
+          {
+            "x": -31,
+            "y": 5.844531948317266,
+            "z": -26,
+            "height": 4.6
+          },
+          {
+            "x": 21,
+            "y": 2.3954224579290644,
+            "z": 17,
+            "height": 2.9
+          },
+          {
+            "x": -40,
+            "y": 5.260972607862252,
+            "z": -1,
+            "height": 3
+          },
+          {
+            "x": 3,
+            "y": 5.6687023390719995,
+            "z": -40,
+            "height": 3.4
+          }
+        ],
+        "shards": 40,
+        "particles": 72,
+        "night": 0,
+        "elapsed": 0
+      },
+      "water": {
+        "version": 1,
+        "flightDuration": 0,
+        "impact": null,
+        "path": [],
+        "pondOnly": true,
+        "water": true,
+        "waterfall": false,
+        "solver": "gpgpu-heightfield",
+        "gpuError": null,
+        "gpuPond": {
+          "active": true,
+          "n": 64,
+          "bounds": [
+            -13.34000015258789,
+            -4.065185546875,
+            25.551111221313477,
+            22.285184860229492
+          ],
+          "inlet": [
+            0,
+            0
+          ],
+          "diagnosticPoint": [
+            -0.5644445419311523,
+            7.077406883239746
+          ],
+          "steps": 0,
+          "computePasses": 0,
+          "maxSubsteps": 3,
+          "dropped": 0,
+          "updateCpuMs": 0,
+          "flowRate": 1,
+          "automaticInlet": false,
+          "paused": false,
+          "amplitude": 1,
+          "neutral": false,
+          "damping": 0.995,
+          "waveSpeed": 3.5,
+          "renderTargets": 2,
+          "targetBytes": 65536,
+          "shorelineFade": 0.8,
+          "channelFade": 1
+        },
+        "cpuPond": null,
+        "impulses": {
+          "ambient": 0,
+          "rain": 0,
+          "dropped": 0,
+          "elapsed": 0,
+          "averageRate": 0,
+          "candidates": 2397,
+          "last": null
+        },
+        "reflection": {
+          "size": 256,
+          "version": 4,
+          "vertices": 6614,
+          "triangles": 13057,
+          "captures": 2,
+          "passes": 2,
+          "captured": true,
+          "impact": [
+            0,
+            0,
+            0
+          ],
+          "flowDirection": [
+            0,
+            1
+          ]
+        },
+        "elapsed": 0,
+        "rockFlowCount": 0,
+        "rockPaths": [],
+        "droplets": 0,
+        "ripples": 0,
+        "regions": [
+          "pond"
+        ],
+        "triangles": 0,
+        "fallingFlow": null,
+        "flowError": null,
+        "channelStates": [],
+        "fluid": null
+      },
+      "camera": [
+        115.63548949707187,
+        102.58334887760202,
+        177.90128864163384
+      ],
+      "target": [
+        0.607695154586736,
+        16.312503120738178,
+        13.411542731880102
+      ],
+      "scenery": {
+        "variant": "a",
+        "mobile": true,
+        "seed": 40308754,
+        "requested": {
+          "boulder": 35,
+          "ridge": 14,
+          "broad": 123,
+          "spire": 78,
+          "young": 131,
+          "pebble": 12
+        },
+        "rejected": {
+          "wooded-rock-shoulders:slope": 138,
+          "wooded-rock-shoulders:spacing": 98,
+          "wooded-rock-shoulders:burial": 3,
+          "wooded-rock-shoulders:obstacle": 3,
+          "backdrop-shelves:spacing": 377,
+          "backdrop-shelves:slope": 301,
+          "west-inner-grove:obstacle": 223,
+          "west-inner-grove:western-glade": 72,
+          "west-inner-grove:spacing": 35,
+          "east-inner-grove:spacing": 113,
+          "east-inner-grove:loop": 53,
+          "rear-inner-grove:obstacle": 125,
+          "rear-inner-grove:spacing": 320,
+          "rear-inner-grove:slope": 16,
+          "east-shelf-understory:slope": 342,
+          "east-shelf-understory:spacing": 326,
+          "west-shelf-understory:spacing": 250,
+          "west-shelf-understory:slope": 16,
+          "foreground-rock-banks:spacing": 199,
+          "foreground-rock-banks:slope": 1,
+          "foreground-rock-banks:burial": 1,
+          "west-grove:western-glade": 157,
+          "west-grove:spacing": 221,
+          "west-grove:obstacle": 30,
+          "west-grove:slope": 47,
+          "southwest-frame:western-glade": 60,
+          "southwest-frame:spacing": 197,
+          "northwest-grove:spacing": 131,
+          "northwest-grove:slope": 61,
+          "north-ridge:obstacle": 79,
+          "north-ridge:slope": 192,
+          "north-ridge:spacing": 423,
+          "ridge-crowns:slope": 142,
+          "ridge-crowns:spacing": 222,
+          "east-shoulder:spacing": 300,
+          "east-shoulder:slope": 15
+        },
+        "zoneCounts": {
+          "wooded-rock-shoulders": 19,
+          "backdrop-shelves": 16,
+          "west-inner-grove": 16,
+          "east-inner-grove": 22,
+          "rear-inner-grove": 11,
+          "east-shelf-understory": 5,
+          "west-shelf-understory": 8,
+          "foreground-rock-banks": 27,
+          "west-grove": 46,
+          "southwest-frame": 22,
+          "northwest-grove": 33,
+          "north-ridge": 6,
+          "ridge-crowns": 28,
+          "east-shoulder": 31
+        },
+        "placed": {
+          "broad": 63,
+          "spire": 53,
+          "young": 92,
+          "pebble": 9,
+          "boulder": 18,
+          "ridge": 8
+        },
+        "instanceCount": 243,
+        "draws": 8,
+        "triangles": 50092,
+        "resources": {
+          "geometries": 8,
+          "materials": 8,
+          "textures": 0
+        },
+        "visible": true
+      },
+      "textures": 23,
+      "shadow": {
+        "bias": -0.0001,
+        "normalBias": 0.08,
+        "mapSize": [
+          1024,
+          1024
+        ],
+        "allocated": true,
+        "bounds": [
+          -184,
+          184,
+          10,
+          700
+        ]
+      },
+      "sun": {
+        "direction": [
+          0.3387379202452915,
+          0.9408807689542256,
+          0
+        ],
+        "allocated": true,
+        "intensity": 2.5,
+        "castShadow": true
+      },
+      "moon": {
+        "direction": [
+          -0.3387379202452915,
+          -0.9408807689542256,
+          0
+        ],
+        "visibility": 0,
+        "intensity": 0,
+        "castShadow": false,
+        "allocated": false
+      }
+    },
+    "mobile-dusk": {
+      "fantasy": {
+        "colonies": [
+          {
+            "x": -24,
+            "y": 2.7079075669252846,
+            "z": 8,
+            "height": 8.4
+          },
+          {
+            "x": 23,
+            "y": 3.271949535212829,
+            "z": -18,
+            "height": 5.5
+          },
+          {
+            "x": -31,
+            "y": 5.844531948317266,
+            "z": -26,
+            "height": 4.6
+          },
+          {
+            "x": 21,
+            "y": 2.3954224579290644,
+            "z": 17,
+            "height": 2.9
+          },
+          {
+            "x": -40,
+            "y": 5.260972607862252,
+            "z": -1,
+            "height": 3
+          },
+          {
+            "x": 3,
+            "y": 5.6687023390719995,
+            "z": -40,
+            "height": 3.4
+          }
+        ],
+        "shards": 40,
+        "particles": 72,
+        "night": 0.48148148148148145,
+        "elapsed": 0
+      },
+      "water": {
+        "version": 1,
+        "flightDuration": 0,
+        "impact": null,
+        "path": [],
+        "pondOnly": true,
+        "water": true,
+        "waterfall": false,
+        "solver": "gpgpu-heightfield",
+        "gpuError": null,
+        "gpuPond": {
+          "active": true,
+          "n": 64,
+          "bounds": [
+            -13.34000015258789,
+            -4.065185546875,
+            25.551111221313477,
+            22.285184860229492
+          ],
+          "inlet": [
+            0,
+            0
+          ],
+          "diagnosticPoint": [
+            -0.5644445419311523,
+            7.077406883239746
+          ],
+          "steps": 0,
+          "computePasses": 0,
+          "maxSubsteps": 3,
+          "dropped": 0,
+          "updateCpuMs": 0,
+          "flowRate": 1,
+          "automaticInlet": false,
+          "paused": false,
+          "amplitude": 1,
+          "neutral": false,
+          "damping": 0.995,
+          "waveSpeed": 3.5,
+          "renderTargets": 2,
+          "targetBytes": 65536,
+          "shorelineFade": 0.8,
+          "channelFade": 1
+        },
+        "cpuPond": null,
+        "impulses": {
+          "ambient": 0,
+          "rain": 0,
+          "dropped": 0,
+          "elapsed": 0,
+          "averageRate": 0,
+          "candidates": 2397,
+          "last": null
+        },
+        "reflection": {
+          "size": 256,
+          "version": 4,
+          "vertices": 6614,
+          "triangles": 13057,
+          "captures": 3,
+          "passes": 2,
+          "captured": true,
+          "impact": [
+            0,
+            0,
+            0
+          ],
+          "flowDirection": [
+            0,
+            1
+          ]
+        },
+        "elapsed": 0,
+        "rockFlowCount": 0,
+        "rockPaths": [],
+        "droplets": 0,
+        "ripples": 0,
+        "regions": [
+          "pond"
+        ],
+        "triangles": 0,
+        "fallingFlow": null,
+        "flowError": null,
+        "channelStates": [],
+        "fluid": null
+      },
+      "camera": [
+        115.63548949707187,
+        102.58334887760202,
+        177.90128864163384
+      ],
+      "target": [
+        0.607695154586736,
+        16.312503120738178,
+        13.411542731880102
+      ],
+      "scenery": {
+        "variant": "a",
+        "mobile": true,
+        "seed": 40308754,
+        "requested": {
+          "boulder": 35,
+          "ridge": 14,
+          "broad": 123,
+          "spire": 78,
+          "young": 131,
+          "pebble": 12
+        },
+        "rejected": {
+          "wooded-rock-shoulders:slope": 138,
+          "wooded-rock-shoulders:spacing": 98,
+          "wooded-rock-shoulders:burial": 3,
+          "wooded-rock-shoulders:obstacle": 3,
+          "backdrop-shelves:spacing": 377,
+          "backdrop-shelves:slope": 301,
+          "west-inner-grove:obstacle": 223,
+          "west-inner-grove:western-glade": 72,
+          "west-inner-grove:spacing": 35,
+          "east-inner-grove:spacing": 113,
+          "east-inner-grove:loop": 53,
+          "rear-inner-grove:obstacle": 125,
+          "rear-inner-grove:spacing": 320,
+          "rear-inner-grove:slope": 16,
+          "east-shelf-understory:slope": 342,
+          "east-shelf-understory:spacing": 326,
+          "west-shelf-understory:spacing": 250,
+          "west-shelf-understory:slope": 16,
+          "foreground-rock-banks:spacing": 199,
+          "foreground-rock-banks:slope": 1,
+          "foreground-rock-banks:burial": 1,
+          "west-grove:western-glade": 157,
+          "west-grove:spacing": 221,
+          "west-grove:obstacle": 30,
+          "west-grove:slope": 47,
+          "southwest-frame:western-glade": 60,
+          "southwest-frame:spacing": 197,
+          "northwest-grove:spacing": 131,
+          "northwest-grove:slope": 61,
+          "north-ridge:obstacle": 79,
+          "north-ridge:slope": 192,
+          "north-ridge:spacing": 423,
+          "ridge-crowns:slope": 142,
+          "ridge-crowns:spacing": 222,
+          "east-shoulder:spacing": 300,
+          "east-shoulder:slope": 15
+        },
+        "zoneCounts": {
+          "wooded-rock-shoulders": 19,
+          "backdrop-shelves": 16,
+          "west-inner-grove": 16,
+          "east-inner-grove": 22,
+          "rear-inner-grove": 11,
+          "east-shelf-understory": 5,
+          "west-shelf-understory": 8,
+          "foreground-rock-banks": 27,
+          "west-grove": 46,
+          "southwest-frame": 22,
+          "northwest-grove": 33,
+          "north-ridge": 6,
+          "ridge-crowns": 28,
+          "east-shoulder": 31
+        },
+        "placed": {
+          "broad": 63,
+          "spire": 53,
+          "young": 92,
+          "pebble": 9,
+          "boulder": 18,
+          "ridge": 8
+        },
+        "instanceCount": 243,
+        "draws": 8,
+        "triangles": 50092,
+        "resources": {
+          "geometries": 8,
+          "materials": 8,
+          "textures": 0
+        },
+        "visible": true
+      },
+      "textures": 23,
+      "shadow": {
+        "bias": -0.0001,
+        "normalBias": 0.08,
+        "mapSize": [
+          1024,
+          1024
+        ],
+        "allocated": true,
+        "bounds": [
+          -184,
+          184,
+          10,
+          700
+        ]
+      },
+      "sun": {
+        "direction": [
+          -0.25344151278773164,
+          -0.2027872953565122,
+          0.9458566024709333
+        ],
+        "allocated": true,
+        "intensity": 0.2851851851851852,
+        "castShadow": true
+      },
+      "moon": {
+        "direction": [
+          0.25344151278773164,
+          0.2027872953565122,
+          -0.9458566024709333
+        ],
+        "visibility": 0.473100615817396,
+        "intensity": 0.3075154002813074,
+        "castShadow": false,
+        "allocated": false
+      }
+    },
+    "mobile-night": {
+      "fantasy": {
+        "colonies": [
+          {
+            "x": -24,
+            "y": 2.7079075669252846,
+            "z": 8,
+            "height": 8.4
+          },
+          {
+            "x": 23,
+            "y": 3.271949535212829,
+            "z": -18,
+            "height": 5.5
+          },
+          {
+            "x": -31,
+            "y": 5.844531948317266,
+            "z": -26,
+            "height": 4.6
+          },
+          {
+            "x": 21,
+            "y": 2.3954224579290644,
+            "z": 17,
+            "height": 2.9
+          },
+          {
+            "x": -40,
+            "y": 5.260972607862252,
+            "z": -1,
+            "height": 3
+          },
+          {
+            "x": 3,
+            "y": 5.6687023390719995,
+            "z": -40,
+            "height": 3.4
+          }
+        ],
+        "shards": 40,
+        "particles": 72,
+        "night": 1,
+        "elapsed": 0
+      },
+      "water": {
+        "version": 1,
+        "flightDuration": 0,
+        "impact": null,
+        "path": [],
+        "pondOnly": true,
+        "water": true,
+        "waterfall": false,
+        "solver": "gpgpu-heightfield",
+        "gpuError": null,
+        "gpuPond": {
+          "active": true,
+          "n": 64,
+          "bounds": [
+            -13.34000015258789,
+            -4.065185546875,
+            25.551111221313477,
+            22.285184860229492
+          ],
+          "inlet": [
+            0,
+            0
+          ],
+          "diagnosticPoint": [
+            -0.5644445419311523,
+            7.077406883239746
+          ],
+          "steps": 0,
+          "computePasses": 0,
+          "maxSubsteps": 3,
+          "dropped": 0,
+          "updateCpuMs": 0,
+          "flowRate": 1,
+          "automaticInlet": false,
+          "paused": false,
+          "amplitude": 1,
+          "neutral": false,
+          "damping": 0.995,
+          "waveSpeed": 3.5,
+          "renderTargets": 2,
+          "targetBytes": 65536,
+          "shorelineFade": 0.8,
+          "channelFade": 1
+        },
+        "cpuPond": null,
+        "impulses": {
+          "ambient": 0,
+          "rain": 0,
+          "dropped": 0,
+          "elapsed": 0,
+          "averageRate": 0,
+          "candidates": 2397,
+          "last": null
+        },
+        "reflection": {
+          "size": 256,
+          "version": 4,
+          "vertices": 6614,
+          "triangles": 13057,
+          "captures": 4,
+          "passes": 2,
+          "captured": true,
+          "impact": [
+            0,
+            0,
+            0
+          ],
+          "flowDirection": [
+            0,
+            1
+          ]
+        },
+        "elapsed": 0,
+        "rockFlowCount": 0,
+        "rockPaths": [],
+        "droplets": 0,
+        "ripples": 0,
+        "regions": [
+          "pond"
+        ],
+        "triangles": 0,
+        "fallingFlow": null,
+        "flowError": null,
+        "channelStates": [],
+        "fluid": null
+      },
+      "camera": [
+        115.63548949707187,
+        102.58334887760202,
+        177.90128864163384
+      ],
+      "target": [
+        0.607695154586736,
+        16.312503120738178,
+        13.411542731880102
+      ],
+      "scenery": {
+        "variant": "a",
+        "mobile": true,
+        "seed": 40308754,
+        "requested": {
+          "boulder": 35,
+          "ridge": 14,
+          "broad": 123,
+          "spire": 78,
+          "young": 131,
+          "pebble": 12
+        },
+        "rejected": {
+          "wooded-rock-shoulders:slope": 138,
+          "wooded-rock-shoulders:spacing": 98,
+          "wooded-rock-shoulders:burial": 3,
+          "wooded-rock-shoulders:obstacle": 3,
+          "backdrop-shelves:spacing": 377,
+          "backdrop-shelves:slope": 301,
+          "west-inner-grove:obstacle": 223,
+          "west-inner-grove:western-glade": 72,
+          "west-inner-grove:spacing": 35,
+          "east-inner-grove:spacing": 113,
+          "east-inner-grove:loop": 53,
+          "rear-inner-grove:obstacle": 125,
+          "rear-inner-grove:spacing": 320,
+          "rear-inner-grove:slope": 16,
+          "east-shelf-understory:slope": 342,
+          "east-shelf-understory:spacing": 326,
+          "west-shelf-understory:spacing": 250,
+          "west-shelf-understory:slope": 16,
+          "foreground-rock-banks:spacing": 199,
+          "foreground-rock-banks:slope": 1,
+          "foreground-rock-banks:burial": 1,
+          "west-grove:western-glade": 157,
+          "west-grove:spacing": 221,
+          "west-grove:obstacle": 30,
+          "west-grove:slope": 47,
+          "southwest-frame:western-glade": 60,
+          "southwest-frame:spacing": 197,
+          "northwest-grove:spacing": 131,
+          "northwest-grove:slope": 61,
+          "north-ridge:obstacle": 79,
+          "north-ridge:slope": 192,
+          "north-ridge:spacing": 423,
+          "ridge-crowns:slope": 142,
+          "ridge-crowns:spacing": 222,
+          "east-shoulder:spacing": 300,
+          "east-shoulder:slope": 15
+        },
+        "zoneCounts": {
+          "wooded-rock-shoulders": 19,
+          "backdrop-shelves": 16,
+          "west-inner-grove": 16,
+          "east-inner-grove": 22,
+          "rear-inner-grove": 11,
+          "east-shelf-understory": 5,
+          "west-shelf-understory": 8,
+          "foreground-rock-banks": 27,
+          "west-grove": 46,
+          "southwest-frame": 22,
+          "northwest-grove": 33,
+          "north-ridge": 6,
+          "ridge-crowns": 28,
+          "east-shoulder": 31
+        },
+        "placed": {
+          "broad": 63,
+          "spire": 53,
+          "young": 92,
+          "pebble": 9,
+          "boulder": 18,
+          "ridge": 8
+        },
+        "instanceCount": 243,
+        "draws": 8,
+        "triangles": 50092,
+        "resources": {
+          "geometries": 8,
+          "materials": 8,
+          "textures": 0
+        },
+        "visible": true
+      },
+      "textures": 23,
+      "shadow": {
+        "bias": -0.0001,
+        "normalBias": 0.08,
+        "mapSize": [
+          1024,
+          1024
+        ],
+        "allocated": false,
+        "bounds": [
+          -184,
+          184,
+          10,
+          700
+        ]
+      },
+      "sun": {
+        "direction": [
+          -0.3387379202452915,
+          -0.9408807689542256,
+          -4.148343097782277e-17
+        ],
+        "allocated": false,
+        "intensity": 0,
+        "castShadow": false
+      },
+      "moon": {
+        "direction": [
+          0.3387379202452915,
+          0.9408807689542256,
+          4.148343097782277e-17
+        ],
+        "visibility": 1,
+        "intensity": 0.65,
+        "castShadow": true,
+        "allocated": true
+      }
+    }
+  },
+  "interactions": {
+    "contact-day": {
+      "camera": [
+        51,
+        38,
+        69
+      ],
+      "target": [
+        0,
+        5,
+        8
+      ],
+      "shadow": {
+        "bias": -0.0001,
+        "normalBias": 0.08,
+        "mapSize": [
+          2048,
+          2048
+        ],
+        "allocated": true,
+        "bounds": [
+          -184,
+          184,
+          10,
+          700
+        ]
+      },
+      "sun": {
+        "direction": [
+          0.3387379202452915,
+          0.9408807689542256,
+          0
+        ],
+        "allocated": true,
+        "intensity": 2.5,
+        "castShadow": true
+      },
+      "moon": {
+        "direction": [
+          -0.3387379202452915,
+          -0.9408807689542256,
+          0
+        ],
+        "visibility": 0,
+        "intensity": 0,
+        "castShadow": false,
+        "allocated": false
+      }
+    },
+    "contact-night": {
+      "camera": [
+        51,
+        38,
+        69
+      ],
+      "target": [
+        0,
+        5,
+        8
+      ],
+      "shadow": {
+        "bias": -0.0001,
+        "normalBias": 0.08,
+        "mapSize": [
+          2048,
+          2048
+        ],
+        "allocated": false,
+        "bounds": [
+          -184,
+          184,
+          10,
+          700
+        ]
+      },
+      "sun": {
+        "direction": [
+          -0.3387379202452915,
+          -0.9408807689542256,
+          -4.148343097782277e-17
+        ],
+        "allocated": false,
+        "intensity": 0,
+        "castShadow": false
+      },
+      "moon": {
+        "direction": [
+          0.3387379202452915,
+          0.9408807689542256,
+          4.148343097782277e-17
+        ],
+        "visibility": 1,
+        "intensity": 0.65,
+        "castShadow": true,
+        "allocated": true
+      }
+    },
+    "grove-day": {
+      "camera": [
+        108.00000000000003,
+        64.99999999999997,
+        92.00000000000003
+      ],
+      "target": [
+        25,
+        20,
+        -16
+      ],
+      "shadow": {
+        "bias": -0.0001,
+        "normalBias": 0.08,
+        "mapSize": [
+          2048,
+          2048
+        ],
+        "allocated": true,
+        "bounds": [
+          -184,
+          184,
+          10,
+          700
+        ]
+      },
+      "sun": {
+        "direction": [
+          0.3387379202452915,
+          0.9408807689542256,
+          0
+        ],
+        "allocated": true,
+        "intensity": 2.5,
+        "castShadow": true
+      },
+      "moon": {
+        "direction": [
+          -0.3387379202452915,
+          -0.9408807689542256,
+          0
+        ],
+        "visibility": 0,
+        "intensity": 0,
+        "castShadow": false,
+        "allocated": false
+      }
+    },
+    "wide-dawn": {
+      "camera": [
+        189.99999999999997,
+        150.00000000000003,
+        239.99999999999994
+      ],
+      "target": [
+        0,
+        15,
+        0
+      ],
+      "shadow": {
+        "bias": -0.0001,
+        "normalBias": 0.08,
+        "mapSize": [
+          2048,
+          2048
+        ],
+        "allocated": true,
+        "bounds": [
+          -184,
+          184,
+          10,
+          700
+        ]
+      },
+      "sun": {
+        "direction": [
+          6.123233995736766e-17,
+          0,
+          -1
+        ],
+        "allocated": true,
+        "intensity": 0.5425925925925925,
+        "castShadow": true
+      },
+      "moon": {
+        "direction": [
+          -6.123233995736766e-17,
+          0,
+          1
+        ],
+        "visibility": 0,
+        "intensity": 0,
+        "castShadow": false,
+        "allocated": false
+      }
+    },
+    "input": {
+      "orbitCamera": [
+        52.64455299191815,
+        93.17249479026671,
+        145.22863946197327
+      ],
+      "zoomCamera": [
+        38.05419976948037,
+        88.34936469853417,
+        131.72152330665205
+      ],
+      "distances": [
+        157.99999999999994,
+        140.53579530166942
+      ],
+      "shadow": {
+        "bias": -0.0001,
+        "normalBias": 0.08,
+        "mapSize": [
+          2048,
+          2048
+        ],
+        "allocated": true,
+        "bounds": [
+          -184,
+          184,
+          10,
+          700
+        ]
+      }
+    },
+    "casterTransitions": [
+      {
+        "hour": 5.5,
+        "sun": {
+          "direction": [
+            -0.12984643031458792,
+            -0.10192445579505004,
+            -0.986281557084711
+          ],
+          "allocated": true,
+          "intensity": 0.12,
+          "castShadow": true
+        },
+        "moon": {
+          "direction": [
+            0.12984643031458792,
+            0.10192445579505004,
+            0.986281557084711
+          ],
+          "visibility": 0.13351151693717345,
+          "intensity": 0.08678248600916275,
+          "castShadow": false,
+          "allocated": false
+        },
+        "textures": 23
+      },
+      {
+        "hour": 6.5,
+        "sun": {
+          "direction": [
+            0.12984643031458806,
+            0.10192445579505004,
+            -0.986281557084711
+          ],
+          "allocated": true,
+          "intensity": 1.3274074074074074,
+          "castShadow": true
+        },
+        "moon": {
+          "direction": [
+            -0.12984643031458806,
+            -0.10192445579505004,
+            0.986281557084711
+          ],
+          "visibility": 0,
+          "intensity": 0,
+          "castShadow": false,
+          "allocated": false
+        },
+        "textures": 23
+      },
+      {
+        "hour": 18,
+        "sun": {
+          "direction": [
+            6.123233995736766e-17,
+            9.552245033349355e-17,
+            1
+          ],
+          "allocated": true,
+          "intensity": 1.1,
+          "castShadow": true
+        },
+        "moon": {
+          "direction": [
+            -6.123233995736766e-17,
+            -9.552245033349355e-17,
+            -1
+          ],
+          "visibility": 0,
+          "intensity": 0,
+          "castShadow": false,
+          "allocated": false
+        },
+        "textures": 23
+      },
+      {
+        "hour": 19,
+        "sun": {
+          "direction": [
+            -0.25344151278773164,
+            -0.2027872953565122,
+            0.9458566024709333
+          ],
+          "allocated": true,
+          "intensity": 0.2851851851851852,
+          "castShadow": true
+        },
+        "moon": {
+          "direction": [
+            0.25344151278773164,
+            0.2027872953565122,
+            -0.9458566024709333
+          ],
+          "visibility": 0.473100615817396,
+          "intensity": 0.3075154002813074,
+          "castShadow": false,
+          "allocated": false
+        },
+        "textures": 23
+      },
+      {
+        "hour": 20,
+        "sun": {
+          "direction": [
+            -0.4588773128419908,
+            -0.3971478906347808,
+            0.7947988202830061
+          ],
+          "allocated": false,
+          "intensity": 0,
+          "castShadow": false
+        },
+        "moon": {
+          "direction": [
+            0.4588773128419908,
+            0.3971478906347808,
+            -0.7947988202830061
+          ],
+          "visibility": 0.7407407407407407,
+          "intensity": 0.48148148148148145,
+          "castShadow": true,
+          "allocated": true
+        },
+        "textures": 23
+      },
+      {
+        "hour": 0,
+        "sun": {
+          "direction": [
+            -0.3387379202452915,
+            -0.9408807689542256,
+            -4.148343097782277e-17
+          ],
+          "allocated": false,
+          "intensity": 0,
+          "castShadow": false
+        },
+        "moon": {
+          "direction": [
+            0.3387379202452915,
+            0.9408807689542256,
+            4.148343097782277e-17
+          ],
+          "visibility": 1,
+          "intensity": 0.65,
+          "castShadow": true,
+          "allocated": true
+        },
+        "textures": 23
+      },
+      {
+        "hour": 12,
+        "sun": {
+          "direction": [
+            0.3387379202452915,
+            0.9408807689542256,
+            0
+          ],
+          "allocated": true,
+          "intensity": 2.5,
+          "castShadow": true
+        },
+        "moon": {
+          "direction": [
+            -0.3387379202452915,
+            -0.9408807689542256,
+            0
+          ],
+          "visibility": 0,
+          "intensity": 0,
+          "castShadow": false,
+          "allocated": false
+        },
+        "textures": 23
+      }
+    ]
+  }
+}

@@ -11,7 +11,11 @@ import type { BufferGeometry } from 'three';
 import type { VegetationSite } from '../vegetation/vegetationPlacement';
 import { SCENERY_KINDS, SCENERY_SEED, SCENERY_ZONES } from './sceneryConfig';
 import type { SceneryKind, SceneryVariant } from './sceneryConfig';
-import { createSceneryGeometry, projectedFootprint } from './sceneryGeometry';
+import {
+  createSceneryGeometry,
+  projectedFootprint,
+  sceneryShapeCount,
+} from './sceneryGeometry';
 import { placeScenery } from './sceneryPlacement';
 import type { Occupied, SceneryFootprints } from './sceneryPlacement';
 export function createScenery(
@@ -22,41 +26,44 @@ export function createScenery(
   const group = new Group();
   group.name = 'OasisScenery';
   root.add(group);
-  const meshes = new Map<
-      SceneryKind,
-      InstancedMesh<BufferGeometry, MeshStandardMaterial>
-    >(),
+  const meshes = new Map<string, InstancedMesh<BufferGeometry, MeshStandardMaterial>>(),
     footprints: SceneryFootprints = {};
+  const meshKinds = new Map<string, SceneryKind>();
   if (variant !== 'off')
-    for (const kind of SCENERY_KINDS) {
-      const geometry = createSceneryGeometry(kind);
-      footprints[kind] = projectedFootprint(geometry);
-      const mesh = new InstancedMesh(
-        geometry,
-        new MeshStandardMaterial({
-          color: '#ffffff',
-          vertexColors: true,
-          flatShading: true,
-          roughness: 1,
-        }),
-        Math.max(
-          1,
-          SCENERY_ZONES.reduce(
-            (sum, zone) => sum + Math.ceil((zone.counts[kind] ?? 0) * 1.5),
-            0,
+    for (let shape = 0; shape < 3; shape++)
+      for (const kind of SCENERY_KINDS) {
+        if (shape >= sceneryShapeCount(kind, mobile)) continue;
+        const key = `${kind}_${shape}`;
+        const geometry = createSceneryGeometry(kind, shape);
+        if (shape === 0) footprints[kind] = projectedFootprint(geometry);
+        const mesh = new InstancedMesh(
+          geometry,
+          new MeshStandardMaterial({
+            color: '#ffffff',
+            vertexColors: true,
+            flatShading: true,
+            roughness: 1,
+          }),
+          Math.max(
+            1,
+            SCENERY_ZONES.reduce(
+              (sum, zone) => sum + Math.ceil((zone.counts[kind] ?? 0) * 1.5),
+              0,
+            ),
           ),
-        ),
-      );
-      mesh.name = `Scenery_${kind}`;
-      mesh.count = 0;
-      // The monumental grove is assembled from these low-poly instances.
-      // Keep them in the active sun/moon shadow pass so the added trees are
-      // grounded against the terrain instead of appearing uniformly lit.
-      mesh.castShadow = true;
-      mesh.receiveShadow = true;
-      meshes.set(kind, mesh);
-      group.add(mesh);
-    }
+        );
+        mesh.name = `Scenery_${key}`;
+        mesh.userData.shape = shape;
+        mesh.count = 0;
+        // The monumental grove is assembled from these low-poly instances.
+        // Keep them in the active sun/moon shadow pass so the added trees are
+        // grounded against the terrain instead of appearing uniformly lit.
+        mesh.castShadow = true;
+        mesh.receiveShadow = true;
+        meshes.set(key, mesh);
+        meshKinds.set(key, kind);
+        group.add(mesh);
+      }
   let disposed = false,
     placement = placeScenery({} as VegetationSite, [], {}, 'off');
   const matrix = new Matrix4(),
@@ -69,7 +76,8 @@ export function createScenery(
   function refresh(site: VegetationSite, occupied: readonly Occupied[]) {
     if (disposed) return;
     placement = placeScenery(site, occupied, footprints, variant);
-    for (const [kind, mesh] of meshes) {
+    for (const [key, mesh] of meshes) {
+      const kind = meshKinds.get(key)!;
       let count = 0,
         ordinal = 0;
       for (const p of placement.instances.filter((p) => p.kind === kind)) {
@@ -79,6 +87,13 @@ export function createScenery(
           kind !== 'ridge' &&
           !priorityZones.has(p.zone) &&
           ordinal++ % 4 === 3
+        )
+          continue;
+        // Stable tint-derived selection survives rebuilds and mobile thinning.
+        if (
+          Math.floor(p.tint * sceneryShapeCount(kind, mobile)) %
+            sceneryShapeCount(kind, mobile) !==
+          mesh.userData.shape
         )
           continue;
         matrix.compose(
@@ -107,7 +122,14 @@ export function createScenery(
       requested: placement.requested,
       rejected: placement.rejected,
       zoneCounts: placement.zoneCounts,
-      placed: Object.fromEntries([...meshes].map(([kind, mesh]) => [kind, mesh.count])),
+      placed: Object.fromEntries(
+        SCENERY_KINDS.map((kind) => [
+          kind,
+          [...meshes]
+            .filter(([key]) => meshKinds.get(key) === kind)
+            .reduce((n, [, mesh]) => n + mesh.count, 0),
+        ]),
+      ),
       instanceCount: [...meshes.values()].reduce((n, m) => n + m.count, 0),
       draws: [...meshes.values()].filter((m) => m.count).length,
       triangles: [...meshes.values()].reduce(

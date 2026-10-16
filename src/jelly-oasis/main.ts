@@ -6,7 +6,7 @@ import { frameWorld, frameLandscape } from './terrain/worldCamera';
 import { Box3 } from 'three';
 import { selectComposition } from './composition/compositionConfig';
 import { selectVegetation } from './vegetation/vegetationConfig';
-import { PerspectiveCamera, Scene, Vector3 } from 'three';
+import { PCFShadowMap, PerspectiveCamera, Scene, Vector3 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { RendererManager } from '../core/renderer/RendererManager';
 import {
@@ -39,6 +39,7 @@ function start(canvas: HTMLCanvasElement): void {
   const scene = new Scene();
   const manager = new RendererManager(canvas);
   const renderer = manager.renderer;
+  renderer.shadowMap.type = PCFShadowMap;
   if (debugEnabled)
     renderer.debug.onShaderError = (gl, program, vertex, fragment) => {
       console.error(
@@ -69,6 +70,8 @@ function start(canvas: HTMLCanvasElement): void {
     scene,
     mobile,
     motionPreference.matches,
+    undefined,
+    config.size,
   );
   const surface = createTerrainSurface(config.maxHeight, config.size);
   const terrain = createTerrain(config, surface.material);
@@ -357,7 +360,7 @@ function start(canvas: HTMLCanvasElement): void {
               loaded.isolate(kind ? 'scenery-prototype' : '');
               loaded.scenery.group.visible = true;
               for (const mesh of loaded.scenery.group.children)
-                mesh.visible = !kind || mesh.name === `Scenery_${kind}`;
+                mesh.visible = !kind || mesh.name.startsWith(`Scenery_${kind}`);
               invalidate();
             },
             reviewIsolate: (name: string) => {
@@ -638,10 +641,6 @@ function start(canvas: HTMLCanvasElement): void {
       dirty = true;
     }
     if (!previousTarget.equals(controls.target)) dirty = true;
-    environment.focusShadow(
-      controls.target,
-      camera.position.distanceTo(controls.target),
-    );
     if (
       environment.update(
         seconds,

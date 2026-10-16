@@ -45,7 +45,7 @@ export class EnvironmentController {
   private readonly cloudDay = new Color('#fff3de');
   private readonly cloudNight = new Color('#818cab');
   private readonly cloudStorm = new Color('#727f8d');
-  private readonly shadowFocus = new Vector3();
+  private readonly shadowFocus = new Vector3(0, 20, 0);
   private elapsed = 0;
   private cloudAge = Infinity;
   private changed = true;
@@ -55,6 +55,7 @@ export class EnvironmentController {
     mobile: boolean,
     reducedMotion: boolean,
     weatherSeed?: number,
+    worldSize = 224,
   ) {
     this.autoWeather = new AutoWeather(weatherSeed, !reducedMotion);
     this.state = {
@@ -78,44 +79,28 @@ export class EnvironmentController {
       this.moon.target,
       this.ambient,
     );
-    const shadowSize = mobile ? 512 : 1024;
+    // A fixed world envelope keeps the tall canopy in the map even at ground-level
+    // zoom. Camera motion never rescales or translates the shadow texel grid.
+    // Enclose the square terrain and elevations -60..100, including the world tree.
+    const span = Math.ceil(Math.hypot(worldSize / Math.SQRT2, 80) / 8) * 8;
+    const shadowSize = mobile ? 1024 : 2048;
     this.sun.shadow.mapSize.set(shadowSize, shadowSize);
     Object.assign(this.sun.shadow.camera, {
-      left: -180,
-      right: 180,
-      top: 180,
-      bottom: -180,
+      left: -span,
+      right: span,
+      top: span,
+      bottom: -span,
       near: 10,
       far: 700,
     });
     this.sun.shadow.camera.updateProjectionMatrix();
-    this.sun.shadow.normalBias = 0.12;
+    this.sun.shadow.normalBias = 0.08;
     this.sun.shadow.bias = -0.0001;
     this.moon.shadow.copy(this.sun.shadow);
+    this.sun.target.position.copy(this.shadowFocus);
+    this.moon.target.position.copy(this.shadowFocus);
     scene.add(this.root);
     scene.fog = this.fog;
-  }
-  /** Fit the existing directional shadow to the orbit view, retaining distant casters. */
-  focusShadow(target: Vector3, distance: number): void {
-    const span = Math.max(45, Math.min(230, distance * 0.8));
-    const texel = (span * 2) / this.sun.shadow.mapSize.x;
-    const x = Math.round(target.x / texel) * texel;
-    const z = Math.round(target.z / texel) * texel;
-    const camera = this.sun.shadow.camera;
-    if (camera.right === span && this.shadowFocus.x === x && this.shadowFocus.z === z)
-      return;
-    this.shadowFocus.set(x, 0, z);
-    for (const light of [this.sun, this.moon]) {
-      light.target.position.copy(this.shadowFocus);
-      Object.assign(light.shadow.camera, {
-        left: -span,
-        right: span,
-        top: span,
-        bottom: -span,
-      });
-      light.shadow.camera.updateProjectionMatrix();
-    }
-    this.changed = true;
   }
   setShadows(enabled: boolean): void {
     this.shadowsEnabled = enabled;
