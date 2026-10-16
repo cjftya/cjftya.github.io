@@ -19,7 +19,11 @@ function paint(source: BufferGeometry, hex: string) {
   g.setAttribute('color', new Float32BufferAttribute(values, 3));
   return g;
 }
-export function createSceneryGeometry(kind: SceneryKind) {
+/** Three adult silhouettes and two saplings share the existing placement envelope. */
+export function sceneryShapeCount(kind: SceneryKind, mobile = false): number {
+  return kind === 'broad' ? (mobile ? 2 : 3) : kind === 'young' ? 2 : 1;
+}
+export function createSceneryGeometry(kind: SceneryKind, shape = 0) {
   const parts: BufferGeometry[] = [];
   const branch = (
     ax: number,
@@ -60,13 +64,29 @@ export function createSceneryGeometry(kind: SceneryKind) {
     parts.push(paint(g, shade));
   };
   if (kind === 'broad') {
-    branch(0, 0, 0, 0.2, 4.9, 0.1, 0.43);
-    branch(0, 2.6, 0, -1.4, 4.9, 0.3, 0.24);
-    branch(0.1, 3.1, 0, 1.35, 5.4, -0.5, 0.23);
-    crown(-1.0, 5.3, 0.2, 1.9, 1.4, 1.8, '#536f40');
-    crown(1.0, 5.85, -0.35, 1.8, 1.35, 1.6, '#768d51');
-    crown(0.05, 6.3, 0.15, 1.7, 0.95, 1.7, '#8a9e60');
-    crown(0.1, 4.9, 1, 1.7, 1.2, 1.7, '#607d47');
+    if (shape === 1) {
+      // A leaning trunk carries one taller crown with a low, off-centre bough.
+      branch(0, 0, 0, 0.8, 5.2, -0.2, 0.43);
+      branch(0.35, 2.7, -0.1, -1.25, 4.5, 0.5, 0.25);
+      crown(0.65, 5.5, -0.3, 1.55, 1.85, 1.45, '#7a9154');
+      crown(-1.1, 4.45, 0.45, 1.45, 1.55, 1.4, '#536f40');
+      crown(1.1, 4.55, 0.8, 1.25, 1.45, 1.2, '#657f48');
+    } else if (shape === 2) {
+      // A low fork and unequal crowns leave a readable notch in the silhouette.
+      branch(0, 0, 0, -1.15, 4.9, 0.1, 0.4);
+      branch(-0.25, 1.8, 0, 1.25, 4.1, -0.4, 0.32);
+      crown(-1.1, 5.25, 0.15, 1.5, 1.8, 1.4, '#7e9658');
+      crown(1.2, 4.45, -0.4, 1.4, 1.55, 1.45, '#607c46');
+      crown(-0.2, 4.15, 1, 1.35, 1.3, 1.3, '#526f3f');
+    } else {
+      branch(0, 0, 0, 0.2, 5.1, 0.1, 0.43);
+      branch(0, 2.6, 0, -1.25, 4.4, 0.3, 0.25);
+      branch(0.1, 3.1, 0, 1.2, 4.9, -0.5, 0.24);
+      crown(-1.0, 4.55, 0.2, 1.55, 1.65, 1.5, '#536f40');
+      crown(0.95, 4.95, -0.4, 1.55, 1.75, 1.4, '#718b50');
+      crown(-0.1, 5.7, 0.15, 1.4, 1.65, 1.4, '#8a9e60');
+      crown(0.1, 4.1, 0.85, 1.35, 1.3, 1.35, '#607d47');
+    }
   } else if (kind === 'spire') {
     branch(0, 0, 0, 0, 7.3, 0, 0.32);
     for (let i = 0; i < 4; i++) {
@@ -76,9 +96,14 @@ export function createSceneryGeometry(kind: SceneryKind) {
       parts.push(paint(g, ['#365d42', '#4b7150', '#638753', '#86a367'][i]!));
     }
   } else if (kind === 'young') {
-    branch(0, 0, 0, 0.15, 2.5, 0, 0.23);
-    crown(-0.3, 2.4, 0, 1.15, 0.9, 1.05, '#75944e');
-    crown(0.25, 3.15, 0, 1.2, 0.9, 1.1, '#9cac62');
+    const lean = shape === 1 ? -0.35 : 0.15;
+    branch(0, 0, 0, lean, 2.8, 0, 0.23);
+    crown(lean - 0.25, 2.4, 0.15, 1.0, 1.1, 0.95, '#75944e');
+    crown(lean + 0.2, shape === 1 ? 2.85 : 3.1, -0.1, 0.9, 1.05, 0.85, '#9cac62');
+    if (shape === 1) {
+      branch(-0.1, 1.2, 0, 0.8, 2, 0.35, 0.14);
+      crown(0.85, 2.1, 0.35, 0.75, 0.85, 0.7, '#647f48');
+    }
   } else if (kind === 'ridge') {
     // Three joined strata form a low outcrop with asymmetric planting shelves.
     // The lower bodies overlap; no detached slabs or floating flat bases.

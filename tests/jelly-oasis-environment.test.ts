@@ -62,28 +62,54 @@ describe('environment time', () => {
 });
 
 describe('weather transitions and scene budgets', () => {
-  it('refocuses shadows without changing the sun direction or allocating a larger map', () => {
-    const environment = new EnvironmentController(new Scene(), false, true);
-    step(environment, 0);
-    const direction = environment.sun.position.clone().normalize();
-    environment.focusShadow(new Vector3(70, -6, 58), 104);
-    expect(step(environment, 0)).toBe(true);
-    expect(environment.sun.shadow.camera.right).toBeCloseTo(83.2);
-    expect(environment.sun.shadow.mapSize.toArray()).toEqual([1024, 1024]);
-    const focusedDirection = environment.sun.position
-      .clone()
-      .sub(environment.sun.target.position)
-      .normalize();
-    expect(focusedDirection.distanceTo(direction)).toBeLessThan(1e-10);
-    expect(step(environment, 0)).toBe(false);
-    environment.focusShadow(new Vector3(70, -6, 58), 104);
-    expect(step(environment, 0)).toBe(false);
-    environment.focusShadow(new Vector3(), 1000);
-    expect(step(environment, 0)).toBe(true);
-    expect(environment.sun.shadow.camera.right).toBe(230);
-    environment.focusShadow(new Vector3(), 5);
-    expect(environment.sun.shadow.camera.right).toBe(45);
-    environment.dispose();
+  it('keeps the shadow grid fixed through orbit/zoom and encloses tall casters at every light angle', () => {
+    for (const size of [192, 224, 320]) {
+      const scene = new Scene();
+      const environment = new EnvironmentController(
+        scene,
+        false,
+        true,
+        undefined,
+        size,
+      );
+      const projection = environment.sun.shadow.camera.projectionMatrix.clone();
+      const focus = environment.sun.target.position.clone();
+      for (const hour of [0, 3, 6, 9, 12, 18, 21]) {
+        environment.setTime(hour);
+        step(environment, 0);
+        scene.updateMatrixWorld(true);
+        for (const light of [environment.sun, environment.moon]) {
+          light.shadow.updateMatrices(light);
+          for (const x of [-size / 2, size / 2])
+            for (const y of [-60, 100])
+              for (const z of [-size / 2, size / 2]) {
+                const clip = new Vector3(x, y, z).project(light.shadow.camera);
+                expect(
+                  Math.max(Math.abs(clip.x), Math.abs(clip.y), Math.abs(clip.z)),
+                ).toBeLessThan(1);
+              }
+        }
+        const direction = environment.sun.position.clone().sub(focus).normalize();
+        for (const distance of [5, 104, 459, 1050]) {
+          const orbit = new PerspectiveCamera();
+          orbit.position.set(distance, distance * 0.4, -distance);
+          environment.update(0, orbit, distance, 1);
+          expect(
+            environment.sun.shadow.camera.projectionMatrix.equals(projection),
+          ).toBe(true);
+          expect(environment.sun.target.position.equals(focus)).toBe(true);
+          expect(
+            environment.sun.position
+              .clone()
+              .sub(focus)
+              .normalize()
+              .distanceTo(direction),
+          ).toBeLessThan(1e-10);
+        }
+      }
+      expect(environment.sun.shadow.mapSize.toArray()).toEqual([2048, 2048]);
+      environment.dispose();
+    }
   });
   it('bounds all profiles and interpolation, including invalid blend inputs', () => {
     for (const preset of WEATHER_PRESETS)
@@ -174,7 +200,7 @@ describe('weather transitions and scene budgets', () => {
         environment.rain.count * 2,
       );
       expect(environment.clouds.mesh.material.map).toBeNull();
-      expect(environment.sun.shadow.mapSize.x).toBe(mobile ? 512 : 1024);
+      expect(environment.sun.shadow.mapSize.x).toBe(mobile ? 1024 : 2048);
       const cloudGeometry = environment.clouds.mesh.geometry;
       const rainArray = environment.rain.mesh.geometry.attributes.position!.array;
       const sceneChildren = environment.root.children.length;

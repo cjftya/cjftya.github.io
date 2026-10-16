@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { PerspectiveCamera, Scene, Vector3 } from 'three';
+import type { Vector3 } from 'three';
+import { PerspectiveCamera, Scene } from 'three';
 import { AutoWeather } from '../src/jelly-oasis/environment/autoWeather';
 import { EnvironmentController } from '../src/jelly-oasis/environment/EnvironmentController';
 import {
@@ -78,13 +79,12 @@ describe('automatic weather', () => {
   });
 });
 describe('moon and single shadow caster', () => {
-  it('shares the disc direction with the light at both night hours and follows focus', () => {
+  it('shares the disc direction with the light at both night hours and shares the fixed world envelope', () => {
     const e = new EnvironmentController(new Scene(), false, true);
     e.setShadows(true);
     let midnight: Vector3 | null = null;
     for (const hour of [12, 0, 3, 12]) {
       e.setTime(hour);
-      e.focusShadow(new Vector3(70, -6, 58), 104);
       tick(e, 0);
       const direction = e.moon.position.clone().sub(e.moon.target.position).normalize();
       expect(
@@ -94,7 +94,7 @@ describe('moon and single shadow caster', () => {
       expect(e.moon.castShadow).toBe(hour !== 12);
       expect(e.moon.target.parent).toBe(e.root);
       expect(e.moon.shadow.camera.right).toBe(e.sun.shadow.camera.right);
-      expect(e.moon.shadow.mapSize.toArray()).toEqual([1024, 1024]);
+      expect(e.moon.shadow.mapSize.toArray()).toEqual([2048, 2048]);
       if (hour === 0) midnight = direction;
       if (hour === 3) expect(direction.distanceTo(midnight!)).toBeGreaterThan(0.3);
     }
@@ -103,7 +103,7 @@ describe('moon and single shadow caster', () => {
     expect(e.sun.castShadow || e.moon.castShadow).toBe(false);
     e.dispose();
   });
-  it('enables a single mobile caster at 512px; weather attenuates disc and light', () => {
+  it('enables a single mobile caster at 1024px; weather attenuates disc and light', () => {
     const e = new EnvironmentController(new Scene(), true, true);
     e.setShadows(true);
     e.setTime(0);
@@ -115,7 +115,7 @@ describe('moon and single shadow caster', () => {
       expect(e.moon.intensity).toBeLessThan(clear);
       expect(e.moon.castShadow).toBe(true);
       expect(e.sun.castShadow).toBe(false);
-      expect(e.moon.shadow.mapSize.toArray()).toEqual([512, 512]);
+      expect(e.moon.shadow.mapSize.toArray()).toEqual([1024, 1024]);
       expect(e.moon.shadow.map).toBeNull();
     }
     e.dispose();

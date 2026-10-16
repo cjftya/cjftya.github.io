@@ -60,6 +60,15 @@ vec3 dirt = mix(terrainDirt, regional, 0.12) * (1.0 + (dirtDetail - 0.5) * 0.16)
 vec3 rock = mix(terrainRock, regional, 0.08) * (1.0 + (rockDetail - 0.5) * 0.20) * (1.0 + .025*sin(vTerrainWorld.y*1.4));
 float rockMoss = smoothstep(.43,.63,grassDetail + macro*.2) * (1.-smoothstep(.14,.3,slope)) * (1.-vTerrainBasin);
 rock = mix(rock, mix(terrainRock, regional * vec3(.78,.94,.84), .62), rockMoss * .32);
+// Three existing understory shelves receive broad moss/soil transitions.
+// World-space masks reuse current samples: no texture, mesh or per-frame allocation.
+vec2 shelfUV = vTerrainWorld.xz / terrainWorldSize;
+float shelfPocket = max(
+  1.-smoothstep(.35,1.,length((shelfUV-vec2(.26,-.25))/vec2(.085,.06))),
+  max(1.-smoothstep(.35,1.,length((shelfUV-vec2(.32,-.12))/vec2(.07,.09))),
+      1.-smoothstep(.35,1.,length((shelfUV-vec2(-.28,-.23))/vec2(.085,.07)))));
+shelfPocket *= (1.-vTerrainBasin) * (1.-smoothstep(.2,.38,slope));
+rock = mix(rock, mix(terrainDirt,regional * vec3(.82,.96,.85),.65), shelfPocket*(.22+grassDetail*.16));
 vec3 surface = grass * weights.x + dirt * weights.y + rock * weights.z;
 surface *= 1.0 + macro * terrainMacro * 0.12;
 diffuseColor.rgb *= surface;
