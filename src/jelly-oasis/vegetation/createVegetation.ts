@@ -1,3 +1,4 @@
+import { rootedWind } from '../animation/vegetationWind';
 import {
   BufferGeometry,
   Color,
@@ -131,7 +132,14 @@ export function createVegetationGeometry(kind: VegetationKind): BufferGeometry {
   parts.forEach((p) => p.dispose());
   merged.computeBoundingBox();
   merged.computeBoundingSphere();
-  return merged;
+  return rootedWind(
+    merged,
+    0,
+    0.005,
+    0,
+    kind === 'shrub' ? 0.65 : 0.395,
+    kind === 'shrub' ? 0.065 : 0.055,
+  );
 }
 export function createVegetation(
   root: Group,

@@ -1,3 +1,4 @@
+import { rootedWind } from '../animation/vegetationWind';
 import {
   Color,
   ConeGeometry,
@@ -163,6 +164,15 @@ export function createSceneryGeometry(kind: SceneryKind, shape = 0) {
   result.computeVertexNormals();
   result.computeBoundingBox();
   result.computeBoundingSphere();
+  if (['broad', 'spire', 'young'].includes(kind))
+    rootedWind(
+      result,
+      0,
+      0.8,
+      0,
+      kind === 'young' ? 2.3 : 6,
+      kind === 'young' ? 0.14 : 0.22,
+    );
   return result;
 }
 // Actual projected vertices supplement the radial terrain probes for dry rock support.

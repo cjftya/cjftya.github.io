@@ -1,3 +1,4 @@
+import { rootedWind } from '../animation/vegetationWind';
 import type { Matrix4 } from 'three';
 import {
   AdditiveBlending,
@@ -356,6 +357,7 @@ export function createFantasySanctuary(
       colors?: Color[],
     ) {
       const geometry = new DodecahedronGeometry(1, 0);
+      if (name === 'CrystalFlowerSkirts') rootedWind(geometry, 0, -1, 0, 2, 0.075);
       owned.push(geometry);
       const mesh = new InstancedMesh(geometry, material, transforms.length);
       mesh.name = name;
