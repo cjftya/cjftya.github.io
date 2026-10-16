@@ -138,7 +138,7 @@ export function createVegetationGeometry(kind: VegetationKind): BufferGeometry {
     0.005,
     0,
     kind === 'shrub' ? 0.65 : 0.395,
-    kind === 'shrub' ? 0.065 : 0.055,
+    kind === 'shrub' ? 0.18 : 0.14,
   );
 }
 export function createVegetation(

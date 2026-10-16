@@ -31,7 +31,7 @@ export function createMeadowGeometry(kind: MeadowKind): BufferGeometry {
     parts.forEach((p) => p.dispose());
     g.computeBoundingBox();
     g.computeBoundingSphere();
-    return rootedWind(g, 0, 0, 0, 1.2, 0.085);
+    return rootedWind(g, 0, 0, 0, 1.2, 0.22);
   }
   const source = createVegetationGeometry('flower'),
     p = source.attributes.position!,
@@ -97,5 +97,5 @@ export function createMeadowGeometry(kind: MeadowKind): BufferGeometry {
   geometry.computeVertexNormals();
   geometry.computeBoundingBox();
   geometry.computeBoundingSphere();
-  return rootedWind(geometry, 0, 0.004, 0, 0.22, 0.045);
+  return rootedWind(geometry, 0, 0.004, 0, 0.22, 0.1);
 }

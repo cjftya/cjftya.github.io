@@ -76,7 +76,7 @@ export function createPrecinctGarden(
           y + r * (i ? 0.35 : 0.65),
           z + Math.sin(a) * rr,
         );
-      rootedWind(g, x, y, z, r * 1.2, r * 0.035);
+      rootedWind(g, x, y, z, r * 1.2, r * 0.1);
       plants.push(paintFaces(g, moss));
       for (let k = 0; k < (mobile ? 3 : 5); k++)
         plants.push(

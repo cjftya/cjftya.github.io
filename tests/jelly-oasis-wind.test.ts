@@ -56,7 +56,7 @@ it('keeps roots fixed while preserving painted colors and rest positions', () =>
     for (let i = 0; i < p.count; i++) {
       if (p.getY(i) <= 0.004) expect(weights.getZ(i)).toBe(0);
       expect(weights.getZ(i)).toBeGreaterThanOrEqual(0);
-      expect(weights.getZ(i)).toBeLessThanOrEqual(0.23);
+      expect(weights.getZ(i)).toBeLessThanOrEqual(0.66);
       moving += Number(weights.getZ(i) > 0);
     }
     expect(moving).toBeGreaterThan(0);
@@ -97,7 +97,7 @@ it('pads scaled instance bounds without accumulating padding or uploading matric
   expect(f.root.children).toHaveLength(1);
   f.dispose();
 });
-it('eases weather changes, caps long deltas and supports reduced motion with smooth resume', () => {
+it('eases weather changes, caps long deltas and keeps a softened breeze running under reduced motion', () => {
   const f = fixture();
   f.wind.bind(f.root);
   for (let i = 0; i < 120; i++) f.wind.update(1 / 60, WEATHER_PROFILES.MIST, false);
@@ -115,13 +115,17 @@ it('eases weather changes, caps long deltas and supports reduced motion with smo
   f.wind.update(NaN, weather, false);
   expect(Number.isFinite(f.wind.snapshot().time)).toBe(true);
   expect(f.wind.update(0.1, weather, true)).toBe(true);
-  const stopped = f.wind.snapshot();
-  expect(stopped.strength).toBe(0);
-  expect(f.wind.update(0.1, weather, true)).toBe(false);
-  expect(f.wind.snapshot().time).toBe(stopped.time);
+  const reduced = f.wind.snapshot();
+  expect(reduced.strength).toBeGreaterThan(0);
+  for (let i = 0; i < 180; i++) f.wind.update(1 / 60, weather, true);
+  expect(f.wind.snapshot().time).toBeGreaterThan(reduced.time);
+  expect(f.wind.snapshot().strength).toBeLessThan(reduced.strength);
+  const gentle = f.wind.snapshot().strength;
   f.wind.update(1 / 60, weather, false);
-  expect(f.wind.snapshot().strength).toBeGreaterThan(0);
-  expect(f.wind.snapshot().strength).toBeLessThan(0.03);
+  expect(f.wind.snapshot().strength).toBeGreaterThan(gentle);
+  f.wind.enabled = false;
+  f.wind.update(1 / 60, weather, false);
+  expect(f.wind.snapshot().strength).toBe(0);
   f.dispose();
 });
 it('rebuilds bindings without duplicate material allocations and disposes resources exactly once', () => {
@@ -140,4 +144,25 @@ it('rebuilds bindings without duplicate material allocations and disposes resour
   f.wind.dispose();
   expect(a).toHaveBeenCalledTimes(1);
   expect(b).toHaveBeenCalledTimes(1);
+});
+
+it('advances the same wind at desktop 60 Hz and mobile 30 Hz', () => {
+  const desktop = new VegetationWind(),
+    mobile = new VegetationWind();
+  for (const reduced of [false, true]) {
+    for (let i = 0; i < 600; i++)
+      desktop.update(1 / 60, WEATHER_PROFILES.CLEAR, reduced);
+    for (let i = 0; i < 300; i++)
+      mobile.update(1 / 30, WEATHER_PROFILES.CLEAR, reduced);
+    expect(mobile.snapshot().time).toBeCloseTo(desktop.snapshot().time, 8);
+    expect(mobile.snapshot().strength).toBeCloseTo(desktop.snapshot().strength, 8);
+    expect(mobile.snapshot().gust).toBeCloseTo(desktop.snapshot().gust, 8);
+    mobile
+      .snapshot()
+      .direction.forEach((v, i) =>
+        expect(v).toBeCloseTo(desktop.snapshot().direction[i]!, 8),
+      );
+  }
+  desktop.dispose();
+  mobile.dispose();
 });

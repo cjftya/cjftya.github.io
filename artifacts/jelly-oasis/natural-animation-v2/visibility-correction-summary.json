@@ -1,0 +1,57 @@
+{
+  "note": "Device emulation with software WebGL is not physical mobile performance. Canvas capture uses test-only preserveDrawingBuffer.",
+  "devices": [
+    {
+      "mobile": false,
+      "visibleChange": {
+        "changed": 8958,
+        "fraction": 0.014580078125,
+        "meanDelta": 0.446865234375
+      },
+      "liveWindSeconds": [
+        8.183299999999985,
+        10.249999999999975
+      ],
+      "clearStrength": 0.37999978819165964,
+      "rainStrength": 0.6499998495046004,
+      "reducedMotionStrength": 0.4280138856643755,
+      "geometryCounts": [
+        105,
+        105
+      ],
+      "textureCounts": [
+        23,
+        23
+      ],
+      "boundMeshes": 22,
+      "materialCount": 19,
+      "errors": []
+    },
+    {
+      "mobile": true,
+      "visibleChange": {
+        "changed": 6169,
+        "fraction": 0.018741645400413173,
+        "meanDelta": 0.8994075829383886
+      },
+      "liveWindSeconds": [
+        8.299899999999992,
+        10.333199999999986
+      ],
+      "clearStrength": 0.3799998005144484,
+      "rainStrength": 0.6499998495046004,
+      "reducedMotionStrength": 0.4276930935372122,
+      "geometryCounts": [
+        104,
+        104
+      ],
+      "textureCounts": [
+        23,
+        23
+      ],
+      "boundMeshes": 21,
+      "materialCount": 18,
+      "errors": []
+    }
+  ]
+}

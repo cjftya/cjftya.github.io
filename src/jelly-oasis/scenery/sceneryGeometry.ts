@@ -171,7 +171,7 @@ export function createSceneryGeometry(kind: SceneryKind, shape = 0) {
       0.8,
       0,
       kind === 'young' ? 2.3 : 6,
-      kind === 'young' ? 0.14 : 0.22,
+      kind === 'young' ? 0.35 : 0.65,
     );
   return result;
 }
