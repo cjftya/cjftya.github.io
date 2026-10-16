@@ -1,3 +1,4 @@
+import { windWeights } from '../animation/vegetationWind';
 import {
   BufferGeometry,
   Color,
@@ -43,6 +44,13 @@ export function leafBlade(
     ),
   );
   g.computeVertexNormals();
+  windWeights(g, origin.x, origin.z, (x, y, z) => {
+    const t = Math.min(
+      1,
+      Math.hypot(x - origin.x, y - origin.y, z - origin.z) / length,
+    );
+    return [0.035 * t * t, 0.022 * t * t];
+  });
   return paintFaces(g, [
     color,
     color.clone().multiplyScalar(1.1),
@@ -90,6 +98,10 @@ export function foliageCrown(
       .translate(pos.x, pos.y, pos.z);
     g.computeVertexNormals();
     const tint = 0.92 + 0.09 * Math.sin(i * 1.7 + seed) + 0.08 * h;
+    windWeights(g, pos.x, pos.z, (_x, y) => {
+      const t = Math.min(1, Math.max(0, (y - (pos.y - size * 0.74)) / (size * 1.48)));
+      return [0.075 * t, 0.018 * t];
+    });
     parts.push(
       paintFaces(
         g,

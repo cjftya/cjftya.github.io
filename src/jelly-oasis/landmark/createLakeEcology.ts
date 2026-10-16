@@ -39,13 +39,21 @@ export function createLakeEcology(
     geometry?.dispose();
     anchors = [];
     const positions: number[] = [],
-      colors: number[] = [];
+      colors: number[] = [],
+      wind: number[] = [];
+    let windRoot = [0, 0, 0],
+      windHeight = 1,
+      windAmplitude = 0;
     const leafColor = new Color('#648a57'),
       shadowColor = new Color('#476f54'),
       reedColor = new Color('#7e965a');
     function triangle(a: number[], b: number[], c: number[], color: Color) {
       positions.push(...a, ...b, ...c);
-      for (let j = 0; j < 3; j++) colors.push(color.r, color.g, color.b);
+      for (const vertex of [a, b, c]) {
+        colors.push(color.r, color.g, color.b);
+        const t = Math.min(1, Math.max(0, (vertex[1]! - windRoot[1]!) / windHeight));
+        wind.push(windRoot[0]!, windRoot[2]!, windAmplitude * t * t, 0);
+      }
     }
     function blade(
       x: number,
@@ -95,6 +103,9 @@ export function createLakeEcology(
         if (d < 0.35 || depth < 0.22 || depth > 2.0) continue;
         anchors.push({ kind: 'plant', x, y: floor, z, depth });
         count++;
+        windRoot = [x, floor - 0.025, z];
+        windHeight = depth + 0.9;
+        windAmplitude = 0.065;
         for (let leaf = 0; leaf < 4; leaf++)
           blade(
             x,
@@ -172,6 +183,7 @@ export function createLakeEcology(
       )
         continue;
       const y = waterY + 0.065;
+      windAmplitude = 0;
       // Ten-sided leaf, open notch and raised central rib; no generic disc decal.
       for (let i = 0; i < 9; i++) {
         const a = ((i + 0.35) * Math.PI * 2) / 10,
@@ -188,6 +200,7 @@ export function createLakeEcology(
     geometry = new BufferGeometry();
     geometry.setAttribute('position', new Float32BufferAttribute(positions, 3));
     geometry.setAttribute('color', new Float32BufferAttribute(colors, 3));
+    geometry.setAttribute('oasisWind', new Float32BufferAttribute(wind, 4));
     geometry.computeVertexNormals();
     geometry.computeBoundingBox();
     geometry.computeBoundingSphere();

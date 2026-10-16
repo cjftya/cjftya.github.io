@@ -7,6 +7,8 @@ export const WEATHER_PRESETS = [
 ] as const;
 export type WeatherPreset = (typeof WEATHER_PRESETS)[number];
 export interface WeatherProfile {
+  windStrength: number;
+  windGust: number;
   cloudCoverage: number;
   cloudDarkness: number;
   sunlightMultiplier: number;
@@ -16,6 +18,8 @@ export interface WeatherProfile {
 }
 export const WEATHER_PROFILES: Record<WeatherPreset, Readonly<WeatherProfile>> = {
   CLEAR: {
+    windStrength: 0.24,
+    windGust: 0.12,
     cloudCoverage: 0.22,
     cloudDarkness: 0,
     sunlightMultiplier: 1,
@@ -24,6 +28,8 @@ export const WEATHER_PROFILES: Record<WeatherPreset, Readonly<WeatherProfile>> =
     rainIntensity: 0,
   },
   PARTLY_CLOUDY: {
+    windStrength: 0.32,
+    windGust: 0.15,
     cloudCoverage: 0.55,
     cloudDarkness: 0.1,
     sunlightMultiplier: 0.85,
@@ -32,6 +38,8 @@ export const WEATHER_PROFILES: Record<WeatherPreset, Readonly<WeatherProfile>> =
     rainIntensity: 0,
   },
   OVERCAST: {
+    windStrength: 0.43,
+    windGust: 0.19,
     cloudCoverage: 1,
     cloudDarkness: 0.62,
     sunlightMultiplier: 0.3,
@@ -40,6 +48,8 @@ export const WEATHER_PROFILES: Record<WeatherPreset, Readonly<WeatherProfile>> =
     rainIntensity: 0,
   },
   RAIN: {
+    windStrength: 0.58,
+    windGust: 0.24,
     cloudCoverage: 1,
     cloudDarkness: 0.85,
     sunlightMultiplier: 0.18,
@@ -48,6 +58,8 @@ export const WEATHER_PROFILES: Record<WeatherPreset, Readonly<WeatherProfile>> =
     rainIntensity: 0.85,
   },
   MIST: {
+    windStrength: 0.12,
+    windGust: 0.06,
     cloudCoverage: 0.4,
     cloudDarkness: 0.24,
     sunlightMultiplier: 0.55,

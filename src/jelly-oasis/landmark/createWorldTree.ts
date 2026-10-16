@@ -1,3 +1,4 @@
+import { windWeights } from '../animation/vegetationWind';
 import {
   BufferGeometry,
   CatmullRomCurve3,
@@ -156,6 +157,13 @@ export function createWorldTree(
             );
         }
       }
+      const tip = points.at(-1)!;
+      const branch = into === wood && radii[0]! <= 3.2 && points[0]!.y > base + 15;
+      windWeights(g, tip.x, tip.z, (x, y, z) => {
+        if (!branch) return [0, 0];
+        const t = Math.max(0, 1 - Math.hypot(x - tip.x, y - tip.y, z - tip.z) / 3);
+        return [0.07 * t * t, 0];
+      });
       into.push(g);
     }
     const p = (x: number, y: number, z: number) =>
@@ -177,16 +185,24 @@ export function createWorldTree(
           ),
       );
       limb(points, [0.085, 0.06, 0.035, 0.012], vines, seed);
+      const swayVine = (g: BufferGeometry) =>
+        windWeights(g, start.x, start.z, (_x, y) => {
+          const t = Math.min(1, Math.max(0, (points[0]!.y - y) / length));
+          return [0.2 * t * t, 0];
+        });
+      swayVine(vines.at(-1)!);
       const curve = new CatmullRomCurve3(points),
         count = Math.ceil(length * 2.3);
       for (let i = 0; i < count; i++)
         for (const side of [-1, 1])
           leaves.push(
-            leafBlade(
-              curve.getPoint(i / count),
-              seed + side * 1.3,
-              1.05 + 0.35 * Math.sin(i * 2.7 + seed),
-              new Color(i % 3 ? '#6e8c42' : '#92a754'),
+            swayVine(
+              leafBlade(
+                curve.getPoint(i / count),
+                seed + side * 1.3,
+                1.05 + 0.35 * Math.sin(i * 2.7 + seed),
+                new Color(i % 3 ? '#6e8c42' : '#92a754'),
+              ),
             ),
           );
     }
@@ -504,6 +520,16 @@ export function createWorldTree(
       ['PrecinctStones', garden.stones],
     ] as const) {
       if (!parts.length) continue;
+      if (
+        [
+          'WorldTreeWood',
+          'WorldTreeCanopy',
+          'WorldTreeVines',
+          'PrecinctPlants',
+        ].includes(name)
+      )
+        for (const part of parts)
+          if (!part.hasAttribute('oasisWind')) windWeights(part, 0, 0, () => [0, 0]);
       const g = mergeStoneParts(parts);
       owned.push(g);
       const mesh = new Mesh(g, material);

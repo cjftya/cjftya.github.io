@@ -1,3 +1,4 @@
+import { rootedWind } from '../animation/vegetationWind';
 import type { BufferGeometry } from 'three';
 import { Color, IcosahedronGeometry, Vector3 } from 'three';
 import type { LayoutGuide } from './landmarkConfig';
@@ -75,6 +76,7 @@ export function createPrecinctGarden(
           y + r * (i ? 0.35 : 0.65),
           z + Math.sin(a) * rr,
         );
+      rootedWind(g, x, y, z, r * 1.2, r * 0.035);
       plants.push(paintFaces(g, moss));
       for (let k = 0; k < (mobile ? 3 : 5); k++)
         plants.push(

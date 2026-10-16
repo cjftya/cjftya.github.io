@@ -1,3 +1,4 @@
+import { VegetationWind } from '../animation/vegetationWind';
 import { createFantasySanctuary } from './createFantasySanctuary';
 import { createWorldTree } from './createWorldTree';
 import { createMeadow } from '../meadow/createMeadow';
@@ -77,6 +78,7 @@ export async function createOvergrownRuin(
     crystalDetail,
     aesthetic,
   );
+  const wind = new VegetationWind();
   const root = new Group();
   root.name = 'OvergrownOasisRuin';
   const content = new Group();
@@ -567,6 +569,7 @@ export async function createOvergrownRuin(
       pond.visible = !waterOptions.basinOnly;
       root.updateMatrixWorld(true);
     }
+    wind.unbind();
     worldTree?.place(localGround);
     lakeEcology?.place(localGround, pondHeight);
     fantasy?.place(localGround, pondHeight);
@@ -616,6 +619,7 @@ export async function createOvergrownRuin(
       },
       [...vegetation.instances(), ...composition.instances(), ...scenery.instances()],
     );
+    wind.bind(root);
   }
   place(placement);
   if (waterOptions.water || waterOptions.waterfall)
@@ -683,6 +687,7 @@ export async function createOvergrownRuin(
     scenery,
     meadow,
     worldTree,
+    wind,
     lakeEcology,
     fantasy,
     sacredLakeSnapshot: () =>
@@ -745,6 +750,7 @@ export async function createOvergrownRuin(
         lakeEcology.group.visible = !name || name === 'SacredLakeEcology';
     },
     refreshMaterials() {
+      wind.refreshMaterials();
       vegetation.refreshMaterials();
       composition.refreshMaterials();
       scenery.refreshMaterials();
@@ -762,6 +768,7 @@ export async function createOvergrownRuin(
     dispose() {
       if (disposed) return;
       disposed = true;
+      wind.dispose();
       worldTree?.dispose();
       lakeEcology?.dispose();
       fantasy?.dispose();

@@ -306,6 +306,26 @@ function start(canvas: HTMLCanvasElement): void {
         Object.assign(window, {
           __oasisLandmark: {
             audit: () => auditLandmark(loaded),
+            wind: () => loaded.wind.snapshot(),
+            configureWind: (enabled: boolean, paused = false) => {
+              loaded.wind.enabled = enabled;
+              loaded.wind.paused = paused;
+              invalidate();
+            },
+            reviewWindStep: (seconds = 1) => {
+              const duration = Number.isFinite(seconds)
+                ? Math.min(30, Math.max(0, seconds))
+                : 0;
+              loaded.wind.paused = false;
+              for (let remaining = duration; remaining > 0.0001; remaining -= 1 / 60)
+                loaded.wind.update(
+                  Math.min(1 / 60, remaining),
+                  environment.profile,
+                  false,
+                );
+              loaded.wind.paused = true;
+              invalidate();
+            },
             reviewEnvironment: (hour: number, weather: WeatherPreset = 'CLEAR') => {
               environment.setAutoWeather(false);
               environment.setPlaying(false);
@@ -460,6 +480,7 @@ function start(canvas: HTMLCanvasElement): void {
               pondBankMaxDisplacement:
                 loaded.assets.modules.get('PondEdge_Blockout')!.userData
                   .maxBankDisplacement,
+              wind: loaded.wind.snapshot(),
               autoWeather: {
                 enabled: environment.autoWeather.enabled,
                 secondsUntilNext: environment.autoWeather.secondsUntilNext,
@@ -649,6 +670,8 @@ function start(canvas: HTMLCanvasElement): void {
         renderer.getPixelRatio(),
       )
     )
+      dirty = true;
+    if (landmark?.wind.update(seconds, environment.profile, motionPreference.matches))
       dirty = true;
     if (
       landmark?.waterEffects?.update(
