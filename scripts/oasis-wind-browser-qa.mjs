@@ -114,6 +114,62 @@ try {
         assert.equal(animated[kind].draws, rest[kind].draws);
       await capture('day');
       await api('reviewIsolate', ['WorldTreePrecinct']);
+      // Keep the actual default camera. Verify ordinary frame-loop movement,
+      // rather than advancing only through the manual reviewWindStep helper.
+      await capture('default-phase-a');
+      await page.evaluate(() => {
+        const canvas = document.querySelector('canvas');
+        const copy = document.createElement('canvas');
+        copy.width = canvas.width;
+        copy.height = canvas.height;
+        const ctx = copy.getContext('2d');
+        ctx.drawImage(canvas, 0, 0);
+        window.__windQaPixels = ctx.getImageData(0, 0, copy.width, copy.height).data;
+      });
+      const liveStart = await api('wind');
+      await api('configureWind', [true, false]);
+      await page.waitForFunction(
+        (t) => window.__oasisLandmark.wind().time > t + 2,
+        liveStart.time,
+      );
+      await api('configureWind', [true, true]);
+      const liveEnd = await api('wind');
+      await capture('default-phase-b');
+      const visibleChange = await page.evaluate(() => {
+        const canvas = document.querySelector('canvas');
+        const copy = document.createElement('canvas');
+        copy.width = canvas.width;
+        copy.height = canvas.height;
+        const ctx = copy.getContext('2d');
+        ctx.drawImage(canvas, 0, 0);
+        const pixels = ctx.getImageData(0, 0, copy.width, copy.height).data;
+        let changed = 0,
+          totalDelta = 0;
+        for (let i = 0; i < pixels.length; i += 4) {
+          const delta = Math.max(
+            ...[0, 1, 2].map((c) =>
+              Math.abs(pixels[i + c] - window.__windQaPixels[i + c]),
+            ),
+          );
+          changed += Number(delta > 8);
+          totalDelta += delta;
+        }
+        delete window.__windQaPixels;
+        return {
+          changed,
+          fraction: changed / (pixels.length / 4),
+          meanDelta: totalDelta / (pixels.length / 4),
+        };
+      });
+      assert.ok(
+        visibleChange.fraction > 0.001,
+        'Wind must visibly change the tree at the default camera',
+      );
+      console.log('live default wind', mobile, {
+        liveStart: liveStart.time,
+        liveEnd: liveEnd.time,
+        visibleChange,
+      });
       await api('reviewCamera', [
         [0, 65, 80],
         [-12, 42, -18],
@@ -132,10 +188,16 @@ try {
       await capture('rain-night');
       await api('configureWind', [true, false]);
       await page.emulateMedia({ reducedMotion: 'reduce' });
-      await page.waitForFunction(() => window.__oasisLandmark.wind().strength === 0);
+      const beforeReduced = await api('wind');
+      await page.waitForFunction(
+        (t) => window.__oasisLandmark.wind().time > t + 2,
+        beforeReduced.time,
+      );
       const reduced = await api('wind');
       await frame();
-      assert.equal((await api('wind')).time, reduced.time);
+      assert.ok(reduced.strength > 0.05);
+      assert.ok(reduced.strength < beforeReduced.strength);
+      assert.ok((await api('wind')).time > reduced.time);
       await page.emulateMedia({ reducedMotion: 'no-preference' });
       await page.waitForFunction(
         (t) => window.__oasisLandmark.wind().time > t,
@@ -148,7 +210,18 @@ try {
       assert.deepEqual(rebuilt.meshes, previous.meshes);
       assert.equal(rebuilt.materials, previous.materials);
       assert.deepEqual(errors, []);
-      results.devices.push({ mobile, rest, animated, rain, reduced, rebuilt, errors });
+      results.devices.push({
+        mobile,
+        rest,
+        animated,
+        rain,
+        reduced,
+        rebuilt,
+        liveStart,
+        liveEnd,
+        visibleChange,
+        errors,
+      });
       console.log('PASS', mobile ? 'mobile' : 'desktop');
     } finally {
       await browser.close();

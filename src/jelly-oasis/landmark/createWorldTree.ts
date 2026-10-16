@@ -162,7 +162,7 @@ export function createWorldTree(
       windWeights(g, tip.x, tip.z, (x, y, z) => {
         if (!branch) return [0, 0];
         const t = Math.max(0, 1 - Math.hypot(x - tip.x, y - tip.y, z - tip.z) / 3);
-        return [0.07 * t * t, 0];
+        return [0.22 * t * t, 0];
       });
       into.push(g);
     }
@@ -188,7 +188,7 @@ export function createWorldTree(
       const swayVine = (g: BufferGeometry) =>
         windWeights(g, start.x, start.z, (_x, y) => {
           const t = Math.min(1, Math.max(0, (points[0]!.y - y) / length));
-          return [0.2 * t * t, 0];
+          return [0.7 * t * t, 0];
         });
       swayVine(vines.at(-1)!);
       const curve = new CatmullRomCurve3(points),

@@ -91,7 +91,7 @@ export class VegetationWind {
   update(seconds: number, weather: Readonly<WeatherProfile>, reducedMotion: boolean) {
     const u = this.uniforms;
     const wasMoving = u.oasisWindStrength.value > 0 || u.oasisWindGust.value > 0;
-    if (!this.enabled || reducedMotion) {
+    if (!this.enabled) {
       u.oasisWindStrength.value = u.oasisWindGust.value = 0;
       return wasMoving;
     }
@@ -101,11 +101,14 @@ export class VegetationWind {
     const t = u.oasisWindTime.value;
     const angle = 0.6 + 0.28 * Math.sin(t * 0.025) + 0.12 * Math.sin(t * 0.067);
     u.oasisWindDirection.value.set(Math.cos(angle), Math.sin(angle));
-    // Weather already interpolates; ease back from reduced motion as well.
+    // Keep the breeze alive on every device. Reduced motion softens movement
+    // instead of silently freezing the entire landscape. No device-specific gain.
     const blend = 1 - Math.exp(-dt * 1.8);
     u.oasisWindStrength.value +=
-      (weather.windStrength - u.oasisWindStrength.value) * blend;
-    u.oasisWindGust.value += (weather.windGust - u.oasisWindGust.value) * blend;
+      (weather.windStrength * (reducedMotion ? 0.65 : 1) - u.oasisWindStrength.value) *
+      blend;
+    u.oasisWindGust.value +=
+      (weather.windGust * (reducedMotion ? 0.35 : 1) - u.oasisWindGust.value) * blend;
     return dt > 0 && this.bindings.length > 0;
   }
 

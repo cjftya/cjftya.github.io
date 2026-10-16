@@ -49,7 +49,7 @@ export function leafBlade(
       1,
       Math.hypot(x - origin.x, y - origin.y, z - origin.z) / length,
     );
-    return [0.035 * t * t, 0.022 * t * t];
+    return [0.14 * t * t, 0.055 * t * t];
   });
   return paintFaces(g, [
     color,
@@ -98,10 +98,12 @@ export function foliageCrown(
       .translate(pos.x, pos.y, pos.z);
     g.computeVertexNormals();
     const tint = 0.92 + 0.09 * Math.sin(i * 1.7 + seed) + 0.08 * h;
-    windWeights(g, pos.x, pos.z, (_x, y) => {
+    const crownWeights = (_x: number, y: number): readonly [number, number] => {
       const t = Math.min(1, Math.max(0, (y - (pos.y - size * 0.74)) / (size * 1.48)));
-      return [0.075 * t, 0.018 * t];
-    });
+      // Scale the crown motion to the giant tree, rather than sub-pixel leaf sizes.
+      return [Math.min(1.8, Math.max(0.9, width * 0.12)) * t, 0.07 * t];
+    };
+    windWeights(g, pos.x, pos.z, crownWeights);
     parts.push(
       paintFaces(
         g,
@@ -120,12 +122,18 @@ export function foliageCrown(
             Math.sin(b) * size * 0.55,
           ),
         );
+      // The attached leaf tips follow the same crown field and phase.
       parts.push(
-        leafBlade(
-          origin,
-          b,
-          0.9 + size * 0.24,
-          palette[1]!.clone().multiplyScalar(tint),
+        windWeights(
+          leafBlade(
+            origin,
+            b,
+            0.9 + size * 0.24,
+            palette[1]!.clone().multiplyScalar(tint),
+          ),
+          pos.x,
+          pos.z,
+          crownWeights,
         ),
       );
     }
