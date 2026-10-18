@@ -689,6 +689,7 @@ function start(canvas: HTMLCanvasElement): void {
         environment.state.timeOfDay,
         motionPreference.matches,
         canvas.clientHeight * renderer.getPixelRatio(),
+        environment.profile.cloudDarkness,
       )
     )
       dirty = true;

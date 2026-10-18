@@ -24,7 +24,9 @@ export class EnvironmentController {
   readonly clouds = createClouds();
   readonly rain: ReturnType<typeof createRain>;
   readonly sun = new DirectionalLight('#fff0d0', 2.5);
-  readonly moon = new DirectionalLight('#a5bbed', 0.5);
+  readonly moon = new DirectionalLight('#aadbe9', 0.5);
+  readonly sanctuaryRim = new DirectionalLight('#79dfd6', 0.45);
+  readonly sanctuaryFill = new DirectionalLight('#d8b6ea', 0.25);
   readonly ambient = new HemisphereLight('#f2edd6', '#61715c', 1.65);
   readonly fog = new Fog('#dce7d6', 250, 900);
   readonly profile: WeatherProfile = { ...WEATHER_PROFILES.CLEAR };
@@ -39,10 +41,10 @@ export class EnvironmentController {
   private readonly overcastZenith = new Color('#777e9c');
   private readonly overcastHorizon = new Color('#b4b3c7');
   private readonly dayAmbient = new Color('#e2eeeb');
-  private readonly nightAmbient = new Color('#afc2e9');
+  private readonly nightAmbient = new Color('#87cbd5');
   private readonly dayGround = new Color('#637664');
-  private readonly nightGround = new Color('#78869d');
-  private readonly distanceHaze = new Color('#8da8c4');
+  private readonly nightGround = new Color('#6b759b');
+  private readonly distanceHaze = new Color('#568e9f');
   private readonly cloudDay = new Color('#fff3de');
   private readonly cloudNight = new Color('#818cab');
   private readonly cloudStorm = new Color('#727f8d');
@@ -79,7 +81,15 @@ export class EnvironmentController {
       this.moon,
       this.moon.target,
       this.ambient,
+      this.sanctuaryRim,
+      this.sanctuaryRim.target,
+      this.sanctuaryFill,
+      this.sanctuaryFill.target,
     );
+    this.sanctuaryRim.position.set(-70, 90, -65);
+    this.sanctuaryRim.target.position.set(14, 20, 14);
+    this.sanctuaryFill.position.set(65, 40, 70);
+    this.sanctuaryFill.target.position.set(14, 15, 14);
     // A fixed world envelope keeps the tall canopy in the map even at ground-level
     // zoom. Camera motion never rescales or translates the shadow texel grid.
     // Enclose the square terrain and elevations -60..100, including the world tree.
@@ -211,7 +221,7 @@ export class EnvironmentController {
       25,
       distance - MathUtils.lerp(18, 100, this.profile.fogStrength),
     );
-    this.fog.far = distance + 330 - this.profile.fogStrength * 185;
+    this.fog.far = distance + 390 - this.profile.fogStrength * 220;
     this.scene.fog = this.fogEnabled ? this.fog : null;
     const needsUpdate = this.changed || advancing || transitioning;
     if (!needsUpdate) return false;
@@ -250,6 +260,9 @@ export class EnvironmentController {
     this.ambient.color.copy(this.dayAmbient).lerp(this.nightAmbient, night);
     this.ambient.groundColor.copy(this.dayGround).lerp(this.nightGround, night);
     this.ambient.intensity = frame.ambient * weather.ambientMultiplier;
+    const sanctuaryVisibility = 1 - weather.cloudDarkness * 0.55;
+    this.sanctuaryRim.intensity = (0.38 + night * 0.62) * sanctuaryVisibility;
+    this.sanctuaryFill.intensity = (0.16 + night * 0.22) * sanctuaryVisibility;
     // One direction drives both the rendered disc and directional light.
     const moonDirection = u.moonDirection!.value as Vector3;
     // The primary moon has an art-directed orbit in the scenic sky. Its visible
@@ -302,5 +315,7 @@ export class EnvironmentController {
     this.sun.dispose();
     this.moon.dispose();
     this.ambient.dispose();
+    this.sanctuaryRim.dispose();
+    this.sanctuaryFill.dispose();
   }
 }

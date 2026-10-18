@@ -38,6 +38,24 @@ export const COMPOSITION_ZONES: readonly CompositionZone[] = [
     slope: 0.25,
     intent: 'Quiet root transition',
   },
+  {
+    id: 'forest-floor-gardens',
+    basis: 'world',
+    centers: [
+      [-76, -48],
+      [-48, -85],
+      [38, -85],
+      [91, -36],
+      [-75, 33],
+      [89, 55],
+      [-35, 92],
+      [62, 98],
+    ],
+    radius: 14,
+    counts: { rock: 12, grass: 36, shrub: 20, flower: 24 },
+    slope: 0.7,
+    intent: 'Low layered planting links the forest ribbons and foreground banks',
+  },
 ];
 export function selectComposition(
   debug: boolean,

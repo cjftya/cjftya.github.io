@@ -75,11 +75,12 @@ export function createReflectivePond(
   const lastCamera = new Matrix4(),
     lastProjection = new Matrix4();
   const material = pond.material;
-  material.color.set('#347982');
+  material.color.set('#348f8b');
   material.roughness = 0.16;
   material.opacity = 1;
   material.transparent = !!fluid;
   material.depthWrite = !fluid;
+  const sanctuaryNight = { value: 0 };
   const waterLevel = { value: pond.geometry.attributes.position!.getY(0) };
   const fluidTexture = { value: fluid?.value?.texture };
   const fluidBounds = { value: fluid?.value?.bounds };
@@ -110,6 +111,7 @@ export function createReflectivePond(
       gpuPondAmplitude: gpuAmplitude,
       gpuPondNeutral: gpuNeutral,
       waterTime: time,
+      sanctuaryNight,
       fluidField: fluidTexture,
       fluidBounds,
       waterLevel,
@@ -149,7 +151,7 @@ export function createReflectivePond(
       .replace(
         '#include <common>',
         `#include <common>
-      uniform float waterTime, waterCaptured, waterLevel;
+      uniform float waterTime, waterCaptured, waterLevel, sanctuaryNight;
       ${gpu ? 'uniform float gpuPondNeutral;' : ''}
       ${fluid ? 'varying float inletTravel, inletMask;' + flowNoiseGLSL : ''}
       uniform vec3 waterImpact; uniform vec2 waterFlowDirection;
@@ -223,19 +225,29 @@ export function createReflectivePond(
         }`
             : ''
         }
+        // Emission follows shallow banks and broken wave ridges; deep water
+        // retains the reflected tree and sky instead of becoming a solid neon disc.
+        float bankGlow = exp(-max(0.,waterThickness)*1.8) * smoothstep(.008,.10,waterThickness);
+        float shimmer = pow(.5+.5*sin(waterPosition.x*.8 + waterPosition.z*.67
+          + sin(waterPosition.z*1.3-waterTime*.23)*1.7 + waterTime*.19), 12.);
+        float pool = exp(-length((waterPosition.xz-vec2(-4.,7.))*vec2(.055,.075)));
+        float sacredGain = mix(.14,.65,sanctuaryNight);
+        ${gpu ? 'sacredGain *= 1. - step(.5, gpuPondNeutral);' : ''}
+        outgoingLight += vec3(.10,.65,.53) * sacredGain
+          * (bankGlow*.65 + shimmer*pool*.26 + pool*.14);
         #include <opaque_fragment>`,
       );
   };
   material.customProgramCacheKey = () =>
     gpu
-      ? 'oasis-gpgpu-pond-prototype-v1'
+      ? 'oasis-gpgpu-pond-sacred-v2'
       : fluid
-        ? 'oasis-shallow-water-v8'
+        ? 'oasis-shallow-water-sacred-v9'
         : excavated
-          ? 'oasis-reflective-pond-excavated-v1'
+          ? 'oasis-reflective-pond-excavated-v2'
           : realWater
-            ? 'oasis-reflective-pond-v4'
-            : 'oasis-reflective-pond-v3';
+            ? 'oasis-reflective-pond-v5'
+            : 'oasis-reflective-pond-sacred-v4';
   material.needsUpdate = true;
   function rebuild() {
     gpuField.value = gpu?.value?.texture.value ?? fluid?.value?.texture;
@@ -346,6 +358,12 @@ export function createReflectivePond(
   return {
     time,
     rebuild,
+    updateLighting(night: number) {
+      sanctuaryNight.value = Math.max(
+        0,
+        Math.min(1, Number.isFinite(night) ? night : 0),
+      );
+    },
     setImpact(point: Vector2 | null, strength = 0, direction?: Vector2) {
       impact.value.set(point?.x ?? 0, point?.y ?? 0, point ? strength : 0);
       if (direction) flowDirection.value.copy(direction).normalize();

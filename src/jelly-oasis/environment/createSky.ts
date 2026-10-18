@@ -87,6 +87,18 @@ export function createSky() {
         float nebula = noise3(ray * 7.) * .65 + noise3(ray * 19.) * .35;
         color += mix(vec3(.08,.16,.25),vec3(.22,.09,.30),nebula) * river * nebula * night * clearSky * .62;
 
+        // Long, domain-warped luminous ribbons fill the sky between celestial
+        // bodies. Angular coordinates remain stable as the camera orbits.
+        float az = atan(ray.z,ray.x);
+        float warp = noise3(ray * 3.2 + vec3(0.,elapsed*.004,0.));
+        float beltY = .27 + .11*sin(az*2.+warp*2.) + .045*sin(az*5.-elapsed*.008);
+        float veilBand = exp(-pow((ray.y-beltY)*13.,2.));
+        float ribbon = exp(-pow((ray.y-beltY+.025*sin(az*13.+warp*5.))*40.,2.));
+        float breaks = smoothstep(.24,.70,noise3(ray*9.+vec3(elapsed*.003,0.,0.)));
+        vec3 veilColor = mix(vec3(.025,.32,.30),vec3(.24,.09,.36),smoothstep(-.6,.8,sin(az*2.3)));
+        color += veilColor * (veilBand*.42+ribbon*.34) * breaks
+          * (.14+night*.86) * clearSky;
+
         // A huge banded gas giant, with a curved terminator and thin atmosphere.
         vec2 uv = bodyUV(ray,planetDirection,.245);
         float r2 = dot(uv,uv), edge = max(fwidth(r2),.002);
@@ -118,9 +130,13 @@ export function createSky() {
         float wisps = pow(max(0.,sin(ray.y*55. + noise3(ray*8.)*5. + elapsed*.012)),6.);
         clouds = max(clouds,wisps * smoothstep(.48,.74,noise3(ray*4.)) * .24);
         clouds *= smoothstep(-.22,-.04,ray.y) * (1.-smoothstep(.65,.96,ray.y));
-        vec3 cloudLight = mix(vec3(.82,.79,.89),vec3(.15,.19,.34),night);
+        vec3 cloudLight = mix(vec3(.71,.85,.83),vec3(.075,.18,.25),night);
         cloudLight = mix(cloudLight,vec3(.24,.27,.37),cloudDarkness*.72);
         vec3 cloudColor = mix(cloudLight*.62,cloudLight,smoothstep(.44,.76,density));
+        // Silver/peach edges are confined to sun-facing cloud density transitions.
+        float cloudEdge = smoothstep(.40,.57,density) * (1.-smoothstep(.58,.73,density));
+        cloudColor += mix(vec3(.30,.20,.14),vec3(.07,.20,.22),night)
+          * cloudEdge * (.35+.65*pow(sunDot,4.)) * clearSky;
         color = mix(color,cloudColor,clouds * cloudsEnabled * mix(.48,.83,cloudCover));
         gl_FragColor = vec4(color,1.);
         #include <tonemapping_fragment>

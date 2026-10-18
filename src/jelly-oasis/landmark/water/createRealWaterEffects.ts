@@ -1,3 +1,4 @@
+import { sampleTime } from '../../environment/timeOfDay';
 import {
   Float32BufferAttribute,
   Group,
@@ -390,6 +391,7 @@ export function createRealWaterEffects(
     group,
     rebuild,
     update(dt: number, hour: number, reduced: boolean, environmentKey = '') {
+      reflection.updateLighting(sampleTime(hour).stars);
       const key = `${Math.floor(hour * 60)}:${environmentKey}`;
       if (environment !== key) {
         environment = key;

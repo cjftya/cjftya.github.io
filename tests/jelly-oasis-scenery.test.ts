@@ -94,6 +94,14 @@ it('places deterministic grounded scenery on real compact terrain and GLBs, supp
   const owner = l.scenery,
     initial = owner.instances(),
     original = { ...l.placement, position: { ...l.placement.position } };
+  // Coverage of the requested slope faces must survive exclusion/spacing masks.
+  for (const zone of [
+    'north-slope-forest',
+    'west-slope-forest',
+    'east-slope-forest',
+    'southern-garden-banks',
+  ])
+    expect(initial.filter((p) => p.zone === zone).length).toBeGreaterThan(20);
   const meshes = owner.group.children as InstancedMesh[];
   const resources = meshes.flatMap((m) => [
     m,

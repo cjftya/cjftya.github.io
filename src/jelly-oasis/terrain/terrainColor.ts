@@ -8,14 +8,14 @@ import { ENCHANTED_COLONIES } from '../landmark/enchantedPalette';
 /** Original sRGB palette, guided by Tiny Glade's grass/earth separation and
  * ISLANDERS' broad grass/stone masses. Color converts to linear vertex data. */
 export const TERRAIN_PALETTE = {
-  meadow: '#929f68',
-  dry: '#b3a17e',
+  meadow: '#7eaa85',
+  dry: '#a9a38c',
   oasis: '#65937b',
-  grove: '#7b8963',
+  grove: '#527f78',
   damp: '#547b72',
-  shoulder: '#95988a',
+  shoulder: '#82949e',
   dirt: '#aa9378',
-  rock: '#98968d',
+  rock: '#8b91a0',
   enchantedMoss: '#807d9b',
   enchantedShore: '#67a49a',
   enchantedFlowers: '#a99c87',
