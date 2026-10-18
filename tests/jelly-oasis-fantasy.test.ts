@@ -36,8 +36,19 @@ describe('fantasy sanctuary lifecycle and animation', () => {
     expect(geometry.attributes.position!.count).toBeGreaterThan(100);
     expect(geometry.boundingBox!.max.y).toBeGreaterThan(7.5);
     const dispose = vi.spyOn(geometry, 'dispose');
+    const shaft = effect.group.getObjectByName('CanopyLightShafts') as Mesh;
+    const oldShaft = shaft.geometry;
+    const releaseShaft = vi.spyOn(oldShaft, 'dispose');
+    const shaftVertices = Array.from(oldShaft.attributes.position!.array);
     effect.place((x, z) => ground(x, z) + 3, 3);
     expect(dispose).toHaveBeenCalledOnce();
+    expect(releaseShaft).toHaveBeenCalledOnce();
+    const movedShaft = shaft.geometry.attributes.position!;
+    for (let i = 0; i < movedShaft.count; i++) {
+      expect(movedShaft.getX(i)).toBeCloseTo(shaftVertices[i * 3]!);
+      expect(movedShaft.getY(i)).toBeCloseTo(shaftVertices[i * 3 + 1]! + 3);
+      expect(movedShaft.getZ(i)).toBeCloseTo(shaftVertices[i * 3 + 2]!);
+    }
     effect
       .snapshot()
       .colonies.forEach((c, i) => expect(c.y).toBeCloseTo(first.colonies[i]!.y + 3));

@@ -42,16 +42,16 @@ const key = (
 });
 const COLOR_CHANNELS = ['zenith', 'horizon', 'sun'] as const;
 const KEYS = [
-  key(0, 0, 0.68, 1, 0x171b47, 0x766491, 0x99b8ec),
-  key(4, 0, 0.68, 1, 0x292451, 0x8c779e, 0xabbcf0),
+  key(0, 0, 0.68, 1, 0x101d3c, 0x397b87, 0x99b8ec),
+  key(4, 0, 0.68, 1, 0x232c53, 0x578e9d, 0xabbcf0),
   key(5.5, 0.12, 0.85, 0.3, 0x6261a0, 0xe6b3bd, 0xffb27a),
-  key(7, 1.75, 1.2, 0, 0x4c8dbd, 0xc8b8dc, 0xffd09a),
-  key(12, 2.5, 1.5, 0, 0x397eae, 0xc9c6e7, 0xfff4e4),
+  key(7, 1.75, 1.2, 0, 0x3989a3, 0xb4d8d2, 0xffd09a),
+  key(12, 2.5, 1.5, 0, 0x246c91, 0xa5d8ce, 0xfff4e4),
   key(16, 2.0, 1.45, 0, 0x638bb9, 0xddbcd7, 0xffdbb0),
   key(18, 1.1, 1.02, 0, 0x64569b, 0xf2b09c, 0xffa461),
-  key(19.5, 0, 0.73, 0.65, 0x362a69, 0xad7caa, 0xd2a9d8),
-  key(21, 0, 0.68, 1, 0x171b47, 0x766491, 0x99b8ec),
-  key(24, 0, 0.68, 1, 0x171b47, 0x766491, 0x99b8ec),
+  key(19.5, 0, 0.73, 0.65, 0x28345e, 0x7a9ab3, 0xd2a9d8),
+  key(21, 0, 0.68, 1, 0x101d3c, 0x397b87, 0x99b8ec),
+  key(24, 0, 0.68, 1, 0x101d3c, 0x397b87, 0x99b8ec),
 ];
 export function wrapTime(hours: number): number {
   return Number.isFinite(hours) ? ((hours % 24) + 24) % 24 : 12;

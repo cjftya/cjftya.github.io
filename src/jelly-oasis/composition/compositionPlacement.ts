@@ -88,6 +88,10 @@ export function placeComposition(
           Math.max(...heights.map((v) => Math.abs(v - h))) / step > zone.slope
         )
           reason = 'slope';
+        // New slope gardens may contain low rocks; reject deep burial instead
+        // of hiding most of a small rock to cover a steep terrain step.
+        if (!reason && kind === 'rock' && h - Math.min(h, ...heights) > 0.27)
+          reason = 'burial';
         if (
           !reason &&
           [...vegetation, ...instances].some(

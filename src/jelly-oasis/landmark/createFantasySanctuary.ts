@@ -1,3 +1,4 @@
+import { createSanctuaryLight } from './createSanctuaryLight';
 import { rootedWind } from '../animation/vegetationWind';
 import type { Matrix4 } from 'three';
 import {
@@ -175,6 +176,7 @@ export function createFantasySanctuary(
   group.name = 'FantasySanctuary';
   content.add(group);
   const understory = createEnchantedUnderstory(pond, approach);
+  const canopyLight = createSanctuaryLight();
   const crystalMaterials = palettes.map((color) => {
     const material = new MeshStandardMaterial({
       color,
@@ -233,7 +235,9 @@ export function createFantasySanctuary(
   // A distant, softly feathered moon bounce avoids point-light hotspots inside
   // the canopy. The cone favours the branch forks over the ground and backdrop.
   // It replaces the existing unshadowed light on both quality tiers.
-  const treeLight = new SpotLight('#bdd4ed', 0, 180, 0.55, 1, 0);
+  const treeLight = new SpotLight('#b3e3d5', 0, 180, 0.55, 1, 0);
+  const lakeBounce = new PointLight('#66ead6', 0, 70, 0);
+  lakeBounce.name = 'SacredLakeBounce';
   treeLight.name = 'WorldTreeMoonBounce';
   const crystalLight = new PointLight('#b19ade', 0, 28, 2);
   const mistMaterial = new ShaderMaterial({
@@ -272,6 +276,7 @@ export function createFantasySanctuary(
   let particleCount = 0;
   function clear() {
     understory.group.removeFromParent();
+    canopyLight.mesh.removeFromParent();
     group.traverse((o) => {
       if (o instanceof InstancedMesh) o.dispose();
     });
@@ -282,7 +287,8 @@ export function createFantasySanctuary(
     if (disposed) return;
     clear();
     understory.place(ground);
-    group.add(understory.group);
+    canopyLight.place(ground);
+    group.add(understory.group, canopyLight.mesh);
     anchors = [];
     const shards: BufferGeometry[][] = [[], []];
     const source = crystalGeometry();
@@ -421,18 +427,25 @@ export function createFantasySanctuary(
     const positions: number[] = [],
       sizes: number[] = [],
       colors: number[] = [];
-    particleCount = mobile ? 72 : 144;
+    particleCount = mobile ? 96 : 192;
     for (let i = 0; i < particleCount; i++) {
       const colony = ENCHANTED_COLONIES[i % ENCHANTED_COLONIES.length]!;
       const a = i * 2.399,
         r = Math.sqrt(noise(i + 15)) * colony.radius * 1.4;
-      const x = colony.x + Math.cos(a) * r,
-        z = colony.z + Math.sin(a) * r * 0.85;
+      const high = i % 3 === 0;
+      const heightBand = 12 + noise(i * 7) * 40;
+      const x = high
+          ? -12 + Math.cos(a) * (14 + noise(i) * 20)
+          : colony.x + Math.cos(a) * r,
+        z = high
+          ? -18 + Math.sin(a) * (12 + noise(i + 2) * 18)
+          : colony.z + Math.sin(a) * r * 0.85;
       const overWater = polygonDistance(x, z, pond.positions) > 0;
       const y =
-        Math.max(ground(x, z), overWater ? waterY : -Infinity) + 1 + noise(i * 5) * 3.2;
+        Math.max(ground(x, z), overWater ? waterY : -Infinity) +
+        (high ? heightBand : 1 + noise(i * 5) * 4.5);
       positions.push(x, y, z);
-      sizes.push(0.1 + noise(i * 9) * 0.15);
+      sizes.push((high ? 0.18 : 0.12) + noise(i * 9) * 0.19);
       const tint = new Color(
         i % 4 === 0 ? '#ffe3a0' : ENCHANTED_COLORS[colony.palette],
       );
@@ -442,7 +455,8 @@ export function createFantasySanctuary(
     const treeGround = ground(-12, -18);
     treeLight.position.set(-38, treeGround + 70, 70);
     treeLight.target.position.set(-12, treeGround + 34, -18);
-    group.add(treeLight, treeLight.target);
+    lakeBounce.position.set(-4, waterY + 2.5, 7);
+    group.add(treeLight, treeLight.target, lakeBounce);
     if (crystalLight) {
       const hero = CRYSTAL_COLONIES[0];
       crystalLight.position.set(hero.x, ground(hero.x, hero.z) + 3.2, hero.z);
@@ -479,6 +493,7 @@ export function createFantasySanctuary(
       hour: number,
       reducedMotion: boolean,
       viewportHeight: number,
+      cloudDarkness = 0,
     ) {
       if (disposed) return false;
       const night = sampleTime(hour).stars;
@@ -491,10 +506,12 @@ export function createFantasySanctuary(
           : 0.94 + 0.06 * Math.sin(elapsed * 0.55 + i * 2.1);
         m.emissiveIntensity = MathUtils.lerp(0.26, i === 0 ? 3.0 : 2.2, night) * pulse;
       });
-      treeLight.intensity = night * 1.1;
+      treeLight.intensity = (0.3 + night * 1.65) * (1 - cloudDarkness * 0.35);
+      lakeBounce.intensity = 0.22 + night * 0.85;
+      canopyLight.update(elapsed, night, cloudDarkness);
       crystalLight.intensity = 2 + night * 26;
       mistMaterial.uniforms.elapsed!.value = elapsed;
-      mistMaterial.uniforms.opacity!.value = 0.055 + night * 0.14;
+      mistMaterial.uniforms.opacity!.value = 0.035 + night * 0.08;
       flowerMaterial.emissiveIntensity = 0.08 + night * 0.3;
       particleMaterials.forEach((m) => {
         m.uniforms.elapsed!.value = elapsed;
@@ -516,6 +533,7 @@ export function createFantasySanctuary(
       if (disposed) return;
       disposed = true;
       understory.dispose();
+      canopyLight.dispose();
       clear();
       [
         ...crystalMaterials,
@@ -526,6 +544,7 @@ export function createFantasySanctuary(
         ...particleMaterials,
       ].forEach((m) => m.dispose());
       treeLight.dispose();
+      lakeBounce.dispose();
       crystalLight?.dispose();
       group.removeFromParent();
     },

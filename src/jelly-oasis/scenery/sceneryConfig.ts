@@ -208,6 +208,69 @@ export const SCENERY_ZONES: readonly SceneryZone[] = [
     radius: 16,
     counts: { broad: 14, spire: 9, young: 12 },
   },
+  // Descending ribbons cover the visible slope faces, not just the ridge tops.
+  // Priority keeps the same forest mass on mobile; short trees preserve the hero.
+  {
+    id: 'north-slope-forest',
+    basis: 'world',
+    ribbon: true,
+    priority: true,
+    centers: [
+      [-0.29, -0.3],
+      [-0.18, -0.26],
+      [-0.04, -0.3],
+      [0.12, -0.29],
+      [0.27, -0.27],
+    ],
+    radius: 17,
+    scale: 0.68,
+    counts: { broad: 30, young: 30, spire: 12 },
+  },
+  {
+    id: 'west-slope-forest',
+    basis: 'world',
+    ribbon: true,
+    priority: true,
+    centers: [
+      [-0.33, -0.28],
+      [-0.28, -0.16],
+      [-0.31, -0.02],
+      [-0.32, 0.13],
+    ],
+    radius: 15,
+    scale: 0.65,
+    counts: { broad: 22, young: 26, spire: 8 },
+  },
+  {
+    id: 'east-slope-forest',
+    basis: 'world',
+    ribbon: true,
+    priority: true,
+    centers: [
+      [0.28, -0.29],
+      [0.32, -0.19],
+      [0.31, -0.07],
+      [0.35, 0.08],
+      [0.34, 0.24],
+    ],
+    radius: 15,
+    scale: 0.68,
+    counts: { broad: 24, young: 28, spire: 10 },
+  },
+  {
+    id: 'southern-garden-banks',
+    basis: 'world',
+    priority: true,
+    centers: [
+      [-0.2, 0.27],
+      [-0.08, 0.35],
+      [0.26, 0.32],
+      [0.36, 0.3],
+    ],
+    radius: 12,
+    scale: 0.48,
+    counts: { broad: 8, young: 26, boulder: 8, pebble: 6 },
+  },
 ];
 export const SCENERY_SCALE = {
   broad: 2.15,
@@ -235,9 +298,9 @@ export function scenerySeparation(
   return (a.radius + b.radius) * (bothTrees ? 0.32 : bothRocks ? 0.5 : 1) + 0.5;
 }
 export const SCENERY_SHAPES = {
-  broad: { radius: 4.6, height: 7.4, slope: 0.75 },
-  spire: { radius: 3.0, height: 9.0, slope: 0.75 },
-  young: { radius: 2.4, height: 4.2, slope: 0.75 },
+  broad: { radius: 4.6, height: 7.4, slope: 1.05 },
+  spire: { radius: 3.0, height: 9.0, slope: 1.05 },
+  young: { radius: 2.4, height: 4.2, slope: 1.15 },
   pebble: { radius: 0.85, height: 0.65, slope: 0.32 },
   boulder: { radius: 2.25, height: 2.45, slope: 0.38 },
   ridge: { radius: 6.2, height: 5.3, slope: 0.55 },

@@ -1,3 +1,4 @@
+import { sanctuarySurface } from '../environment/sanctuarySurface';
 import {
   Color,
   Group,
@@ -52,6 +53,7 @@ export function createScenery(
             ),
           ),
         );
+        sanctuarySurface(mesh.material);
         mesh.name = `Scenery_${key}`;
         mesh.userData.shape = shape;
         mesh.count = 0;

@@ -1,3 +1,4 @@
+import { sanctuarySurface } from '../environment/sanctuarySurface';
 import { windWeights } from '../animation/vegetationWind';
 import {
   BufferGeometry,
@@ -84,6 +85,8 @@ export function createWorldTree(
     );
   };
   rootMaterial.customProgramCacheKey = () => 'oasis-root-light-v1';
+  sanctuarySurface(material);
+  sanctuarySurface(rootMaterial);
   let owned: BufferGeometry[] = [],
     disposed = false;
   const footprints: Footprint[] = [];

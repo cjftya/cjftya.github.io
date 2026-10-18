@@ -1,3 +1,4 @@
+import { sampleTime } from '../../environment/timeOfDay';
 import {
   BufferGeometry,
   DoubleSide,
@@ -589,6 +590,7 @@ export function createWaterEffects(
     group: waterfall,
     rebuild,
     update(dt: number, hour: number, reduced: boolean, environmentKey = '') {
+      reflectivePond?.updateLighting(sampleTime(hour).stars);
       const hourBucket = Math.floor(hour * 60);
       if (hourBucket !== previousHour || environmentKey !== previousEnvironment) {
         previousEnvironment = environmentKey;
