@@ -1,0 +1,37 @@
+{
+  "note": "Production build; software WebGL and mobile emulation, not physical-device FPS.",
+  "devices": [
+    {
+      "mobile": false,
+      "windTime": [
+        0.6333000000000016,
+        3.2166000000000063
+      ],
+      "windStrength": 0.37883782732060495,
+      "reducedWindStrength": 0.25002721742114553,
+      "rainMoonVisibility": 0.2928374043359323,
+      "crownPixels": {
+        "changed": 21282,
+        "total": 119700,
+        "fraction": 0.17779448621553884
+      },
+      "errors": []
+    },
+    {
+      "mobile": true,
+      "windTime": [
+        0.5665999999999995,
+        3.1165000000000003
+      ],
+      "windStrength": 0.3786083762195449,
+      "reducedWindStrength": 0.250025054758692,
+      "rainMoonVisibility": 0.2906321599999998,
+      "crownPixels": {
+        "changed": 6774,
+        "total": 56496,
+        "fraction": 0.11990229396771453
+      },
+      "errors": []
+    }
+  ]
+}

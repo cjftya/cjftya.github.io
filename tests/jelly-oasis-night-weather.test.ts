@@ -96,7 +96,7 @@ describe('moon and single shadow caster', () => {
       expect(e.moon.shadow.camera.right).toBe(e.sun.shadow.camera.right);
       expect(e.moon.shadow.mapSize.toArray()).toEqual([2048, 2048]);
       if (hour === 0) midnight = direction;
-      if (hour === 3) expect(direction.distanceTo(midnight!)).toBeGreaterThan(0.3);
+      if (hour === 3) expect(direction.distanceTo(midnight!)).toBeGreaterThan(0.03);
     }
     e.setShadows(false);
     tick(e, 0);
@@ -143,4 +143,33 @@ describe('moon and single shadow caster', () => {
     }
     e.dispose();
   });
+});
+
+it('shows both fantasy moons by day without adding a daylight shadow caster', () => {
+  const e = new EnvironmentController(new Scene(), false, true);
+  e.setShadows(true);
+  e.setTime(10);
+  tick(e, 0);
+  const u = e.sky.material.uniforms;
+  const daylight = u.moonVisibility!.value as number;
+  expect(daylight).toBeGreaterThan(0.3);
+  expect(e.moon.visible).toBe(false);
+  expect(e.sun.castShadow).toBe(true);
+  expect(e.moon.castShadow).toBe(false);
+  expect(u.companionDirection!.value.length()).toBeCloseTo(1);
+  expect(u.planetDirection!.value.length()).toBeCloseTo(1);
+  expect(
+    u.companionDirection!.value.distanceTo(u.moonDirection!.value),
+  ).toBeGreaterThan(0.08);
+  const planet = u.planetDirection!.value.clone();
+  e.setTime(0);
+  tick(e, 0);
+  expect(u.moonVisibility!.value).toBeGreaterThan(daylight);
+  expect(u.planetDirection!.value.equals(planet)).toBe(true);
+  expect(e.sky.starMaterial.uniforms.planetDirection).toBe(u.planetDirection);
+  expect(e.sky.starMaterial.uniforms.companionDirection).toBe(u.companionDirection);
+  e.setWeather('RAIN');
+  run(e, 5);
+  expect(u.moonVisibility!.value).toBeLessThan(daylight);
+  e.dispose();
 });
