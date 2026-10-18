@@ -3,6 +3,7 @@ import { OVERGROWN_RUIN_CONFIG } from '../landmark/landmarkConfig';
 import { SCENERY_ZONES } from '../scenery/sceneryConfig';
 import { smoothstep } from './heightfield';
 import type { TerrainConfig } from './heightfield';
+import { ENCHANTED_COLONIES } from '../landmark/enchantedPalette';
 
 /** Original sRGB palette, guided by Tiny Glade's grass/earth separation and
  * ISLANDERS' broad grass/stone masses. Color converts to linear vertex data. */
@@ -15,6 +16,9 @@ export const TERRAIN_PALETTE = {
   shoulder: '#95988a',
   dirt: '#aa9378',
   rock: '#98968d',
+  enchantedMoss: '#807d9b',
+  enchantedShore: '#67a49a',
+  enchantedFlowers: '#a99c87',
 } as const;
 const palette = Object.fromEntries(
   Object.entries(TERRAIN_PALETTE).map(([name, hex]) => [name, new Color(hex)]),
@@ -90,5 +94,25 @@ export function sampleTerrainColor(
   const lowBasin = (1 - smoothstep(-config.maxHeight * 0.13, 0.5, height)) * oasis;
   const excavated = smoothstep(0.02, 0.55, excavationDepth);
   target.lerp(palette.damp, Math.max(lowBasin * 0.7, excavated * 0.85));
+  // Match the planted colonies in landmark-local space, with broad feathered
+  // transitions. This remains soil colour in daylight, never a rainbow overlay.
+  const angle = OVERGROWN_RUIN_CONFIG.rotationY;
+  const localX =
+    (dx * Math.cos(angle) - dz * Math.sin(angle)) / OVERGROWN_RUIN_CONFIG.scale;
+  const localZ =
+    (dx * Math.sin(angle) + dz * Math.cos(angle)) / OVERGROWN_RUIN_CONFIG.scale;
+  for (const colony of ENCHANTED_COLONIES) {
+    const distance = Math.hypot(localX - colony.x, (localZ - colony.z) / 0.8);
+    const influence =
+      (1 - smoothstep(colony.radius * 0.3, colony.radius * 2.1, distance)) *
+      (1 - excavated);
+    const tint =
+      colony.palette === 0
+        ? palette.enchantedMoss
+        : colony.palette === 1
+          ? palette.enchantedShore
+          : palette.enchantedFlowers;
+    target.lerp(tint, influence * 0.58);
+  }
   return target.multiplyScalar(1 + broad * 0.045);
 }

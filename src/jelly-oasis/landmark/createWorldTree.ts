@@ -64,6 +64,26 @@ export function createWorldTree(
     roughness: 0.95,
   });
   material.name = 'JO_WorldTree_Faceted';
+  const rootMaterial = material.clone();
+  rootMaterial.name = 'JO_WorldTree_RootLight';
+  rootMaterial.emissive.set('#b08ee0');
+  const rootNight = { value: 0 };
+  rootMaterial.onBeforeCompile = (shader) => {
+    shader.uniforms.rootNight = rootNight;
+    shader.vertexShader =
+      'attribute float rootGlow; varying float vRootGlow;\n' + shader.vertexShader;
+    shader.vertexShader = shader.vertexShader.replace(
+      '#include <begin_vertex>',
+      '#include <begin_vertex>\nvRootGlow = rootGlow;',
+    );
+    shader.fragmentShader =
+      'uniform float rootNight; varying float vRootGlow;\n' + shader.fragmentShader;
+    shader.fragmentShader = shader.fragmentShader.replace(
+      '#include <emissivemap_fragment>',
+      '#include <emissivemap_fragment>\ntotalEmissiveRadiance *= vRootGlow * mix(.12, 1.5, rootNight);',
+    );
+  };
+  rootMaterial.customProgramCacheKey = () => 'oasis-root-light-v1';
   let owned: BufferGeometry[] = [],
     disposed = false;
   const footprints: Footprint[] = [];
@@ -531,8 +551,28 @@ export function createWorldTree(
         for (const part of parts)
           if (!part.hasAttribute('oasisWind')) windWeights(part, 0, 0, () => [0, 0]);
       const g = mergeStoneParts(parts);
+      if (name === 'WorldTreeWood') {
+        const positions = g.attributes.position!;
+        const glow = new Float32Array(positions.count);
+        for (let i = 0; i < positions.count; i++) {
+          const x = positions.getX(i),
+            z = positions.getZ(i);
+          const height = positions.getY(i) - ground(x, z);
+          const radius = Math.hypot(x - tx, z - tz);
+          const veins = Math.max(
+            0,
+            Math.sin(Math.atan2(z - tz, x - tx) * 9 + radius * 0.24),
+          );
+          glow[i] =
+            Math.max(0, 1 - Math.abs(height - 0.7) / 3.2) *
+            Math.max(0, 1 - radius / 27) *
+            veins *
+            veins;
+        }
+        g.setAttribute('rootGlow', new Float32BufferAttribute(glow, 1));
+      }
       owned.push(g);
-      const mesh = new Mesh(g, material);
+      const mesh = new Mesh(g, name === 'WorldTreeWood' ? rootMaterial : material);
       mesh.name = name;
       mesh.castShadow = mesh.receiveShadow = true;
       group.add(mesh);
@@ -543,15 +583,20 @@ export function createWorldTree(
   return {
     group,
     place,
+    updateLighting: (night: number) => {
+      rootNight.value = night;
+    },
     footprints: () => footprints,
     refreshMaterials: () => {
       material.needsUpdate = true;
+      rootMaterial.needsUpdate = true;
     },
     dispose() {
       if (disposed) return;
       disposed = true;
       clear();
       material.dispose();
+      rootMaterial.dispose();
       group.removeFromParent();
     },
   };

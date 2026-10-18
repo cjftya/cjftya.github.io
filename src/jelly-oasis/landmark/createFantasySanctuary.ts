@@ -18,11 +18,15 @@ import {
   SpotLight,
   Points,
   ShaderMaterial,
+  UniformsLib,
+  UniformsUtils,
 } from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { polygonDistance } from '../terrain/excavateTerrain';
 import { sampleTime } from '../environment/timeOfDay';
 import type { LayoutGuide } from './landmarkConfig';
+import { createEnchantedUnderstory } from './createEnchantedUnderstory';
+import { ENCHANTED_COLONIES, ENCHANTED_COLORS } from './enchantedPalette';
 
 // Asymmetric colonies frame the lake; the arch opening stays unobstructed.
 export const CRYSTAL_COLONIES = [
@@ -165,10 +169,12 @@ export function createFantasySanctuary(
   content: Group,
   pond: LayoutGuide,
   mobile = false,
+  approach?: LayoutGuide,
 ) {
   const group = new Group();
   group.name = 'FantasySanctuary';
   content.add(group);
+  const understory = createEnchantedUnderstory(pond, approach);
   const crystalMaterials = palettes.map((color) => {
     const material = new MeshStandardMaterial({
       color,
@@ -229,23 +235,34 @@ export function createFantasySanctuary(
   // It replaces the existing unshadowed light on both quality tiers.
   const treeLight = new SpotLight('#bdd4ed', 0, 180, 0.55, 1, 0);
   treeLight.name = 'WorldTreeMoonBounce';
-  const crystalLight = mobile ? null : new PointLight('#b19ade', 0, 24, 2);
+  const crystalLight = new PointLight('#b19ade', 0, 28, 2);
   const mistMaterial = new ShaderMaterial({
-    uniforms: { elapsed: { value: 0 }, opacity: { value: 0 } },
+    uniforms: {
+      ...UniformsUtils.clone(UniformsLib.fog!),
+      elapsed: { value: 0 },
+      opacity: { value: 0 },
+    },
     vertexShader: `varying vec2 vUv;
-      void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.); }`,
+      #include <fog_pars_vertex>
+      void main() { vUv = uv; vec4 mvPosition = modelViewMatrix * vec4(position,1.);
+        gl_Position = projectionMatrix * mvPosition;
+        #include <fog_vertex>
+      }`,
     fragmentShader: `varying vec2 vUv; uniform float elapsed; uniform float opacity;
+      #include <fog_pars_fragment>
       void main() {
         vec2 p = vUv * 2. - 1.;
         float edge = 1.-smoothstep(.2,1.,length(p));
         float wisps = .55+.22*sin(p.x*7.+sin(p.y*5.)+elapsed*.07)+.18*cos(p.y*8.-elapsed*.05);
-        gl_FragColor=vec4(.48,.70,.72, edge*wisps*opacity);
+        gl_FragColor=vec4(.30,.55,.67, edge*wisps*opacity);
         #include <tonemapping_fragment>
         #include <colorspace_fragment>
+        #include <fog_fragment>
       }`,
     side: DoubleSide,
     transparent: true,
     depthWrite: false,
+    fog: true,
   });
   const owned: BufferGeometry[] = [];
   let disposed = false,
@@ -254,6 +271,7 @@ export function createFantasySanctuary(
   let anchors: { x: number; y: number; z: number; height: number }[] = [];
   let particleCount = 0;
   function clear() {
+    understory.group.removeFromParent();
     group.traverse((o) => {
       if (o instanceof InstancedMesh) o.dispose();
     });
@@ -263,6 +281,8 @@ export function createFantasySanctuary(
   function place(ground: (x: number, z: number) => number, waterY: number) {
     if (disposed) return;
     clear();
+    understory.place(ground);
+    group.add(understory.group);
     anchors = [];
     const shards: BufferGeometry[][] = [[], []];
     const source = crystalGeometry();
@@ -403,16 +423,19 @@ export function createFantasySanctuary(
       colors: number[] = [];
     particleCount = mobile ? 72 : 144;
     for (let i = 0; i < particleCount; i++) {
+      const colony = ENCHANTED_COLONIES[i % ENCHANTED_COLONIES.length]!;
       const a = i * 2.399,
-        r = Math.sqrt(noise(i + 15)) * 24;
-      const x = -9 + Math.cos(a) * r,
-        z = -8 + Math.sin(a) * r * 0.85;
+        r = Math.sqrt(noise(i + 15)) * colony.radius * 1.4;
+      const x = colony.x + Math.cos(a) * r,
+        z = colony.z + Math.sin(a) * r * 0.85;
       const overWater = polygonDistance(x, z, pond.positions) > 0;
       const y =
-        Math.max(ground(x, z), overWater ? waterY : -Infinity) + 0.7 + noise(i * 5) * 8;
+        Math.max(ground(x, z), overWater ? waterY : -Infinity) + 1 + noise(i * 5) * 3.2;
       positions.push(x, y, z);
       sizes.push(0.1 + noise(i * 9) * 0.15);
-      const tint = new Color(i % 5 === 0 ? '#a3ebdf' : '#ffe3a0');
+      const tint = new Color(
+        i % 4 === 0 ? '#ffe3a0' : ENCHANTED_COLORS[colony.palette],
+      );
       colors.push(tint.r, tint.g, tint.b);
     }
     points('SanctuaryFireflies', positions, sizes, colors, particleMaterials[0]!);
@@ -425,13 +448,15 @@ export function createFantasySanctuary(
       crystalLight.position.set(hero.x, ground(hero.x, hero.z) + 3.2, hero.z);
       group.add(crystalLight);
     }
-    const mistGeometry = new PlaneGeometry(14, 5);
+    const mistGeometry = new PlaneGeometry(19, 7);
     owned.push(mistGeometry);
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 5; i++) {
       const mist = new Mesh(mistGeometry, mistMaterial);
       mist.name = `LakeWisp_${i}`;
-      mist.rotation.set(-Math.PI / 2, 0, i * 0.8);
-      mist.position.set(i - 1, waterY + 0.25 + i * 0.24, 5 + i * 2.5);
+      mist.rotation.set(-Math.PI / 2 + 0.08, 0, i * 0.8);
+      const x = [-6, 3, -2, -17, 9][i]!;
+      const z = [8, 11, 3, -5, -17][i]!;
+      mist.position.set(x, Math.max(waterY, ground(x, z)) + 0.38 + i * 0.18, z);
       group.add(mist);
     }
     previousNight = -1;
@@ -458,6 +483,7 @@ export function createFantasySanctuary(
       if (disposed) return false;
       const night = sampleTime(hour).stars;
       const changed = night !== previousNight;
+      understory.update(night);
       if (!reducedMotion) elapsed += Math.min(Math.max(seconds, 0), 0.1);
       crystalMaterials.forEach((m, i) => {
         const pulse = reducedMotion
@@ -466,9 +492,9 @@ export function createFantasySanctuary(
         m.emissiveIntensity = MathUtils.lerp(0.26, i === 0 ? 3.0 : 2.2, night) * pulse;
       });
       treeLight.intensity = night * 1.1;
-      if (crystalLight) crystalLight.intensity = night * 18;
+      crystalLight.intensity = 2 + night * 26;
       mistMaterial.uniforms.elapsed!.value = elapsed;
-      mistMaterial.uniforms.opacity!.value = night * 0.1;
+      mistMaterial.uniforms.opacity!.value = 0.055 + night * 0.14;
       flowerMaterial.emissiveIntensity = 0.08 + night * 0.3;
       particleMaterials.forEach((m) => {
         m.uniforms.elapsed!.value = elapsed;
@@ -484,10 +510,12 @@ export function createFantasySanctuary(
       particles: particleCount,
       night: previousNight,
       elapsed,
+      understory: understory.snapshot(),
     }),
     dispose() {
       if (disposed) return;
       disposed = true;
+      understory.dispose();
       clear();
       [
         ...crystalMaterials,
