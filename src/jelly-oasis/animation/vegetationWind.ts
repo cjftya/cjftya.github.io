@@ -59,8 +59,8 @@ vec3 oasisDeform(vec3 p) {
   float travel = dot(anchor.xz, oasisWindDirection) * .045 - oasisWindTime * .52;
   float gust = .5 + .5 * sin(travel + .32 * sin(travel * .43));
   float strength = clamp(oasisWindStrength + oasisWindGust * gust, 0., 1.);
-  float sway = .48 + .32 * sin(oasisWindTime * .83 + phase)
-                     + .20 * sin(oasisWindTime * 1.37 + phase * 1.71);
+  float sway = .20 + .55 * sin(oasisWindTime * 1.15 + phase)
+                     + .25 * sin(oasisWindTime * 1.90 + phase * 1.71);
   float flutter = sin(oasisWindTime * 2.3 + phase * 2.1);
   vec3 direction = vec3(oasisWindDirection.x, 0., oasisWindDirection.y);
   vec3 localDirection = normalize(vec3(
@@ -124,7 +124,7 @@ export class VegetationWind {
         'transformed = oasisDeform(transformed);\n#include <project_vertex>',
       );
     };
-    material.customProgramCacheKey = () => `${key}:oasis-wind-v2`;
+    material.customProgramCacheKey = () => `${key}:oasis-wind-v2.1`;
     material.needsUpdate = true;
   }
 

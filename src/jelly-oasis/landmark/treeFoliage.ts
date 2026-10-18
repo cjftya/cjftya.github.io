@@ -101,7 +101,7 @@ export function foliageCrown(
     const crownWeights = (_x: number, y: number): readonly [number, number] => {
       const t = Math.min(1, Math.max(0, (y - (pos.y - size * 0.74)) / (size * 1.48)));
       // Scale the crown motion to the giant tree, rather than sub-pixel leaf sizes.
-      return [Math.min(1.8, Math.max(0.9, width * 0.12)) * t, 0.07 * t];
+      return [Math.min(3.0, Math.max(1.4, width * 0.25)) * t, 0.12 * t];
     };
     windWeights(g, pos.x, pos.z, crownWeights);
     parts.push(

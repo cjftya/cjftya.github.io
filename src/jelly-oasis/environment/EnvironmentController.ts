@@ -36,8 +36,8 @@ export class EnvironmentController {
   cloudsEnabled = true;
   private readonly from: WeatherProfile = { ...WEATHER_PROFILES.CLEAR };
   private readonly timeFrame = createTimeFrame();
-  private readonly overcastZenith = new Color('#85949f');
-  private readonly overcastHorizon = new Color('#bac5c0');
+  private readonly overcastZenith = new Color('#777e9c');
+  private readonly overcastHorizon = new Color('#b4b3c7');
   private readonly dayAmbient = new Color('#e2eeeb');
   private readonly nightAmbient = new Color('#afc2e9');
   private readonly dayGround = new Color('#637664');
@@ -225,6 +225,12 @@ export class EnvironmentController {
       .setRGB(...frame.horizon, SRGBColorSpace)
       .lerp(this.overcastHorizon, weather.cloudDarkness * (1 - night * 0.8));
     (u.sunColor!.value as Color).setRGB(...frame.sun, SRGBColorSpace);
+    (u.midSky!.value as Color).copy(u.horizon!.value).lerp(u.zenith!.value, 0.53);
+    u.elapsed!.value = this.elapsed;
+    u.night!.value = night;
+    u.cloudCover!.value = weather.cloudCoverage;
+    u.cloudDarkness!.value = weather.cloudDarkness;
+    u.cloudsEnabled!.value = this.cloudsEnabled ? 1 : 0;
     // Continuous art-directed path; the actual light fades out below the horizon.
     const angle = Math.asin(frame.elevation) * 0.78;
     this.sun.position
@@ -245,12 +251,23 @@ export class EnvironmentController {
     this.ambient.intensity = frame.ambient * weather.ambientMultiplier;
     // One direction drives both the rendered disc and directional light.
     const moonDirection = u.moonDirection!.value as Vector3;
-    moonDirection.copy(u.sunDirection!.value).negate();
+    // The primary moon has an art-directed orbit in the scenic sky. Its visible
+    // disc and the existing single moon shadow light still share this direction.
+    const orbit = (this.state.timeOfDay / 24) * Math.PI * 2;
+    const moonAzimuth = -2.1 + 0.06 * Math.sin(orbit);
+    moonDirection
+      .set(
+        Math.cos(moonAzimuth),
+        0.075 + 0.025 * Math.cos(orbit),
+        Math.sin(moonAzimuth),
+      )
+      .normalize();
     this.moon.position.copy(moonDirection).multiplyScalar(300).add(this.shadowFocus);
-    const moonRise = MathUtils.smoothstep(moonDirection.y, 0, 0.22);
+    const moonRise = MathUtils.smoothstep(moonDirection.y, 0, 0.04);
     const moonVisibility =
       night * moonRise * weather.sunlightMultiplier * (1 - weather.cloudDarkness * 0.7);
-    u.moonVisibility!.value = moonVisibility;
+    u.moonVisibility!.value =
+      (0.42 + night * 0.58) * (1 - weather.cloudDarkness * 0.85);
     u.moonMist!.value = weather.fogStrength;
     this.moon.intensity = moonVisibility * 0.65;
     this.moon.visible = this.moon.intensity > 0.005;

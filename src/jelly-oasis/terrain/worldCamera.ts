@@ -43,7 +43,7 @@ export function frameLandscape(
   landmarks: Object3D[] = [],
 ) {
   const target = new Vector3(14, 8, 7),
-    outward = new Vector3(100, 75, 143).normalize();
+    outward = new Vector3(100, 42, 143).normalize();
   let distance = camera.aspect < 1 ? 195 : 215;
   const tree = landmarks.find((o) => o.name === 'Tree_Landmark_Blockout');
   const precinct = landmarks.find((o) => o.name === 'WorldTreePrecinct');
