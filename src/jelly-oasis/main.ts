@@ -693,6 +693,7 @@ function start(canvas: HTMLCanvasElement): void {
     )
       dirty = true;
     if (!dirty) return;
+    landmark?.worldTree?.updateLighting(landmark?.fantasy?.night ?? 0);
     const renderStart = debugEnabled ? performance.now() : 0;
     bloom.render(landmark?.fantasy?.night ?? 0);
     if (debugEnabled) {

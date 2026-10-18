@@ -1,6 +1,15 @@
 import { describe, expect, it, vi } from 'vitest';
 import { Group, Mesh, Points } from 'three';
 import { createFantasySanctuary } from '../src/jelly-oasis/landmark/createFantasySanctuary';
+import { polygonDistance } from '../src/jelly-oasis/terrain/excavateTerrain';
+import { createEnchantedUnderstory } from '../src/jelly-oasis/landmark/createEnchantedUnderstory';
+import { VegetationWind } from '../src/jelly-oasis/animation/vegetationWind';
+import type {
+  BufferGeometry,
+  MeshStandardMaterial,
+  ShaderMaterial,
+  WebGLRenderer,
+} from 'three';
 const pond = {
   positions: [
     [-9, 0, 0],
@@ -66,7 +75,56 @@ describe('fantasy sanctuary lifecycle and animation', () => {
     mobile.place(ground, 0);
     expect(mobile.snapshot().shards).toBe(desktop.snapshot().shards);
     expect(mobile.snapshot().particles).toBe(desktop.snapshot().particles / 2);
+    expect(mobile.snapshot().understory.anchors).toEqual(
+      desktop.snapshot().understory.anchors,
+    );
+    expect(desktop.snapshot().understory.anchors.length).toBeGreaterThan(100);
+    for (const anchor of desktop.snapshot().understory.anchors) {
+      expect(polygonDistance(anchor.x, anchor.z, pond.positions)).toBeLessThan(-1.15);
+      expect(anchor.y).toBeCloseTo(ground(anchor.x, anchor.z));
+    }
     desktop.dispose();
     mobile.dispose();
+  });
+  it('keeps the approach clear and updates glow after wind clones plant materials', () => {
+    const approach = {
+      positions: [
+        [-14, 0, 18],
+        [-6, 0, 18],
+        [-14, 0, 29],
+        [-6, 0, 29],
+      ],
+      indices: [],
+    };
+    const effect = createEnchantedUnderstory(pond, approach);
+    effect.place(ground);
+    for (const anchor of effect.snapshot().anchors)
+      if (anchor.z >= 18 && anchor.z <= 29)
+        expect(Math.abs(anchor.x + 10)).toBeGreaterThanOrEqual(3.8);
+    const wind = new VegetationWind();
+    wind.bind(effect.group);
+    const flowers = effect.group.getObjectByName('EnchantedFlowers') as Mesh;
+    const material = flowers.material as MeshStandardMaterial;
+    const shader = {
+      uniforms: {},
+      vertexShader: '#include <begin_vertex>\n#include <project_vertex>',
+      fragmentShader: '#include <emissivemap_fragment>',
+    } as Parameters<MeshStandardMaterial['onBeforeCompile']>[0];
+    material.onBeforeCompile(shader, {} as WebGLRenderer);
+    effect.update(1);
+    expect(shader.uniforms.enchantedNight!.value).toBe(1);
+    expect(shader.vertexShader).toContain('oasisDeform(transformed)');
+    effect.update(0);
+    expect(shader.uniforms.enchantedNight!.value).toBe(0);
+    const pool = effect.group.getObjectByName('UnderstoryColourBounce') as Mesh<
+      BufferGeometry,
+      ShaderMaterial
+    >;
+    expect(pool.material.uniforms.fogColor).toBeDefined();
+    wind.dispose();
+    const dispose = vi.spyOn(flowers.geometry, 'dispose');
+    effect.dispose();
+    effect.dispose();
+    expect(dispose).toHaveBeenCalledOnce();
   });
 });

@@ -288,7 +288,12 @@ export async function createOvergrownRuin(
 
   const fantasy =
     aesthetic.sacred && crystalDetail
-      ? createFantasySanctuary(content, pondGuide, waterOptions.mobile)
+      ? createFantasySanctuary(
+          content,
+          pondGuide,
+          waterOptions.mobile,
+          assets.layout.guides.CreaturePaths_ArchApproach_6m,
+        )
       : undefined;
 
   function localGround(x: number, z: number): number {

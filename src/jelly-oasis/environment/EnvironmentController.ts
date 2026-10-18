@@ -41,7 +41,8 @@ export class EnvironmentController {
   private readonly dayAmbient = new Color('#e2eeeb');
   private readonly nightAmbient = new Color('#afc2e9');
   private readonly dayGround = new Color('#637664');
-  private readonly nightGround = new Color('#5f698e');
+  private readonly nightGround = new Color('#78869d');
+  private readonly distanceHaze = new Color('#8da8c4');
   private readonly cloudDay = new Color('#fff3de');
   private readonly cloudNight = new Color('#818cab');
   private readonly cloudStorm = new Color('#727f8d');
@@ -208,9 +209,9 @@ export class EnvironmentController {
     // Keep the focal basin clear in fair weather; mist/rain retain their veil.
     this.fog.near = Math.max(
       25,
-      distance - MathUtils.lerp(75, 140, this.profile.fogStrength),
+      distance - MathUtils.lerp(18, 100, this.profile.fogStrength),
     );
-    this.fog.far = distance + 600 - this.profile.fogStrength * 390;
+    this.fog.far = distance + 330 - this.profile.fogStrength * 185;
     this.scene.fog = this.fogEnabled ? this.fog : null;
     const needsUpdate = this.changed || advancing || transitioning;
     if (!needsUpdate) return false;
@@ -272,7 +273,7 @@ export class EnvironmentController {
     this.moon.intensity = moonVisibility * 0.65;
     this.moon.visible = this.moon.intensity > 0.005;
     this.updateShadowCaster();
-    this.fog.color.copy(u.horizon!.value);
+    this.fog.color.copy(u.horizon!.value).lerp(this.distanceHaze, 0.18 + night * 0.2);
     this.sky.starMaterial.uniforms.brightness!.value =
       night * (1 - weather.cloudDarkness) * 0.88;
     this.sky.stars.visible = this.sky.starMaterial.uniforms.brightness!.value > 0.005;

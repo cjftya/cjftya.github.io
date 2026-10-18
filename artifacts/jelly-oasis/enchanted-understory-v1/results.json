@@ -1,0 +1,10 @@
+{
+  "build": "production",
+  "views": [
+    "desktop-day.png",
+    "desktop-night.png",
+    "mobile-night.png"
+  ],
+  "errors": [],
+  "note": "Software WebGL; mobile viewport emulation, not physical-device performance."
+}
