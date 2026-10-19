@@ -101,7 +101,14 @@ it('audits frozen production assets and the actual northern surface without weak
     const vegetation = l.vegetation.instances(),
       composition = l.composition.instances();
     expect(vegetation.length).toBe(40);
-    expect(composition.length).toBe(18);
+    // Preserve the original two root/shore transitions while auditing the
+    // newly requested forest-floor gardens separately.
+    expect(composition.filter((p) => p.zone !== 'forest-floor-gardens').length).toBe(
+      18,
+    );
+    expect(composition.filter((p) => p.zone === 'forest-floor-gardens').length).toBe(
+      92,
+    );
     const placement = placeComposition(site, vegetation);
     expect(placement.instances).toEqual(composition);
     expect(placement.zoneCounts['north-highland']).toBeUndefined();
