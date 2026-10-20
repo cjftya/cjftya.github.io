@@ -20,13 +20,14 @@ describe('public/data/projects.json', () => {
       'jelly-sim-v1',
       'jelly-markdown',
       'lite-computer-use',
+      'callisto',
       'viola',
       'wedding-card',
       'uriel',
       'virus-sim',
       'jelly-oasis',
     ]);
-    expect(collection.projects).toHaveLength(11);
+    expect(collection.projects).toHaveLength(12);
     expect(
       collection.galaxies.every(
         (galaxy) =>
@@ -46,7 +47,7 @@ describe('public/data/projects.json', () => {
     );
     expect(
       collection.projects.filter((project) => project.galaxyId === 'jelly-garden'),
-    ).toHaveLength(6);
+    ).toHaveLength(7);
     expect(
       collection.projects.filter((project) => project.galaxyId === 'pages-archive'),
     ).toHaveLength(5);
@@ -59,6 +60,12 @@ describe('public/data/projects.json', () => {
             project.links.github?.startsWith('https://github.com/cjftya/'),
         ),
     ).toBe(true);
+    expect(
+      collection.projects.find((project) => project.id === 'callisto'),
+    ).toMatchObject({
+      galaxyId: 'jelly-garden',
+      links: { github: 'https://github.com/cjftya/callisto_auto' },
+    });
     expect(
       collection.projects
         .filter((project) => project.galaxyId === 'pages-archive')
