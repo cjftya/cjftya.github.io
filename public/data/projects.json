@@ -364,6 +364,52 @@
       }
     },
     {
+      "id": "callisto",
+      "galaxyId": "jelly-garden",
+      "name": "Callisto",
+      "summary": "AI CLI에서 자연어로 Android 앱을 탐색하고 테스트하는 자동화 스킬이에요.",
+      "status": "active",
+      "featured": true,
+      "order": 80,
+      "tags": ["Android", "자연어 테스트", "AI CLI"],
+      "links": {
+        "github": "https://github.com/cjftya/callisto_auto"
+      },
+      "details": {
+        "category": "Android 테스트 자동화",
+        "description": "Google ARTEMIS의 Pro 자동화 엔진을 AI CLI용 스킬로 연결해요. Codex·Claude Code·Gemini CLI에서 자연어로 테스트를 요청하면 로컬 AI CLI와 ADB를 이용해 계획·탐색·조작·검증·복구를 수행해요.",
+        "techStack": ["Python", "ADB", "UIAutomator2", "AI CLI"]
+      },
+      "planet": {
+        "seed": 2808,
+        "orbit": {
+          "radius": 15.6,
+          "speed": 0.026,
+          "startAngle": 100,
+          "inclination": -4
+        },
+        "rotation": {
+          "speed": 0.1,
+          "direction": "counterclockwise",
+          "axisTilt": 9
+        },
+        "shape": {
+          "radius": 0.7,
+          "roughness": 0.085,
+          "frequency": 3.2
+        },
+        "surface": {
+          "baseColor": "#b9aaa1"
+        },
+        "ring": {
+          "enabled": false,
+          "color": "#e4d9cc",
+          "width": 0.14,
+          "tilt": 0
+        }
+      }
+    },
+    {
       "id": "viola",
       "galaxyId": "pages-archive",
       "name": "Viola",
