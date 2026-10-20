@@ -39,6 +39,9 @@ function start(canvas: HTMLCanvasElement): void {
   const scene = new Scene();
   const manager = new RendererManager(canvas);
   const renderer = manager.renderer;
+  // A frame includes pond compute, both captures, shadows and postprocessing.
+  // Three's default reset on every renderer.render() only reports OutputPass.
+  if (debugEnabled) renderer.info.autoReset = false;
   renderer.shadowMap.type = PCFShadowMap;
   if (debugEnabled)
     renderer.debug.onShaderError = (gl, program, vertex, fragment) => {
@@ -86,6 +89,9 @@ function start(canvas: HTMLCanvasElement): void {
   let frameMs = 0;
   let renderCpuMs = 0;
   let frameCpuMs = 0;
+  let renderPasses = 0;
+  let frameCalls = 0;
+  let frameTriangles = 0;
   let landmark: OvergrownRuin | null = null;
   let pondPanel: HTMLElement | undefined;
   let landmarkDebug: ReturnType<typeof createLandmarkDebug> | null = null;
@@ -520,8 +526,10 @@ function start(canvas: HTMLCanvasElement): void {
               placement: loaded.placement,
               renderCpuMs,
               frameCpuMs,
-              calls: renderer.info.render.calls,
-              triangles: renderer.info.render.triangles,
+              calls: frameCalls,
+              triangles: frameTriangles,
+              renderCountersScope: 'whole-frame',
+              renderPasses,
               textures: renderer.info.memory.textures,
               geometries: renderer.info.memory.geometries,
               shadows: renderer.shadowMap.enabled,
@@ -626,6 +634,8 @@ function start(canvas: HTMLCanvasElement): void {
     const seconds = lastTick ? Math.min(0.1, (now - lastTick) / 1000) : 0;
     lastTick = now;
     const frameStart = debugEnabled ? performance.now() : 0;
+    const firstPass = renderer.info.render.frame;
+    if (debugEnabled) renderer.info.reset();
     previousTarget.copy(controls.target);
     controls.update();
     // Preserve the orbit's view direction when it touches the ground by lifting
@@ -701,6 +711,9 @@ function start(canvas: HTMLCanvasElement): void {
       const end = performance.now();
       renderCpuMs = end - renderStart;
       frameCpuMs = end - frameStart;
+      renderPasses = renderer.info.render.frame - firstPass;
+      frameCalls = renderer.info.render.calls;
+      frameTriangles = renderer.info.render.triangles;
     }
     if (lastRender) frameMs = frameMs * 0.85 + (now - lastRender) * 0.15;
     lastRender = now;

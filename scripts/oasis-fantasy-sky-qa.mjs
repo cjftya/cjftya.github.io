@@ -25,9 +25,9 @@ try {
         ? {
             args: [
               '--no-sandbox',
-              '--no-zygote',
-              '--single-process',
-              '--in-process-gpu',
+              ...(process.env.OASIS_QA_SINGLE_PROCESS
+                ? ['--no-zygote', '--single-process', '--in-process-gpu']
+                : []),
               '--use-gl=angle',
               '--use-angle=swiftshader',
               '--enable-unsafe-swiftshader',
