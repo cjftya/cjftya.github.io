@@ -1,12 +1,6 @@
 import { createSanctuaryBloom } from './environment/createSanctuaryBloom';
-import { selectMeadow } from './meadow/meadowConfig';
-import { selectScenery } from './scenery/sceneryConfig';
-import { createWorldConfig, selectWorldSize } from './terrain/worldLayout';
 import { frameWorld, frameLandscape } from './terrain/worldCamera';
-import { Box3 } from 'three';
-import { selectComposition } from './composition/compositionConfig';
-import { selectVegetation } from './vegetation/vegetationConfig';
-import { PCFShadowMap, PerspectiveCamera, Scene, Vector3 } from 'three';
+import { Box3, PCFShadowMap, PerspectiveCamera, Scene, Vector3 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { RendererManager } from '../core/renderer/RendererManager';
 import {
@@ -22,7 +16,8 @@ import { createOvergrownRuin } from './landmark/createOvergrownRuin';
 import type { OvergrownRuin } from './landmark/createOvergrownRuin';
 import { createLandmarkDebug } from './landmark/landmarkDebug';
 import { frameLandmark } from './landmark/landmarkCamera';
-import { selectCrystalDetail, type LandmarkCamera } from './landmark/landmarkConfig';
+import type { LandmarkCamera } from './landmark/landmarkConfig';
+import { readStartupOptions } from './startupOptions';
 import { auditLandmark } from './landmark/landmarkAudit';
 import type { PondControls } from './landmark/water/gpgpuPondSurface';
 import type { WeatherPreset } from './environment/weather';
@@ -30,12 +25,21 @@ import { createPondPanel } from './landmark/water/gpgpuPondPanel';
 import './styles.css';
 
 function start(canvas: HTMLCanvasElement): void {
-  const debugEnabled =
-    import.meta.env.DEV || new URLSearchParams(location.search).has('debug');
-  const config = createWorldConfig(
-    selectWorldSize(debugEnabled, new URLSearchParams(location.search).get('world')),
-    debugEnabled && new URLSearchParams(location.search).get('art') === 'b' ? 2 : 1,
-  );
+  const {
+    query,
+    debugEnabled,
+    config,
+    cliffDetail,
+    ruinDetail,
+    treeDetail,
+    pondDetail,
+    crystalDetail,
+    aesthetic,
+    vegetation,
+    composition,
+    scenery,
+    meadow,
+  } = readStartupOptions(location.search, import.meta.env.DEV);
   const scene = new Scene();
   const manager = new RendererManager(canvas);
   const renderer = manager.renderer;
@@ -165,12 +169,12 @@ function start(canvas: HTMLCanvasElement): void {
     dirty = true;
   };
   controls.addEventListener('change', invalidate);
-  const releaseMediumCamera = (): void => {
+  const releaseFramingCamera = (): void => {
     mediumCamera = false;
     overviewCamera = false;
     presentationCamera = false;
   };
-  controls.addEventListener('start', releaseMediumCamera);
+  controls.addEventListener('start', releaseFramingCamera);
   const debugPanel = createEnvironmentPanel(
     environment,
     renderer,
@@ -223,52 +227,6 @@ function start(canvas: HTMLCanvasElement): void {
   landmarkStatus.role = 'status';
   landmarkStatus.textContent = '랜드마크 불러오는 중…';
   document.querySelector('.oasis-shell')!.append(landmarkStatus);
-  const cliffDetail = !(
-    debugEnabled && new URLSearchParams(location.search).get('cliff') === 'blockout'
-  );
-  const ruinDetail = !(
-    debugEnabled && new URLSearchParams(location.search).get('ruin') === 'blockout'
-  );
-  const treeDetail = !(
-    debugEnabled && new URLSearchParams(location.search).get('tree') === 'blockout'
-  );
-  const pondQuery = debugEnabled
-    ? new URLSearchParams(location.search).get('pond')
-    : null;
-  const pondDetail =
-    pondQuery === 'blockout' ? false : pondQuery === 'detail' ? true : 'v2';
-  // Approved detailed crystals are the production default; blockout is debug-only.
-  const crystalDetail = selectCrystalDetail(
-    debugEnabled,
-    new URLSearchParams(location.search).get('crystal'),
-  );
-  const candidateQuery = new URLSearchParams(location.search);
-  const waterQuery = debugEnabled ? candidateQuery.get('water') : null;
-  const refinedDefault = !(
-    debugEnabled && candidateQuery.get('aesthetic') === 'baseline'
-  );
-  const aesthetic = {
-    sacred: !(debugEnabled && candidateQuery.get('sacred') === 'baseline'),
-    tree:
-      (refinedDefault && !(debugEnabled && candidateQuery.get('tree') === 'detail')) ||
-      (debugEnabled && candidateQuery.get('tree') === 'refined'),
-    pond:
-      (refinedDefault && !(debugEnabled && pondQuery === 'detail-v2')) ||
-      (debugEnabled && pondQuery === 'refined'),
-    cliff:
-      (refinedDefault &&
-        !(
-          debugEnabled &&
-          ['detail', 'detail-v1'].includes(candidateQuery.get('cliff') ?? '')
-        )) ||
-      (debugEnabled && candidateQuery.get('cliff') === 'refined'),
-    water:
-      waterQuery === 'deep' || waterQuery === 'soft'
-        ? waterQuery
-        : waterQuery === 'baseline' || !refinedDefault
-          ? undefined
-          : 'soft',
-  } as const;
   void createOvergrownRuin(
     config,
     cliffDetail,
@@ -283,14 +241,14 @@ function start(canvas: HTMLCanvasElement): void {
       waterfall: false,
       mobile,
       renderer,
-      gpuNeutral: debugEnabled && candidateQuery.get('material') === 'neutral',
-      forceCpu: debugEnabled && candidateQuery.get('surface') === 'cpu',
+      gpuNeutral: debugEnabled && query.get('material') === 'neutral',
+      forceCpu: debugEnabled && query.get('surface') === 'cpu',
     },
     terrain,
-    selectVegetation(debugEnabled, candidateQuery.get('vegetation')),
-    selectComposition(debugEnabled, candidateQuery.get('composition')),
-    selectScenery(debugEnabled, candidateQuery.get('scenery')),
-    selectMeadow(debugEnabled, candidateQuery.get('meadow')),
+    vegetation,
+    composition,
+    scenery,
+    meadow,
   )
     .then((loaded) => {
       if (disposed) {
@@ -300,7 +258,7 @@ function start(canvas: HTMLCanvasElement): void {
       landmark = loaded;
       scene.add(loaded.root);
       if (overviewCamera || presentationCamera) resetView(overviewCamera);
-      if (debugEnabled && candidateQuery.has('blockout')) {
+      if (debugEnabled && query.has('blockout')) {
         loaded.vegetation.group.visible = false;
         loaded.composition.group.visible = false;
         loaded.meadow.group.visible = false;
@@ -547,7 +505,7 @@ function start(canvas: HTMLCanvasElement): void {
       }
       if (
         debugEnabled &&
-        ['waterfall', 'pond-low', 'pond-top'].includes(candidateQuery.get('view') ?? '')
+        ['waterfall', 'pond-low', 'pond-top'].includes(query.get('view') ?? '')
       ) {
         overviewCamera = false;
         presentationCamera = false;
@@ -557,7 +515,7 @@ function start(canvas: HTMLCanvasElement): void {
         controls.update();
         controls.minDistance = 1;
         controls.maxPolarAngle = Math.PI - 0.01;
-        const pondView = candidateQuery.get('view');
+        const pondView = query.get('view');
         if (pondView === 'pond-low') {
           camera.position.set(70, -4.6, 79);
           controls.target.set(70, -6.3, 66);
@@ -581,14 +539,14 @@ function start(canvas: HTMLCanvasElement): void {
       }
       if (
         debugEnabled &&
-        candidateQuery.get('panel') === 'pond' &&
+        query.get('panel') === 'pond' &&
         loaded.waterEffects &&
         'configurePond' in loaded.waterEffects
       ) {
         pondPanel = createPondPanel(
           loaded.waterEffects.configurePond,
           invalidate,
-          candidateQuery.get('material') === 'neutral',
+          query.get('material') === 'neutral',
           loaded.waterEffects.snapshot().gpuError,
         );
       }
@@ -760,7 +718,10 @@ function start(canvas: HTMLCanvasElement): void {
     bloom.dispose();
     manager.dispose();
     resetButton.removeEventListener('click', resetPresentation);
-    controls.removeEventListener('start', releaseMediumCamera);
+    controls.removeEventListener('start', releaseFramingCamera);
+    controls.removeEventListener('change', invalidate);
+    canvas.removeEventListener('webglcontextlost', contextLostHandler);
+    canvas.removeEventListener('webglcontextrestored', contextRestoredHandler);
     window.removeEventListener('keydown', keydown);
     document.removeEventListener('visibilitychange', visibility);
     window.removeEventListener('pagehide', pagehide);
@@ -774,12 +735,12 @@ function start(canvas: HTMLCanvasElement): void {
   }
   window.addEventListener('pagehide', pagehide);
   window.addEventListener('pageshow', pageshow);
-  canvas.addEventListener('webglcontextlost', (event) => {
+  function contextLostHandler(event: Event): void {
     event.preventDefault();
     contextLost = true;
     renderer.setAnimationLoop(null);
-  });
-  canvas.addEventListener('webglcontextrestored', () => {
+  }
+  function contextRestoredHandler(): void {
     contextLost = false;
     environment.invalidate();
     renderer.shadowMap.needsUpdate = true;
@@ -789,7 +750,9 @@ function start(canvas: HTMLCanvasElement): void {
     landmark?.waterEffects?.invalidate();
     dirty = true;
     visibility();
-  });
+  }
+  canvas.addEventListener('webglcontextlost', contextLostHandler);
+  canvas.addEventListener('webglcontextrestored', contextRestoredHandler);
 }
 try {
   const canvas = document.querySelector<HTMLCanvasElement>('#oasis-canvas');
