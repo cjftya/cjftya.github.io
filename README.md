@@ -130,6 +130,13 @@ deploy GitHub Pages → Run workflow**에서 `master`와 `update_data`를 선택
 빌드하고, `copy-legacy.mjs`가 이 네 프로젝트를 제외한 `projects/`와 `shared/`를
 같은 경로로 복사해요. Wedding Card의 원본 정적 파일과 기존 공개 URL을 유지해요.
 
+## Virus Sim
+
+`/projects/virus-sim/`에서 95종 바이러스의 3D 구조를 관찰하는 v4.9 뷰어예요.
+기능 개발은 완료했으며 기존 콘텐츠와 동작의 회귀 방지를 중심으로 유지보수해요.
+`npm run dev`로 실행하고 `npx vitest run tests/virus-sim`으로 관련 회귀 테스트를 확인해요.
+코드 지도와 데이터·설정 보존 규칙은 [유지보수 안내](docs/virus-sim.md)를 참고해요.
+
 ## Jelly Oasis
 
 `/projects/jelly-oasis/`에서 지형, 낮·밤·날씨와 Overgrown Oasis Ruin 랜드마크를
@@ -156,8 +163,8 @@ deploy GitHub Pages → Run workflow**에서 `master`와 `update_data`를 선택
 - Prettier
 - GitHub Actions 및 GitHub Pages
 
-루트 탐색과 Jelly Oasis는 Three.js와 DOM을 사용해요. Uriel은 React, Virus Sim은
-PixiJS를 사용하며, 전체 의존성은 `package.json`을 기준으로 확인해요.
+루트 탐색과 Jelly Oasis, Virus Sim은 Three.js와 DOM을 사용해요. Uriel은 React를
+사용하며, 전체 의존성은 `package.json`을 기준으로 확인해요.
 
 ## 개발 환경
 

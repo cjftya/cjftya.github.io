@@ -192,5 +192,5 @@ export interface ProjectRepository {
 ## 다른 앱의 경계
 
 이 문서의 장면·데이터 흐름은 루트 Jelly Plants 앱을 설명해요. Uriel은 React와
-Worker 기반 분석 앱, Virus Sim은 PixiJS 앱이에요. Jelly Oasis의 별도 장면과
+Worker 기반 분석 앱, Virus Sim은 Three.js 기반 3D 뷰어예요. [유지보수 안내](virus-sim.md)에 별도 구조와 보존 규칙이 있어요. Jelly Oasis의 별도 장면과
 검증 진입점은 [운영 안내](jelly-oasis/README.md)를 참고해요.
