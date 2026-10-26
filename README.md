@@ -131,6 +131,11 @@ deploy GitHub Pages → Run workflow**에서 `master`와 `update_data`를 선택
 `/projects/jelly-oasis/`에서 지형, 낮·밤·날씨와 Overgrown Oasis Ruin 랜드마크를
 확인할 수 있습니다. `?debug`를 붙이면 후보 위치, 방향, 동선과 검수 카메라를 비교합니다.
 
+- 진입점은 `src/jelly-oasis/main.ts`예요. 초기 URL 설정은 `startupOptions.ts`에서
+  한 번 해석하며, 검수용 변형은 개발 모드 또는 `?debug`에서만 적용해요.
+- `environment/`는 시간·날씨·하늘·후처리, `landmark/`는 세계수·호수·랜드마크,
+  `terrain/`, `vegetation/`, `composition/`, `scenery/`, `meadow/`는 지형과 식생을 관리해요.
+- [현재 렌더링 최적화와 검증 범위](docs/jelly-oasis-performance-v1.md)
 - [랜드마크 통합 보고서와 스크린샷](docs/jelly-oasis-landmark-integration-v1.md)
 - [Blender blockout 원본과 재현 방법](docs/jelly-oasis-overgrown-ruin-blockout-v1.md)
 - 로컬 서버 실행 후 `npm run qa:landmark`로 브라우저 검수를 재실행합니다(Microsoft Edge 필요).
