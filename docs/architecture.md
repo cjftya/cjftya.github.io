@@ -140,7 +140,7 @@ flowchart LR
   Catalog --> App["App"]
 ```
 
-`ProjectRepository`는 다음 두 메서드만 노출합니다.
+`ProjectRepository`는 다음 세 메서드만 노출합니다.
 
 ```ts
 export interface ProjectRepository {
@@ -188,3 +188,9 @@ export interface ProjectRepository {
 
 확장 시에도 `App`은 조정, Repository는 데이터, `SolarSystem`은 장면 상태,
 `UiController`는 DOM이라는 경계를 유지합니다.
+
+## 다른 앱의 경계
+
+이 문서의 장면·데이터 흐름은 루트 Jelly Plants 앱을 설명해요. Uriel은 React와
+Worker 기반 분석 앱, Virus Sim은 PixiJS 앱이에요. Jelly Oasis의 별도 장면과
+검증 진입점은 [운영 안내](jelly-oasis/README.md)를 참고해요.

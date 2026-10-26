@@ -1,23 +1,24 @@
 # GitHub Pages 마이그레이션
 
-## 기준 상태
+## 현재 배포 계약
+
+기본 브랜치는 `master`이고 `.github/workflows/deploy-pages.yml`이 검사한 `dist/`를
+GitHub Pages에 배포해요. Vite는 루트·Viola·Uriel·Virus Sim·Jelly Oasis를 빌드해요.
+`copy-legacy.mjs`는 이 네 프로젝트를 원본 복사에서 제외하고 나머지 `projects/`와
+`shared/`를 같은 경로로 복사해요. 빌드된 HTML을 원본 TypeScript 진입점으로
+덮어쓰지 않는 것이 중요해요. 아래 최초 전환 이력과 구분해서 읽어 주세요.
+
+## 최초 전환 이력
 
 - 저장소: `cjftya/cjftya.github.io`
-- 기본 브랜치: `master`
-- 작업 전 최신 `master` SHA:
-  `ec3386d3ba735d65b6fe857415e64bd86e21b1ee`
-- 로컬 백업 태그: `pre-jelly-plants`
-- 원격 백업 태그: 현재 Work 연결에는 tag ref 생성 기능이 없어 아직 만들지 않음
-- 작업 브랜치: `feature/jelly-plants-foundation`
+- 전환 전 기준 SHA: `ec3386d3ba735d65b6fe857415e64bd86e21b1ee`
+- 당시 작업 브랜치: `feature/jelly-plants-foundation`
+- 당시 로컬 백업 태그명: `pre-jelly-plants`
 
-로컬 `pre-jelly-plants`는 위 SHA를 가리키며 기존 루트와 레거시 프로젝트를 복구하는
-기준입니다. 병합 전에 원격 태그도 보존하려면 저장소 쓰기 인증이 있는 환경에서 다음을
-실행합니다. 같은 원격 태그가 생겼다면 덮어쓰지 않습니다.
-
-```bash
-git ls-remote --tags origin refs/tags/pre-jelly-plants
-git push origin refs/tags/pre-jelly-plants
-```
+위 태그는 최초 작업 환경의 기록이며 새 checkout이나 원격에 존재한다고 가정하지
+않아요. 현재 롤백은 되돌릴 변경 커밋을 확인한 뒤 새 revert 커밋으로 진행해요.
+기록된 SHA로 전체 서비스를 되돌리면 이후 추가된 앱도 사라지므로 일반 롤백 기준으로
+사용하지 않아요.
 
 ## 기존 구조
 
@@ -31,7 +32,8 @@ shared/                    두 프로젝트의 공용 JavaScript
 ```
 
 Viola와 Wedding Card는 프로젝트 내부 상대 경로와 `../../shared/` 참조를 사용합니다.
-따라서 이번 마이그레이션에서는 세 레거시 디렉터리의 파일을 이동하거나 수정하지 않습니다.
+최초 전환에서 세 디렉터리의 경로를 보존했어요. 현재 Viola는 Vite 엔트리이며
+Wedding Card와 `shared/`는 원본 복사 경로를 유지해요.
 
 ## 루트 페이지 변경
 
@@ -44,8 +46,8 @@ Viola와 Wedding Card는 프로젝트 내부 상대 경로와 `../../shared/` �
 방식 A인 빌드 후 복사를 사용합니다.
 
 1. Vite가 새 앱과 `public/`을 `dist/`에 빌드합니다.
-2. `scripts/copy-legacy.mjs`가 원본 `projects/`와 `shared/`를 `dist/`의 같은 경로에
-   복사합니다.
+2. `scripts/copy-legacy.mjs`가 Vite 빌드 프로젝트를 제외한 원본 `projects/`와
+   `shared/`를 `dist/`의 같은 경로에 복사해요.
 3. GitHub Pages는 `dist/` 전체를 배포합니다.
 
 대규모 파일 이동이 없고 기존 상대 경로가 그대로 유지되는 방식입니다. 다음 URL은
@@ -60,7 +62,7 @@ Viola와 Wedding Card는 프로젝트 내부 상대 경로와 `../../shared/` �
 artifact를 배포합니다. 워크플로는 `master` push와 수동 실행에서만 배포하고,
 Pull Request에서는 lint, test, build까지만 실행합니다.
 
-최초 병합 전 다음 설정을 확인해야 합니다.
+최초 전환 시 사용한 설정 절차예요. 배포 구성을 복구할 때 확인해요.
 
 1. GitHub 저장소의 **Settings → Pages**를 엽니다.
 2. **Build and deployment → Source**를 **GitHub Actions**로 변경합니다.
@@ -87,9 +89,9 @@ Pull Request에서는 lint, test, build까지만 실행합니다.
 긴급 확인용 기준:
 
 ```bash
-git show pre-jelly-plants:index.html
-git diff pre-jelly-plants -- projects/ shared/
+git show ec3386d3ba735d65b6fe857415e64bd86e21b1ee:index.html
+git diff ec3386d3ba735d65b6fe857415e64bd86e21b1ee -- projects/ shared/
 ```
 
-태그는 상태 확인과 새 롤백 PR의 기준으로 사용하며, `master`를 태그로 강제 이동하지
-않습니다.
+이 명령은 최초 전환 전후를 조사하는 용도예요. 현재 앱 전체 복원 명령이 아니에요.
+`master`를 과거 SHA나 태그로 강제 이동하지 않아요.

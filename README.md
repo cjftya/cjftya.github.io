@@ -30,6 +30,7 @@ GitHub Pages 저장소 자체를 제외한 공개 저장소를 행성으로 표�
 - Jelly Sim V1
 - JellyMarkdown
 - Lite Computer Use
+- Callisto
 
 ## Pages Archive
 
@@ -38,6 +39,8 @@ GitHub Pages에서 직접 실행되는 웹 프로젝트를 별도 은하계로 �
 - Viola
 - Wedding Card
 - Uriel
+- Virus Sim
+- Jelly Oasis
 
 Pages Archive의 상세 패널은 등록된 `보기`와 GitHub 버튼을 모두 표시합니다. Jelly
 Garden은 GitHub 버튼만 표시하고, Wedding Card는 두 버튼을 모두 숨깁니다. 기존 웹
@@ -123,8 +126,9 @@ deploy GitHub Pages → Run workflow**에서 `master`와 `update_data`를 선택
 - `/projects/uriel/`
 - 두 프로젝트가 함께 사용하는 `/shared/`
 
-`npm run build`가 Vite 결과를 만든 뒤 `projects/`와 `shared/`를 원래 경로 그대로
-`dist/`에 복사합니다. 따라서 기존 상대 경로와 공개 URL이 유지됩니다.
+`npm run build`는 루트·Viola·Uriel·Virus Sim·Jelly Oasis를 Vite 멀티 엔트리로
+빌드하고, `copy-legacy.mjs`가 이 네 프로젝트를 제외한 `projects/`와 `shared/`를
+같은 경로로 복사해요. Wedding Card의 원본 정적 파일과 기존 공개 URL을 유지해요.
 
 ## Jelly Oasis
 
@@ -135,6 +139,7 @@ deploy GitHub Pages → Run workflow**에서 `master`와 `update_data`를 선택
   한 번 해석하며, 검수용 변형은 개발 모드 또는 `?debug`에서만 적용해요.
 - `environment/`는 시간·날씨·하늘·후처리, `landmark/`는 세계수·호수·랜드마크,
   `terrain/`, `vegetation/`, `composition/`, `scenery/`, `meadow/`는 지형과 식생을 관리해요.
+- [현재 운영·구조·기본값과 검증 방법](docs/jelly-oasis/README.md)
 - [현재 렌더링 최적화와 검증 범위](docs/jelly-oasis-performance-v1.md)
 - [랜드마크 통합 보고서와 스크린샷](docs/jelly-oasis-landmark-integration-v1.md)
 - [Blender blockout 원본과 재현 방법](docs/jelly-oasis-overgrown-ruin-blockout-v1.md)
@@ -151,7 +156,8 @@ deploy GitHub Pages → Run workflow**에서 `master`와 `update_data`를 선택
 - Prettier
 - GitHub Actions 및 GitHub Pages
 
-UI 프레임워크는 사용하지 않습니다.
+루트 탐색과 Jelly Oasis는 Three.js와 DOM을 사용해요. Uriel은 React, Virus Sim은
+PixiJS를 사용하며, 전체 의존성은 `package.json`을 기준으로 확인해요.
 
 ## 개발 환경
 
@@ -174,6 +180,7 @@ Vite가 출력한 로컬 주소를 브라우저에서 엽니다.
 
 ```bash
 npm run lint
+npm run format:check
 npm run test
 npm run build
 npm run preview
@@ -234,11 +241,13 @@ src/planets/       행성 geometry 생성과 결정적 노이즈
 src/solar-system/  태양, 궤도, 행성의 장면 객체와 업데이트
 src/ui/            HTML 상태 및 선택 패널
 src/styles/        전역 스타일
-tests/             데이터 계층과 seed 결정성 테스트
-scripts/           빌드 후 레거시 복사 작업
-docs/              설계, 마이그레이션, 데이터 스키마 문서
-projects/          수정하지 않은 기존 프로젝트
+tests/             프로젝트 계약, 렌더 자원, 데이터·알고리즘 회귀 테스트
+scripts/           빌드 후 복사, 데이터 관리, QA·모델 제작 도구
+docs/              현재 운영 안내와 보존한 검증 기록
+projects/          Vite HTML 진입점과 원본 정적 프로젝트
 shared/            기존 프로젝트의 공용 스크립트
 ```
 
 구조와 객체 간 흐름은 [docs/architecture.md](docs/architecture.md)에 설명되어 있습니다.
+
+현재 문서와 과거 검증 기록의 구분은 [문서 안내](docs/README.md)를 참고해요.
