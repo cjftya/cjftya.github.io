@@ -10,6 +10,8 @@
 | [배포·마이그레이션](migration.md)              | 현재 복사 정책, 최초 전환 이력과 롤백 |
 | [Jelly Oasis 운영 안내](jelly-oasis/README.md) | 현재 기본값, 소스 책임, 검증 경로     |
 
+[Virus Sim 유지보수 안내](virus-sim.md)는 v4.9의 코드·데이터·설정 보존 규칙과 검증 진입점이에요.
+
 이번 정리의 삭제 근거와 검사 결과는 [2026-10-26 검증 기록](cleanup-2026-10-26.md)에 있어요.
 
 ## Jelly Oasis 과거 검증 기록
