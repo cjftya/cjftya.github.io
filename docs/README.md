@@ -12,7 +12,7 @@
 
 [Virus Sim 유지보수 안내](virus-sim.md)는 v4.9의 코드·데이터·설정 보존 규칙과 검증 진입점이에요.
 
-이번 정리의 삭제 근거와 검사 결과는 [2026-10-26 검증 기록](cleanup-2026-10-26.md)에 있어요.
+문서 통합 근거는 [2026-10-26 검증 기록](cleanup-2026-10-26.md), 중복 산출물 정리 근거는 [2026-10-28 검증 기록](cleanup-2026-10-28.md)에 있어요.
 
 ## Jelly Oasis 과거 검증 기록
 
@@ -65,4 +65,4 @@
 - [World tree art pass — 2026-10-14](jelly-oasis-worldtree-art-pass.md)
 - [World tree and ruined enclosure](jelly-oasis-worldtree-reconstruction.md)
 
-`docs/images/`, `artifacts/`, 모델 제작 스크립트·Blender 원본과 `docs/research/`는 비교·연구·재현 근거로 보존해요. `scripts/`의 검수 도구는 각 기록과 스크립트의 현재 전제 조건을 읽고 사용해요. 과거 자료의 모든 URL·외부 참조가 현행 동작을 보장하지는 않아요.
+`docs/images/`, `artifacts/`의 고유 자료, 모델 제작 스크립트·Blender 원본과 `docs/research/`는 비교·연구·재현 근거로 보존해요. 바이트가 동일한 과거 캡처는 대표 파일로 통합했어요. 과거 JSON에 남은 원래 경로는 [중복 경로 대응표](jelly-oasis/artifact-deduplication.json)의 `removed` → `retained`로 찾아요. 대표 파일의 해시·크기는 `npm run archive:check`로 검증해요. `scripts/`의 검수 도구는 각 기록과 스크립트의 현재 전제 조건을 읽고 사용해요. 과거 자료의 모든 URL·외부 참조가 현행 동작을 보장하지는 않아요.

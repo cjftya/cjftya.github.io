@@ -16,7 +16,7 @@
 
 세 후보 모두 월드 경계 안에 들어온다. 선택한 footprint는 월드 면적의 **5.94%**이며 4 m 간격 표본에서 중앙 42 m 반경 초원과 겹치지 않는다. 면적 비율은 여유 동선까지 포함한 직사각형 기준이다.
 
-같은 위치와 고정된 medium 카메라에서 -30°, 0°, 30°, 60°를 비교했다. 30°는 나무 줄기가 암벽 뒤에 숨는 현상을 줄이고 아치가 정면에 가깝게 열린다. 60°는 연못 지형 편차가 조금 작지만 유적과 뿌리의 배치가 더 겹쳐 보인다. [후보 서쪽](../artifacts/jelly-oasis/landmark-integration/candidate-west.png), [북쪽](../artifacts/jelly-oasis/landmark-integration/candidate-north.png), [yaw -30°](../artifacts/jelly-oasis/landmark-integration/yaw--30.png), [0°](../artifacts/jelly-oasis/landmark-integration/yaw-0.png), [30°](../artifacts/jelly-oasis/landmark-integration/yaw-30.png), [60°](../artifacts/jelly-oasis/landmark-integration/yaw-60.png).
+같은 위치와 고정된 medium 카메라에서 -30°, 0°, 30°, 60°를 비교했다. 30°는 나무 줄기가 암벽 뒤에 숨는 현상을 줄이고 아치가 정면에 가깝게 열린다. 60°는 연못 지형 편차가 조금 작지만 유적과 뿌리의 배치가 더 겹쳐 보인다. [후보 서쪽](../artifacts/jelly-oasis/landmark-integration/candidate-west.png), [북쪽](../artifacts/jelly-oasis/landmark-integration/candidate-north.png), [yaw -30°](../artifacts/jelly-oasis/landmark-integration/yaw--30.png), [0°](../artifacts/jelly-oasis/landmark-integration/yaw-0.png), [30°](../artifacts/jelly-oasis/landmark-integration/medium.png), [60°](../artifacts/jelly-oasis/landmark-integration/yaw-60.png).
 
 **자산, 배치, Blender 수정**
 
@@ -70,7 +70,7 @@ root의 Y는 지형에서 계산한다(약 -6.237 m). 모듈은 analytic heightf
 
 | 조건                   | 화면                                                                   | 확인                                                        |
 | ---------------------- | ---------------------------------------------------------------------- | ----------------------------------------------------------- |
-| Noon / CLEAR           | [noon](../artifacts/jelly-oasis/landmark-integration/noon.png)         | 전체 형태와 재질 구분                                       |
+| Noon / CLEAR           | [noon](../artifacts/jelly-oasis/landmark-integration/medium.png)       | 전체 형태와 재질 구분                                       |
 | Sunset / PARTLY_CLOUDY | [sunset](../artifacts/jelly-oasis/landmark-integration/sunset.png)     | 긴 그림자에서도 구조 구분                                   |
 | Night / CLEAR          | [night](../artifacts/jelly-oasis/landmark-integration/night.png)       | 나무는 어둡지만 실루엣 유지, crystal이 주변을 압도하지 않음 |
 | Noon / OVERCAST        | [overcast](../artifacts/jelly-oasis/landmark-integration/overcast.png) | 확산광에서 유적/암벽 구분                                   |

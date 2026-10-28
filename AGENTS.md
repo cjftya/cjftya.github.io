@@ -8,3 +8,5 @@
 - `public/`의 GLB·이미지·데이터, Blender 원본, 테스트 fixture, QA 비교 자료는 동적 참조까지 확인한 뒤에만 제거해요.
 - 일반 정리에서 Uriel CSV를 갱신하거나 의존성을 업그레이드하지 않아요. `data:check`는 공식 사이트 조회이고 `data:update`는 데이터 변경이에요.
 - 브라우저 QA는 스크립트별 URL·브라우저·출력 옵션을 확인해요. 과거 후보용 스크립트를 현재 장면의 통과 기준으로 사용하지 않아요. 실행하지 않은 검사를 통과로 보고하지 않아요.
+
+- 중복 QA 미디어의 과거 경로는 `docs/jelly-oasis/artifact-deduplication.json`에서 대표 파일로 해석해요. 과거 JSON은 재작성하지 않으며 `npm run archive:check`로 대표 파일의 해시·크기를 검증해요. 새 캡처를 일괄 강제 추가하지 않아요.

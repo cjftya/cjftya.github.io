@@ -25,16 +25,16 @@ Blender MCP 연결 및 5.2.2 LTS 확인. 원본 씬을 변경하기 전에 sourc
 원본 나무는 숨겨 보존하고 Tree_Landmark_Detail_v1 아래 Trunk_and_Branches와 Canopy_Clusters를 추가했다.
 외부 Root/Ruin/Cliff 모델과 layout은 수정하지 않았다. 모든 기존 GLB의 SHA-256을 기준 commit과 대조했다.
 
-| 항목 | 기존 | 후보 |
-|---|---:|---:|
-| Blender X/Y/Z 크기 | 25 / 20 / 28m | 25 / 20 / 28m |
-| 삼각형 | 1,908 | 11,866 |
-| glTF meshes | 1 | 2 |
-| primitives / materials | 4 / 4 | 4 / 4 |
-| 이미지 texture | 0 | 0 |
-| 바이트 | 187,124 | 677,916 |
-| Blender origin | −12 / 18 / 0 | −12 / 18 / 0 |
-| scale | 1 / 1 / 1 | 1 / 1 / 1 |
+| 항목                   |          기존 |          후보 |
+| ---------------------- | ------------: | ------------: |
+| Blender X/Y/Z 크기     | 25 / 20 / 28m | 25 / 20 / 28m |
+| 삼각형                 |         1,908 |        11,866 |
+| glTF meshes            |             1 |             2 |
+| primitives / materials |         4 / 4 |         4 / 4 |
+| 이미지 texture         |             0 |             0 |
+| 바이트                 |       187,124 |       677,916 |
+| Blender origin         |  −12 / 18 / 0 |  −12 / 18 / 0 |
+| scale                  |     1 / 1 / 1 |     1 / 1 / 1 |
 
 GLB root/mesh transform은 identity, export는 Z-up → glTF Y-up이다. runtime 식별 이름은 Tree_Landmark_Blockout을 유지한다.
 전체 landmark는 9,844 → 19,802 triangles다. export GLB triangle과 아래 shadow pass 포함 렌더 triangle을 구분한다.
@@ -51,14 +51,14 @@ GLB root/mesh transform은 identity, export는 Z-up → glTF Y-up이다. runtime
 
 ## 동일 카메라 비교
 
-| 시점 | 기존 | 후보 |
-|---|---|---|
-| 전체 | [전](../artifacts/jelly-oasis/landmark-tree-detail-v1/before-overview-noon.png) | [후](../artifacts/jelly-oasis/landmark-tree-detail-v1/after-overview-noon.png) |
-| 중거리 | [전](../artifacts/jelly-oasis/landmark-tree-detail-v1/before-medium-noon.png) | [후](../artifacts/jelly-oasis/landmark-tree-detail-v1/after-medium-noon.png) |
-| 나무 지상 | [전](../artifacts/jelly-oasis/landmark-tree-detail-v1/before-tree-ground.png) | [후](../artifacts/jelly-oasis/landmark-tree-detail-v1/after-tree-ground.png) |
-| 좌측 3/4 | [전](../artifacts/jelly-oasis/landmark-tree-detail-v1/before-tree-left.png) | [후](../artifacts/jelly-oasis/landmark-tree-detail-v1/after-tree-left.png) |
-| 우측 3/4 | [전](../artifacts/jelly-oasis/landmark-tree-detail-v1/before-tree-right.png) | [후](../artifacts/jelly-oasis/landmark-tree-detail-v1/after-tree-right.png) |
-| 수관 아래 | [전](../artifacts/jelly-oasis/landmark-tree-detail-v1/before-tree-under.png) | [후](../artifacts/jelly-oasis/landmark-tree-detail-v1/after-tree-under.png) |
+| 시점          | 기존                                                                            | 후보                                                                           |
+| ------------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| 전체          | [전](../artifacts/jelly-oasis/landmark-tree-detail-v1/before-overview-noon.png) | [후](../artifacts/jelly-oasis/landmark-tree-detail-v1/after-overview-noon.png) |
+| 중거리        | [전](../artifacts/jelly-oasis/landmark-tree-detail-v1/before-medium-noon.png)   | [후](../artifacts/jelly-oasis/landmark-tree-detail-v1/environment-noon.png)    |
+| 나무 지상     | [전](../artifacts/jelly-oasis/landmark-tree-detail-v1/before-tree-ground.png)   | [후](../artifacts/jelly-oasis/landmark-tree-detail-v1/after-tree-ground.png)   |
+| 좌측 3/4      | [전](../artifacts/jelly-oasis/landmark-tree-detail-v1/before-tree-left.png)     | [후](../artifacts/jelly-oasis/landmark-tree-detail-v1/after-tree-left.png)     |
+| 우측 3/4      | [전](../artifacts/jelly-oasis/landmark-tree-detail-v1/before-tree-right.png)    | [후](../artifacts/jelly-oasis/landmark-tree-detail-v1/after-tree-right.png)    |
+| 수관 아래     | [전](../artifacts/jelly-oasis/landmark-tree-detail-v1/before-tree-under.png)    | [후](../artifacts/jelly-oasis/landmark-tree-detail-v1/after-tree-under.png)    |
 | 모바일 중거리 | [전](../artifacts/jelly-oasis/landmark-tree-detail-v1/before-mobile-medium.png) | [후](../artifacts/jelly-oasis/landmark-tree-detail-v1/after-mobile-medium.png) |
 
 [낮](../artifacts/jelly-oasis/landmark-tree-detail-v1/environment-noon.png), [노을](../artifacts/jelly-oasis/landmark-tree-detail-v1/environment-sunset.png), [달빛 밤](../artifacts/jelly-oasis/landmark-tree-detail-v1/environment-night.png), [흐림](../artifacts/jelly-oasis/landmark-tree-detail-v1/environment-overcast.png), [비](../artifacts/jelly-oasis/landmark-tree-detail-v1/environment-rain.png), [안개](../artifacts/jelly-oasis/landmark-tree-detail-v1/environment-mist.png).
@@ -68,13 +68,13 @@ GLB root/mesh transform은 identity, export는 Z-up → glTF Y-up이다. runtime
 Windows headless Edge, production preview. desktop 1440×1000 / DPR1, mobile viewport 390×844 및 가로 844×390.
 기존 canopy castShadow=false 정책을 유지했다. 줄기·가지 castShadow=true, receiveShadow=true. 모바일은 전체 shadow off. 별도 shadow map은 추가하지 않았다.
 
-| 조건 | draw calls | rendered triangles | GPU textures |
-|---|---:|---:|---:|
-| 기존 낮, shadow ON | 71 | 48,760 | 4 |
-| 후보 낮, shadow ON | 71 | 62,596 | 4 |
-| 후보 달빛 밤, shadow ON | 72 | 62,596 | 4 |
-| 후보 밤, shadow OFF | 41 | 37,866 | 2 |
-| 후보 모바일 밤 | 41 | 37,866 | 2 |
+| 조건                    | draw calls | rendered triangles | GPU textures |
+| ----------------------- | ---------: | -----------------: | -----------: |
+| 기존 낮, shadow ON      |         71 |             48,760 |            4 |
+| 후보 낮, shadow ON      |         71 |             62,596 |            4 |
+| 후보 달빛 밤, shadow ON |         72 |             62,596 |            4 |
+| 후보 밤, shadow OFF     |         41 |             37,866 |            2 |
+| 후보 모바일 밤          |         41 |             37,866 |            2 |
 
 실기 모바일 GPU FPS/frame time은 측정하지 않았다. 정지 이미지로 애니메이션 성능을 주장하지 않는다.
 
