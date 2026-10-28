@@ -1,0 +1,1935 @@
+{
+  "version": 1,
+  "sourceCommit": "0b0150db2c0a6e851ac2209fdfc4ebfbd7f1270a",
+  "policy": "Byte-identical historical media only. Original QA JSON paths are historical names; resolve removed paths through this manifest. Generators may recreate ignored copies at their original output paths.",
+  "removedFiles": 321,
+  "removedBytes": 149640813,
+  "entries": [
+    {
+      "removed": "artifacts/jelly-oasis/aesthetic-improvement-v1/cliff-regression/panel-mobile-collapsed.png",
+      "retained": "artifacts/jelly-oasis/aesthetic-improvement-v1/camera/390x844-production-entry.png",
+      "sha256": "a3edb0ac17e8a15313d5615c7e7491861072e3631fce264cd89a3f57dac769a6",
+      "bytes": 68114
+    },
+    {
+      "removed": "artifacts/jelly-oasis/aesthetic-improvement-v1/cliff/baseline/ground-night.png",
+      "retained": "artifacts/jelly-oasis/aesthetic-improvement-v1/tree/flat/ground-night.png",
+      "sha256": "e22e1022d2cac6eab91bc1c5c0c8d983e9cf3212fcb8e2778b5bd18fc5913777",
+      "bytes": 428279
+    },
+    {
+      "removed": "artifacts/jelly-oasis/aesthetic-improvement-v1/cliff/baseline/ground-noon.png",
+      "retained": "artifacts/jelly-oasis/aesthetic-improvement-v1/baseline/1440x900-debug-ground.png",
+      "sha256": "406f0173a961431627cb44f0f7b4b9bce48e9c0bcb4b745ac45200b60ec317ce",
+      "bytes": 538902
+    },
+    {
+      "removed": "artifacts/jelly-oasis/aesthetic-improvement-v1/cliff/baseline/medium-night.png",
+      "retained": "artifacts/jelly-oasis/aesthetic-improvement-v1/pond/baseline/medium-night.png",
+      "sha256": "2e1945700bfb731615857afdeae280431bb9b4f9dc9ccd2818c3cf0e82278b93",
+      "bytes": 738678
+    },
+    {
+      "removed": "artifacts/jelly-oasis/aesthetic-improvement-v1/cliff/baseline/medium-noon.png",
+      "retained": "artifacts/jelly-oasis/aesthetic-improvement-v1/baseline/1440x900-debug-medium.png",
+      "sha256": "550b7690134a98675405a679171007ae5dabaf5964141326ff02700fc15b203d",
+      "bytes": 897425
+    },
+    {
+      "removed": "artifacts/jelly-oasis/aesthetic-improvement-v1/crystal-regression/blockout-Crystal_Blockout_A.png",
+      "retained": "artifacts/jelly-oasis/crystal-accent-detail-v1/blockout-Crystal_Blockout_A.png",
+      "sha256": "fbf43593e731ed8a5ffb94de382d07f9645d68a7ea9cccb9fd60a160e80978dc",
+      "bytes": 586390
+    },
+    {
+      "removed": "artifacts/jelly-oasis/aesthetic-improvement-v1/crystal-regression/blockout-Crystal_Blockout_B.png",
+      "retained": "artifacts/jelly-oasis/crystal-accent-detail-v1/blockout-Crystal_Blockout_B.png",
+      "sha256": "7f96a6eb2e5ef09dea73466020ee8e9a1186f992881021c063dc54fa1cca3d99",
+      "bytes": 577460
+    },
+    {
+      "removed": "artifacts/jelly-oasis/aesthetic-improvement-v1/crystal-regression/blockout-Crystal_Blockout_C.png",
+      "retained": "artifacts/jelly-oasis/crystal-accent-detail-v1/blockout-Crystal_Blockout_C.png",
+      "sha256": "13f00cf3325ba8a846527bb0536e6f63a123251c2af67128a65f7a4f7dd627eb",
+      "bytes": 581064
+    },
+    {
+      "removed": "artifacts/jelly-oasis/aesthetic-improvement-v1/crystal-regression/blockout-medium-night.png",
+      "retained": "artifacts/jelly-oasis/aesthetic-improvement-v1/landmark-regression/night.png",
+      "sha256": "48848b30a66647b838da0241076b12c6e52825a5bdad998a9e8b8ff194ce42e5",
+      "bytes": 825533
+    },
+    {
+      "removed": "artifacts/jelly-oasis/aesthetic-improvement-v1/crystal-regression/blockout-medium-noon.png",
+      "retained": "artifacts/jelly-oasis/aesthetic-improvement-v1/landmark-regression/noon.png",
+      "sha256": "f3a10c5e8aac7ebc8b1873c1bba64fb41d820957793394fcb1240a2e9eaa82c9",
+      "bytes": 1002591
+    },
+    {
+      "removed": "artifacts/jelly-oasis/aesthetic-improvement-v1/crystal-regression/blockout-mobile.png",
+      "retained": "artifacts/jelly-oasis/aesthetic-improvement-v1/camera/390x844-debug-medium.png",
+      "sha256": "9b45b9692654e2c071fddccff038a8d4c7b4badd316983ded184e06908d7985c",
+      "bytes": 219705
+    },
+    {
+      "removed": "artifacts/jelly-oasis/aesthetic-improvement-v1/crystal-regression/detail-Crystal_Blockout_A.png",
+      "retained": "artifacts/jelly-oasis/crystal-accent-detail-v1/detail-Crystal_Blockout_A.png",
+      "sha256": "37670892521401615ac4a225de019def4d34a40988e7210f90cc6349bcb18ba2",
+      "bytes": 586188
+    },
+    {
+      "removed": "artifacts/jelly-oasis/aesthetic-improvement-v1/crystal-regression/detail-Crystal_Blockout_B.png",
+      "retained": "artifacts/jelly-oasis/crystal-accent-detail-v1/detail-Crystal_Blockout_B.png",
+      "sha256": "d370e879c74329e000865cc1ed7c8e44775da86980cff947fc29ba5a16b07e27",
+      "bytes": 575813
+    },
+    {
+      "removed": "artifacts/jelly-oasis/aesthetic-improvement-v1/crystal-regression/detail-Crystal_Blockout_C.png",
+      "retained": "artifacts/jelly-oasis/crystal-accent-detail-v1/detail-Crystal_Blockout_C.png",
+      "sha256": "4c1773c8d1b93339a00216583e8860ef394392b920e7a593da7e184bf5e08cd1",
+      "bytes": 587236
+    },
+    {
+      "removed": "artifacts/jelly-oasis/aesthetic-improvement-v1/landmark-regression/asset-Rock_Large_A.png",
+      "retained": "artifacts/jelly-oasis/ruin-root-night-v1/landmark-regression/asset-Rock_Large_A.png",
+      "sha256": "4172245ed4974544c8ea9ddca448169714a60ebaeef4beb8d5c28bd40b5bb7ed",
+      "bytes": 890767
+    },
+    {
+      "removed": "artifacts/jelly-oasis/aesthetic-improvement-v1/landmark-regression/asset-Ruin_Arch_A.png",
+      "retained": "artifacts/jelly-oasis/ruin-root-night-v1/landmark-regression/asset-Ruin_Arch_A.png",
+      "sha256": "03ac52722629a25ca46f03158816ac385f6525d08c4b4c4e19a7c05dd5424b22",
+      "bytes": 923644
+    },
+    {
+      "removed": "artifacts/jelly-oasis/aesthetic-improvement-v1/landmark-regression/candidate-basin.png",
+      "retained": "artifacts/jelly-oasis/aesthetic-improvement-v1/landmark-regression/noon.png",
+      "sha256": "f3a10c5e8aac7ebc8b1873c1bba64fb41d820957793394fcb1240a2e9eaa82c9",
+      "bytes": 1002591
+    },
+    {
+      "removed": "artifacts/jelly-oasis/aesthetic-improvement-v1/landmark-regression/medium.png",
+      "retained": "artifacts/jelly-oasis/aesthetic-improvement-v1/landmark-regression/noon.png",
+      "sha256": "f3a10c5e8aac7ebc8b1873c1bba64fb41d820957793394fcb1240a2e9eaa82c9",
+      "bytes": 1002591
+    },
+    {
+      "removed": "artifacts/jelly-oasis/aesthetic-improvement-v1/landmark-regression/yaw-30.png",
+      "retained": "artifacts/jelly-oasis/aesthetic-improvement-v1/landmark-regression/noon.png",
+      "sha256": "f3a10c5e8aac7ebc8b1873c1bba64fb41d820957793394fcb1240a2e9eaa82c9",
+      "bytes": 1002591
+    },
+    {
+      "removed": "artifacts/jelly-oasis/aesthetic-improvement-v1/pond/baseline/medium-noon.png",
+      "retained": "artifacts/jelly-oasis/aesthetic-improvement-v1/baseline/1440x900-debug-medium.png",
+      "sha256": "550b7690134a98675405a679171007ae5dabaf5964141326ff02700fc15b203d",
+      "bytes": 897425
+    },
+    {
+      "removed": "artifacts/jelly-oasis/aesthetic-improvement-v1/ruin/baseline/arch-night.png",
+      "retained": "artifacts/jelly-oasis/aesthetic-improvement-v1/ruin/refined/arch-night.png",
+      "sha256": "00be829d633eb16adb404697801acb1188212abd384aa5cb11a41759f253994c",
+      "bytes": 377255
+    },
+    {
+      "removed": "artifacts/jelly-oasis/aesthetic-improvement-v1/ruin/baseline/arch-noon.png",
+      "retained": "artifacts/jelly-oasis/aesthetic-improvement-v1/ruin/refined/arch-noon.png",
+      "sha256": "90023b80769ae3de2783b46c8934b14676aa390d4819d189889785f63441489d",
+      "bytes": 502958
+    },
+    {
+      "removed": "artifacts/jelly-oasis/aesthetic-improvement-v1/ruin/baseline/ground-night.png",
+      "retained": "artifacts/jelly-oasis/aesthetic-improvement-v1/tree/flat/ground-night.png",
+      "sha256": "e22e1022d2cac6eab91bc1c5c0c8d983e9cf3212fcb8e2778b5bd18fc5913777",
+      "bytes": 428279
+    },
+    {
+      "removed": "artifacts/jelly-oasis/aesthetic-improvement-v1/ruin/baseline/ground-noon.png",
+      "retained": "artifacts/jelly-oasis/aesthetic-improvement-v1/baseline/1440x900-debug-ground.png",
+      "sha256": "406f0173a961431627cb44f0f7b4b9bce48e9c0bcb4b745ac45200b60ec317ce",
+      "bytes": 538902
+    },
+    {
+      "removed": "artifacts/jelly-oasis/aesthetic-improvement-v1/ruin/baseline/medium-night.png",
+      "retained": "artifacts/jelly-oasis/aesthetic-improvement-v1/pond/baseline/medium-night.png",
+      "sha256": "2e1945700bfb731615857afdeae280431bb9b4f9dc9ccd2818c3cf0e82278b93",
+      "bytes": 738678
+    },
+    {
+      "removed": "artifacts/jelly-oasis/aesthetic-improvement-v1/ruin/baseline/medium-noon.png",
+      "retained": "artifacts/jelly-oasis/aesthetic-improvement-v1/baseline/1440x900-debug-medium.png",
+      "sha256": "550b7690134a98675405a679171007ae5dabaf5964141326ff02700fc15b203d",
+      "bytes": 897425
+    },
+    {
+      "removed": "artifacts/jelly-oasis/aesthetic-improvement-v1/ruin/refined/ground-night.png",
+      "retained": "artifacts/jelly-oasis/aesthetic-improvement-v1/tree/flat/ground-night.png",
+      "sha256": "e22e1022d2cac6eab91bc1c5c0c8d983e9cf3212fcb8e2778b5bd18fc5913777",
+      "bytes": 428279
+    },
+    {
+      "removed": "artifacts/jelly-oasis/aesthetic-improvement-v1/ruin/refined/ground-noon.png",
+      "retained": "artifacts/jelly-oasis/aesthetic-improvement-v1/baseline/1440x900-debug-ground.png",
+      "sha256": "406f0173a961431627cb44f0f7b4b9bce48e9c0bcb4b745ac45200b60ec317ce",
+      "bytes": 538902
+    },
+    {
+      "removed": "artifacts/jelly-oasis/aesthetic-improvement-v1/tree/baseline/ground-night.png",
+      "retained": "artifacts/jelly-oasis/aesthetic-improvement-v1/tree/flat/ground-night.png",
+      "sha256": "e22e1022d2cac6eab91bc1c5c0c8d983e9cf3212fcb8e2778b5bd18fc5913777",
+      "bytes": 428279
+    },
+    {
+      "removed": "artifacts/jelly-oasis/aesthetic-improvement-v1/tree/baseline/ground-noon.png",
+      "retained": "artifacts/jelly-oasis/aesthetic-improvement-v1/baseline/1440x900-debug-ground.png",
+      "sha256": "406f0173a961431627cb44f0f7b4b9bce48e9c0bcb4b745ac45200b60ec317ce",
+      "bytes": 538902
+    },
+    {
+      "removed": "artifacts/jelly-oasis/aesthetic-improvement-v1/tree/baseline/medium-night.png",
+      "retained": "artifacts/jelly-oasis/aesthetic-improvement-v1/pond/baseline/medium-night.png",
+      "sha256": "2e1945700bfb731615857afdeae280431bb9b4f9dc9ccd2818c3cf0e82278b93",
+      "bytes": 738678
+    },
+    {
+      "removed": "artifacts/jelly-oasis/aesthetic-improvement-v1/tree/baseline/medium-noon.png",
+      "retained": "artifacts/jelly-oasis/aesthetic-improvement-v1/baseline/1440x900-debug-medium.png",
+      "sha256": "550b7690134a98675405a679171007ae5dabaf5964141326ff02700fc15b203d",
+      "bytes": 897425
+    },
+    {
+      "removed": "artifacts/jelly-oasis/aesthetic-improvement-v1/tree/flat/ground-noon.png",
+      "retained": "artifacts/jelly-oasis/aesthetic-improvement-v1/baseline/1440x900-debug-ground.png",
+      "sha256": "406f0173a961431627cb44f0f7b4b9bce48e9c0bcb4b745ac45200b60ec317ce",
+      "bytes": 538902
+    },
+    {
+      "removed": "artifacts/jelly-oasis/aesthetic-improvement-v1/tree/refined/ground-night.png",
+      "retained": "artifacts/jelly-oasis/aesthetic-improvement-v1/tree/flat/ground-night.png",
+      "sha256": "e22e1022d2cac6eab91bc1c5c0c8d983e9cf3212fcb8e2778b5bd18fc5913777",
+      "bytes": 428279
+    },
+    {
+      "removed": "artifacts/jelly-oasis/aesthetic-improvement-v1/tree/refined/ground-noon.png",
+      "retained": "artifacts/jelly-oasis/aesthetic-improvement-v1/baseline/1440x900-debug-ground.png",
+      "sha256": "406f0173a961431627cb44f0f7b4b9bce48e9c0bcb4b745ac45200b60ec317ce",
+      "bytes": 538902
+    },
+    {
+      "removed": "artifacts/jelly-oasis/basin-watercourse-v1/landmark-regression/candidate-basin.webp",
+      "retained": "artifacts/jelly-oasis/basin-watercourse-v1/landmark-regression/noon.webp",
+      "sha256": "8d2c2b37469a8cd0362ebeb7eff008823f4c94e99d1b60f56423d74ed5a65d39",
+      "bytes": 71076
+    },
+    {
+      "removed": "artifacts/jelly-oasis/basin-watercourse-v1/landmark-regression/medium.webp",
+      "retained": "artifacts/jelly-oasis/basin-watercourse-v1/landmark-regression/noon.webp",
+      "sha256": "8d2c2b37469a8cd0362ebeb7eff008823f4c94e99d1b60f56423d74ed5a65d39",
+      "bytes": 71076
+    },
+    {
+      "removed": "artifacts/jelly-oasis/basin-watercourse-v1/landmark-regression/yaw-30.webp",
+      "retained": "artifacts/jelly-oasis/basin-watercourse-v1/landmark-regression/noon.webp",
+      "sha256": "8d2c2b37469a8cd0362ebeb7eff008823f4c94e99d1b60f56423d74ed5a65d39",
+      "bytes": 71076
+    },
+    {
+      "removed": "artifacts/jelly-oasis/cliff-detail-v1/before-ground-noon.png",
+      "retained": "artifacts/jelly-oasis/landmark-integration/ground.png",
+      "sha256": "f32c7c231c869f6cd6400af70d1c3a56bc8460d2d82de06ba6b94665b9ad4974",
+      "bytes": 633404
+    },
+    {
+      "removed": "artifacts/jelly-oasis/cliff-detail-v1/before-medium-noon.png",
+      "retained": "artifacts/jelly-oasis/landmark-integration/medium.png",
+      "sha256": "24143b9c003785b554ddccbcbe3df1686bceadad899d8a9aa0b857ccb8f9cde6",
+      "bytes": 950651
+    },
+    {
+      "removed": "artifacts/jelly-oasis/cliff-detail-v1/before-medium-sunset.png",
+      "retained": "artifacts/jelly-oasis/landmark-integration/sunset.png",
+      "sha256": "13509dd7ce60192e14ff386cbbb8675224bdd37179fd1683adf4246c915acc08",
+      "bytes": 811685
+    },
+    {
+      "removed": "artifacts/jelly-oasis/crystal-accent-detail-v1/blockout-medium-night.png",
+      "retained": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/night.png",
+      "sha256": "9fb47537e3a76b315a7947a72ac3e83f88d6b970d9ce9645aaa8ef765f1c8f03",
+      "bytes": 828719
+    },
+    {
+      "removed": "artifacts/jelly-oasis/crystal-accent-detail-v1/blockout-medium-noon.png",
+      "retained": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/medium.png",
+      "sha256": "f34a2437b5e8ec0bca45a6f784f585f1ba65d4593e4578d7ac9183393b9da96c",
+      "bytes": 1006513
+    },
+    {
+      "removed": "artifacts/jelly-oasis/crystal-accent-detail-v1/landmark-regression/asset-Cliff_Waterfall_A.png",
+      "retained": "artifacts/jelly-oasis/ruin-root-night-v1/landmark-regression/asset-Cliff_Waterfall_A.png",
+      "sha256": "cdc6814cae64a1c0337fa42847bd3c682c08000502df2394ab0b558b13fb3d70",
+      "bytes": 881394
+    },
+    {
+      "removed": "artifacts/jelly-oasis/crystal-accent-detail-v1/landmark-regression/asset-Rock_Large_A.png",
+      "retained": "artifacts/jelly-oasis/ruin-root-night-v1/landmark-regression/asset-Rock_Large_A.png",
+      "sha256": "4172245ed4974544c8ea9ddca448169714a60ebaeef4beb8d5c28bd40b5bb7ed",
+      "bytes": 890767
+    },
+    {
+      "removed": "artifacts/jelly-oasis/crystal-accent-detail-v1/landmark-regression/asset-Ruin_Arch_A.png",
+      "retained": "artifacts/jelly-oasis/ruin-root-night-v1/landmark-regression/asset-Ruin_Arch_A.png",
+      "sha256": "03ac52722629a25ca46f03158816ac385f6525d08c4b4c4e19a7c05dd5424b22",
+      "bytes": 923644
+    },
+    {
+      "removed": "artifacts/jelly-oasis/crystal-accent-detail-v1/landmark-regression/candidate-basin.png",
+      "retained": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/medium.png",
+      "sha256": "f34a2437b5e8ec0bca45a6f784f585f1ba65d4593e4578d7ac9183393b9da96c",
+      "bytes": 1006513
+    },
+    {
+      "removed": "artifacts/jelly-oasis/crystal-accent-detail-v1/landmark-regression/candidate-north.png",
+      "retained": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/landmark/candidate-north.png",
+      "sha256": "83370e86324ae500af850d72868360a3d0552fe9a14e1711f2f08e1339fbc62f",
+      "bytes": 692941
+    },
+    {
+      "removed": "artifacts/jelly-oasis/crystal-accent-detail-v1/landmark-regression/candidate-west.png",
+      "retained": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/landmark/candidate-west.png",
+      "sha256": "dc7398de0bba6d684885a424ffa5fbc769cbbac8acd6f6978c6faaf9d4aae7bb",
+      "bytes": 770228
+    },
+    {
+      "removed": "artifacts/jelly-oasis/crystal-accent-detail-v1/landmark-regression/ground.png",
+      "retained": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/ground.png",
+      "sha256": "5d0143af55d8b37453f9d845dba82c342798cd730e40a0954b4a5b2e801f3e23",
+      "bytes": 587818
+    },
+    {
+      "removed": "artifacts/jelly-oasis/crystal-accent-detail-v1/landmark-regression/layout-reference.png",
+      "retained": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/landmark/layout-reference.png",
+      "sha256": "b2e824748df5f7046cd9256a558f70ed1b7a86d90a7dfe5f4bac63fcb5331362",
+      "bytes": 1060477
+    },
+    {
+      "removed": "artifacts/jelly-oasis/crystal-accent-detail-v1/landmark-regression/medium.png",
+      "retained": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/medium.png",
+      "sha256": "f34a2437b5e8ec0bca45a6f784f585f1ba65d4593e4578d7ac9183393b9da96c",
+      "bytes": 1006513
+    },
+    {
+      "removed": "artifacts/jelly-oasis/crystal-accent-detail-v1/landmark-regression/mist.png",
+      "retained": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/landmark/mist.png",
+      "sha256": "44041c6935a82598a7958da5f85840696269ffcd03c7b1f76f9753c78adb358e",
+      "bytes": 887980
+    },
+    {
+      "removed": "artifacts/jelly-oasis/crystal-accent-detail-v1/landmark-regression/mobile.png",
+      "retained": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/landmark/mobile.png",
+      "sha256": "83a162916b3f0b70ee1038def2e8307863f7412a5e1a86488aa6cb7ab188dcde",
+      "bytes": 69515
+    },
+    {
+      "removed": "artifacts/jelly-oasis/crystal-accent-detail-v1/landmark-regression/movement-guides.png",
+      "retained": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/landmark/movement-guides.png",
+      "sha256": "f88c7cdbcb65d502837dd59729d55e3e4c086f99668673042c2d2deec7e03144",
+      "bytes": 1038014
+    },
+    {
+      "removed": "artifacts/jelly-oasis/crystal-accent-detail-v1/landmark-regression/night.png",
+      "retained": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/night.png",
+      "sha256": "9fb47537e3a76b315a7947a72ac3e83f88d6b970d9ce9645aaa8ef765f1c8f03",
+      "bytes": 828719
+    },
+    {
+      "removed": "artifacts/jelly-oasis/crystal-accent-detail-v1/landmark-regression/noon.png",
+      "retained": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/medium.png",
+      "sha256": "f34a2437b5e8ec0bca45a6f784f585f1ba65d4593e4578d7ac9183393b9da96c",
+      "bytes": 1006513
+    },
+    {
+      "removed": "artifacts/jelly-oasis/crystal-accent-detail-v1/landmark-regression/overcast.png",
+      "retained": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/landmark/overcast.png",
+      "sha256": "e71f4724a33d395670365457843c689da7dd65581ed289e54d0f356f7cf8e867",
+      "bytes": 949000
+    },
+    {
+      "removed": "artifacts/jelly-oasis/crystal-accent-detail-v1/landmark-regression/overview.png",
+      "retained": "artifacts/jelly-oasis/pond-edge-detail-v2/after-overview.png",
+      "sha256": "b147f121ebf564221f2c5e9175e073808b57dd98361a7d9db8e84886eb5e223c",
+      "bytes": 416771
+    },
+    {
+      "removed": "artifacts/jelly-oasis/crystal-accent-detail-v1/landmark-regression/rain.png",
+      "retained": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/rain.png",
+      "sha256": "61365b515526b242f6458b3885a52873ec1d49c4759efbd15a09b5cc7cbc6136",
+      "bytes": 931111
+    },
+    {
+      "removed": "artifacts/jelly-oasis/crystal-accent-detail-v1/landmark-regression/sunset.png",
+      "retained": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/landmark/sunset.png",
+      "sha256": "8c3455dc7f3ae0c9b3a57b2c455b41960dbbfea31beb266ecd5d3e72e83ae1c7",
+      "bytes": 848960
+    },
+    {
+      "removed": "artifacts/jelly-oasis/crystal-accent-detail-v1/landmark-regression/yaw--30.png",
+      "retained": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/landmark/yaw--30.png",
+      "sha256": "4f0bf67359269d526b0b0fae4ea6eeaf62c210f4d16d45186fc0827d6f2f7eb9",
+      "bytes": 985333
+    },
+    {
+      "removed": "artifacts/jelly-oasis/crystal-accent-detail-v1/landmark-regression/yaw-0.png",
+      "retained": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/landmark/yaw-0.png",
+      "sha256": "45bf3c97834f98a13262bde949fbad1bcc64f76ce4e21c43f9c2c17994639afa",
+      "bytes": 993579
+    },
+    {
+      "removed": "artifacts/jelly-oasis/crystal-accent-detail-v1/landmark-regression/yaw-30.png",
+      "retained": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/medium.png",
+      "sha256": "f34a2437b5e8ec0bca45a6f784f585f1ba65d4593e4578d7ac9183393b9da96c",
+      "bytes": 1006513
+    },
+    {
+      "removed": "artifacts/jelly-oasis/crystal-accent-detail-v1/landmark-regression/yaw-60.png",
+      "retained": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/landmark/yaw-60.png",
+      "sha256": "9efa24c33e2abdaad4e8ea95e35507a431427cdaedce2c2ff5806527b42f79cb",
+      "bytes": 1011988
+    },
+    {
+      "removed": "artifacts/jelly-oasis/environment-polish-v1/1440x900-ground-noon.jpg",
+      "retained": "artifacts/jelly-oasis/map-rescale-v1/320-1440x900-ground.jpg",
+      "sha256": "125b1f2a1ad93f221f6f9a0e51585e9c24291e1c019889348a9de6c8f8853f09",
+      "bytes": 70589
+    },
+    {
+      "removed": "artifacts/jelly-oasis/environment-polish-v1/1440x900-medium-noon.jpg",
+      "retained": "artifacts/jelly-oasis/map-rescale-v1/320-1440x900-medium.jpg",
+      "sha256": "e35adbbfec8477b9e654d63883c0c67548d1dbd322d4ea2e019cc3b869c8f17d",
+      "bytes": 64597
+    },
+    {
+      "removed": "artifacts/jelly-oasis/environment-polish-v1/1440x900-overview-noon.jpg",
+      "retained": "artifacts/jelly-oasis/environment-polish-v1/overview-noon.jpg",
+      "sha256": "64e27a7d4d72a170cd28e58252e9645982c1e9016142d4af257a60955f671894",
+      "bytes": 35828
+    },
+    {
+      "removed": "artifacts/jelly-oasis/environment-polish-v1/360x780-ground-noon.jpg",
+      "retained": "artifacts/jelly-oasis/map-rescale-v1/320-360x780-ground.jpg",
+      "sha256": "3a39fa7a1a8419500c4edcf3870ee7bc8b75a851940d2246ea6ae7c6f8576224",
+      "bytes": 23933
+    },
+    {
+      "removed": "artifacts/jelly-oasis/environment-polish-v1/360x780-medium-noon.jpg",
+      "retained": "artifacts/jelly-oasis/map-rescale-v1/320-360x780-medium.jpg",
+      "sha256": "c3c51745de4d162fb888469026502c00f5703d22a414e043267094585b6a44d6",
+      "bytes": 18987
+    },
+    {
+      "removed": "artifacts/jelly-oasis/environment-polish-v1/390x844-ground-noon.jpg",
+      "retained": "artifacts/jelly-oasis/map-rescale-v1/320-390x844-ground.jpg",
+      "sha256": "cdec52d3650d26bcce08c93b467b6a7555cc8bf7bcff704a34189a22fc4ece1a",
+      "bytes": 26678
+    },
+    {
+      "removed": "artifacts/jelly-oasis/environment-polish-v1/390x844-medium-noon.jpg",
+      "retained": "artifacts/jelly-oasis/map-rescale-v1/320-390x844-medium.jpg",
+      "sha256": "d4ac339ce733c77ad0f0440e3f58847e78b62fbc1c5dfc4914fc05f554243d68",
+      "bytes": 21010
+    },
+    {
+      "removed": "artifacts/jelly-oasis/environment-polish-v1/844x390-ground-noon.jpg",
+      "retained": "artifacts/jelly-oasis/map-rescale-v1/320-844x390-ground.jpg",
+      "sha256": "576ee303f25bb6732181030fea3694ea97d4b70e6bae5b1103748a002873034f",
+      "bytes": 29021
+    },
+    {
+      "removed": "artifacts/jelly-oasis/environment-polish-v1/844x390-medium-noon.jpg",
+      "retained": "artifacts/jelly-oasis/map-rescale-v1/320-844x390-medium.jpg",
+      "sha256": "4f2bac89d529c9b1403468dc484904d6ead13d0bf0dc8b23c2ed25003b2c51dc",
+      "bytes": 20082
+    },
+    {
+      "removed": "artifacts/jelly-oasis/environment-polish-v1/landscape/a-ground.jpg",
+      "retained": "artifacts/jelly-oasis/landscape-composition-v1/a-ground.jpg",
+      "sha256": "4ade51f41d819d117f3cc71df5cb872aa46004679b08e0cee7703010865b4719",
+      "bytes": 63564
+    },
+    {
+      "removed": "artifacts/jelly-oasis/environment-polish-v1/landscape/a-medium.jpg",
+      "retained": "artifacts/jelly-oasis/landscape-composition-v1/a-medium.jpg",
+      "sha256": "64ec87c58629fd48e639f0832d4cb82389a5dc0f7f75bae518e79b41ad6b635d",
+      "bytes": 56691
+    },
+    {
+      "removed": "artifacts/jelly-oasis/environment-polish-v1/landscape/a-overview.jpg",
+      "retained": "artifacts/jelly-oasis/landscape-composition-v1/a-overview.jpg",
+      "sha256": "1cf7c46288d472e9ea5953643912ce1fbaaa30ec1b005fa89c251be39f4e1db1",
+      "bytes": 32576
+    },
+    {
+      "removed": "artifacts/jelly-oasis/environment-polish-v1/landscape/a-shore-transition.jpg",
+      "retained": "artifacts/jelly-oasis/landscape-composition-v1/a-shore-transition.jpg",
+      "sha256": "4c952e1a7b5a281e07ad5d83bf3c3ec646152d66ccb70a43d9c9f1550d135818",
+      "bytes": 63154
+    },
+    {
+      "removed": "artifacts/jelly-oasis/environment-polish-v1/landscape/a-west-hills.jpg",
+      "retained": "artifacts/jelly-oasis/landscape-composition-v1/a-west-hills.jpg",
+      "sha256": "6e27a187610d99b18d9715892dd8f57dabe52ba811be5f906cbf8e9ae9816e65",
+      "bytes": 41270
+    },
+    {
+      "removed": "artifacts/jelly-oasis/environment-polish-v1/landscape/b-ground.jpg",
+      "retained": "artifacts/jelly-oasis/landscape-composition-v1/a-ground.jpg",
+      "sha256": "4ade51f41d819d117f3cc71df5cb872aa46004679b08e0cee7703010865b4719",
+      "bytes": 63564
+    },
+    {
+      "removed": "artifacts/jelly-oasis/environment-polish-v1/landscape/b-medium.jpg",
+      "retained": "artifacts/jelly-oasis/landscape-composition-v1/desktop-b-noon-medium.jpg",
+      "sha256": "58ac2a8aec0292a6f87d2157e273c9984c2b97cec83f5ddabe8f4f55fcebd8b6",
+      "bytes": 57125
+    },
+    {
+      "removed": "artifacts/jelly-oasis/environment-polish-v1/landscape/b-overview.jpg",
+      "retained": "artifacts/jelly-oasis/landscape-composition-v1/b-overview.jpg",
+      "sha256": "4ef1e5ff219b1ad9efc39097c64b3b96db88eaa1fa963bfa3510e5a442a84be3",
+      "bytes": 32646
+    },
+    {
+      "removed": "artifacts/jelly-oasis/environment-polish-v1/landscape/b-shore-transition.jpg",
+      "retained": "artifacts/jelly-oasis/landscape-composition-v1/b-shore-transition.jpg",
+      "sha256": "b71105f6cc973de210fabe046ada477b46bea42fc3ab11b79feebe2157e56490",
+      "bytes": 63934
+    },
+    {
+      "removed": "artifacts/jelly-oasis/environment-polish-v1/landscape/b-west-hills.jpg",
+      "retained": "artifacts/jelly-oasis/landscape-composition-v1/b-west-hills.jpg",
+      "sha256": "c67775caaf6df23403076ae4b7078f7876700270e60a5eaec77655c05f214951",
+      "bytes": 42674
+    },
+    {
+      "removed": "artifacts/jelly-oasis/environment-polish-v1/landscape/desktop-a-noon-medium.jpg",
+      "retained": "artifacts/jelly-oasis/landscape-composition-v1/a-medium.jpg",
+      "sha256": "64ec87c58629fd48e639f0832d4cb82389a5dc0f7f75bae518e79b41ad6b635d",
+      "bytes": 56691
+    },
+    {
+      "removed": "artifacts/jelly-oasis/environment-polish-v1/landscape/landscape-a-noon-medium.jpg",
+      "retained": "artifacts/jelly-oasis/landscape-composition-v1/landscape.jpg",
+      "sha256": "003c7a785e6c9a691b9a9c8c73a86bbbc5d1c06f25103be17511ea42dd9a37be",
+      "bytes": 18017
+    },
+    {
+      "removed": "artifacts/jelly-oasis/environment-polish-v1/landscape/landscape.jpg",
+      "retained": "artifacts/jelly-oasis/landscape-composition-v1/landscape.jpg",
+      "sha256": "003c7a785e6c9a691b9a9c8c73a86bbbc5d1c06f25103be17511ea42dd9a37be",
+      "bytes": 18017
+    },
+    {
+      "removed": "artifacts/jelly-oasis/environment-polish-v1/landscape/mist.jpg",
+      "retained": "artifacts/jelly-oasis/landscape-composition-v1/mist.jpg",
+      "sha256": "fa5280373b91c166dc926d58e9e7081c4a7512aaf4ba6ab2bbc2420824671694",
+      "bytes": 60369
+    },
+    {
+      "removed": "artifacts/jelly-oasis/environment-polish-v1/landscape/mobile360-a-noon-medium.jpg",
+      "retained": "artifacts/jelly-oasis/environment-polish-v1/vegetation/mobile360.jpg",
+      "sha256": "294ed5f1d4c6cedfa3988e9993f2d8d2a22d9451dca4c782b80cd7c7831a6d80",
+      "bytes": 17064
+    },
+    {
+      "removed": "artifacts/jelly-oasis/environment-polish-v1/landscape/mobile360.jpg",
+      "retained": "artifacts/jelly-oasis/landscape-composition-v1/mobile360.jpg",
+      "sha256": "eafe715f4f6e1b53a0af804e9f3c6c9f6a7e8a436358bd4ba9aeb0a4165bb6c6",
+      "bytes": 17064
+    },
+    {
+      "removed": "artifacts/jelly-oasis/environment-polish-v1/landscape/mobile390-a-noon-medium.jpg",
+      "retained": "artifacts/jelly-oasis/environment-polish-v1/landscape/mobile390.jpg",
+      "sha256": "2190fc54bde36f3dce4ea3d20713c54175b5127185f4e231b89ebecf698818d6",
+      "bytes": 18750
+    },
+    {
+      "removed": "artifacts/jelly-oasis/environment-polish-v1/landscape/night.jpg",
+      "retained": "artifacts/jelly-oasis/landscape-composition-v1/night.jpg",
+      "sha256": "5728c0d1c96a45d69d1fc88a005502d3d828abfb2b0fb106eed4b39ff7316cd2",
+      "bytes": 42666
+    },
+    {
+      "removed": "artifacts/jelly-oasis/environment-polish-v1/landscape/noon.jpg",
+      "retained": "artifacts/jelly-oasis/landscape-composition-v1/a-medium.jpg",
+      "sha256": "64ec87c58629fd48e639f0832d4cb82389a5dc0f7f75bae518e79b41ad6b635d",
+      "bytes": 56691
+    },
+    {
+      "removed": "artifacts/jelly-oasis/environment-polish-v1/landscape/off-ground.jpg",
+      "retained": "artifacts/jelly-oasis/landscape-composition-v1/off-ground.jpg",
+      "sha256": "2ef45492a8674c182b84b03bbf309b85967b8e02b488d13b732d111a364ad8d8",
+      "bytes": 63458
+    },
+    {
+      "removed": "artifacts/jelly-oasis/environment-polish-v1/landscape/off-medium.jpg",
+      "retained": "artifacts/jelly-oasis/vegetation-detail-v1/density-a-medium.jpg",
+      "sha256": "4085d5dd246c16a7f56752e8a4ad694c7b44b1ac3319ce00e3abbfc078acb1d4",
+      "bytes": 55717
+    },
+    {
+      "removed": "artifacts/jelly-oasis/environment-polish-v1/landscape/off-overview.jpg",
+      "retained": "artifacts/jelly-oasis/landscape-composition-v1/off-overview.jpg",
+      "sha256": "eacdd5d0c40f94d749b2ff40bcddf7a747537de9496d3ae566ff819ed007ea66",
+      "bytes": 32473
+    },
+    {
+      "removed": "artifacts/jelly-oasis/environment-polish-v1/landscape/production.jpg",
+      "retained": "artifacts/jelly-oasis/landscape-composition-v1/production.jpg",
+      "sha256": "81536aa8516508d81385fb4d9bd70fbb13f5734ccdcd19bc1fa270099e7544a6",
+      "bytes": 31995
+    },
+    {
+      "removed": "artifacts/jelly-oasis/environment-polish-v1/landscape/prototype-flower.jpg",
+      "retained": "artifacts/jelly-oasis/vegetation-detail-v1/prototype-flower.jpg",
+      "sha256": "dd78dcea1793cf9d890be63186cbfb9178862402f2d1a0d18c1bf022e68a0c5f",
+      "bytes": 34037
+    },
+    {
+      "removed": "artifacts/jelly-oasis/environment-polish-v1/landscape/prototype-grass.jpg",
+      "retained": "artifacts/jelly-oasis/vegetation-detail-v1/prototype-grass.jpg",
+      "sha256": "903e89bea4f57a12e451675c5a92c5bf8e457033ef5fa3272be39777c82112b6",
+      "bytes": 17112
+    },
+    {
+      "removed": "artifacts/jelly-oasis/environment-polish-v1/landscape/prototype-shrub.jpg",
+      "retained": "artifacts/jelly-oasis/vegetation-detail-v1/prototype-shrub.jpg",
+      "sha256": "a55dc9555bb73fdf57dd0dd9682c4b456c4e33eb0eaba0b7da289d90a15e5fe1",
+      "bytes": 28339
+    },
+    {
+      "removed": "artifacts/jelly-oasis/environment-polish-v1/landscape/rain.jpg",
+      "retained": "artifacts/jelly-oasis/landscape-composition-v1/rain.jpg",
+      "sha256": "fee4c22d6cdaf0cedf6c9bbc2800d6f6c9e936d7e3a720f6ce0ab4b579133ae9",
+      "bytes": 54919
+    },
+    {
+      "removed": "artifacts/jelly-oasis/environment-polish-v1/landscape/reset.jpg",
+      "retained": "artifacts/jelly-oasis/landscape-composition-v1/reset.jpg",
+      "sha256": "fc5cd9052d290dda49c1805cab2473d754da60fd555eb9812d01d28bb1a1b82d",
+      "bytes": 32596
+    },
+    {
+      "removed": "artifacts/jelly-oasis/environment-polish-v1/pond/clear-4s.png",
+      "retained": "artifacts/jelly-oasis/environment-polish-v1/pond/clear-2s.png",
+      "sha256": "8d70c92edbe34e866ef624c007a4fa5f79c426d4022288ea93f849bdc76250c8",
+      "bytes": 438988
+    },
+    {
+      "removed": "artifacts/jelly-oasis/environment-polish-v1/vegetation/density-a-ground.jpg",
+      "retained": "artifacts/jelly-oasis/landscape-composition-v1/a-ground.jpg",
+      "sha256": "4ade51f41d819d117f3cc71df5cb872aa46004679b08e0cee7703010865b4719",
+      "bytes": 63564
+    },
+    {
+      "removed": "artifacts/jelly-oasis/environment-polish-v1/vegetation/density-a-medium.jpg",
+      "retained": "artifacts/jelly-oasis/landscape-composition-v1/a-medium.jpg",
+      "sha256": "64ec87c58629fd48e639f0832d4cb82389a5dc0f7f75bae518e79b41ad6b635d",
+      "bytes": 56691
+    },
+    {
+      "removed": "artifacts/jelly-oasis/environment-polish-v1/vegetation/landscape.jpg",
+      "retained": "artifacts/jelly-oasis/landscape-composition-v1/landscape.jpg",
+      "sha256": "003c7a785e6c9a691b9a9c8c73a86bbbc5d1c06f25103be17511ea42dd9a37be",
+      "bytes": 18017
+    },
+    {
+      "removed": "artifacts/jelly-oasis/environment-polish-v1/vegetation/lifecycle-before.jpg",
+      "retained": "artifacts/jelly-oasis/landscape-composition-v1/lifecycle-before.jpg",
+      "sha256": "b0f5b83c6435e9b7cb9b89481b407a5a8d275bb85acf720a1fbf339d17a3faf0",
+      "bytes": 56672
+    },
+    {
+      "removed": "artifacts/jelly-oasis/environment-polish-v1/vegetation/mist.jpg",
+      "retained": "artifacts/jelly-oasis/landscape-composition-v1/mist.jpg",
+      "sha256": "fa5280373b91c166dc926d58e9e7081c4a7512aaf4ba6ab2bbc2420824671694",
+      "bytes": 60369
+    },
+    {
+      "removed": "artifacts/jelly-oasis/environment-polish-v1/vegetation/mobile390.jpg",
+      "retained": "artifacts/jelly-oasis/environment-polish-v1/landscape/mobile390.jpg",
+      "sha256": "2190fc54bde36f3dce4ea3d20713c54175b5127185f4e231b89ebecf698818d6",
+      "bytes": 18750
+    },
+    {
+      "removed": "artifacts/jelly-oasis/environment-polish-v1/vegetation/noon.jpg",
+      "retained": "artifacts/jelly-oasis/landscape-composition-v1/noon.jpg",
+      "sha256": "b62e582b0c17433ee52bece7fe671fa379a4de04bceaafc44d426dd0a332257f",
+      "bytes": 56697
+    },
+    {
+      "removed": "artifacts/jelly-oasis/environment-polish-v1/vegetation/production.jpg",
+      "retained": "artifacts/jelly-oasis/landscape-composition-v1/production.jpg",
+      "sha256": "81536aa8516508d81385fb4d9bd70fbb13f5734ccdcd19bc1fa270099e7544a6",
+      "bytes": 31995
+    },
+    {
+      "removed": "artifacts/jelly-oasis/environment-polish-v1/vegetation/prototype-flower.jpg",
+      "retained": "artifacts/jelly-oasis/vegetation-detail-v1/prototype-flower.jpg",
+      "sha256": "dd78dcea1793cf9d890be63186cbfb9178862402f2d1a0d18c1bf022e68a0c5f",
+      "bytes": 34037
+    },
+    {
+      "removed": "artifacts/jelly-oasis/environment-polish-v1/vegetation/prototype-grass.jpg",
+      "retained": "artifacts/jelly-oasis/vegetation-detail-v1/prototype-grass.jpg",
+      "sha256": "903e89bea4f57a12e451675c5a92c5bf8e457033ef5fa3272be39777c82112b6",
+      "bytes": 17112
+    },
+    {
+      "removed": "artifacts/jelly-oasis/environment-polish-v1/vegetation/prototype-shrub.jpg",
+      "retained": "artifacts/jelly-oasis/vegetation-detail-v1/prototype-shrub.jpg",
+      "sha256": "a55dc9555bb73fdf57dd0dd9682c4b456c4e33eb0eaba0b7da289d90a15e5fe1",
+      "bytes": 28339
+    },
+    {
+      "removed": "artifacts/jelly-oasis/environment-polish-v1/vegetation/rain.jpg",
+      "retained": "artifacts/jelly-oasis/landscape-composition-v1/rain.jpg",
+      "sha256": "fee4c22d6cdaf0cedf6c9bbc2800d6f6c9e936d7e3a720f6ce0ab4b579133ae9",
+      "bytes": 54919
+    },
+    {
+      "removed": "artifacts/jelly-oasis/environment-polish-v1/vegetation/reset.jpg",
+      "retained": "artifacts/jelly-oasis/landscape-composition-v1/reset.jpg",
+      "sha256": "fc5cd9052d290dda49c1805cab2473d754da60fd555eb9812d01d28bb1a1b82d",
+      "bytes": 32596
+    },
+    {
+      "removed": "artifacts/jelly-oasis/environment-polish-v1/vegetation/restored.jpg",
+      "retained": "artifacts/jelly-oasis/landscape-composition-v1/restored.jpg",
+      "sha256": "194810a982dee24ac58fe40b49acc67e5ceb7cde3308f3311a42c6e81d21526b",
+      "bytes": 56735
+    },
+    {
+      "removed": "artifacts/jelly-oasis/flower-meadow-final-composition-v1/a-1440x900-ground.jpg",
+      "retained": "artifacts/jelly-oasis/tree-grove-rock-expansion-v1/a-1440x900-ground.jpg",
+      "sha256": "f0bac9b9202e7a5590c372525424503214592fd0bf38870ce48179c9dc17bf2c",
+      "bytes": 89103
+    },
+    {
+      "removed": "artifacts/jelly-oasis/flower-meadow-final-composition-v1/off-1440x900-medium.jpg",
+      "retained": "artifacts/jelly-oasis/tree-grove-rock-expansion-v1/a-1440x900-medium.jpg",
+      "sha256": "7b8bf3a31dc1bc27305acab4913e252d3e7a1325c3d757521586bb3140c1e4a0",
+      "bytes": 92511
+    },
+    {
+      "removed": "artifacts/jelly-oasis/flower-meadow-final-composition-v1/off-1440x900-overview.jpg",
+      "retained": "artifacts/jelly-oasis/tree-grove-rock-expansion-v1/a-1440x900-overview.jpg",
+      "sha256": "de3845d4f2334ede5312cb98f0bfc1cd02bff5a624ab7bf557a10f9cfd7a8dfa",
+      "bytes": 41317
+    },
+    {
+      "removed": "artifacts/jelly-oasis/landmark-integration/candidate-basin.png",
+      "retained": "artifacts/jelly-oasis/landmark-integration/medium.png",
+      "sha256": "24143b9c003785b554ddccbcbe3df1686bceadad899d8a9aa0b857ccb8f9cde6",
+      "bytes": 950651
+    },
+    {
+      "removed": "artifacts/jelly-oasis/landmark-integration/noon.png",
+      "retained": "artifacts/jelly-oasis/landmark-integration/medium.png",
+      "sha256": "24143b9c003785b554ddccbcbe3df1686bceadad899d8a9aa0b857ccb8f9cde6",
+      "bytes": 950651
+    },
+    {
+      "removed": "artifacts/jelly-oasis/landmark-integration/yaw-30.png",
+      "retained": "artifacts/jelly-oasis/landmark-integration/medium.png",
+      "sha256": "24143b9c003785b554ddccbcbe3df1686bceadad899d8a9aa0b857ccb8f9cde6",
+      "bytes": 950651
+    },
+    {
+      "removed": "artifacts/jelly-oasis/landmark-tree-detail-v1/after-arch-ground.png",
+      "retained": "artifacts/jelly-oasis/ruin-root-night-v1/after-arch-ground.png",
+      "sha256": "16de17f18a357370fa1b5c3c1ee41115b9b68b5723009670098c4e916b9a4aed",
+      "bytes": 547270
+    },
+    {
+      "removed": "artifacts/jelly-oasis/landmark-tree-detail-v1/after-arch-left.png",
+      "retained": "artifacts/jelly-oasis/ruin-root-night-v1/after-arch-left.png",
+      "sha256": "fe0f0fb764a32bd3997e991a515801f874dbb7df3c05a56484a8572ca2668f80",
+      "bytes": 672943
+    },
+    {
+      "removed": "artifacts/jelly-oasis/landmark-tree-detail-v1/after-ground-noon.png",
+      "retained": "artifacts/jelly-oasis/ruin-root-night-v1/after-ground-noon.png",
+      "sha256": "5e8d1d9f3b6b1882bd23c0ded746e79c0ed193810e715c4a2e2d45f331c42d02",
+      "bytes": 541690
+    },
+    {
+      "removed": "artifacts/jelly-oasis/landmark-tree-detail-v1/after-medium-noon.png",
+      "retained": "artifacts/jelly-oasis/landmark-tree-detail-v1/environment-noon.png",
+      "sha256": "935d425bc3737d85e6fa89e097f9736167cf293cbd97da1e08ab39b5621d0f1d",
+      "bytes": 999537
+    },
+    {
+      "removed": "artifacts/jelly-oasis/landmark-tree-detail-v1/before-arch-front.png",
+      "retained": "artifacts/jelly-oasis/ruin-root-night-v1/after-arch-front.png",
+      "sha256": "4917fb714929afd25ae3cd60513eb4848bc19fd0b890422c8fc286ecc7dc3c50",
+      "bytes": 602950
+    },
+    {
+      "removed": "artifacts/jelly-oasis/landmark-tree-detail-v1/before-arch-ground.png",
+      "retained": "artifacts/jelly-oasis/ruin-root-night-v1/after-arch-ground.png",
+      "sha256": "16de17f18a357370fa1b5c3c1ee41115b9b68b5723009670098c4e916b9a4aed",
+      "bytes": 547270
+    },
+    {
+      "removed": "artifacts/jelly-oasis/landmark-tree-detail-v1/before-arch-left.png",
+      "retained": "artifacts/jelly-oasis/ruin-root-night-v1/after-arch-left.png",
+      "sha256": "fe0f0fb764a32bd3997e991a515801f874dbb7df3c05a56484a8572ca2668f80",
+      "bytes": 672943
+    },
+    {
+      "removed": "artifacts/jelly-oasis/landmark-tree-detail-v1/before-arch-right.png",
+      "retained": "artifacts/jelly-oasis/ruin-root-night-v1/after-arch-right.png",
+      "sha256": "694d0e5ee795e81a8b8f3329c8dc81eabd6debd7f7e231e5db60bdeef2c1c5f4",
+      "bytes": 698145
+    },
+    {
+      "removed": "artifacts/jelly-oasis/landmark-tree-detail-v1/before-ground-noon.png",
+      "retained": "artifacts/jelly-oasis/ruin-root-night-v1/after-ground-noon.png",
+      "sha256": "5e8d1d9f3b6b1882bd23c0ded746e79c0ed193810e715c4a2e2d45f331c42d02",
+      "bytes": 541690
+    },
+    {
+      "removed": "artifacts/jelly-oasis/landmark-tree-detail-v1/before-root-front.png",
+      "retained": "artifacts/jelly-oasis/ruin-root-night-v1/after-root-front.png",
+      "sha256": "9133b7f550d6cc9acf09c1f8d2e93cec17a8c3476610b1033c27c8e75a2bf27c",
+      "bytes": 622280
+    },
+    {
+      "removed": "artifacts/jelly-oasis/landmark-tree-detail-v1/before-root-ground.png",
+      "retained": "artifacts/jelly-oasis/landmark-tree-detail-v1/after-root-ground.png",
+      "sha256": "9d33efd9d7e7548f6666b0ecd53bbcdc091a75d65965d583c6540abd77528d9c",
+      "bytes": 467570
+    },
+    {
+      "removed": "artifacts/jelly-oasis/landmark-tree-detail-v1/before-root-right.png",
+      "retained": "artifacts/jelly-oasis/ruin-root-night-v1/after-root-right.png",
+      "sha256": "010a428bc406c8304afe455518d977de7a7089168c3fa5e46f2fa97bec98e6d6",
+      "bytes": 675675
+    },
+    {
+      "removed": "artifacts/jelly-oasis/landmark-tree-detail-v1/mobile-moon-sky.png",
+      "retained": "artifacts/jelly-oasis/ruin-root-night-v1/mobile-moon-sky.png",
+      "sha256": "161a612a7b4fab72287dfe9f73694908a0b46caad2aa757e22664e49413c0250",
+      "bytes": 27571
+    },
+    {
+      "removed": "artifacts/jelly-oasis/landmark-tree-detail-v1/moon-sky-12.png",
+      "retained": "artifacts/jelly-oasis/ruin-root-night-v1/moon-sky-12.png",
+      "sha256": "5e27ca93f5cf4a8ac78813bffb94e89dc20eeffd39f9566fe3d7c5a2a81e9cec",
+      "bytes": 197283
+    },
+    {
+      "removed": "artifacts/jelly-oasis/landmark-tree-detail-v1/night-restored.png",
+      "retained": "artifacts/jelly-oasis/landmark-tree-detail-v1/environment-night.png",
+      "sha256": "57bfb24e94f5e47660ed0e0030a39eacd1291e797bc1810925dcab1fbae094b2",
+      "bytes": 819640
+    },
+    {
+      "removed": "artifacts/jelly-oasis/landmark-tree-detail-v1/production-moon-sky.png",
+      "retained": "artifacts/jelly-oasis/ruin-root-night-v1/production-moon-sky.png",
+      "sha256": "ba023ef8bde7beae6dfe8e6b204e9ce4087a8c265a69afd44aec9319a7929df6",
+      "bytes": 46463
+    },
+    {
+      "removed": "artifacts/jelly-oasis/landscape-composition-v1/b-ground.jpg",
+      "retained": "artifacts/jelly-oasis/landscape-composition-v1/a-ground.jpg",
+      "sha256": "4ade51f41d819d117f3cc71df5cb872aa46004679b08e0cee7703010865b4719",
+      "bytes": 63564
+    },
+    {
+      "removed": "artifacts/jelly-oasis/landscape-composition-v1/desktop-a-night-ground.jpg",
+      "retained": "artifacts/jelly-oasis/landscape-composition-v1/night.jpg",
+      "sha256": "5728c0d1c96a45d69d1fc88a005502d3d828abfb2b0fb106eed4b39ff7316cd2",
+      "bytes": 42666
+    },
+    {
+      "removed": "artifacts/jelly-oasis/landscape-composition-v1/desktop-a-noon-ground.jpg",
+      "retained": "artifacts/jelly-oasis/landscape-composition-v1/a-ground.jpg",
+      "sha256": "4ade51f41d819d117f3cc71df5cb872aa46004679b08e0cee7703010865b4719",
+      "bytes": 63564
+    },
+    {
+      "removed": "artifacts/jelly-oasis/landscape-composition-v1/desktop-a-noon-medium.jpg",
+      "retained": "artifacts/jelly-oasis/landscape-composition-v1/a-medium.jpg",
+      "sha256": "64ec87c58629fd48e639f0832d4cb82389a5dc0f7f75bae518e79b41ad6b635d",
+      "bytes": 56691
+    },
+    {
+      "removed": "artifacts/jelly-oasis/landscape-composition-v1/desktop-a-noon-overview.jpg",
+      "retained": "artifacts/jelly-oasis/landscape-composition-v1/a-overview.jpg",
+      "sha256": "1cf7c46288d472e9ea5953643912ce1fbaaa30ec1b005fa89c251be39f4e1db1",
+      "bytes": 32576
+    },
+    {
+      "removed": "artifacts/jelly-oasis/landscape-composition-v1/desktop-b-mist-ground.jpg",
+      "retained": "artifacts/jelly-oasis/landscape-composition-v1/desktop-a-mist-ground.jpg",
+      "sha256": "c97c9e1b7012cec10dad64c4e926a00e50a1dcae6246e0694bac26b7506cf353",
+      "bytes": 60274
+    },
+    {
+      "removed": "artifacts/jelly-oasis/landscape-composition-v1/desktop-b-night-ground.jpg",
+      "retained": "artifacts/jelly-oasis/landscape-composition-v1/night.jpg",
+      "sha256": "5728c0d1c96a45d69d1fc88a005502d3d828abfb2b0fb106eed4b39ff7316cd2",
+      "bytes": 42666
+    },
+    {
+      "removed": "artifacts/jelly-oasis/landscape-composition-v1/desktop-b-noon-ground.jpg",
+      "retained": "artifacts/jelly-oasis/landscape-composition-v1/a-ground.jpg",
+      "sha256": "4ade51f41d819d117f3cc71df5cb872aa46004679b08e0cee7703010865b4719",
+      "bytes": 63564
+    },
+    {
+      "removed": "artifacts/jelly-oasis/landscape-composition-v1/desktop-b-rain-ground.jpg",
+      "retained": "artifacts/jelly-oasis/landscape-composition-v1/desktop-a-rain-ground.jpg",
+      "sha256": "e00720d68bb2db7c872c6bcd38258ad1ea2a33817ba6a265f71ba4affd932fdc",
+      "bytes": 54901
+    },
+    {
+      "removed": "artifacts/jelly-oasis/landscape-composition-v1/desktop-off-noon-ground.jpg",
+      "retained": "artifacts/jelly-oasis/landscape-composition-v1/off-ground.jpg",
+      "sha256": "2ef45492a8674c182b84b03bbf309b85967b8e02b488d13b732d111a364ad8d8",
+      "bytes": 63458
+    },
+    {
+      "removed": "artifacts/jelly-oasis/landscape-composition-v1/desktop-off-noon-medium.jpg",
+      "retained": "artifacts/jelly-oasis/vegetation-detail-v1/density-a-medium.jpg",
+      "sha256": "4085d5dd246c16a7f56752e8a4ad694c7b44b1ac3319ce00e3abbfc078acb1d4",
+      "bytes": 55717
+    },
+    {
+      "removed": "artifacts/jelly-oasis/landscape-composition-v1/desktop-off-noon-overview.jpg",
+      "retained": "artifacts/jelly-oasis/landscape-composition-v1/off-overview.jpg",
+      "sha256": "eacdd5d0c40f94d749b2ff40bcddf7a747537de9496d3ae566ff819ed007ea66",
+      "bytes": 32473
+    },
+    {
+      "removed": "artifacts/jelly-oasis/landscape-composition-v1/landscape-a-noon-medium.jpg",
+      "retained": "artifacts/jelly-oasis/landscape-composition-v1/landscape.jpg",
+      "sha256": "003c7a785e6c9a691b9a9c8c73a86bbbc5d1c06f25103be17511ea42dd9a37be",
+      "bytes": 18017
+    },
+    {
+      "removed": "artifacts/jelly-oasis/landscape-composition-v1/landscape-off-noon-medium.jpg",
+      "retained": "artifacts/jelly-oasis/vegetation-detail-v1/landscape.jpg",
+      "sha256": "da6e469ca1ab0b2fbbda5b46f9f242ebb9e31143a31c24a1d4f3ff46cf077d53",
+      "bytes": 17803
+    },
+    {
+      "removed": "artifacts/jelly-oasis/landscape-composition-v1/mobile360-a-noon-medium.jpg",
+      "retained": "artifacts/jelly-oasis/landscape-composition-v1/mobile360.jpg",
+      "sha256": "eafe715f4f6e1b53a0af804e9f3c6c9f6a7e8a436358bd4ba9aeb0a4165bb6c6",
+      "bytes": 17064
+    },
+    {
+      "removed": "artifacts/jelly-oasis/landscape-composition-v1/mobile360-b-mist-ground.jpg",
+      "retained": "artifacts/jelly-oasis/landscape-composition-v1/mobile360-a-mist-ground.jpg",
+      "sha256": "81b9ff5996809fb565f60e690baea52a76ad34fb39193a083f9923021f89dfa8",
+      "bytes": 21119
+    },
+    {
+      "removed": "artifacts/jelly-oasis/landscape-composition-v1/mobile360-b-night-ground.jpg",
+      "retained": "artifacts/jelly-oasis/landscape-composition-v1/mobile360-a-night-ground.jpg",
+      "sha256": "b26ae33fac35f94fc1115c1ecdfc5203d4de0df8aca18950ae84bb958ae6c386",
+      "bytes": 17147
+    },
+    {
+      "removed": "artifacts/jelly-oasis/landscape-composition-v1/mobile360-b-noon-ground.jpg",
+      "retained": "artifacts/jelly-oasis/landscape-composition-v1/mobile360-a-noon-ground.jpg",
+      "sha256": "f85ace94bc9ab2fb12ea56d26974f2eebcd3ecedf654b0f396c118decc4474fe",
+      "bytes": 21842
+    },
+    {
+      "removed": "artifacts/jelly-oasis/landscape-composition-v1/mobile360-b-rain-ground.jpg",
+      "retained": "artifacts/jelly-oasis/landscape-composition-v1/mobile360-a-rain-ground.jpg",
+      "sha256": "f34e2aaf9ac8c28b95316b4adec74e76e1216de251d78cf8f861502ac2241910",
+      "bytes": 20014
+    },
+    {
+      "removed": "artifacts/jelly-oasis/landscape-composition-v1/mobile360-off-mist-ground.jpg",
+      "retained": "artifacts/jelly-oasis/landscape-composition-v1/mobile360-a-mist-ground.jpg",
+      "sha256": "81b9ff5996809fb565f60e690baea52a76ad34fb39193a083f9923021f89dfa8",
+      "bytes": 21119
+    },
+    {
+      "removed": "artifacts/jelly-oasis/landscape-composition-v1/mobile360-off-night-ground.jpg",
+      "retained": "artifacts/jelly-oasis/landscape-composition-v1/mobile360-a-night-ground.jpg",
+      "sha256": "b26ae33fac35f94fc1115c1ecdfc5203d4de0df8aca18950ae84bb958ae6c386",
+      "bytes": 17147
+    },
+    {
+      "removed": "artifacts/jelly-oasis/landscape-composition-v1/mobile360-off-noon-ground.jpg",
+      "retained": "artifacts/jelly-oasis/landscape-composition-v1/mobile360-a-noon-ground.jpg",
+      "sha256": "f85ace94bc9ab2fb12ea56d26974f2eebcd3ecedf654b0f396c118decc4474fe",
+      "bytes": 21842
+    },
+    {
+      "removed": "artifacts/jelly-oasis/landscape-composition-v1/mobile360-off-noon-medium.jpg",
+      "retained": "artifacts/jelly-oasis/vegetation-detail-v1/mobile360.jpg",
+      "sha256": "790e03d3e8eca5fa0e98d325122f7afe5031c7b44425d7f10c596b29d0df0359",
+      "bytes": 16946
+    },
+    {
+      "removed": "artifacts/jelly-oasis/landscape-composition-v1/mobile360-off-rain-ground.jpg",
+      "retained": "artifacts/jelly-oasis/landscape-composition-v1/mobile360-a-rain-ground.jpg",
+      "sha256": "f34e2aaf9ac8c28b95316b4adec74e76e1216de251d78cf8f861502ac2241910",
+      "bytes": 20014
+    },
+    {
+      "removed": "artifacts/jelly-oasis/landscape-composition-v1/mobile390-a-noon-medium.jpg",
+      "retained": "artifacts/jelly-oasis/landscape-composition-v1/mobile390.jpg",
+      "sha256": "106c376c0d34961f80557e2eca9fc2e168526ed8276c0541cb4b05640c418903",
+      "bytes": 18756
+    },
+    {
+      "removed": "artifacts/jelly-oasis/landscape-composition-v1/mobile390-b-mist-ground.jpg",
+      "retained": "artifacts/jelly-oasis/landscape-composition-v1/mobile390-a-mist-ground.jpg",
+      "sha256": "3da211d41bfb31bc64e67a1a0ad4ca06d926a3547764f9b09b30be3f0057ead6",
+      "bytes": 23337
+    },
+    {
+      "removed": "artifacts/jelly-oasis/landscape-composition-v1/mobile390-b-night-ground.jpg",
+      "retained": "artifacts/jelly-oasis/landscape-composition-v1/mobile390-a-night-ground.jpg",
+      "sha256": "01438816fa6c2bc146fb8e9527359376812f29ca9226a138240a6d5b897c150d",
+      "bytes": 18674
+    },
+    {
+      "removed": "artifacts/jelly-oasis/landscape-composition-v1/mobile390-b-noon-ground.jpg",
+      "retained": "artifacts/jelly-oasis/landscape-composition-v1/mobile390-a-noon-ground.jpg",
+      "sha256": "c19cecae9e9811d9f573385fc7bf3a75b9b353c9f6746e28a97bf23d975bb74b",
+      "bytes": 24287
+    },
+    {
+      "removed": "artifacts/jelly-oasis/landscape-composition-v1/mobile390-b-rain-ground.jpg",
+      "retained": "artifacts/jelly-oasis/landscape-composition-v1/mobile390-a-rain-ground.jpg",
+      "sha256": "d9ea236c5315db534b7077d8253873e6b33b55b70ffb6203d94a3ceabce9cff1",
+      "bytes": 22201
+    },
+    {
+      "removed": "artifacts/jelly-oasis/landscape-composition-v1/mobile390-off-mist-ground.jpg",
+      "retained": "artifacts/jelly-oasis/landscape-composition-v1/mobile390-a-mist-ground.jpg",
+      "sha256": "3da211d41bfb31bc64e67a1a0ad4ca06d926a3547764f9b09b30be3f0057ead6",
+      "bytes": 23337
+    },
+    {
+      "removed": "artifacts/jelly-oasis/landscape-composition-v1/mobile390-off-night-ground.jpg",
+      "retained": "artifacts/jelly-oasis/landscape-composition-v1/mobile390-a-night-ground.jpg",
+      "sha256": "01438816fa6c2bc146fb8e9527359376812f29ca9226a138240a6d5b897c150d",
+      "bytes": 18674
+    },
+    {
+      "removed": "artifacts/jelly-oasis/landscape-composition-v1/mobile390-off-noon-ground.jpg",
+      "retained": "artifacts/jelly-oasis/landscape-composition-v1/mobile390-a-noon-ground.jpg",
+      "sha256": "c19cecae9e9811d9f573385fc7bf3a75b9b353c9f6746e28a97bf23d975bb74b",
+      "bytes": 24287
+    },
+    {
+      "removed": "artifacts/jelly-oasis/landscape-composition-v1/mobile390-off-rain-ground.jpg",
+      "retained": "artifacts/jelly-oasis/landscape-composition-v1/mobile390-a-rain-ground.jpg",
+      "sha256": "d9ea236c5315db534b7077d8253873e6b33b55b70ffb6203d94a3ceabce9cff1",
+      "bytes": 22201
+    },
+    {
+      "removed": "artifacts/jelly-oasis/landscape-composition-v1/prototype-flower.jpg",
+      "retained": "artifacts/jelly-oasis/vegetation-detail-v1/prototype-flower.jpg",
+      "sha256": "dd78dcea1793cf9d890be63186cbfb9178862402f2d1a0d18c1bf022e68a0c5f",
+      "bytes": 34037
+    },
+    {
+      "removed": "artifacts/jelly-oasis/landscape-composition-v1/prototype-grass.jpg",
+      "retained": "artifacts/jelly-oasis/vegetation-detail-v1/prototype-grass.jpg",
+      "sha256": "903e89bea4f57a12e451675c5a92c5bf8e457033ef5fa3272be39777c82112b6",
+      "bytes": 17112
+    },
+    {
+      "removed": "artifacts/jelly-oasis/landscape-composition-v1/prototype-shrub.jpg",
+      "retained": "artifacts/jelly-oasis/vegetation-detail-v1/prototype-shrub.jpg",
+      "sha256": "a55dc9555bb73fdf57dd0dd9682c4b456c4e33eb0eaba0b7da289d90a15e5fe1",
+      "bytes": 28339
+    },
+    {
+      "removed": "artifacts/jelly-oasis/map-rescale-v1/320-1440x900-north.jpg",
+      "retained": "artifacts/jelly-oasis/environment-polish-v1/north-noon.jpg",
+      "sha256": "4b85c67e077114b8fd1afdb9fc834347ab32c2fffe215932fb19e661ebaeafac",
+      "bytes": 36820
+    },
+    {
+      "removed": "artifacts/jelly-oasis/map-rescale-v1/320-1440x900-pond-low.jpg",
+      "retained": "artifacts/jelly-oasis/environment-polish-v1/pond-low-noon.jpg",
+      "sha256": "9a3c4cfb99425f1c33767af5434bd7422e3e471e721cbaf206d70c705b54e187",
+      "bytes": 74110
+    },
+    {
+      "removed": "artifacts/jelly-oasis/map-rescale-v1/baseline/1440x900-ground.jpg",
+      "retained": "artifacts/jelly-oasis/map-rescale-v1/320-1440x900-ground.jpg",
+      "sha256": "125b1f2a1ad93f221f6f9a0e51585e9c24291e1c019889348a9de6c8f8853f09",
+      "bytes": 70589
+    },
+    {
+      "removed": "artifacts/jelly-oasis/map-rescale-v1/baseline/1440x900-medium.jpg",
+      "retained": "artifacts/jelly-oasis/map-rescale-v1/320-1440x900-medium.jpg",
+      "sha256": "e35adbbfec8477b9e654d63883c0c67548d1dbd322d4ea2e019cc3b869c8f17d",
+      "bytes": 64597
+    },
+    {
+      "removed": "artifacts/jelly-oasis/map-rescale-v1/baseline/1440x900-north.jpg",
+      "retained": "artifacts/jelly-oasis/environment-polish-v1/north-noon.jpg",
+      "sha256": "4b85c67e077114b8fd1afdb9fc834347ab32c2fffe215932fb19e661ebaeafac",
+      "bytes": 36820
+    },
+    {
+      "removed": "artifacts/jelly-oasis/map-rescale-v1/baseline/1440x900-overview.jpg",
+      "retained": "artifacts/jelly-oasis/environment-polish-v1/overview-noon.jpg",
+      "sha256": "64e27a7d4d72a170cd28e58252e9645982c1e9016142d4af257a60955f671894",
+      "bytes": 35828
+    },
+    {
+      "removed": "artifacts/jelly-oasis/map-rescale-v1/baseline/1440x900-pond-low.jpg",
+      "retained": "artifacts/jelly-oasis/environment-polish-v1/pond-low-noon.jpg",
+      "sha256": "9a3c4cfb99425f1c33767af5434bd7422e3e471e721cbaf206d70c705b54e187",
+      "bytes": 74110
+    },
+    {
+      "removed": "artifacts/jelly-oasis/map-rescale-v1/baseline/1440x900-west.jpg",
+      "retained": "artifacts/jelly-oasis/map-rescale-v1/320-1440x900-west.jpg",
+      "sha256": "b2315396ab93eaec42f71318acda4ad8a3f27224237b2d898d2498d4eca3b254",
+      "bytes": 43517
+    },
+    {
+      "removed": "artifacts/jelly-oasis/map-rescale-v1/baseline/360x780-ground.jpg",
+      "retained": "artifacts/jelly-oasis/map-rescale-v1/320-360x780-ground.jpg",
+      "sha256": "3a39fa7a1a8419500c4edcf3870ee7bc8b75a851940d2246ea6ae7c6f8576224",
+      "bytes": 23933
+    },
+    {
+      "removed": "artifacts/jelly-oasis/map-rescale-v1/baseline/360x780-pond-low.jpg",
+      "retained": "artifacts/jelly-oasis/map-rescale-v1/320-360x780-pond-low.jpg",
+      "sha256": "d2271450f60204c01df9e54b7e89462bfee0b411db525bd0e8de1e25b6d223cf",
+      "bytes": 18736
+    },
+    {
+      "removed": "artifacts/jelly-oasis/map-rescale-v1/baseline/390x844-ground.jpg",
+      "retained": "artifacts/jelly-oasis/map-rescale-v1/320-390x844-ground.jpg",
+      "sha256": "cdec52d3650d26bcce08c93b467b6a7555cc8bf7bcff704a34189a22fc4ece1a",
+      "bytes": 26678
+    },
+    {
+      "removed": "artifacts/jelly-oasis/map-rescale-v1/baseline/390x844-medium.jpg",
+      "retained": "artifacts/jelly-oasis/map-rescale-v1/320-390x844-medium.jpg",
+      "sha256": "d4ac339ce733c77ad0f0440e3f58847e78b62fbc1c5dfc4914fc05f554243d68",
+      "bytes": 21010
+    },
+    {
+      "removed": "artifacts/jelly-oasis/map-rescale-v1/baseline/390x844-overview.jpg",
+      "retained": "artifacts/jelly-oasis/environment-polish-v1/390x844-overview-noon.jpg",
+      "sha256": "5aaf77ba8c9e56c0e2aabd9d1b043be8a9ad5ec4dea52ef5f051b718213858eb",
+      "bytes": 15217
+    },
+    {
+      "removed": "artifacts/jelly-oasis/map-rescale-v1/baseline/390x844-pond-low.jpg",
+      "retained": "artifacts/jelly-oasis/map-rescale-v1/320-390x844-pond-low.jpg",
+      "sha256": "14ab6fd833222984a7d63e78b014adb25fcba3cbd3c862d510fbeecee955f203",
+      "bytes": 20528
+    },
+    {
+      "removed": "artifacts/jelly-oasis/map-rescale-v1/baseline/844x390-ground.jpg",
+      "retained": "artifacts/jelly-oasis/map-rescale-v1/320-844x390-ground.jpg",
+      "sha256": "576ee303f25bb6732181030fea3694ea97d4b70e6bae5b1103748a002873034f",
+      "bytes": 29021
+    },
+    {
+      "removed": "artifacts/jelly-oasis/map-rescale-v1/baseline/844x390-medium.jpg",
+      "retained": "artifacts/jelly-oasis/map-rescale-v1/320-844x390-medium.jpg",
+      "sha256": "4f2bac89d529c9b1403468dc484904d6ead13d0bf0dc8b23c2ed25003b2c51dc",
+      "bytes": 20082
+    },
+    {
+      "removed": "artifacts/jelly-oasis/map-rescale-v1/baseline/844x390-overview.jpg",
+      "retained": "artifacts/jelly-oasis/environment-polish-v1/844x390-overview-noon.jpg",
+      "sha256": "ef7114d892d0ae4a72e38ad82c274a6d2085bf3f2aa10f84ea5cacae8f7bfd78",
+      "bytes": 15582
+    },
+    {
+      "removed": "artifacts/jelly-oasis/map-rescale-v1/baseline/844x390-pond-low.jpg",
+      "retained": "artifacts/jelly-oasis/map-rescale-v1/320-844x390-pond-low.jpg",
+      "sha256": "bee20a56e6cedc8ffce177b1fe35f938824561e826ef2d88046f419dbefea6d0",
+      "bytes": 30862
+    },
+    {
+      "removed": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/landmark/asset-Cliff_Waterfall_A.png",
+      "retained": "artifacts/jelly-oasis/ruin-root-night-v1/landmark-regression/asset-Cliff_Waterfall_A.png",
+      "sha256": "cdc6814cae64a1c0337fa42847bd3c682c08000502df2394ab0b558b13fb3d70",
+      "bytes": 881394
+    },
+    {
+      "removed": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/landmark/asset-Rock_Large_A.png",
+      "retained": "artifacts/jelly-oasis/ruin-root-night-v1/landmark-regression/asset-Rock_Large_A.png",
+      "sha256": "4172245ed4974544c8ea9ddca448169714a60ebaeef4beb8d5c28bd40b5bb7ed",
+      "bytes": 890767
+    },
+    {
+      "removed": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/landmark/asset-Ruin_Arch_A.png",
+      "retained": "artifacts/jelly-oasis/ruin-root-night-v1/landmark-regression/asset-Ruin_Arch_A.png",
+      "sha256": "03ac52722629a25ca46f03158816ac385f6525d08c4b4c4e19a7c05dd5424b22",
+      "bytes": 923644
+    },
+    {
+      "removed": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/landmark/candidate-basin.png",
+      "retained": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/medium.png",
+      "sha256": "f34a2437b5e8ec0bca45a6f784f585f1ba65d4593e4578d7ac9183393b9da96c",
+      "bytes": 1006513
+    },
+    {
+      "removed": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/landmark/ground.png",
+      "retained": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/ground.png",
+      "sha256": "5d0143af55d8b37453f9d845dba82c342798cd730e40a0954b4a5b2e801f3e23",
+      "bytes": 587818
+    },
+    {
+      "removed": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/landmark/medium.png",
+      "retained": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/medium.png",
+      "sha256": "f34a2437b5e8ec0bca45a6f784f585f1ba65d4593e4578d7ac9183393b9da96c",
+      "bytes": 1006513
+    },
+    {
+      "removed": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/landmark/night.png",
+      "retained": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/night.png",
+      "sha256": "9fb47537e3a76b315a7947a72ac3e83f88d6b970d9ce9645aaa8ef765f1c8f03",
+      "bytes": 828719
+    },
+    {
+      "removed": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/landmark/noon.png",
+      "retained": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/medium.png",
+      "sha256": "f34a2437b5e8ec0bca45a6f784f585f1ba65d4593e4578d7ac9183393b9da96c",
+      "bytes": 1006513
+    },
+    {
+      "removed": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/landmark/overview.png",
+      "retained": "artifacts/jelly-oasis/pond-edge-detail-v2/after-overview.png",
+      "sha256": "b147f121ebf564221f2c5e9175e073808b57dd98361a7d9db8e84886eb5e223c",
+      "bytes": 416771
+    },
+    {
+      "removed": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/landmark/rain.png",
+      "retained": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/rain.png",
+      "sha256": "61365b515526b242f6458b3885a52873ec1d49c4759efbd15a09b5cc7cbc6136",
+      "bytes": 931111
+    },
+    {
+      "removed": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/landmark/yaw-30.png",
+      "retained": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/medium.png",
+      "sha256": "f34a2437b5e8ec0bca45a6f784f585f1ba65d4593e4578d7ac9183393b9da96c",
+      "bytes": 1006513
+    },
+    {
+      "removed": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/overview.png",
+      "retained": "artifacts/jelly-oasis/pond-edge-detail-v2/after-overview.png",
+      "sha256": "b147f121ebf564221f2c5e9175e073808b57dd98361a7d9db8e84886eb5e223c",
+      "bytes": 416771
+    },
+    {
+      "removed": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/pond-waterfall-facing.png",
+      "retained": "artifacts/jelly-oasis/pond-edge-detail-v2/after-waterfall-facing.png",
+      "sha256": "e5b48a481c5c4e29425dc8d973296227280c4bf63cfe614c0457c3364e7dee31",
+      "bytes": 675359
+    },
+    {
+      "removed": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/pond/after-ground.png",
+      "retained": "artifacts/jelly-oasis/pond-edge-detail-v2/after-ground.png",
+      "sha256": "f8546f43e406e3939cc01047a150975b3bf1e5708725e0801636e112759c9b05",
+      "bytes": 641362
+    },
+    {
+      "removed": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/pond/after-medium.png",
+      "retained": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/medium.png",
+      "sha256": "f34a2437b5e8ec0bca45a6f784f585f1ba65d4593e4578d7ac9183393b9da96c",
+      "bytes": 1006513
+    },
+    {
+      "removed": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/pond/after-mobile.png",
+      "retained": "artifacts/jelly-oasis/pond-edge-detail-v2/after-mobile.png",
+      "sha256": "ccb41e00abf67e244bcbe287512b8339f54410a4144dd4eb322e303a44a8993c",
+      "bytes": 273768
+    },
+    {
+      "removed": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/pond/after-night.png",
+      "retained": "artifacts/jelly-oasis/pond-edge-detail-v2/after-night.png",
+      "sha256": "1a597dda6981ff279b8d1ec1dff4f585d23f12d9556f201e1ed7424985380ff9",
+      "bytes": 514978
+    },
+    {
+      "removed": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/pond/after-overview.png",
+      "retained": "artifacts/jelly-oasis/pond-edge-detail-v2/after-overview.png",
+      "sha256": "b147f121ebf564221f2c5e9175e073808b57dd98361a7d9db8e84886eb5e223c",
+      "bytes": 416771
+    },
+    {
+      "removed": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/pond/after-rain.png",
+      "retained": "artifacts/jelly-oasis/pond-edge-detail-v2/after-rain.png",
+      "sha256": "5039e42c1b4bea39a1e80c1b1b96b16216c3ed72a809dd4f9772486cad32f2dc",
+      "bytes": 599081
+    },
+    {
+      "removed": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/pond/after-waterfall-facing.png",
+      "retained": "artifacts/jelly-oasis/pond-edge-detail-v2/after-waterfall-facing.png",
+      "sha256": "e5b48a481c5c4e29425dc8d973296227280c4bf63cfe614c0457c3364e7dee31",
+      "bytes": 675359
+    },
+    {
+      "removed": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/pond/before-ground.png",
+      "retained": "artifacts/jelly-oasis/pond-edge-detail-v2/before-ground.png",
+      "sha256": "097f732fd3f21332df69e04ad52a7b99ce5b27b4d1ba0864837c7d4fa98fd3a4",
+      "bytes": 613523
+    },
+    {
+      "removed": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/pond/before-medium.png",
+      "retained": "artifacts/jelly-oasis/pond-edge-detail-v1/after-medium.png",
+      "sha256": "a0ccb4bbbf5b397c74d481430b92f75184695f1470ff9c60f4eb1a2c99a832f7",
+      "bytes": 1004464
+    },
+    {
+      "removed": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/pond/before-mobile.png",
+      "retained": "artifacts/jelly-oasis/pond-edge-detail-v1/after-mobile.png",
+      "sha256": "94424a8aeed12e09819d7d4543660e491bd015f5ea81edc9710ae62eb7bb34d9",
+      "bytes": 272238
+    },
+    {
+      "removed": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/pond/before-night.png",
+      "retained": "artifacts/jelly-oasis/pond-edge-detail-v2/before-night.png",
+      "sha256": "400bcdbe6b2fc94df167cda14c21466d9218f771c1df3c37f1f243cca3843830",
+      "bytes": 497566
+    },
+    {
+      "removed": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/pond/before-overview.png",
+      "retained": "artifacts/jelly-oasis/pond-edge-detail-v1/after-overview.png",
+      "sha256": "16e4631aed32c282509e0b3ef7331987531b04d1cc863987f2ddc081f95d33d9",
+      "bytes": 416675
+    },
+    {
+      "removed": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/pond/before-rain.png",
+      "retained": "artifacts/jelly-oasis/pond-edge-detail-v2/before-rain.png",
+      "sha256": "7046faab45bd5408cb743bad6198d5607081a8e3be61733cb0f93292ebf012cb",
+      "bytes": 578263
+    },
+    {
+      "removed": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/pond/before-waterfall-facing.png",
+      "retained": "artifacts/jelly-oasis/pond-edge-detail-v2/before-waterfall-facing.png",
+      "sha256": "c5c3e88fe1b2fcec562f000180efb174fa27241e0fca0f638724450eb83b186d",
+      "bytes": 654668
+    },
+    {
+      "removed": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/tree-under.png",
+      "retained": "artifacts/jelly-oasis/landmark-tree-detail-v1/after-tree-ground.png",
+      "sha256": "bb24b603205a19924d235da2a70a9fcc99df644943b2456af644c682562fd242",
+      "bytes": 407816
+    },
+    {
+      "removed": "artifacts/jelly-oasis/monumental-composition-v1/before/medium.jpg",
+      "retained": "artifacts/jelly-oasis/flower-meadow-final-composition-v1/a-1440x900-medium.jpg",
+      "sha256": "7177a75bc177aabef72844be5d5c91f1872b050e3b246dac9d724ad5097dbae8",
+      "bytes": 95980
+    },
+    {
+      "removed": "artifacts/jelly-oasis/monumental-composition-v1/before/overview.jpg",
+      "retained": "artifacts/jelly-oasis/flower-meadow-final-composition-v1/a-1440x900-overview.jpg",
+      "sha256": "c52a938393c010276773b703f5f5c88873a9115e53fab2e8d763f32c03dd1cae",
+      "bytes": 41598
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-detail-v1/after-ground.png",
+      "retained": "artifacts/jelly-oasis/pond-edge-detail-v2/before-ground.png",
+      "sha256": "097f732fd3f21332df69e04ad52a7b99ce5b27b4d1ba0864837c7d4fa98fd3a4",
+      "bytes": 613523
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-detail-v1/after-night.png",
+      "retained": "artifacts/jelly-oasis/pond-edge-detail-v2/before-night.png",
+      "sha256": "400bcdbe6b2fc94df167cda14c21466d9218f771c1df3c37f1f243cca3843830",
+      "bytes": 497566
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-detail-v1/after-rain.png",
+      "retained": "artifacts/jelly-oasis/pond-edge-detail-v2/before-rain.png",
+      "sha256": "7046faab45bd5408cb743bad6198d5607081a8e3be61733cb0f93292ebf012cb",
+      "bytes": 578263
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-detail-v1/after-waterfall-facing.png",
+      "retained": "artifacts/jelly-oasis/pond-edge-detail-v2/before-waterfall-facing.png",
+      "sha256": "c5c3e88fe1b2fcec562f000180efb174fa27241e0fca0f638724450eb83b186d",
+      "bytes": 654668
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-detail-v1/landmark-regression/asset-Cliff_Waterfall_A.png",
+      "retained": "artifacts/jelly-oasis/ruin-root-night-v1/landmark-regression/asset-Cliff_Waterfall_A.png",
+      "sha256": "cdc6814cae64a1c0337fa42847bd3c682c08000502df2394ab0b558b13fb3d70",
+      "bytes": 881394
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-detail-v1/landmark-regression/asset-Rock_Large_A.png",
+      "retained": "artifacts/jelly-oasis/ruin-root-night-v1/landmark-regression/asset-Rock_Large_A.png",
+      "sha256": "4172245ed4974544c8ea9ddca448169714a60ebaeef4beb8d5c28bd40b5bb7ed",
+      "bytes": 890767
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-detail-v1/landmark-regression/asset-Ruin_Arch_A.png",
+      "retained": "artifacts/jelly-oasis/ruin-root-night-v1/landmark-regression/asset-Ruin_Arch_A.png",
+      "sha256": "03ac52722629a25ca46f03158816ac385f6525d08c4b4c4e19a7c05dd5424b22",
+      "bytes": 923644
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-detail-v1/landmark-regression/candidate-basin.png",
+      "retained": "artifacts/jelly-oasis/pond-edge-detail-v1/before-medium.png",
+      "sha256": "5941e2f4bcd64c09f3f5ae6ecf7f1f223c29cbc8d57f4c60baa088d80c94f275",
+      "bytes": 999536
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-detail-v1/landmark-regression/ground.png",
+      "retained": "artifacts/jelly-oasis/ruin-root-night-v1/after-ground-noon.png",
+      "sha256": "5e8d1d9f3b6b1882bd23c0ded746e79c0ed193810e715c4a2e2d45f331c42d02",
+      "bytes": 541690
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-detail-v1/landmark-regression/medium.png",
+      "retained": "artifacts/jelly-oasis/pond-edge-detail-v1/before-medium.png",
+      "sha256": "5941e2f4bcd64c09f3f5ae6ecf7f1f223c29cbc8d57f4c60baa088d80c94f275",
+      "bytes": 999536
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-detail-v1/landmark-regression/noon.png",
+      "retained": "artifacts/jelly-oasis/pond-edge-detail-v1/before-medium.png",
+      "sha256": "5941e2f4bcd64c09f3f5ae6ecf7f1f223c29cbc8d57f4c60baa088d80c94f275",
+      "bytes": 999536
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-detail-v1/landmark-regression/overview.png",
+      "retained": "artifacts/jelly-oasis/pond-edge-detail-v1/before-overview.png",
+      "sha256": "e1e1c09f83898d378adc5c48d08bc47f7313b0f36ad2090a4501e7bc3fa7d4e3",
+      "bytes": 416212
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-detail-v1/landmark-regression/yaw-30.png",
+      "retained": "artifacts/jelly-oasis/pond-edge-detail-v1/before-medium.png",
+      "sha256": "5941e2f4bcd64c09f3f5ae6ecf7f1f223c29cbc8d57f4c60baa088d80c94f275",
+      "bytes": 999536
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-detail-v2/after-medium.png",
+      "retained": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/medium.png",
+      "sha256": "f34a2437b5e8ec0bca45a6f784f585f1ba65d4593e4578d7ac9183393b9da96c",
+      "bytes": 1006513
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-detail-v2/landmark-regression/asset-Cliff_Waterfall_A.png",
+      "retained": "artifacts/jelly-oasis/ruin-root-night-v1/landmark-regression/asset-Cliff_Waterfall_A.png",
+      "sha256": "cdc6814cae64a1c0337fa42847bd3c682c08000502df2394ab0b558b13fb3d70",
+      "bytes": 881394
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-detail-v2/landmark-regression/asset-Rock_Large_A.png",
+      "retained": "artifacts/jelly-oasis/ruin-root-night-v1/landmark-regression/asset-Rock_Large_A.png",
+      "sha256": "4172245ed4974544c8ea9ddca448169714a60ebaeef4beb8d5c28bd40b5bb7ed",
+      "bytes": 890767
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-detail-v2/landmark-regression/asset-Ruin_Arch_A.png",
+      "retained": "artifacts/jelly-oasis/ruin-root-night-v1/landmark-regression/asset-Ruin_Arch_A.png",
+      "sha256": "03ac52722629a25ca46f03158816ac385f6525d08c4b4c4e19a7c05dd5424b22",
+      "bytes": 923644
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-detail-v2/landmark-regression/candidate-basin.png",
+      "retained": "artifacts/jelly-oasis/pond-edge-detail-v1/before-medium.png",
+      "sha256": "5941e2f4bcd64c09f3f5ae6ecf7f1f223c29cbc8d57f4c60baa088d80c94f275",
+      "bytes": 999536
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-detail-v2/landmark-regression/candidate-north.png",
+      "retained": "artifacts/jelly-oasis/pond-edge-detail-v1/landmark-regression/candidate-north.png",
+      "sha256": "09931a33e3404d36067d28321d05d1526a2b4474474359be078086aea4389cc4",
+      "bytes": 666866
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-detail-v2/landmark-regression/candidate-west.png",
+      "retained": "artifacts/jelly-oasis/pond-edge-detail-v1/landmark-regression/candidate-west.png",
+      "sha256": "e68d488c0e16851ef0c7278f2a7dc0d4e4d81f3ce03641797266c4d77b07f87d",
+      "bytes": 751246
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-detail-v2/landmark-regression/ground.png",
+      "retained": "artifacts/jelly-oasis/ruin-root-night-v1/after-ground-noon.png",
+      "sha256": "5e8d1d9f3b6b1882bd23c0ded746e79c0ed193810e715c4a2e2d45f331c42d02",
+      "bytes": 541690
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-detail-v2/landmark-regression/layout-reference.png",
+      "retained": "artifacts/jelly-oasis/pond-edge-detail-v1/landmark-regression/layout-reference.png",
+      "sha256": "b9bb476a7bf2cefbe1785c14a644e6fa0b014956c9652554201531409fb10aa0",
+      "bytes": 1053401
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-detail-v2/landmark-regression/medium.png",
+      "retained": "artifacts/jelly-oasis/pond-edge-detail-v1/before-medium.png",
+      "sha256": "5941e2f4bcd64c09f3f5ae6ecf7f1f223c29cbc8d57f4c60baa088d80c94f275",
+      "bytes": 999536
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-detail-v2/landmark-regression/mist.png",
+      "retained": "artifacts/jelly-oasis/pond-edge-detail-v1/landmark-regression/mist.png",
+      "sha256": "4146014b651a436e9dc0183cd8b8f8069a842ab82bb6c8f18996fe37ac5ff8be",
+      "bytes": 880935
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-detail-v2/landmark-regression/mobile.png",
+      "retained": "artifacts/jelly-oasis/pond-edge-detail-v1/landmark-regression/mobile.png",
+      "sha256": "812e8e8c26765b17497a315dc3cbaacf3ce247391bd02caaf6410f173ff1ba8c",
+      "bytes": 69486
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-detail-v2/landmark-regression/movement-guides.png",
+      "retained": "artifacts/jelly-oasis/pond-edge-detail-v1/landmark-regression/movement-guides.png",
+      "sha256": "febb9420e01d5ea2a51baadfa469ea893bd157cde11f53e41a9a6d2b7a584ac8",
+      "bytes": 1029639
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-detail-v2/landmark-regression/night.png",
+      "retained": "artifacts/jelly-oasis/pond-edge-detail-v1/landmark-regression/night.png",
+      "sha256": "8ba047809bdd56529fc91c056487878dafe4aaf32277214e6532597c240efa9c",
+      "bytes": 819639
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-detail-v2/landmark-regression/noon.png",
+      "retained": "artifacts/jelly-oasis/pond-edge-detail-v1/before-medium.png",
+      "sha256": "5941e2f4bcd64c09f3f5ae6ecf7f1f223c29cbc8d57f4c60baa088d80c94f275",
+      "bytes": 999536
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-detail-v2/landmark-regression/overcast.png",
+      "retained": "artifacts/jelly-oasis/pond-edge-detail-v1/landmark-regression/overcast.png",
+      "sha256": "e3794ba062a6842962f26db398238243285fe04b2a38a53a9e23f5e60b02f417",
+      "bytes": 941971
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-detail-v2/landmark-regression/overview.png",
+      "retained": "artifacts/jelly-oasis/pond-edge-detail-v1/before-overview.png",
+      "sha256": "e1e1c09f83898d378adc5c48d08bc47f7313b0f36ad2090a4501e7bc3fa7d4e3",
+      "bytes": 416212
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-detail-v2/landmark-regression/rain.png",
+      "retained": "artifacts/jelly-oasis/pond-edge-detail-v1/landmark-regression/rain.png",
+      "sha256": "e490a76d7f969d8cd095cc609019fd2e68df52cc4d172749bba95e96a82a7b5b",
+      "bytes": 924148
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-detail-v2/landmark-regression/sunset.png",
+      "retained": "artifacts/jelly-oasis/pond-edge-detail-v1/landmark-regression/sunset.png",
+      "sha256": "7e9465ba729115da624f2e377af18f70f6b3b0aaaf2fcfd14f9ce39ff71cd8db",
+      "bytes": 840215
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-detail-v2/landmark-regression/yaw--30.png",
+      "retained": "artifacts/jelly-oasis/pond-edge-detail-v1/landmark-regression/yaw--30.png",
+      "sha256": "a08887a656f2821984ec56e0d078524d857143b6f6a9287f4c7fc1dc8d61c005",
+      "bytes": 977287
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-detail-v2/landmark-regression/yaw-0.png",
+      "retained": "artifacts/jelly-oasis/pond-edge-detail-v1/landmark-regression/yaw-0.png",
+      "sha256": "5772ac2c51098752093a82a474924a4a9ae3b3cbba75e2b4408c4624503e3447",
+      "bytes": 985771
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-detail-v2/landmark-regression/yaw-30.png",
+      "retained": "artifacts/jelly-oasis/pond-edge-detail-v1/before-medium.png",
+      "sha256": "5941e2f4bcd64c09f3f5ae6ecf7f1f223c29cbc8d57f4c60baa088d80c94f275",
+      "bytes": 999536
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-detail-v2/landmark-regression/yaw-60.png",
+      "retained": "artifacts/jelly-oasis/pond-edge-detail-v1/landmark-regression/yaw-60.png",
+      "sha256": "c77cb24aa4433a6d517e97dfffeacd44c381ddb9bab18a027449185171b97f80",
+      "bytes": 1004421
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-production-v2/after-ground.png",
+      "retained": "artifacts/jelly-oasis/pond-edge-detail-v2/after-ground.png",
+      "sha256": "f8546f43e406e3939cc01047a150975b3bf1e5708725e0801636e112759c9b05",
+      "bytes": 641362
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-production-v2/after-medium.png",
+      "retained": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/medium.png",
+      "sha256": "f34a2437b5e8ec0bca45a6f784f585f1ba65d4593e4578d7ac9183393b9da96c",
+      "bytes": 1006513
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-production-v2/after-mobile.png",
+      "retained": "artifacts/jelly-oasis/pond-edge-detail-v2/after-mobile.png",
+      "sha256": "ccb41e00abf67e244bcbe287512b8339f54410a4144dd4eb322e303a44a8993c",
+      "bytes": 273768
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-production-v2/after-night.png",
+      "retained": "artifacts/jelly-oasis/pond-edge-detail-v2/after-night.png",
+      "sha256": "1a597dda6981ff279b8d1ec1dff4f585d23f12d9556f201e1ed7424985380ff9",
+      "bytes": 514978
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-production-v2/after-overview.png",
+      "retained": "artifacts/jelly-oasis/pond-edge-detail-v2/after-overview.png",
+      "sha256": "b147f121ebf564221f2c5e9175e073808b57dd98361a7d9db8e84886eb5e223c",
+      "bytes": 416771
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-production-v2/after-rain.png",
+      "retained": "artifacts/jelly-oasis/pond-edge-detail-v2/after-rain.png",
+      "sha256": "5039e42c1b4bea39a1e80c1b1b96b16216c3ed72a809dd4f9772486cad32f2dc",
+      "bytes": 599081
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-production-v2/after-waterfall-facing.png",
+      "retained": "artifacts/jelly-oasis/pond-edge-detail-v2/after-waterfall-facing.png",
+      "sha256": "e5b48a481c5c4e29425dc8d973296227280c4bf63cfe614c0457c3364e7dee31",
+      "bytes": 675359
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-production-v2/before-ground.png",
+      "retained": "artifacts/jelly-oasis/pond-edge-detail-v2/before-ground.png",
+      "sha256": "097f732fd3f21332df69e04ad52a7b99ce5b27b4d1ba0864837c7d4fa98fd3a4",
+      "bytes": 613523
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-production-v2/before-medium.png",
+      "retained": "artifacts/jelly-oasis/pond-edge-detail-v1/after-medium.png",
+      "sha256": "a0ccb4bbbf5b397c74d481430b92f75184695f1470ff9c60f4eb1a2c99a832f7",
+      "bytes": 1004464
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-production-v2/before-mobile.png",
+      "retained": "artifacts/jelly-oasis/pond-edge-detail-v1/after-mobile.png",
+      "sha256": "94424a8aeed12e09819d7d4543660e491bd015f5ea81edc9710ae62eb7bb34d9",
+      "bytes": 272238
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-production-v2/before-night.png",
+      "retained": "artifacts/jelly-oasis/pond-edge-detail-v2/before-night.png",
+      "sha256": "400bcdbe6b2fc94df167cda14c21466d9218f771c1df3c37f1f243cca3843830",
+      "bytes": 497566
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-production-v2/before-rain.png",
+      "retained": "artifacts/jelly-oasis/pond-edge-detail-v2/before-rain.png",
+      "sha256": "7046faab45bd5408cb743bad6198d5607081a8e3be61733cb0f93292ebf012cb",
+      "bytes": 578263
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-production-v2/before-waterfall-facing.png",
+      "retained": "artifacts/jelly-oasis/pond-edge-detail-v2/before-waterfall-facing.png",
+      "sha256": "c5c3e88fe1b2fcec562f000180efb174fa27241e0fca0f638724450eb83b186d",
+      "bytes": 654668
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-production-v2/landmark-regression/asset-Cliff_Waterfall_A.png",
+      "retained": "artifacts/jelly-oasis/ruin-root-night-v1/landmark-regression/asset-Cliff_Waterfall_A.png",
+      "sha256": "cdc6814cae64a1c0337fa42847bd3c682c08000502df2394ab0b558b13fb3d70",
+      "bytes": 881394
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-production-v2/landmark-regression/asset-Rock_Large_A.png",
+      "retained": "artifacts/jelly-oasis/ruin-root-night-v1/landmark-regression/asset-Rock_Large_A.png",
+      "sha256": "4172245ed4974544c8ea9ddca448169714a60ebaeef4beb8d5c28bd40b5bb7ed",
+      "bytes": 890767
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-production-v2/landmark-regression/asset-Ruin_Arch_A.png",
+      "retained": "artifacts/jelly-oasis/ruin-root-night-v1/landmark-regression/asset-Ruin_Arch_A.png",
+      "sha256": "03ac52722629a25ca46f03158816ac385f6525d08c4b4c4e19a7c05dd5424b22",
+      "bytes": 923644
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-production-v2/landmark-regression/candidate-basin.png",
+      "retained": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/medium.png",
+      "sha256": "f34a2437b5e8ec0bca45a6f784f585f1ba65d4593e4578d7ac9183393b9da96c",
+      "bytes": 1006513
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-production-v2/landmark-regression/candidate-north.png",
+      "retained": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/landmark/candidate-north.png",
+      "sha256": "83370e86324ae500af850d72868360a3d0552fe9a14e1711f2f08e1339fbc62f",
+      "bytes": 692941
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-production-v2/landmark-regression/candidate-west.png",
+      "retained": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/landmark/candidate-west.png",
+      "sha256": "dc7398de0bba6d684885a424ffa5fbc769cbbac8acd6f6978c6faaf9d4aae7bb",
+      "bytes": 770228
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-production-v2/landmark-regression/ground.png",
+      "retained": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/ground.png",
+      "sha256": "5d0143af55d8b37453f9d845dba82c342798cd730e40a0954b4a5b2e801f3e23",
+      "bytes": 587818
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-production-v2/landmark-regression/layout-reference.png",
+      "retained": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/landmark/layout-reference.png",
+      "sha256": "b2e824748df5f7046cd9256a558f70ed1b7a86d90a7dfe5f4bac63fcb5331362",
+      "bytes": 1060477
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-production-v2/landmark-regression/medium.png",
+      "retained": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/medium.png",
+      "sha256": "f34a2437b5e8ec0bca45a6f784f585f1ba65d4593e4578d7ac9183393b9da96c",
+      "bytes": 1006513
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-production-v2/landmark-regression/mist.png",
+      "retained": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/landmark/mist.png",
+      "sha256": "44041c6935a82598a7958da5f85840696269ffcd03c7b1f76f9753c78adb358e",
+      "bytes": 887980
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-production-v2/landmark-regression/mobile.png",
+      "retained": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/landmark/mobile.png",
+      "sha256": "83a162916b3f0b70ee1038def2e8307863f7412a5e1a86488aa6cb7ab188dcde",
+      "bytes": 69515
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-production-v2/landmark-regression/movement-guides.png",
+      "retained": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/landmark/movement-guides.png",
+      "sha256": "f88c7cdbcb65d502837dd59729d55e3e4c086f99668673042c2d2deec7e03144",
+      "bytes": 1038014
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-production-v2/landmark-regression/night.png",
+      "retained": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/night.png",
+      "sha256": "9fb47537e3a76b315a7947a72ac3e83f88d6b970d9ce9645aaa8ef765f1c8f03",
+      "bytes": 828719
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-production-v2/landmark-regression/noon.png",
+      "retained": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/medium.png",
+      "sha256": "f34a2437b5e8ec0bca45a6f784f585f1ba65d4593e4578d7ac9183393b9da96c",
+      "bytes": 1006513
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-production-v2/landmark-regression/overcast.png",
+      "retained": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/landmark/overcast.png",
+      "sha256": "e71f4724a33d395670365457843c689da7dd65581ed289e54d0f356f7cf8e867",
+      "bytes": 949000
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-production-v2/landmark-regression/overview.png",
+      "retained": "artifacts/jelly-oasis/pond-edge-detail-v2/after-overview.png",
+      "sha256": "b147f121ebf564221f2c5e9175e073808b57dd98361a7d9db8e84886eb5e223c",
+      "bytes": 416771
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-production-v2/landmark-regression/rain.png",
+      "retained": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/rain.png",
+      "sha256": "61365b515526b242f6458b3885a52873ec1d49c4759efbd15a09b5cc7cbc6136",
+      "bytes": 931111
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-production-v2/landmark-regression/sunset.png",
+      "retained": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/landmark/sunset.png",
+      "sha256": "8c3455dc7f3ae0c9b3a57b2c455b41960dbbfea31beb266ecd5d3e72e83ae1c7",
+      "bytes": 848960
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-production-v2/landmark-regression/yaw--30.png",
+      "retained": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/landmark/yaw--30.png",
+      "sha256": "4f0bf67359269d526b0b0fae4ea6eeaf62c210f4d16d45186fc0827d6f2f7eb9",
+      "bytes": 985333
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-production-v2/landmark-regression/yaw-0.png",
+      "retained": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/landmark/yaw-0.png",
+      "sha256": "45bf3c97834f98a13262bde949fbad1bcc64f76ce4e21c43f9c2c17994639afa",
+      "bytes": 993579
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-production-v2/landmark-regression/yaw-30.png",
+      "retained": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/medium.png",
+      "sha256": "f34a2437b5e8ec0bca45a6f784f585f1ba65d4593e4578d7ac9183393b9da96c",
+      "bytes": 1006513
+    },
+    {
+      "removed": "artifacts/jelly-oasis/pond-edge-production-v2/landmark-regression/yaw-60.png",
+      "retained": "artifacts/jelly-oasis/modeling-review-before-crystal-v1/landmark/yaw-60.png",
+      "sha256": "9efa24c33e2abdaad4e8ea95e35507a431427cdaedce2c2ff5806527b42f79cb",
+      "bytes": 1011988
+    },
+    {
+      "removed": "artifacts/jelly-oasis/ruin-root-night-v1/after-medium-noon.png",
+      "retained": "artifacts/jelly-oasis/ruin-root-night-v1/environment-noon.png",
+      "sha256": "f3ec32f90c496747b3f25dec51d47d4ec2b938d45dc13db13a5a590607be288b",
+      "bytes": 981922
+    },
+    {
+      "removed": "artifacts/jelly-oasis/ruin-root-night-v1/after-overview-noon.png",
+      "retained": "artifacts/jelly-oasis/landmark-tree-detail-v1/before-overview-noon.png",
+      "sha256": "7fbe0ff8e0bc72e1d62d55c38045796ff901d8f1756e97b76b18cd5f1f5c5680",
+      "bytes": 413332
+    },
+    {
+      "removed": "artifacts/jelly-oasis/ruin-root-night-v1/cliff-regression/after-ground-noon.png",
+      "retained": "artifacts/jelly-oasis/ruin-root-night-v1/before-ground-noon.png",
+      "sha256": "e458fe8f087d3b7b5353369771d7d45ce3b2ac5b542130107d0a169c64f1d293",
+      "bytes": 521684
+    },
+    {
+      "removed": "artifacts/jelly-oasis/ruin-root-night-v1/cliff-regression/after-medium-noon.png",
+      "retained": "artifacts/jelly-oasis/ruin-root-night-v1/before-medium-noon.png",
+      "sha256": "4709e156234656dba9af2a3e5839c2658cd76d4d44c483b067c995b84f44853b",
+      "bytes": 982001
+    },
+    {
+      "removed": "artifacts/jelly-oasis/ruin-root-night-v1/landmark-regression/candidate-basin.png",
+      "retained": "artifacts/jelly-oasis/ruin-root-night-v1/environment-noon.png",
+      "sha256": "f3ec32f90c496747b3f25dec51d47d4ec2b938d45dc13db13a5a590607be288b",
+      "bytes": 981922
+    },
+    {
+      "removed": "artifacts/jelly-oasis/ruin-root-night-v1/landmark-regression/ground.png",
+      "retained": "artifacts/jelly-oasis/ruin-root-night-v1/after-ground-noon.png",
+      "sha256": "5e8d1d9f3b6b1882bd23c0ded746e79c0ed193810e715c4a2e2d45f331c42d02",
+      "bytes": 541690
+    },
+    {
+      "removed": "artifacts/jelly-oasis/ruin-root-night-v1/landmark-regression/medium.png",
+      "retained": "artifacts/jelly-oasis/ruin-root-night-v1/environment-noon.png",
+      "sha256": "f3ec32f90c496747b3f25dec51d47d4ec2b938d45dc13db13a5a590607be288b",
+      "bytes": 981922
+    },
+    {
+      "removed": "artifacts/jelly-oasis/ruin-root-night-v1/landmark-regression/night.png",
+      "retained": "artifacts/jelly-oasis/ruin-root-night-v1/environment-night.png",
+      "sha256": "d81bfc78b50986012d81952de6bb23e022d01066e93756da3899c16d1e9673a9",
+      "bytes": 807808
+    },
+    {
+      "removed": "artifacts/jelly-oasis/ruin-root-night-v1/landmark-regression/noon.png",
+      "retained": "artifacts/jelly-oasis/ruin-root-night-v1/environment-noon.png",
+      "sha256": "f3ec32f90c496747b3f25dec51d47d4ec2b938d45dc13db13a5a590607be288b",
+      "bytes": 981922
+    },
+    {
+      "removed": "artifacts/jelly-oasis/ruin-root-night-v1/landmark-regression/yaw-30.png",
+      "retained": "artifacts/jelly-oasis/ruin-root-night-v1/environment-noon.png",
+      "sha256": "f3ec32f90c496747b3f25dec51d47d4ec2b938d45dc13db13a5a590607be288b",
+      "bytes": 981922
+    },
+    {
+      "removed": "artifacts/jelly-oasis/ruin-root-night-v1/night-restored.png",
+      "retained": "artifacts/jelly-oasis/ruin-root-night-v1/environment-night.png",
+      "sha256": "d81bfc78b50986012d81952de6bb23e022d01066e93756da3899c16d1e9673a9",
+      "bytes": 807808
+    },
+    {
+      "removed": "artifacts/jelly-oasis/tree-grove-rock-expansion-v1/b-360x780-ground.jpg",
+      "retained": "artifacts/jelly-oasis/tree-grove-rock-expansion-v1/a-360x780-ground.jpg",
+      "sha256": "220c2a7520a28131f1c7ced914aa09d87c0779293a5ad2a5460000da206c9f1f",
+      "bytes": 28959
+    },
+    {
+      "removed": "artifacts/jelly-oasis/tree-grove-rock-expansion-v1/b-360x780-pond.jpg",
+      "retained": "artifacts/jelly-oasis/tree-grove-rock-expansion-v1/a-360x780-pond.jpg",
+      "sha256": "e6302115cc8d55018a5b1e86fff3c0c689c4fc3c3b0965adf82cb4c464f4c853",
+      "bytes": 23208
+    },
+    {
+      "removed": "artifacts/jelly-oasis/tree-grove-rock-expansion-v1/b-390x844-ground.jpg",
+      "retained": "artifacts/jelly-oasis/tree-grove-rock-expansion-v1/a-390x844-ground.jpg",
+      "sha256": "7bb5c28d70378dff21e4e6c8abf5e2783e214787dc06330f547d363621e9b2cd",
+      "bytes": 32338
+    },
+    {
+      "removed": "artifacts/jelly-oasis/tree-grove-rock-expansion-v1/b-390x844-pond.jpg",
+      "retained": "artifacts/jelly-oasis/tree-grove-rock-expansion-v1/a-390x844-pond.jpg",
+      "sha256": "9e0e720aeaf5987e73df85dd8f6529d0753af466a7aeede19f6246e17f05c4d2",
+      "bytes": 25438
+    },
+    {
+      "removed": "artifacts/jelly-oasis/tree-grove-rock-expansion-v1/off-360x780-ground.jpg",
+      "retained": "artifacts/jelly-oasis/tree-grove-rock-expansion-v1/a-360x780-ground.jpg",
+      "sha256": "220c2a7520a28131f1c7ced914aa09d87c0779293a5ad2a5460000da206c9f1f",
+      "bytes": 28959
+    },
+    {
+      "removed": "artifacts/jelly-oasis/tree-grove-rock-expansion-v1/off-360x780-pond.jpg",
+      "retained": "artifacts/jelly-oasis/tree-grove-rock-expansion-v1/a-360x780-pond.jpg",
+      "sha256": "e6302115cc8d55018a5b1e86fff3c0c689c4fc3c3b0965adf82cb4c464f4c853",
+      "bytes": 23208
+    },
+    {
+      "removed": "artifacts/jelly-oasis/tree-grove-rock-expansion-v1/off-390x844-ground.jpg",
+      "retained": "artifacts/jelly-oasis/tree-grove-rock-expansion-v1/a-390x844-ground.jpg",
+      "sha256": "7bb5c28d70378dff21e4e6c8abf5e2783e214787dc06330f547d363621e9b2cd",
+      "bytes": 32338
+    },
+    {
+      "removed": "artifacts/jelly-oasis/tree-grove-rock-expansion-v1/off-390x844-pond.jpg",
+      "retained": "artifacts/jelly-oasis/tree-grove-rock-expansion-v1/a-390x844-pond.jpg",
+      "sha256": "9e0e720aeaf5987e73df85dd8f6529d0753af466a7aeede19f6246e17f05c4d2",
+      "bytes": 25438
+    },
+    {
+      "removed": "artifacts/jelly-oasis/tree-grove-rock-expansion-v1/pond/clear-2s.png",
+      "retained": "artifacts/jelly-oasis/tree-grove-rock-expansion-v1/pond/clear-1s.png",
+      "sha256": "7981322999f6f5938a9ce4449b24da4c6ddf2c9285cd04d404f6461961fa8872",
+      "bytes": 461816
+    },
+    {
+      "removed": "artifacts/jelly-oasis/vegetation-detail-v1/density-a-ground.jpg",
+      "retained": "artifacts/jelly-oasis/landscape-composition-v1/off-ground.jpg",
+      "sha256": "2ef45492a8674c182b84b03bbf309b85967b8e02b488d13b732d111a364ad8d8",
+      "bytes": 63458
+    },
+    {
+      "removed": "artifacts/jelly-oasis/vegetation-detail-v1/noon.jpg",
+      "retained": "artifacts/jelly-oasis/vegetation-detail-v1/density-a-medium.jpg",
+      "sha256": "4085d5dd246c16a7f56752e8a4ad694c7b44b1ac3319ce00e3abbfc078acb1d4",
+      "bytes": 55717
+    },
+    {
+      "removed": "artifacts/jelly-oasis/water-waterfall-v1/baseline/desktop-medium.png",
+      "retained": "artifacts/jelly-oasis/water-waterfall-v1/desktop-soft-medium.png",
+      "sha256": "d0b8ce9e8da6f8c38dd049d5508f34b6aad7df7e410575f0e7346619d96984eb",
+      "bytes": 888616
+    },
+    {
+      "removed": "artifacts/jelly-oasis/water-waterfall-v1/baseline/desktop-night.png",
+      "retained": "artifacts/jelly-oasis/water-waterfall-v1/desktop-soft-night.png",
+      "sha256": "ce38b41ccf5e8bb356799dd3e6974b8bff96ee1fe4e9d48e2632273456fd7035",
+      "bytes": 466170
+    },
+    {
+      "removed": "artifacts/jelly-oasis/water-waterfall-v1/baseline/desktop-waterfall.png",
+      "retained": "artifacts/jelly-oasis/water-waterfall-v1/desktop-soft-waterfall.png",
+      "sha256": "f4d50216b901e6a41662f957babfa5d385752cd6792157904de21cf3235046d2",
+      "bytes": 594693
+    },
+    {
+      "removed": "artifacts/jelly-oasis/water-waterfall-v1/production-default.png",
+      "retained": "artifacts/jelly-oasis/water-waterfall-v1/production-query.png",
+      "sha256": "0b93182a41162a2306ee97c5cb25a06579961d2c5311f9c55626599aed4618b9",
+      "bytes": 341607
+    },
+    {
+      "removed": "artifacts/jelly-oasis/water-waterfall-v1/production-reset.png",
+      "retained": "artifacts/jelly-oasis/water-waterfall-v1/production-query.png",
+      "sha256": "0b93182a41162a2306ee97c5cb25a06579961d2c5311f9c55626599aed4618b9",
+      "bytes": 341607
+    }
+  ]
+}

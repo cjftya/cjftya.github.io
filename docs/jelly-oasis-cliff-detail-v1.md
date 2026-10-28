@@ -43,8 +43,8 @@
 | ----------------- | ------------------------------------------------------------------------------ | ---------------------------------------------------------------------------- |
 | Blender 정면      | [before](../artifacts/jelly-oasis/cliff-detail-v1/blender-before-front.png)    | [after](../artifacts/jelly-oasis/cliff-detail-v1/blender-after-front.png)    |
 | Blender 폭포 접근 | [before](../artifacts/jelly-oasis/cliff-detail-v1/blender-before-approach.png) | [after](../artifacts/jelly-oasis/cliff-detail-v1/blender-after-approach.png) |
-| Three.js medium   | [before](../artifacts/jelly-oasis/cliff-detail-v1/before-medium-noon.png)      | [after](../artifacts/jelly-oasis/cliff-detail-v1/after-medium-noon.png)      |
-| Three.js ground   | [before](../artifacts/jelly-oasis/cliff-detail-v1/before-ground-noon.png)      | [after](../artifacts/jelly-oasis/cliff-detail-v1/after-ground-noon.png)      |
+| Three.js medium   | [before](../artifacts/jelly-oasis/landmark-integration/medium.png)             | [after](../artifacts/jelly-oasis/cliff-detail-v1/after-medium-noon.png)      |
+| Three.js ground   | [before](../artifacts/jelly-oasis/landmark-integration/ground.png)             | [after](../artifacts/jelly-oasis/cliff-detail-v1/after-ground-noon.png)      |
 
 추가 Blender 검수: [overview](../artifacts/jelly-oasis/cliff-detail-v1/blender-after-overview.png), [좌측 3/4](../artifacts/jelly-oasis/cliff-detail-v1/blender-after-left.png), [우측 3/4](../artifacts/jelly-oasis/cliff-detail-v1/blender-after-right.png), [상단 shelf](../artifacts/jelly-oasis/cliff-detail-v1/blender-after-shelf.png). Blender 이미지는 형태 확인용 Workbench render이며 실제 조명 판단은 Three.js 이미지 기준이다.
 
@@ -65,7 +65,7 @@
 
 이동한 shadow target만큼 sun 위치도 옮겨 광원 방향을 유지한다. Sky sun direction은 이동 전 방향에서 계산하며 단위 테스트로 검증했다. terrain과 정적 구조물의 cast/receive 정책, canopy cast 제외, 모바일 shadow-off 정책은 유지했다. 전역 shadow 기법을 교체하지 않았다.
 
-Mesh 변경 영향을 분리하기 위해 **기존 blockout을 그대로 둔** shadow after 이미지도 저장했다: [noon medium](../artifacts/jelly-oasis/cliff-detail-v1/shadow-after-medium-noon.png), [noon ground](../artifacts/jelly-oasis/cliff-detail-v1/shadow-after-ground-noon.png), [sunset medium](../artifacts/jelly-oasis/cliff-detail-v1/shadow-after-medium-sunset.png). Before는 위 medium/ground 및 [기존 sunset](../artifacts/jelly-oasis/cliff-detail-v1/before-medium-sunset.png)과 같은 카메라다. 접지 가장자리가 또렷해졌고 검수 시점에서 줄무늬 acne나 명백한 떠 있는 그림자는 관찰되지 않았다. 낮은 태양의 긴 그림자와 terrain에 가려 어두워지는 하부는 남아 있다. 임의의 모든 orbit 위치를 보증하는 검증은 아니다.
+Mesh 변경 영향을 분리하기 위해 **기존 blockout을 그대로 둔** shadow after 이미지도 저장했다: [noon medium](../artifacts/jelly-oasis/cliff-detail-v1/shadow-after-medium-noon.png), [noon ground](../artifacts/jelly-oasis/cliff-detail-v1/shadow-after-ground-noon.png), [sunset medium](../artifacts/jelly-oasis/cliff-detail-v1/shadow-after-medium-sunset.png). Before는 위 medium/ground 및 [기존 sunset](../artifacts/jelly-oasis/landmark-integration/sunset.png)과 같은 카메라다. 접지 가장자리가 또렷해졌고 검수 시점에서 줄무늬 acne나 명백한 떠 있는 그림자는 관찰되지 않았다. 낮은 태양의 긴 그림자와 terrain에 가려 어두워지는 하부는 남아 있다. 임의의 모든 orbit 위치를 보증하는 검증은 아니다.
 
 ## 환경·성능 결과
 
