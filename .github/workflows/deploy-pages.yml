@@ -97,6 +97,9 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Verify archived media references
+        run: npm run archive:check
+
       - name: Test
         run: npm run test
 
