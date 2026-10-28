@@ -36,8 +36,8 @@ Blender source의 빈 scene 누적으로 live MCP 호출이 시간 초과되었�
 | A 단독        | [A 기존](../artifacts/jelly-oasis/crystal-accent-detail-v1/blockout-Crystal_Blockout_A.png) | [A 후보](../artifacts/jelly-oasis/crystal-accent-detail-v1/detail-Crystal_Blockout_A.png) |
 | B 단독        | [B 기존](../artifacts/jelly-oasis/crystal-accent-detail-v1/blockout-Crystal_Blockout_B.png) | [B 후보](../artifacts/jelly-oasis/crystal-accent-detail-v1/detail-Crystal_Blockout_B.png) |
 | C 단독        | [C 기존](../artifacts/jelly-oasis/crystal-accent-detail-v1/blockout-Crystal_Blockout_C.png) | [C 후보](../artifacts/jelly-oasis/crystal-accent-detail-v1/detail-Crystal_Blockout_C.png) |
-| 정오 CLEAR    | [기존 낮](../artifacts/jelly-oasis/crystal-accent-detail-v1/blockout-medium-noon.png)       | [후보 낮](../artifacts/jelly-oasis/crystal-accent-detail-v1/detail-medium-noon.png)       |
-| 자정 CLEAR    | [기존 밤](../artifacts/jelly-oasis/crystal-accent-detail-v1/blockout-medium-night.png)      | [후보 밤](../artifacts/jelly-oasis/crystal-accent-detail-v1/detail-medium-night.png)      |
+| 정오 CLEAR    | [기존 낮](../artifacts/jelly-oasis/modeling-review-before-crystal-v1/medium.png)            | [후보 낮](../artifacts/jelly-oasis/crystal-accent-detail-v1/detail-medium-noon.png)       |
+| 자정 CLEAR    | [기존 밤](../artifacts/jelly-oasis/modeling-review-before-crystal-v1/night.png)             | [후보 밤](../artifacts/jelly-oasis/crystal-accent-detail-v1/detail-medium-night.png)      |
 | 390×844 touch | [기존 mobile](../artifacts/jelly-oasis/crystal-accent-detail-v1/blockout-mobile.png)        | [후보 mobile](../artifacts/jelly-oasis/crystal-accent-detail-v1/detail-mobile.png)        |
 
 [Blender 사선 미리보기](../artifacts/jelly-oasis/crystal-accent-detail-v1/blender-candidates.png)는 Workbench 재질 색 렌더이며 발광의 판단은 Three.js 기준이다. 일부 뒤쪽 결정은 전면에서 가려지지만 사선에서3개를 확인할 수 있다. 후보는 기존보다 차분한 색과 좁은 발광 면적으로 주인공을 압도하지 않는다. 비교 화면에서 심한 부유·열린 틈·지형 교차는 발견하지 않았다. mobile 검수 카메라만 medium보다1.55배 멀리 두었고 제품 카메라는 수정하지 않았다.

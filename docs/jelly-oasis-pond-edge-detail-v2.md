@@ -37,7 +37,7 @@ Blender top은 ORTHO, 중심 (0, −7, 0), distance 32, 최대 이미지 변 100
 | ---------------- | ---------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
 | Blender top      | [이미지](../artifacts/jelly-oasis/pond-edge-detail-v2/blender-top-v1.png)          | [이미지](../artifacts/jelly-oasis/pond-edge-detail-v2/blender-top-v2.png)         |
 | overview         | [이미지](../artifacts/jelly-oasis/pond-edge-detail-v2/before-overview.png)         | [이미지](../artifacts/jelly-oasis/pond-edge-detail-v2/after-overview.png)         |
-| medium           | [이미지](../artifacts/jelly-oasis/pond-edge-detail-v2/before-medium.png)           | [이미지](../artifacts/jelly-oasis/pond-edge-detail-v2/after-medium.png)           |
+| medium           | [이미지](../artifacts/jelly-oasis/pond-edge-detail-v2/before-medium.png)           | [이미지](../artifacts/jelly-oasis/modeling-review-before-crystal-v1/medium.png)   |
 | ground           | [이미지](../artifacts/jelly-oasis/pond-edge-detail-v2/before-ground.png)           | [이미지](../artifacts/jelly-oasis/pond-edge-detail-v2/after-ground.png)           |
 | waterfall-facing | [이미지](../artifacts/jelly-oasis/pond-edge-detail-v2/before-waterfall-facing.png) | [이미지](../artifacts/jelly-oasis/pond-edge-detail-v2/after-waterfall-facing.png) |
 | night            | [이미지](../artifacts/jelly-oasis/pond-edge-detail-v2/before-night.png)            | [이미지](../artifacts/jelly-oasis/pond-edge-detail-v2/after-night.png)            |

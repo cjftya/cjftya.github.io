@@ -31,3 +31,12 @@ __pycache__/
 *.py[cod]
 playwright-report/
 test-results/
+
+# Historical QA media is curated; rerunning tools must not add capture copies.
+# Existing tracked media and model sources remain tracked.
+/artifacts/**/*.png
+/artifacts/**/*.jpg
+/artifacts/**/*.jpeg
+/artifacts/**/*.webp
+/artifacts/**/*.mp4
+/artifacts/**/*.svg
