@@ -59,6 +59,14 @@ export function createSky() {
         vec3 right = normalize(cross(vec3(0,1,0), axis));
         return vec2(dot(ray,right),dot(ray,cross(axis,right))) / radius;
       }
+      float bodyLight(vec3 normal, vec3 axis) {
+        // The visible hemisphere faces the observer (-axis). Project the same
+        // world-space sun used by the landscape into this disc's local frame.
+        vec3 right = normalize(cross(vec3(0,1,0), axis));
+        vec3 light = vec3(dot(sunDirection,right),
+          dot(sunDirection,cross(axis,right)),dot(sunDirection,-axis));
+        return smoothstep(-.24,.78,dot(normal,light));
+      }
       vec3 moon(vec3 color, vec3 ray, vec3 axis, float radius, vec3 tint, float seed) {
         vec2 uv = bodyUV(ray, axis, radius);
         float r2 = dot(uv,uv);
@@ -66,7 +74,7 @@ export function createSky() {
         float mask = (1. - smoothstep(1.-edge,1.+edge,r2)) * step(0.,dot(ray,axis));
         if (mask > 0.) {
           vec3 normal = vec3(uv,sqrt(max(0.,1.-r2)));
-          float light = smoothstep(-.3,.8,dot(normal,normalize(vec3(-.65,.3,.7))));
+          float light = bodyLight(normal,axis);
           float maria = noise3(normal * 5. + seed) * .7 + noise3(normal * 13. + seed) * .3;
           vec3 surface = tint * (.26 + .74 * light) * (.65 + .35 * maria);
           color = mix(color, surface, mask * moonVisibility);
@@ -79,6 +87,7 @@ export function createSky() {
         // Distinct color layers close to the horizon remain visible from the basin.
         vec3 color = mix(horizon, midSky, smoothstep(-.20,.16,ray.y));
         color = mix(color, zenith, smoothstep(.12,.8,ray.y));
+        vec3 atmosphereColor = color;
         float sunDot = max(0.,dot(ray,sunDirection));
         color += sunColor * (pow(sunDot,24.)*.10 + smoothstep(.9992,.9997,sunDot)*.8) * sunStrength;
         float clearSky = 1. - cloudDarkness * .85;
@@ -99,25 +108,37 @@ export function createSky() {
         color += veilColor * (veilBand*.42+ribbon*.34) * breaks
           * (.14+night*.86) * clearSky;
 
-        // A huge banded gas giant, with a curved terminator and thin atmosphere.
+        // Broad painted cloud masses suit the faceted landscape. Domain warping
+        // breaks up the flow without repeating latitude stripes or image maps.
         vec2 uv = bodyUV(ray,planetDirection,.245);
         float r2 = dot(uv,uv), edge = max(fwidth(r2),.002);
         float planetMask = (1.-smoothstep(1.-edge,1.+edge,r2)) * step(0.,dot(ray,planetDirection));
-        float veil = mix(.82,.96,night) * clearSky;
+        float veil = mix(.72,.92,night) * clearSky * (1.-moonMist*.46);
         if (planetMask > 0.) {
           vec3 n = vec3(uv,sqrt(max(0.,1.-r2)));
-          float curl = noise3(n * 5. + vec3(elapsed*.002,0,0));
-          float latitude = dot(n,normalize(vec3(.24,.92,.31)));
-          float bands = .5 + .5 * sin(latitude * 62. + curl * 3.);
-          float filaments = noise3(n * 18. + vec3(elapsed*.004,0,0));
-          vec3 surface = mix(vec3(.10,.18,.34),vec3(.52,.40,.64),bands*.72+filaments*.28);
-          surface = mix(surface,vec3(.68,.68,.81),pow(bands,6.)*.3);
-          float lit = smoothstep(-.25,.85,dot(n,normalize(vec3(-.6,.3,.75))));
-          surface *= .20 + lit * .80;
-          surface += vec3(.15,.34,.53) * pow(1.-n.z,3.) * .6;
+          vec3 flow = vec3(n.x*3.2+n.y*1.1,n.y*5.5-n.x*.65,n.z*3.2);
+          flow += vec3(elapsed*.0015,0.,elapsed*.0007);
+          vec2 bend = vec2(noise3(flow*.65+vec3(3.,7.,1.)),
+            noise3(flow*.65+vec3(11.,2.,5.))) - .5;
+          vec3 p = flow + vec3(bend*1.8,bend.x*.8);
+          float masses = noise3(p)*.62 + noise3(p*2.1+7.)*.27
+            + noise3(p*4.2+19.)*.11;
+          float clouds = smoothstep(.32,.67,masses);
+          float crests = smoothstep(.58,.73,masses);
+          vec3 surface = mix(vec3(.10,.14,.25),vec3(.29,.23,.42),clouds);
+          surface = mix(surface,vec3(.56,.52,.67),crests*.82);
+          float lit = bodyLight(n,planetDirection);
+          surface *= .32 + lit*.68;
+          // Warm twilight is inherited from the sun; retain cool pearl shadows.
+          surface *= mix(vec3(.86,.94,1.),mix(vec3(1.),sunColor,.22),lit);
+          float limb = pow(1.-n.z,2.);
+          float haze = clamp(.18+(1.-night)*.20+limb*.32+moonMist*.20,0.,.78);
+          surface = mix(surface,atmosphereColor,haze);
           color = mix(color,surface,planetMask*veil);
         }
-        color += vec3(.16,.30,.48) * exp(-abs(r2-1.)*35.) * .3 * veil * step(0.,dot(ray,planetDirection));
+        // Restrained, sky-tinted scattering instead of a bright outlined ball.
+        vec3 rimColor = mix(atmosphereColor,vec3(.20,.32,.40),.28+night*.22);
+        color += rimColor * exp(-abs(r2-1.)*28.) * .065 * veil * step(0.,dot(ray,planetDirection));
         color = moon(color,ray,moonDirection,.039,vec3(.76,.85,.98),11.);
         color = moon(color,ray,companionDirection,.023,vec3(.91,.67,.66),29.);
 
