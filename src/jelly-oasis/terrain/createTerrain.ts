@@ -22,17 +22,23 @@ export function createTerrain(
   config: TerrainConfig = DEFAULT_TERRAIN_CONFIG,
   material?: MeshStandardMaterial,
 ): Mesh<PlaneGeometry, MeshStandardMaterial> {
-  const geometry = createTerrainGeometry(config);
-  const terrain = new Mesh(
-    geometry,
+  return createTerrainMesh(
+    createTerrainGeometry(config),
     material ?? createTerrainSurface(config.maxHeight, config.size).material,
   );
+}
+
+export function createTerrainMesh<Geometry extends BufferGeometry>(
+  geometry: Geometry,
+  material: MeshStandardMaterial,
+): Mesh<Geometry, MeshStandardMaterial> {
+  const terrain = new Mesh(geometry, material);
   terrain.name = 'JellyOasisTerrain';
   terrain.receiveShadow = true;
   return terrain;
 }
 
-function createTerrainGeometry(config: TerrainConfig) {
+export function createTerrainGeometry(config: TerrainConfig) {
   validateTerrainConfig(config);
   const geometry = new PlaneGeometry(
     config.size,
@@ -71,11 +77,18 @@ function createTerrainGeometry(config: TerrainConfig) {
   geometry.computeBoundingSphere();
   return geometry;
 }
-/** Close the terrain perimeter with a continuous earthen cut face. */
 export function createTerrainEdge(
   config = DEFAULT_TERRAIN_CONFIG,
   surface?: BufferGeometry,
 ): Mesh<BufferGeometry, MeshStandardMaterial> {
+  return createTerrainEdgeMesh(createTerrainEdgeGeometry(config, surface));
+}
+
+/** Close the terrain perimeter with a continuous earthen cut face. */
+export function createTerrainEdgeGeometry(
+  config: TerrainConfig,
+  surface?: BufferGeometry,
+) {
   validateTerrainConfig(config);
   const vertices: number[] = [];
   const half = config.size / 2;
@@ -156,6 +169,10 @@ export function createTerrainEdge(
   const geometry = new BufferGeometry();
   geometry.setAttribute('position', new Float32BufferAttribute(vertices, 3));
   geometry.computeVertexNormals();
+  return geometry;
+}
+
+export function createTerrainEdgeMesh(geometry: BufferGeometry) {
   const edge = new Mesh(
     geometry,
     new MeshStandardMaterial({ color: '#827d62', roughness: 1 }),

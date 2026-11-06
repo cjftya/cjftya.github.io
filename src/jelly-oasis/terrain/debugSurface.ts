@@ -1,10 +1,10 @@
 import { MeshStandardMaterial } from 'three';
-import type { Mesh, PlaneGeometry } from 'three';
+import type { Mesh, BufferGeometry } from 'three';
 import type { createTerrainSurface } from './terrainSurface';
 
 /** Attached only to the existing opt-in environment inspector. */
 export function createSurfaceDebug(
-  terrain: Mesh<PlaneGeometry, MeshStandardMaterial>,
+  terrain: Mesh<BufferGeometry, MeshStandardMaterial>,
   surface: ReturnType<typeof createTerrainSurface>,
   invalidate: () => void,
 ) {
