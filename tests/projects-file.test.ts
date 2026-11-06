@@ -19,7 +19,6 @@ describe('public/data/projects.json', () => {
       'jelly-tracer',
       'jelly-sim-v1',
       'jelly-markdown',
-      'lite-computer-use',
       'callisto',
       'viola',
       'wedding-card',
@@ -27,7 +26,7 @@ describe('public/data/projects.json', () => {
       'virus-sim',
       'jelly-oasis',
     ]);
-    expect(collection.projects).toHaveLength(12);
+    expect(collection.projects).toHaveLength(11);
     expect(
       collection.galaxies.every(
         (galaxy) =>
@@ -47,7 +46,7 @@ describe('public/data/projects.json', () => {
     );
     expect(
       collection.projects.filter((project) => project.galaxyId === 'jelly-garden'),
-    ).toHaveLength(7);
+    ).toHaveLength(6);
     expect(
       collection.projects.filter((project) => project.galaxyId === 'pages-archive'),
     ).toHaveLength(5);
