@@ -4,10 +4,11 @@ import { Box3, PCFShadowMap, PerspectiveCamera, Scene, Vector3 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { RendererManager } from '../core/renderer/RendererManager';
 import {
-  createTerrain,
-  createTerrainEdge,
+  createTerrainMesh,
+  createTerrainEdgeMesh,
   sampleTerrainHeight,
 } from './terrain/createTerrain';
+import { prepareTerrain } from './terrain/prepareTerrain';
 import { EnvironmentController } from './environment/EnvironmentController';
 import { createEnvironmentPanel } from './environment/debugPanel';
 import { createTerrainSurface } from './terrain/terrainSurface';
@@ -24,7 +25,8 @@ import type { WeatherPreset } from './environment/weather';
 import { createPondPanel } from './landmark/water/gpgpuPondPanel';
 import './styles.css';
 
-function start(canvas: HTMLCanvasElement): void {
+async function start(canvas: HTMLCanvasElement): Promise<void> {
+  const landmarkStatus = document.querySelector<HTMLElement>('#landmark-status')!;
   const {
     query,
     debugEnabled,
@@ -40,6 +42,7 @@ function start(canvas: HTMLCanvasElement): void {
     scenery,
     meadow,
   } = readStartupOptions(location.search, import.meta.env.DEV);
+  const geometry = await prepareTerrain(config);
   const scene = new Scene();
   const manager = new RendererManager(canvas);
   const renderer = manager.renderer;
@@ -81,8 +84,8 @@ function start(canvas: HTMLCanvasElement): void {
     config.size,
   );
   const surface = createTerrainSurface(config.maxHeight, config.size);
-  const terrain = createTerrain(config, surface.material);
-  const edge = createTerrainEdge(config, terrain.geometry);
+  const terrain = createTerrainMesh(geometry.terrain, surface.material);
+  const edge = createTerrainEdgeMesh(geometry.edge);
   scene.add(terrain, edge);
   let dirty = true;
   let disposed = false;
@@ -222,11 +225,7 @@ function start(canvas: HTMLCanvasElement): void {
     frameLandmark(view, landmark, camera, controls);
     invalidate();
   }
-  const landmarkStatus = document.createElement('p');
-  landmarkStatus.id = 'landmark-status';
-  landmarkStatus.role = 'status';
   landmarkStatus.textContent = '랜드마크 불러오는 중…';
-  document.querySelector('.oasis-shell')!.append(landmarkStatus);
   void createOvergrownRuin(
     config,
     cliffDetail,
@@ -754,11 +753,14 @@ function start(canvas: HTMLCanvasElement): void {
   canvas.addEventListener('webglcontextlost', contextLostHandler);
   canvas.addEventListener('webglcontextrestored', contextRestoredHandler);
 }
-try {
+async function initialize(): Promise<void> {
   const canvas = document.querySelector<HTMLCanvasElement>('#oasis-canvas');
   if (!canvas) throw new Error('Jelly Oasis canvas not found.');
-  start(canvas);
-} catch (error) {
+  await start(canvas);
+}
+
+void initialize().catch((error: unknown) => {
+  document.querySelector<HTMLElement>('#landmark-status')!.hidden = true;
   document.querySelector<HTMLElement>('#terrain-error')!.hidden = false;
   console.error('Jelly Oasis initialization failed:', error);
-}
+});
