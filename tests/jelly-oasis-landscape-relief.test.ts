@@ -3,7 +3,10 @@ import { Vector3 } from 'three';
 import { createTerrain } from '../src/jelly-oasis/terrain/createTerrain';
 import { createWorldConfig } from '../src/jelly-oasis/terrain/worldLayout';
 import { sampleTerrainHeight } from '../src/jelly-oasis/terrain/heightfield';
-import { sampleGround } from '../src/jelly-oasis/landmark/landmarkPlacement';
+import {
+  sampleGround,
+  sampleOriginalGround,
+} from '../src/jelly-oasis/landmark/landmarkPlacement';
 import {
   AMPHITHEATRE,
   CANYON,
@@ -75,4 +78,46 @@ it('keeps triangles upward, nondegenerate and consistent with placement sampling
     mesh.geometry.dispose();
     mesh.material.dispose();
   }
+});
+
+it('preserves uncached triangle heights across grid cells and terrain edits', () => {
+  const config = createWorldConfig(224);
+  function checkHeights() {
+    const step = config.size / config.segments;
+    for (const [ix, iz] of [
+      [0, 0],
+      [14, 9],
+      [30, 33],
+      [44, 27],
+      [54, 54],
+    ] as const) {
+      const x0 = ix * step - config.size / 2;
+      const z0 = iz * step - config.size / 2;
+      for (const [dx, dz] of [
+        [0, 0],
+        [0.125, 0.375],
+        [0.875, 0.625],
+        [0.75, 0.25],
+      ] as const) {
+        const x = x0 + dx * step;
+        const z = z0 + dz * step;
+        const u = (x - x0) / step;
+        const v = (z - z0) / step;
+        const a = sampleTerrainHeight(x0, z0, config);
+        const b = sampleTerrainHeight(x0, z0 + step, config);
+        const d = sampleTerrainHeight(x0 + step, z0, config);
+        const c = sampleTerrainHeight(x0 + step, z0 + step, config);
+        const expected =
+          u + v <= 1
+            ? a + u * (d - a) + v * (b - a)
+            : c + (1 - u) * (b - c) + (1 - v) * (d - c);
+        expect(sampleOriginalGround(x, z, config)).toBe(expected);
+      }
+    }
+  }
+  checkHeights();
+  checkHeights();
+  config.seed += 1;
+  config.maxHeight += 3;
+  checkHeights();
 });
