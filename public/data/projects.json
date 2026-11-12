@@ -411,53 +411,6 @@
       }
     },
     {
-      "id": "wedding-card",
-      "galaxyId": "pages-archive",
-      "name": "Wedding Card",
-      "summary": "캔버스 애니메이션과 갤러리로 구성한 개인 모바일 청첩장 프로젝트예요.",
-      "status": "archived",
-      "featured": false,
-      "order": 20,
-      "tags": ["모바일 웹", "청첩장", "캔버스"],
-      "links": {
-        "github": null,
-        "page": "/projects/weddingcard/"
-      },
-      "details": {
-        "category": "모바일 웹 아카이브",
-        "description": "초대 문구, 일정, 지도, 갤러리와 입자 효과를 하나의 세로형 화면에 구성하고 터치 탐색에 맞춰 제작한 개인용 웹 프로젝트예요.",
-        "techStack": ["JavaScript", "p5.js", "Viewer.js", "Canvas 2D"]
-      },
-      "planet": {
-        "seed": 3208,
-        "orbit": {
-          "radius": 8.2,
-          "speed": 0.052,
-          "startAngle": 215,
-          "inclination": -7
-        },
-        "rotation": {
-          "speed": 0.1,
-          "direction": "clockwise",
-          "axisTilt": -14
-        },
-        "shape": {
-          "radius": 0.64,
-          "roughness": 0.045,
-          "frequency": 2.1
-        },
-        "surface": {
-          "baseColor": "#e7a6c8"
-        },
-        "ring": {
-          "enabled": false,
-          "color": "#ffd8ea",
-          "width": 0.14,
-          "tilt": 0
-        }
-      }
-    },
-    {
       "id": "uriel",
       "galaxyId": "pages-archive",
       "name": "Uriel",

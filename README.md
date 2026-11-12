@@ -36,14 +36,13 @@ GitHub Pages 저장소 자체를 제외한 공개 저장소를 행성으로 표�
 GitHub Pages에서 직접 실행되는 웹 프로젝트를 별도 은하계로 표시합니다.
 
 - Viola
-- Wedding Card
 - Uriel
 - Virus Sim
 - Jelly Oasis
 
 Pages Archive의 상세 패널은 등록된 `보기`와 GitHub 버튼을 모두 표시합니다. Jelly
-Garden은 GitHub 버튼만 표시하고, Wedding Card는 두 버튼을 모두 숨깁니다. 기존 웹
-프로젝트의 원본 정적 경로는 아래 레거시 프로젝트 규칙으로 그대로 유지합니다.
+Garden은 GitHub 버튼만 표시합니다. 기존 웹 프로젝트의 원본 정적 경로는 아래
+레거시 프로젝트 규칙으로 그대로 유지합니다.
 
 ### Uriel 분석 엔진
 
