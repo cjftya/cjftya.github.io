@@ -30,6 +30,7 @@ GitHub Pages 저장소 자체를 제외한 공개 저장소를 행성으로 표�
 - Jelly Sim V1
 - JellyMarkdown
 - Callisto
+- Storage Tracking
 
 ## Pages Archive
 
