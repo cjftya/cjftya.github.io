@@ -364,6 +364,52 @@
       }
     },
     {
+      "id": "storage-tracking",
+      "galaxyId": "jelly-garden",
+      "name": "Storage Tracking",
+      "summary": "Windows와 Linux에서 지정한 크기 이상의 파일을 찾아 폴더 트리로 보여주는 스토리지 도구예요.",
+      "status": "active",
+      "featured": false,
+      "order": 90,
+      "tags": ["스토리지", "파일 검색", "Windows · Linux"],
+      "links": {
+        "github": "https://github.com/cjftya/storage_tracking"
+      },
+      "details": {
+        "category": "스토리지 검색 도구",
+        "description": "로컬 스토리지의 파일 메타데이터로 크기를 확인하고, 조건에 맞는 파일과 상위 폴더의 용량 합계를 트리로 보여줘요. 시스템 경로 제외, 검색 취소·재시작과 폴더 열기를 지원하며 스캔 엔진과 Tkinter 화면을 분리했어요.",
+        "techStack": ["Python", "Tkinter"]
+      },
+      "planet": {
+        "seed": 2909,
+        "orbit": {
+          "radius": 17.4,
+          "speed": 0.023,
+          "startAngle": 225,
+          "inclination": 5
+        },
+        "rotation": {
+          "speed": 0.12,
+          "direction": "counterclockwise",
+          "axisTilt": 15
+        },
+        "shape": {
+          "radius": 0.73,
+          "roughness": 0.06,
+          "frequency": 3
+        },
+        "surface": {
+          "baseColor": "#78c6b0"
+        },
+        "ring": {
+          "enabled": true,
+          "color": "#c5f0df",
+          "width": 0.15,
+          "tilt": 14
+        }
+      }
+    },
+    {
       "id": "viola",
       "galaxyId": "pages-archive",
       "name": "Viola",
