@@ -1,7 +1,7 @@
 import { Clock, Vector3 } from 'three';
 import { CameraController } from '../core/camera/CameraController';
 import { PlanetPicker } from '../core/interaction/PlanetPicker';
-import { RendererManager } from '../core/renderer/RendererManager';
+import { RendererManager } from '../shared/rendering/RendererManager';
 import { SceneManager } from '../core/scene/SceneManager';
 import { JsonProjectRepository } from '../data/JsonProjectRepository';
 import type { Galaxy, Project } from '../data/Project';

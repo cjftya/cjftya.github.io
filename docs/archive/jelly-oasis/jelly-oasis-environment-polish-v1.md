@@ -48,7 +48,7 @@ Baseline and final CI commands pass: **61 test files / 317 tests**, lint and pro
 
 Desktop and portrait values equal the recorded prior release values at these views. Counts include water reflection/refraction; they are not FPS. In the landscape lifecycle suite, additional inspected prototype geometry remains cached at 85 geometries / 10 textures across repeated rebuilds; the pond-only camera suite is stable at 67 / 10. Different visibility histories must not be compared as evidence of a leak.
 
-The [northern slope map](../artifacts/jelly-oasis/environment-polish-v1/north-slope-grid.svg) shows the original 4m search disks and nearby measured terrain. All 144 numeric matrix results are retained; duplicate matrix JPEGs are omitted according to `screenshot-manifest.json`, with hashes and a script to reproduce them. Focused evidence and representative restore/fallback captures are retained.
+The [northern slope map](../../../artifacts/jelly-oasis/environment-polish-v1/north-slope-grid.svg) shows the original 4m search disks and nearby measured terrain. All 144 numeric matrix results are retained; duplicate matrix JPEGs are omitted according to `screenshot-manifest.json`, with hashes and a script to reproduce them. Focused evidence and representative restore/fallback captures are retained.
 
 ## Reproduction
 

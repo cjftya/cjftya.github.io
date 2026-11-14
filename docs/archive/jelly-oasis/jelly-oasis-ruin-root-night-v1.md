@@ -16,10 +16,10 @@ master merge/push는 하지 않았다. 상세 GLB 다섯 개가 기본값이며
 `artifacts/jelly-oasis/cliff-detail-v1/jelly-oasis-cliff-detail-v1.blend`였다.
 원본을 덮어쓰지 않고 다음 파일을 만들었다.
 
-- [작업 전 씬 백업](../artifacts/jelly-oasis/ruin-root-night-v1/source-preserved.blend)
-- [상세 모델 작업 씬](../artifacts/jelly-oasis/ruin-root-night-v1/jelly-oasis-ruin-root-detail-v1.blend)
-- [Blender topology / 재임포트 audit](../artifacts/jelly-oasis/ruin-root-night-v1/mesh-audit.json)
-- [최종 GLB audit / 원본 SHA-256](../artifacts/jelly-oasis/ruin-root-night-v1/glb-audit.json)
+- [작업 전 씬 백업](../../../artifacts/jelly-oasis/ruin-root-night-v1/source-preserved.blend)
+- [상세 모델 작업 씬](../../../artifacts/jelly-oasis/ruin-root-night-v1/jelly-oasis-ruin-root-detail-v1.blend)
+- [Blender topology / 재임포트 audit](../../../artifacts/jelly-oasis/ruin-root-night-v1/mesh-audit.json)
+- [최종 GLB audit / 원본 SHA-256](../../../artifacts/jelly-oasis/ruin-root-night-v1/glb-audit.json)
 
 기존 GLB 다섯 개와 Cliff Detail v1은 기준 커밋의 바이너리와 일치한다.
 `layout.json`은 JSON 내용이 일치한다(Windows checkout의 CRLF 차이는 제외).
@@ -102,24 +102,24 @@ context restore 후 현재 시각과 moon caster가 유지된다.
 
 ## 화면과 성능 근거
 
-모든 이번 결과는 [결과 폴더](../artifacts/jelly-oasis/ruin-root-night-v1/)에 있다.
+모든 이번 결과는 [결과 폴더](../../../artifacts/jelly-oasis/ruin-root-night-v1)에 있다.
 Blender의 `blender-before/after-*` 18장은 동일 카메라 비교다.
 브라우저 `before/after-*`는 동일 camera transform에서 모델만 바꾼 비교다.
 
 | 확인 | 전 | 후 |
 |---|---|---|
-| 뿌리/서쪽 벽 | [before](../artifacts/jelly-oasis/ruin-root-night-v1/before-root-right.png) | [after](../artifacts/jelly-oasis/ruin-root-night-v1/after-root-right.png) |
-| 아치 정면 | [before](../artifacts/jelly-oasis/ruin-root-night-v1/before-arch-front.png) | [after](../artifacts/jelly-oasis/ruin-root-night-v1/after-arch-front.png) |
-| 아치 지상 | [before](../artifacts/jelly-oasis/ruin-root-night-v1/before-arch-ground.png) | [after](../artifacts/jelly-oasis/ruin-root-night-v1/after-arch-ground.png) |
-| 야간 medium | [이전 마일스톤](../artifacts/jelly-oasis/cliff-detail-v1/after-medium-night.png) | [moon shadow](../artifacts/jelly-oasis/ruin-root-night-v1/environment-night.png) |
+| 뿌리/서쪽 벽 | [before](../../../artifacts/jelly-oasis/ruin-root-night-v1/before-root-right.png) | [after](../../../artifacts/jelly-oasis/ruin-root-night-v1/after-root-right.png) |
+| 아치 정면 | [before](../../../artifacts/jelly-oasis/ruin-root-night-v1/before-arch-front.png) | [after](../../../artifacts/jelly-oasis/ruin-root-night-v1/after-arch-front.png) |
+| 아치 지상 | [before](../../../artifacts/jelly-oasis/ruin-root-night-v1/before-arch-ground.png) | [after](../../../artifacts/jelly-oasis/ruin-root-night-v1/after-arch-ground.png) |
+| 야간 medium | [이전 마일스톤](../../../artifacts/jelly-oasis/cliff-detail-v1/after-medium-night.png) | [moon shadow](../../../artifacts/jelly-oasis/ruin-root-night-v1/environment-night.png) |
 
-[좌측 뿌리](../artifacts/jelly-oasis/ruin-root-night-v1/after-root-left.png),
-[지상 뿌리](../artifacts/jelly-oasis/ruin-root-night-v1/after-root-ground.png),
-[달](../artifacts/jelly-oasis/ruin-root-night-v1/production-moon-sky.png),
-[자동 날씨 패널](../artifacts/jelly-oasis/ruin-root-night-v1/panel-auto-on.png),
-[모바일 달](../artifacts/jelly-oasis/ruin-root-night-v1/mobile-moon-sky.png),
-[모바일 세로 패널](../artifacts/jelly-oasis/ruin-root-night-v1/mobile-panel.png),
-[모바일 가로 패널](../artifacts/jelly-oasis/ruin-root-night-v1/mobile-landscape-panel.png).
+[좌측 뿌리](../../../artifacts/jelly-oasis/ruin-root-night-v1/after-root-left.png),
+[지상 뿌리](../../../artifacts/jelly-oasis/ruin-root-night-v1/after-root-ground.png),
+[달](../../../artifacts/jelly-oasis/ruin-root-night-v1/production-moon-sky.png),
+[자동 날씨 패널](../../../artifacts/jelly-oasis/ruin-root-night-v1/panel-auto-on.png),
+[모바일 달](../../../artifacts/jelly-oasis/ruin-root-night-v1/mobile-moon-sky.png),
+[모바일 세로 패널](../../../artifacts/jelly-oasis/ruin-root-night-v1/mobile-panel.png),
+[모바일 가로 패널](../../../artifacts/jelly-oasis/ruin-root-night-v1/mobile-landscape-panel.png).
 
 Windows headless Edge, production preview, desktop 1440×1000 / DPR1에서
 `renderer.info`로 측정했다. triangle 수에는 shadow pass가 포함된다.

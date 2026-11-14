@@ -1,0 +1,7 @@
+{
+  "main": "index.html",
+  "viola": "projects/viola/index.html",
+  "uriel": "projects/uriel/index.html",
+  "jellyOasis": "projects/jelly-oasis/index.html",
+  "virusSim": "projects/virus-sim/index.html"
+}

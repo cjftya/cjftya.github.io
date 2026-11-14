@@ -2,7 +2,7 @@
 
 기존 세 기둥과 연결 평면을 하나의 닫힌 암벽 mesh로 상세화했다. 비대칭 정상부, 상단 유입 shelf, 좌우로 이동하는 중앙 groove, 두 주요 침식 ledge와 하단 landing을 만들었다. 기존 runtime GLB와 integration `.blend`는 보존했다. **사용자 승인에 따라 Detail v1을 기본 runtime 자산으로 적용했다.** Environment 패널과 shadow 정리는 소스에 적용했다. 사용자 요청에 따라 기본 브랜치 반영 대상으로 확정했다.
 
-![Detail v1 — noon](../artifacts/jelly-oasis/cliff-detail-v1/after-medium-noon.png)
+![Detail v1 — noon](../../../artifacts/jelly-oasis/cliff-detail-v1/after-medium-noon.png)
 
 ## 미리보기와 파일
 
@@ -11,9 +11,9 @@
 - Detail v1 비교: `/projects/jelly-oasis/?debug&cliff=detail-v1`
 - 두 페이지의 landmark inspector에서 `Medium` 또는 `Ground`를 선택한다.
 - 일반 production 페이지는 쿼리 없이 Detail v1을 사용한다. Blockout 비교는 debug에서만 허용한다. 기존 GLB 파일은 그대로 보존한다.
-- [Blender 작업 사본](../artifacts/jelly-oasis/cliff-detail-v1/jelly-oasis-cliff-detail-v1.blend)
-- [별도 Detail v1 GLB](../public/assets/jelly-oasis/landmarks/overgrown-ruin/Cliff_Waterfall_A_Detail_v1.glb)
-- [mesh 검증](../artifacts/jelly-oasis/cliff-detail-v1/mesh-audit.json), [browser 검증](../artifacts/jelly-oasis/cliff-detail-v1/browser-qa.json), [원본 보존 hash](../artifacts/jelly-oasis/cliff-detail-v1/preservation.json)
+- [Blender 작업 사본](../../../artifacts/jelly-oasis/cliff-detail-v1/jelly-oasis-cliff-detail-v1.blend)
+- [별도 Detail v1 GLB](../../../public/assets/jelly-oasis/landmarks/overgrown-ruin/Cliff_Waterfall_A_Detail_v1.glb)
+- [mesh 검증](../../../artifacts/jelly-oasis/cliff-detail-v1/mesh-audit.json), [browser 검증](../../../artifacts/jelly-oasis/cliff-detail-v1/browser-qa.json), [원본 보존 hash](../../../artifacts/jelly-oasis/cliff-detail-v1/preservation.json)
 
 ## 형태와 자산 검증
 
@@ -35,18 +35,18 @@
 
 하단은 원본 기초의 hull을 기준으로 줄이고 연못 쪽 apron을 안쪽으로 정리했다. 원본 downhill anchor를 보존하고 지형 fit에 잘못 포함되던 높이 0.35 m 이하의 skirt ring을 정리하여 **runtime cliff Y −5.6715860089 m를 정확히 유지**했다. 전체 landmark 위치 X 70 / Z 58, yaw 30°, scale 1도 동일하다. 최대 표본 매몰량은 1.904 m → 1.888 m다. 상단·출구·하단의 local axis는 유지했고 연못 방향으로 열린다. 실제 수류와 연못까지의 물 연결은 후속 단계다.
 
-동선 검사는 배치된 GLB triangle을 지형 위 0.08–3 m로 잘라 표본 검사했다. Main loop 5,040점, clearing 3,209점, approach 4,212점, passage 1,000점 모두 간섭 0이다. 아치 통로 최소 jamb 간격은 4.62 m다. 이는 표본 기반 검증이며 NavMesh나 연속 충돌 보증은 아니다. [동선 화면](../artifacts/jelly-oasis/cliff-detail-v1/movement-guides.png).
+동선 검사는 배치된 GLB triangle을 지형 위 0.08–3 m로 잘라 표본 검사했다. Main loop 5,040점, clearing 3,209점, approach 4,212점, passage 1,000점 모두 간섭 0이다. 아치 통로 최소 jamb 간격은 4.62 m다. 이는 표본 기반 검증이며 NavMesh나 연속 충돌 보증은 아니다. [동선 화면](../../../artifacts/jelly-oasis/cliff-detail-v1/movement-guides.png).
 
 ## 동일 카메라 비교
 
 | 시점              | Before                                                                         | After                                                                        |
 | ----------------- | ------------------------------------------------------------------------------ | ---------------------------------------------------------------------------- |
-| Blender 정면      | [before](../artifacts/jelly-oasis/cliff-detail-v1/blender-before-front.png)    | [after](../artifacts/jelly-oasis/cliff-detail-v1/blender-after-front.png)    |
-| Blender 폭포 접근 | [before](../artifacts/jelly-oasis/cliff-detail-v1/blender-before-approach.png) | [after](../artifacts/jelly-oasis/cliff-detail-v1/blender-after-approach.png) |
-| Three.js medium   | [before](../artifacts/jelly-oasis/landmark-integration/medium.png)             | [after](../artifacts/jelly-oasis/cliff-detail-v1/after-medium-noon.png)      |
-| Three.js ground   | [before](../artifacts/jelly-oasis/landmark-integration/ground.png)             | [after](../artifacts/jelly-oasis/cliff-detail-v1/after-ground-noon.png)      |
+| Blender 정면      | [before](../../../artifacts/jelly-oasis/cliff-detail-v1/blender-before-front.png)    | [after](../../../artifacts/jelly-oasis/cliff-detail-v1/blender-after-front.png)    |
+| Blender 폭포 접근 | [before](../../../artifacts/jelly-oasis/cliff-detail-v1/blender-before-approach.png) | [after](../../../artifacts/jelly-oasis/cliff-detail-v1/blender-after-approach.png) |
+| Three.js medium   | [before](../../../artifacts/jelly-oasis/landmark-integration/medium.png)             | [after](../../../artifacts/jelly-oasis/cliff-detail-v1/after-medium-noon.png)      |
+| Three.js ground   | [before](../../../artifacts/jelly-oasis/landmark-integration/ground.png)             | [after](../../../artifacts/jelly-oasis/cliff-detail-v1/after-ground-noon.png)      |
 
-추가 Blender 검수: [overview](../artifacts/jelly-oasis/cliff-detail-v1/blender-after-overview.png), [좌측 3/4](../artifacts/jelly-oasis/cliff-detail-v1/blender-after-left.png), [우측 3/4](../artifacts/jelly-oasis/cliff-detail-v1/blender-after-right.png), [상단 shelf](../artifacts/jelly-oasis/cliff-detail-v1/blender-after-shelf.png). Blender 이미지는 형태 확인용 Workbench render이며 실제 조명 판단은 Three.js 이미지 기준이다.
+추가 Blender 검수: [overview](../../../artifacts/jelly-oasis/cliff-detail-v1/blender-after-overview.png), [좌측 3/4](../../../artifacts/jelly-oasis/cliff-detail-v1/blender-after-left.png), [우측 3/4](../../../artifacts/jelly-oasis/cliff-detail-v1/blender-after-right.png), [상단 shelf](../../../artifacts/jelly-oasis/cliff-detail-v1/blender-after-shelf.png). Blender 이미지는 형태 확인용 Workbench render이며 실제 조명 판단은 Three.js 이미지 기준이다.
 
 ## Shadow 점검과 수정
 
@@ -65,11 +65,11 @@
 
 이동한 shadow target만큼 sun 위치도 옮겨 광원 방향을 유지한다. Sky sun direction은 이동 전 방향에서 계산하며 단위 테스트로 검증했다. terrain과 정적 구조물의 cast/receive 정책, canopy cast 제외, 모바일 shadow-off 정책은 유지했다. 전역 shadow 기법을 교체하지 않았다.
 
-Mesh 변경 영향을 분리하기 위해 **기존 blockout을 그대로 둔** shadow after 이미지도 저장했다: [noon medium](../artifacts/jelly-oasis/cliff-detail-v1/shadow-after-medium-noon.png), [noon ground](../artifacts/jelly-oasis/cliff-detail-v1/shadow-after-ground-noon.png), [sunset medium](../artifacts/jelly-oasis/cliff-detail-v1/shadow-after-medium-sunset.png). Before는 위 medium/ground 및 [기존 sunset](../artifacts/jelly-oasis/landmark-integration/sunset.png)과 같은 카메라다. 접지 가장자리가 또렷해졌고 검수 시점에서 줄무늬 acne나 명백한 떠 있는 그림자는 관찰되지 않았다. 낮은 태양의 긴 그림자와 terrain에 가려 어두워지는 하부는 남아 있다. 임의의 모든 orbit 위치를 보증하는 검증은 아니다.
+Mesh 변경 영향을 분리하기 위해 **기존 blockout을 그대로 둔** shadow after 이미지도 저장했다: [noon medium](../../../artifacts/jelly-oasis/cliff-detail-v1/shadow-after-medium-noon.png), [noon ground](../../../artifacts/jelly-oasis/cliff-detail-v1/shadow-after-ground-noon.png), [sunset medium](../../../artifacts/jelly-oasis/cliff-detail-v1/shadow-after-medium-sunset.png). Before는 위 medium/ground 및 [기존 sunset](../../../artifacts/jelly-oasis/landmark-integration/sunset.png)과 같은 카메라다. 접지 가장자리가 또렷해졌고 검수 시점에서 줄무늬 acne나 명백한 떠 있는 그림자는 관찰되지 않았다. 낮은 태양의 긴 그림자와 terrain에 가려 어두워지는 하부는 남아 있다. 임의의 모든 orbit 위치를 보증하는 검증은 아니다.
 
 ## 환경·성능 결과
 
-시간을 멈추고 weatherBlend가 1에 도달한 뒤 캡처했다. [Noon / CLEAR](../artifacts/jelly-oasis/cliff-detail-v1/after-medium-noon.png), [Sunset / PARTLY_CLOUDY](../artifacts/jelly-oasis/cliff-detail-v1/after-medium-sunset.png), [Night / CLEAR](../artifacts/jelly-oasis/cliff-detail-v1/after-medium-night.png), [Noon / OVERCAST](../artifacts/jelly-oasis/cliff-detail-v1/after-medium-overcast.png), [RAIN](../artifacts/jelly-oasis/cliff-detail-v1/after-medium-rain.png), [MIST](../artifacts/jelly-oasis/cliff-detail-v1/after-medium-mist.png). 밤과 안개에서 실루엣과 큰 ledge가 구분되고, 노을에서 재질의 과도한 반짝임은 보이지 않는다.
+시간을 멈추고 weatherBlend가 1에 도달한 뒤 캡처했다. [Noon / CLEAR](../../../artifacts/jelly-oasis/cliff-detail-v1/after-medium-noon.png), [Sunset / PARTLY_CLOUDY](../../../artifacts/jelly-oasis/cliff-detail-v1/after-medium-sunset.png), [Night / CLEAR](../../../artifacts/jelly-oasis/cliff-detail-v1/after-medium-night.png), [Noon / OVERCAST](../../../artifacts/jelly-oasis/cliff-detail-v1/after-medium-overcast.png), [RAIN](../../../artifacts/jelly-oasis/cliff-detail-v1/after-medium-rain.png), [MIST](../../../artifacts/jelly-oasis/cliff-detail-v1/after-medium-mist.png). 밤과 안개에서 실루엣과 큰 ledge가 구분되고, 노을에서 재질의 과도한 반짝임은 보이지 않는다.
 
 Edge headless, 1440 × 1000, DPR 1, medium 카메라, noon/CLEAR, guides 숨김 기준:
 
@@ -88,10 +88,10 @@ Edge headless, 1440 × 1000, DPR 1, medium 카메라, noon/CLEAR, guides 숨김 
 
 | 화면             | Collapsed                                                                    | Expanded                                                                    |
 | ---------------- | ---------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| Desktop          | [보기](../artifacts/jelly-oasis/cliff-detail-v1/panel-desktop-collapsed.png) | [보기](../artifacts/jelly-oasis/cliff-detail-v1/panel-desktop-expanded.png) |
-| Mobile 390 × 844 | [보기](../artifacts/jelly-oasis/cliff-detail-v1/panel-mobile-collapsed.png)  | [보기](../artifacts/jelly-oasis/cliff-detail-v1/panel-mobile-expanded.png)  |
+| Desktop          | [보기](../../../artifacts/jelly-oasis/cliff-detail-v1/panel-desktop-collapsed.png) | [보기](../../../artifacts/jelly-oasis/cliff-detail-v1/panel-desktop-expanded.png) |
+| Mobile 390 × 844 | [보기](../../../artifacts/jelly-oasis/cliff-detail-v1/panel-mobile-collapsed.png)  | [보기](../../../artifacts/jelly-oasis/cliff-detail-v1/panel-mobile-expanded.png)  |
 
-[Mobile landscape](../artifacts/jelly-oasis/cliff-detail-v1/panel-mobile-landscape.png), [mobile debug inspector 배치](../artifacts/jelly-oasis/cliff-detail-v1/mobile-debug-layout.png). Safe-area inset을 고려하고 좁은 화면에서는 펼친 inspector가 서로 겹치지 않도록 정리했다. Screenshot viewport에서는 inset이 0이며 실제 notch 기기의 별도 실기 검증은 하지 않았다.
+[Mobile landscape](../../../artifacts/jelly-oasis/cliff-detail-v1/panel-mobile-landscape.png), [mobile debug inspector 배치](../../../artifacts/jelly-oasis/cliff-detail-v1/mobile-debug-layout.png). Safe-area inset을 고려하고 좁은 화면에서는 펼친 inspector가 서로 겹치지 않도록 정리했다. Screenshot viewport에서는 inset이 0이며 실제 notch 기기의 별도 실기 검증은 하지 않았다.
 
 ## 검증과 재실행
 
@@ -102,6 +102,6 @@ Edge headless, 1440 × 1000, DPR 1, medium 카메라, noon/CLEAR, guides 숨김 
 - `npm run qa:cliff`: production GLB 로드, 배치·접지 일치, 동선, 6개 환경, shadow on/off, 일반 페이지, keyboard/focus, time/play/speed/weather, mobile portrait/landscape, 모바일 shadow map 미할당, pagehide 정리 통과. Console/page/shader error 0.
 - 원본 `Cliff_Waterfall_A.glb`는 HEAD의 bytes와 동일함을 검증했다. 기존 integration `.blend`와 배치 config는 변경하지 않았다.
 
-서버는 `npm run preview -- --host 127.0.0.1 --port 4175`로 실행한다. QA 기본 URL은 `http://127.0.0.1:4175`이며 `CLIFF_QA_URL`, `EDGE_PATH`로 변경할 수 있다. [모델 생성 스크립트](../scripts/blender/detail_cliff_waterfall_v1.py)는 기존 Blender integration 장면에서 실행하고, [고정 카메라 render 스크립트](../scripts/blender/render_cliff_detail_v1.py)는 저장된 detail 장면에서 실행한다. 원본 before 이미지는 작업 시작 시의 코드·자산으로 캡처한 보존 자료이며 QA 재실행은 after만 갱신한다.
+서버는 `npm run preview -- --host 127.0.0.1 --port 4175`로 실행한다. QA 기본 URL은 `http://127.0.0.1:4175`이며 `CLIFF_QA_URL`, `EDGE_PATH`로 변경할 수 있다. [모델 생성 스크립트](../../../scripts/blender/detail_cliff_waterfall_v1.py)는 기존 Blender integration 장면에서 실행하고, [고정 카메라 render 스크립트](../../../scripts/blender/render_cliff_detail_v1.py)는 저장된 detail 장면에서 실행한다. 원본 before 이미지는 작업 시작 시의 코드·자산으로 캡처한 보존 자료이며 QA 재실행은 after만 갱신한다.
 
 아직 실제 물·폭포·foam·spray·vegetation·wet material·collision mesh를 만들지 않았다. 근거리 면은 의도적으로 단순하며 낮은 태양에서 일부 strata가 띠처럼 강조된다. Detail v1 기본 적용을 완료했다. 다음 단계는 계획 순서대로 Ruin + Root Detail v1을 진행하는 것이다.
