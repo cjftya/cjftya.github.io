@@ -1,15 +1,42 @@
-import {readFile,writeFile} from 'node:fs/promises';
-const out='artifacts/jelly-oasis/modeling-review-before-crystal-v1/';
-const modules=JSON.parse(await readFile(out+'glb-audit.json','utf8'));
-const r=JSON.parse(await readFile(out+'review-browser.json','utf8'));
-const qa=JSON.parse(await readFile(out+'landmark/browser-qa.json','utf8'));
-const scene=JSON.parse(await readFile(out+'blender-scene-audit.json','utf8'));
-const link=(n)=>`[${n}](../${out}${n}.png)`;
-const notes={Cliff_Waterfall_A:'WARN: 띠 반복',Ruin_Arch_A:'WARN: 규칙적 석재·작은 줄눈',Ruin_Wall_A:'WARN: 규칙적 석재',Ruin_BrokenWall_A:'PASS: 아치와 연결',Tree_Landmark_Blockout:'WARN: 줄기 Smooth·가지 끝 노출',Root_Large_A:'PASS: 벽을 감싸는 높이 변화',Root_Tree_Base_Blockout:'PASS: 거목→뿌리 연결',PondEdge_Blockout:'WARN: 단순 수면·얇은 둑',Crystal_Blockout_A:'WARN: 동일한 블록아웃',Crystal_Blockout_B:'WARN: 동일한 블록아웃',Crystal_Blockout_C:'WARN: 동일한 블록아웃'};
-const rows=modules.map(m=>{const a=[...m.anchor];if(m.name==='Ruin_BrokenWall_A'){a[0]+=4;a[2]+=11}const c=r.audit.contact[m.name],cos=Math.cos(Math.PI/6),x=70+a[0]*cos+a[2]*.5,z=58-a[0]*.5+a[2]*cos;return `| ${m.name} | ${m.file} | ${m.triangles.toLocaleString()} | ${m.materials.map(v=>v.name.replace('JO_','')).join(', ')} | ${m.flatNormalTriangles}/${m.triangles} | (${x.toFixed(2)}, ${c.y.toFixed(2)}, ${z.toFixed(2)}) | ${c.supportCount} / ${c.burial.toFixed(3)} | ${m.name==='PondEdge_Blockout'?'수신 / 투사 제외':m.name==='Tree_Landmark_Blockout'?'수신 / 줄기 투사, 수관 제외':'수신·투사'} | ${notes[m.name]??'PASS: 크기·위치 차등, 유사한 바위 계열'} |`}).join('\n');
+import { readFile, writeFile } from 'node:fs/promises';
+const out = 'artifacts/jelly-oasis/modeling-review-before-crystal-v1/';
+const modules = JSON.parse(await readFile(out + 'glb-audit.json', 'utf8'));
+const r = JSON.parse(await readFile(out + 'review-browser.json', 'utf8'));
+const qa = JSON.parse(await readFile(out + 'landmark/browser-qa.json', 'utf8'));
+const scene = JSON.parse(await readFile(out + 'blender-scene-audit.json', 'utf8'));
+const link = (n) => `[${n}](../../../${out}${n}.png)`;
+const notes = {
+  Cliff_Waterfall_A: 'WARN: 띠 반복',
+  Ruin_Arch_A: 'WARN: 규칙적 석재·작은 줄눈',
+  Ruin_Wall_A: 'WARN: 규칙적 석재',
+  Ruin_BrokenWall_A: 'PASS: 아치와 연결',
+  Tree_Landmark_Blockout: 'WARN: 줄기 Smooth·가지 끝 노출',
+  Root_Large_A: 'PASS: 벽을 감싸는 높이 변화',
+  Root_Tree_Base_Blockout: 'PASS: 거목→뿌리 연결',
+  PondEdge_Blockout: 'WARN: 단순 수면·얇은 둑',
+  Crystal_Blockout_A: 'WARN: 동일한 블록아웃',
+  Crystal_Blockout_B: 'WARN: 동일한 블록아웃',
+  Crystal_Blockout_C: 'WARN: 동일한 블록아웃',
+};
+const rows = modules
+  .map((m) => {
+    const a = [...m.anchor];
+    if (m.name === 'Ruin_BrokenWall_A') {
+      a[0] += 4;
+      a[2] += 11;
+    }
+    const c = r.audit.contact[m.name],
+      cos = Math.cos(Math.PI / 6),
+      x = 70 + a[0] * cos + a[2] * 0.5,
+      z = 58 - a[0] * 0.5 + a[2] * cos;
+    return `| ${m.name} | ${m.file} | ${m.triangles.toLocaleString()} | ${m.materials.map((v) => v.name.replace('JO_', '')).join(', ')} | ${m.flatNormalTriangles}/${m.triangles} | (${x.toFixed(2)}, ${c.y.toFixed(2)}, ${z.toFixed(2)}) | ${c.supportCount} / ${c.burial.toFixed(3)} | ${m.name === 'PondEdge_Blockout' ? '수신 / 투사 제외' : m.name === 'Tree_Landmark_Blockout' ? '수신 / 줄기 투사, 수관 제외' : '수신·투사'} | ${notes[m.name] ?? 'PASS: 크기·위치 차등, 유사한 바위 계열'} |`;
+  })
+  .join('\n');
 let guide;
-for(const n of modules.find(m=>m.name==='PondEdge_Blockout').nodes){if(n.extras?.pond_guide_v2)guide=JSON.parse(n.extras.pond_guide_v2)}
-const text=`# Jelly Oasis — 기존 모델링 전체 검수 (Phase A)
+for (const n of modules.find((m) => m.name === 'PondEdge_Blockout').nodes) {
+  if (n.extras?.pond_guide_v2) guide = JSON.parse(n.extras.pond_guide_v2);
+}
+const text = `# Jelly Oasis — 기존 모델링 전체 검수 (Phase A)
 
 검수일: 2026-10-10. **판정: WARN. BLOCK 결함은 이번 검사에서 발견하지 않았다.** 주요 로딩·배치·동선·회귀 검사는 PASS이며, 스타일과 근접 화면의 미관 차이를 아래에 기록한다. 사용자 요청에 따라 Phase A까지만 수행했다. Crystal 제작 및 기존 모델 수정은 실행하지 않았다.
 
@@ -54,7 +81,7 @@ ${rows}
 기존 QA의 LANDMARK_QA_URL과 LANDMARK_QA_PRODUCTION_URL은 모두 로컬 production preview 4183을 사용했다. 결과 경로는 기존 산출물을 덮어쓰지 않도록 이번 검수 폴더의 landmark/ 및 pond/로 분리했다. 기존 QA가 생성하는 비교 캡처는 재사용했으며 추가 blockout 전체 비교는 하지 않았다.
 
 - 순환로 폭 6m: ${r.audit.loop.samples} samples PASS. 공터 직경 16m: ${r.audit.clearing.samples} samples PASS. 아치 접근부: ${r.audit.approach.samples} samples PASS. 중앙 통과 폭 4m: ${r.audit.passage.samples} samples PASS. 실측 jamb 간격 **${r.audit.passage.measuredJambWidth.toFixed(2)}m**. NavMesh/실제 충돌 검증은 아니다.
-- 연못 v2 embedded 공유 guide: ${guide?.positions.length??'기록 참조'} positions(중심점 포함). 수면/오버레이/동선 제외 경계가 동일 pondGuide를 사용한다. 수면 높이 **${r.audit.pondHeight.toFixed(6)}m**는 v1/v2 QA에서 동일. max lift **${r.audit.pondBankMaxLift.toFixed(3)}m**, v2 max displacement **${r.views.medium.pondBankMaxDisplacement.toFixed(3)}m**. 이는 지면 적응 수치이며 그만큼 떠 있다는 뜻은 아니다.
+- 연못 v2 embedded 공유 guide: ${guide?.positions.length ?? '기록 참조'} positions(중심점 포함). 수면/오버레이/동선 제외 경계가 동일 pondGuide를 사용한다. 수면 높이 **${r.audit.pondHeight.toFixed(6)}m**는 v1/v2 QA에서 동일. max lift **${r.audit.pondBankMaxLift.toFixed(3)}m**, v2 max displacement **${r.views.medium.pondBankMaxDisplacement.toFixed(3)}m**. 이는 지면 적응 수치이며 그만큼 떠 있다는 뜻은 아니다.
 - 낮: 태양 intensity 2.5 / castShadow=true. 자정 CLEAR: 달 intensity 0.65 / castShadow=true / map allocated=true. ${link('night')}. RAIN 표시 확인: ${link('rain')}. shadow OFF와 touch 모바일 shadow-off QA 통과.
 - pagehide 시 debug API/패널 제거 및 console 오류 없음. 기존 dispose는 geometry/material/texture Set으로 중복 해제를 방지하고 실패한 병렬 로딩은 allSettled 후 해제한다. 강제 GLB 404에서 명시적 오류와 지형 유지 QA 통과. 실제 GPU 메모리 누수 장시간 측정은 하지 않았다.
 - 전체 기본 GLB의 큰 구멍/눈에 띄는 뒤집힌 면/심한 부유는 캡처에서 발견하지 않았다. 모든 삼각형의 manifold/방향 일관성 또는 애니메이션 중 z-fighting 부재를 증명하는 검사는 아니다.
@@ -73,5 +100,16 @@ ${rows}
 - 코드·GLB·layout·원본 blend 변경 없음. 시작 전 blend 변경은 그대로 남아 있다. 로컬 master 유지, 커밋·push 없음.
 - WARN 항목은 향후 개선 후보로 남긴다. 품질 게이트상 심각한 BLOCK은 발견하지 않았지만 **사용자 요청 범위에 따라 여기서 종료하며 Phase B는 미실행**이다.
 `;
-await writeFile('docs/jelly-oasis-modeling-review-before-crystal-v1.md',text);
-console.log(JSON.stringify({report:'docs/jelly-oasis-modeling-review-before-crystal-v1.md',gate:'WARN',guidePoints:guide?.positions.length,tests:289,phaseB:false}));
+await writeFile(
+  'docs/archive/jelly-oasis/jelly-oasis-modeling-review-before-crystal-v1.md',
+  text,
+);
+console.log(
+  JSON.stringify({
+    report: 'docs/archive/jelly-oasis/jelly-oasis-modeling-review-before-crystal-v1.md',
+    gate: 'WARN',
+    guidePoints: guide?.positions.length,
+    tests: 289,
+    phaseB: false,
+  }),
+);

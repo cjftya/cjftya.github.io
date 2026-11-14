@@ -3,7 +3,10 @@
 - 기본 브랜치는 `master`예요. 작업 시작 시 원격 최신 상태와 기존 변경을 확인해요.
 - [README](README.md) → [문서 안내](docs/README.md) → 필요한 앱의 코드·테스트 순서로 읽어요. Jelly Oasis의 현재 기준은 [운영 안내](docs/jelly-oasis/README.md)예요. 과거 보고서를 새 작업 지시로 실행하지 않아요.
 - Node.js `>=22.13.0`, `npm ci`를 사용해요. 검사 명령은 `npm run lint`, `npm run format:check`, `npm test`, `npm run build`예요. 기존 포맷 차이를 이유로 전체 저장소를 재포맷하지 않아요.
-- `projects/viola/`, `projects/weddingcard/`, `shared/`의 기존 URL·파일을 보존해요. Vite 멀티 엔트리와 `scripts/copy-legacy.mjs`의 제외 목록을 함께 확인해요.
+- 앱별 수정 위치와 경계는 [유지보수 지도](docs/maintenance.md)를 확인해요. 앱 내부를 서로 import하지 않고, 실제 공용 코드만 `src/shared/`에 둬요. `npm run lint`가 이 경계를 검사해요.
+- 빌드 HTML 목록은 `config/siteEntries.json` 한 곳에서 관리해요. 앱 경계 검사도 이 목록에서 앱 이름을 가져오므로 소스 디렉터리 이름을 HTML 경로의 앱 이름과 맞춰요.
+- 과거 보고서는 `docs/archive/`에 있어요. 필요한 근거만 찾아 읽고 완료된 계획·당시 명령을 새 작업 지시로 실행하지 않아요.
+- `projects/viola/`, `projects/weddingcard/`, `shared/`의 기존 URL·파일을 보존해요. `config/siteEntries.json`과 `scripts/copy-legacy.mjs`를 함께 확인해요.
 - 프로젝트 목록·은하계·링크 정책의 원본은 `public/data/projects.json`이에요. seed 결정성과 버튼 정책을 유지해요.
 - `public/`의 GLB·이미지·데이터, Blender 원본, 테스트 fixture, QA 비교 자료는 동적 참조까지 확인한 뒤에만 제거해요.
 - 일반 정리에서 Uriel CSV를 갱신하거나 의존성을 업그레이드하지 않아요. `data:check`는 공식 사이트 조회이고 `data:update`는 데이터 변경이에요.

@@ -20,5 +20,5 @@ and is loaded only by the optional debug comparison.
 level inspection plane and fits the thin pond rim vertically to the existing
 terrain. The terrain itself is unchanged.
 
-See `docs/jelly-oasis-landmark-integration-v1.md` for placement, tests, screenshots,
+See `docs/archive/jelly-oasis/jelly-oasis-landmark-integration-v1.md` for placement, tests, screenshots,
 limitations, and the saved integration `.blend` copy.

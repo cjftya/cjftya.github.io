@@ -4,9 +4,9 @@
 
 - Blender 5.2.2 LTS, 씬 `JellyOasis_OvergrownRuin_v1`.
 - 기존 `Scene`과 Cube/Camera/Light는 별도 씬에 보존했다.
-- 파일: [jelly-oasis-overgrown-ruin-v1.blend](../artifacts/jelly-oasis/overgrown-ruin-v1/jelly-oasis-overgrown-ruin-v1.blend).
-- 전체 배치 GLB: [Overgrown_Oasis_Ruin_Blockout_v1.glb](../artifacts/jelly-oasis/overgrown-ruin-v1/exports/Overgrown_Oasis_Ruin_Blockout_v1.glb).
-- [전체 보기](../artifacts/jelly-oasis/overgrown-ruin-v1/overview.png), [동선 평면도](../artifacts/jelly-oasis/overgrown-ruin-v1/layout-guides.png), [지상 시점](../artifacts/jelly-oasis/overgrown-ruin-v1/ground-level.png).
+- 파일: [jelly-oasis-overgrown-ruin-v1.blend](../../../artifacts/jelly-oasis/overgrown-ruin-v1/jelly-oasis-overgrown-ruin-v1.blend).
+- 전체 배치 GLB: [Overgrown_Oasis_Ruin_Blockout_v1.glb](../../../artifacts/jelly-oasis/overgrown-ruin-v1/exports/Overgrown_Oasis_Ruin_Blockout_v1.glb).
+- [전체 보기](../../../artifacts/jelly-oasis/overgrown-ruin-v1/overview.png), [동선 평면도](../../../artifacts/jelly-oasis/overgrown-ruin-v1/layout-guides.png), [지상 시점](../../../artifacts/jelly-oasis/overgrown-ruin-v1/ground-level.png).
 
 ## 크기와 구도
 
@@ -63,7 +63,7 @@ Cliff_Waterfall_A, Ruin_Arch_A, Rock_Large_A를 임시 Blender 씬으로 다시 
 
 Rock/Cliff 원점은 바닥 bbox 중앙, Arch는 통로 바닥 중앙, Tree는 줄기 지면 접점이다. Root_Large_A는 뿌리 시작 단면 중심이며, 씬에서는 높이 1.3m의 연결점에 배치되어 있다. 뿌리의 아래쪽 부분은 지면에 조금 묻히도록 허용했다.
 
-검증 원자료: [asset-manifest.json](../artifacts/jelly-oasis/overgrown-ruin-v1/asset-manifest.json), [movement-audit.json](../artifacts/jelly-oasis/overgrown-ruin-v1/movement-audit.json), [glb-validation.json](../artifacts/jelly-oasis/overgrown-ruin-v1/glb-validation.json).
+검증 원자료: [asset-manifest.json](../../../artifacts/jelly-oasis/overgrown-ruin-v1/asset-manifest.json), [movement-audit.json](../../../artifacts/jelly-oasis/overgrown-ruin-v1/movement-audit.json), [glb-validation.json](../../../artifacts/jelly-oasis/overgrown-ruin-v1/glb-validation.json).
 
 ## 임시 재질
 
@@ -97,4 +97,4 @@ Three.js에서 처음 시험할 자산은 **Rock_Large_A → Ruin_Arch_A → Cli
 
 ## 재현
 
-Blender에서 [build_overgrown_ruin_v1.py](../scripts/blender/build_overgrown_ruin_v1.py)를 실행한 뒤 [inspect_export_overgrown_ruin_v1.py](../scripts/blender/inspect_export_overgrown_ruin_v1.py)를 실행한다. 생성 스크립트는 동일 이름의 씬이 이미 있으면 중단하여 기존 작업을 덮어쓰지 않는다. 보고서 및 독립 GLB 검사는 프로젝트 루트에서 `node scripts/blender/report_overgrown_ruin_v1.mjs`로 재생성한다.
+Blender에서 [build_overgrown_ruin_v1.py](../../../scripts/blender/build_overgrown_ruin_v1.py)를 실행한 뒤 [inspect_export_overgrown_ruin_v1.py](../../../scripts/blender/inspect_export_overgrown_ruin_v1.py)를 실행한다. 생성 스크립트는 동일 이름의 씬이 이미 있으면 중단하여 기존 작업을 덮어쓰지 않는다. 보고서 및 독립 GLB 검사는 프로젝트 루트에서 `node scripts/blender/report_overgrown_ruin_v1.mjs`로 재생성한다.

@@ -8,7 +8,7 @@
 - 구현 브랜치: `work/jelly-oasis-aesthetic-v1`. 구현 종료 HEAD: **`0fde011caf89aae61d260e0ac1ae6d74880a2558`**. 이 보고서·검수 근거·백업 생성 방지 설정을 후속 커밋으로 기록한다. 최종 master HEAD와 원격 일치는 최종 응답에 기재한다.
 - 시작 전 미커밋 `pond-edge-detail-v2/jelly-oasis-pond-edge-detail-v2.blend`와 열린 미검증 Crystal `.blend`는 보존했다. 원본 verified Crystal 및 연못 소스의 SHA256도 동일하다.
 - 기존 live Blender는 정상 응답했고 종료·저장·재시작하지 않았다. 8,193개 scene이 누적된 live 문서를 건드리지 않고 새 background 문서에서 컬렉션만 읽어 작업했다. 최종 소스는 **scene 1개**다.
-- Crystal verified 소스에는 별도 `Tree_Detail_v1`·`PondEdge_Detail_v2` 컬렉션이 없어 연못 v2 소스에서 두 컬렉션을 보완했다. [실제 소스 차이](../artifacts/jelly-oasis/aesthetic-improvement-v1/source-audit.json)에는 누락된 컬렉션·메시와 해시를 기록했다.
+- Crystal verified 소스에는 별도 `Tree_Detail_v1`·`PondEdge_Detail_v2` 컬렉션이 없어 연못 v2 소스에서 두 컬렉션을 보완했다. [실제 소스 차이](../../../artifacts/jelly-oasis/aesthetic-improvement-v1/source-audit.json)에는 누락된 컬렉션·메시와 해시를 기록했다.
 
 ## ② 단계별 판정
 
@@ -30,17 +30,17 @@
 
 | 장면 | 기존 | 변경 |
 |---|---|---|
-| 거목 아래 정오 | [Smooth](../artifacts/jelly-oasis/aesthetic-improvement-v1/tree/baseline/tree-under-noon.png) | [Flat·국소 접점](../artifacts/jelly-oasis/aesthetic-improvement-v1/tree/refined/tree-under-noon.png) |
-| 거목 자정 | [기존](../artifacts/jelly-oasis/aesthetic-improvement-v1/tree/baseline/tree-under-night.png) | [변경](../artifacts/jelly-oasis/aesthetic-improvement-v1/tree/refined/tree-under-night.png) |
-| 물가·수면 정오 | [기존](../artifacts/jelly-oasis/aesthetic-improvement-v1/pond/baseline/waterfall-facing-noon.png) | [soft 수면](../artifacts/jelly-oasis/aesthetic-improvement-v1/pond/soft/waterfall-facing-noon.png) |
-| 수면 자정 | [기존](../artifacts/jelly-oasis/aesthetic-improvement-v1/pond/baseline/waterfall-facing-night.png) | [soft](../artifacts/jelly-oasis/aesthetic-improvement-v1/pond/soft/waterfall-facing-night.png) |
-| Shore만 정오 | [기존](../artifacts/jelly-oasis/aesthetic-improvement-v1/pond/baseline/pond-top-noon.png) | [국소 물가 보정](../artifacts/jelly-oasis/aesthetic-improvement-v1/pond/shore/pond-top-noon.png) |
-| Mobile 390×844 medium | [잘림 재현](../artifacts/jelly-oasis/aesthetic-improvement-v1/baseline/390x844-debug-medium.png) | [전체 실루엣](../artifacts/jelly-oasis/aesthetic-improvement-v1/camera/390x844-debug-medium.png) |
-| Mobile 360×780 medium | [기존](../artifacts/jelly-oasis/aesthetic-improvement-v1/baseline/360x780-debug-medium.png) | [변경](../artifacts/jelly-oasis/aesthetic-improvement-v1/camera/360x780-debug-medium.png) |
-| 절벽 근접 정오 | [기존](../artifacts/jelly-oasis/aesthetic-improvement-v1/cliff/baseline/cliff-front-noon.png) | [국소 띠 높이 차등](../artifacts/jelly-oasis/aesthetic-improvement-v1/cliff/refined/cliff-front-noon.png) |
-| 폐기한 벽 풍화 | [기존](../artifacts/jelly-oasis/aesthetic-improvement-v1/ruin/baseline/root-ruin-noon.png) | [폐기 판단 근거](../artifacts/jelly-oasis/aesthetic-improvement-v1/ruin/refined/root-ruin-noon.png) |
-| 통합 정오 | [기존](../artifacts/jelly-oasis/aesthetic-improvement-v1/integrated/desktop-baseline-noon.png) | [메인 설정](../artifacts/jelly-oasis/aesthetic-improvement-v1/integrated/desktop-refined-noon.png) |
-| 통합 모바일 | [기존](../artifacts/jelly-oasis/aesthetic-improvement-v1/integrated/mobile-baseline-noon.png) | [메인 설정](../artifacts/jelly-oasis/aesthetic-improvement-v1/integrated/mobile-refined-noon.png) |
+| 거목 아래 정오 | [Smooth](../../../artifacts/jelly-oasis/aesthetic-improvement-v1/tree/baseline/tree-under-noon.png) | [Flat·국소 접점](../../../artifacts/jelly-oasis/aesthetic-improvement-v1/tree/refined/tree-under-noon.png) |
+| 거목 자정 | [기존](../../../artifacts/jelly-oasis/aesthetic-improvement-v1/tree/baseline/tree-under-night.png) | [변경](../../../artifacts/jelly-oasis/aesthetic-improvement-v1/tree/refined/tree-under-night.png) |
+| 물가·수면 정오 | [기존](../../../artifacts/jelly-oasis/aesthetic-improvement-v1/pond/baseline/waterfall-facing-noon.png) | [soft 수면](../../../artifacts/jelly-oasis/aesthetic-improvement-v1/pond/soft/waterfall-facing-noon.png) |
+| 수면 자정 | [기존](../../../artifacts/jelly-oasis/aesthetic-improvement-v1/pond/baseline/waterfall-facing-night.png) | [soft](../../../artifacts/jelly-oasis/aesthetic-improvement-v1/pond/soft/waterfall-facing-night.png) |
+| Shore만 정오 | [기존](../../../artifacts/jelly-oasis/aesthetic-improvement-v1/pond/baseline/pond-top-noon.png) | [국소 물가 보정](../../../artifacts/jelly-oasis/aesthetic-improvement-v1/pond/shore/pond-top-noon.png) |
+| Mobile 390×844 medium | [잘림 재현](../../../artifacts/jelly-oasis/aesthetic-improvement-v1/baseline/390x844-debug-medium.png) | [전체 실루엣](../../../artifacts/jelly-oasis/aesthetic-improvement-v1/camera/390x844-debug-medium.png) |
+| Mobile 360×780 medium | [기존](../../../artifacts/jelly-oasis/aesthetic-improvement-v1/baseline/360x780-debug-medium.png) | [변경](../../../artifacts/jelly-oasis/aesthetic-improvement-v1/camera/360x780-debug-medium.png) |
+| 절벽 근접 정오 | [기존](../../../artifacts/jelly-oasis/aesthetic-improvement-v1/cliff/baseline/cliff-front-noon.png) | [국소 띠 높이 차등](../../../artifacts/jelly-oasis/aesthetic-improvement-v1/cliff/refined/cliff-front-noon.png) |
+| 폐기한 벽 풍화 | [기존](../../../artifacts/jelly-oasis/aesthetic-improvement-v1/ruin/baseline/root-ruin-noon.png) | [폐기 판단 근거](../../../artifacts/jelly-oasis/aesthetic-improvement-v1/ruin/refined/root-ruin-noon.png) |
+| 통합 정오 | [기존](../../../artifacts/jelly-oasis/aesthetic-improvement-v1/integrated/desktop-baseline-noon.png) | [메인 설정](../../../artifacts/jelly-oasis/aesthetic-improvement-v1/integrated/desktop-refined-noon.png) |
+| 통합 모바일 | [기존](../../../artifacts/jelly-oasis/aesthetic-improvement-v1/integrated/mobile-baseline-noon.png) | [메인 설정](../../../artifacts/jelly-oasis/aesthetic-improvement-v1/integrated/mobile-refined-noon.png) |
 
 통합 RAIN/MIST·shadow-off와 전체 viewport·production 진입/Reset·회전·Ground 화면은 같은 검수 폴더에 있다. 큰 열린 틈·지형 부유·눈에 띄는 z-fighting은 검수 화면에서 발견하지 않았다. 연속 프레임 전체에 대한 무결함 보증은 아니다.
 
@@ -61,9 +61,9 @@
 | desktop 자정 CLEAR | 100 / 63,594 | 100 / 63,594 |
 | 390×844 touch 정오 | 68 / 38,864 | 68 / 38,864 |
 
-[통합 계측](../artifacts/jelly-oasis/aesthetic-improvement-v1/integrated/browser-qa.json), [GLB 재수입](../artifacts/jelly-oasis/aesthetic-improvement-v1/roundtrip-audit.json), [소스 보존](../artifacts/jelly-oasis/aesthetic-improvement-v1/preservation-audit.json) 참조. Flat export 때문에 거목 정점·파일 크기는 늘어날 수 있으며 triangle 수와 draw calls 유지가 동일한 모든 GPU 비용을 보증하지는 않는다.
+[통합 계측](../../../artifacts/jelly-oasis/aesthetic-improvement-v1/integrated/browser-qa.json), [GLB 재수입](../../../artifacts/jelly-oasis/aesthetic-improvement-v1/roundtrip-audit.json), [소스 보존](../../../artifacts/jelly-oasis/aesthetic-improvement-v1/preservation-audit.json) 참조. Flat export 때문에 거목 정점·파일 크기는 늘어날 수 있으며 triangle 수와 draw calls 유지가 동일한 모든 GPU 비용을 보증하지는 않는다.
 
-Crystal 기존 후보 재검수도 desktop **99→117 calls**, mobile **68→77 calls**다. 자산 triangles **20,786→20,894 (+108)**. 군집별 102 triangles, **4 primitives / 4 materials**, 세 군집 총 12 primitives다. 같은 재질 이름을 공유하는 것만으로 primitive별 렌더 호출이 합쳐지지는 않는다. 군집을 재질별로 합치려면 각각의 앵커·접지·선택·소유권을 고려한 별도 결합이 필요하므로 이번에는 조사만 기록했다. 성능 개선을 주장하지 않는다. [Crystal QA](../artifacts/jelly-oasis/aesthetic-improvement-v1/crystal-regression/browser-qa.json).
+Crystal 기존 후보 재검수도 desktop **99→117 calls**, mobile **68→77 calls**다. 자산 triangles **20,786→20,894 (+108)**. 군집별 102 triangles, **4 primitives / 4 materials**, 세 군집 총 12 primitives다. 같은 재질 이름을 공유하는 것만으로 primitive별 렌더 호출이 합쳐지지는 않는다. 군집을 재질별로 합치려면 각각의 앵커·접지·선택·소유권을 고려한 별도 결합이 필요하므로 이번에는 조사만 기록했다. 성능 개선을 주장하지 않는다. [Crystal QA](../../../artifacts/jelly-oasis/aesthetic-improvement-v1/crystal-regression/browser-qa.json).
 
 ## ⑤ 실제 테스트 및 보존 계약
 
@@ -96,11 +96,11 @@ Z-up ↔ Y-up export/reimport, 바깥 경계·footprint·scale·origin을 검사
 - 기존 tree/pond/cliff blockout 비교는 그대로 지원한다. 명시적 debug `tree=detail`, `pond=detail-v2`, `cliff=detail`/`detail-v1`은 해당 기존 상세 GLB를 사용한다.
 - 수면 비교: `?debug&water=baseline` 또는 `?debug&water=deep`.
 - Crystal detail: 기존 `?debug&crystal=detail`만 사용한다.
-- 최종 Blender 소스: [jelly-oasis-aesthetic-refined-v1.blend](../artifacts/jelly-oasis/aesthetic-improvement-v1/jelly-oasis-aesthetic-refined-v1.blend).
+- 최종 Blender 소스: [jelly-oasis-aesthetic-refined-v1.blend](../../../artifacts/jelly-oasis/aesthetic-improvement-v1/jelly-oasis-aesthetic-refined-v1.blend).
 
 ## ⑦ 정리 내역 및 남은 과제
 
-사용자 요청으로 더 이상 사용하지 않는 `.blend1` 자동 백업 8개, 검증본으로 대체된 미검증 Crystal GLB, 기준선 임시 `.blend`, 완료된 Flat/유적 비교 GLB 및 public과 동일한 중간 GLB를 삭제했다. 구 미관 제안서도 이 실행 보고서로 대체했다. 합계 **17파일 / 16,723,928 bytes(약 16.0MiB)**를 정리했다. 파일별 경로·bytes·SHA256·삭제 이유는 [cleanup.json](../artifacts/jelly-oasis/aesthetic-improvement-v1/cleanup.json)에 기록했다. 현재 기능의 debug 비교·재현에 쓰이는 이전 GLB/소스/검수 보고서는 사용 중이므로 보존했다. 열려 있는 사용자 Crystal 파일과 기존 미커밋 pond 소스는 삭제하지 않았다.
+사용자 요청으로 더 이상 사용하지 않는 `.blend1` 자동 백업 8개, 검증본으로 대체된 미검증 Crystal GLB, 기준선 임시 `.blend`, 완료된 Flat/유적 비교 GLB 및 public과 동일한 중간 GLB를 삭제했다. 구 미관 제안서도 이 실행 보고서로 대체했다. 합계 **17파일 / 16,723,928 bytes(약 16.0MiB)**를 정리했다. 파일별 경로·bytes·SHA256·삭제 이유는 [cleanup.json](../../../artifacts/jelly-oasis/aesthetic-improvement-v1/cleanup.json)에 기록했다. 현재 기능의 debug 비교·재현에 쓰이는 이전 GLB/소스/검수 보고서는 사용 중이므로 보존했다. 열려 있는 사용자 Crystal 파일과 기존 미커밋 pond 소스는 삭제하지 않았다.
 
 남은 과제: 한 곳 외의 노출된 가지 끝, shore·절벽의 작은 미관 차이, 별도 유적 풍화 설계, Crystal primitive 결합 최적화. **실기 모바일 FPS·장시간 GPU 누수는 미측정**이다. 이번 실행 중 live Blender 응답 없음은 발생하지 않았다.
 

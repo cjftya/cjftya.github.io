@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { calculateRenderPixelRatio } from '../src/core/renderer/RendererManager';
+import { calculateRenderPixelRatio } from '../src/shared/rendering/RendererManager';
 
 describe('calculateRenderPixelRatio', () => {
   it('keeps the requested ratio when the viewport is within the pixel budget', () => {

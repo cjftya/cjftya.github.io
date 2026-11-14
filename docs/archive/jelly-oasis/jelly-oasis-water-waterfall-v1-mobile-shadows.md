@@ -34,10 +34,10 @@
 
 | 장면 | 현재 soft | v1 후보 |
 |---|---|---|
-| 정오 폭포 방향 | [soft](../artifacts/jelly-oasis/water-waterfall-v1/desktop-soft-waterfall.png) | [물·폭포 v1](../artifacts/jelly-oasis/water-waterfall-v1/desktop-v1-waterfall.png) |
-| 자정 | [soft](../artifacts/jelly-oasis/water-waterfall-v1/desktop-soft-night.png) | [v1](../artifacts/jelly-oasis/water-waterfall-v1/desktop-v1-night.png) |
-| 연못 위 | [soft](../artifacts/jelly-oasis/water-waterfall-v1/desktop-soft-pond-top.png) | [v1](../artifacts/jelly-oasis/water-waterfall-v1/desktop-v1-pond-top.png) |
-| 모바일 | [soft](../artifacts/jelly-oasis/water-waterfall-v1/mobile-soft-waterfall.png) | [v1](../artifacts/jelly-oasis/water-waterfall-v1/mobile-v1-waterfall.png) |
+| 정오 폭포 방향 | [soft](../../../artifacts/jelly-oasis/water-waterfall-v1/desktop-soft-waterfall.png) | [물·폭포 v1](../../../artifacts/jelly-oasis/water-waterfall-v1/desktop-v1-waterfall.png) |
+| 자정 | [soft](../../../artifacts/jelly-oasis/water-waterfall-v1/desktop-soft-night.png) | [v1](../../../artifacts/jelly-oasis/water-waterfall-v1/desktop-v1-night.png) |
+| 연못 위 | [soft](../../../artifacts/jelly-oasis/water-waterfall-v1/desktop-soft-pond-top.png) | [v1](../../../artifacts/jelly-oasis/water-waterfall-v1/desktop-v1-pond-top.png) |
+| 모바일 | [soft](../../../artifacts/jelly-oasis/water-waterfall-v1/mobile-soft-waterfall.png) | [v1](../../../artifacts/jelly-oasis/water-waterfall-v1/mobile-v1-waterfall.png) |
 
 기존 `frame()`의 dt를 사용해요. reduced-motion에서는 정지하고, 후보가 숨겨지거나 개별 자산 검수로 제외되면 효과 업데이트를 멈춰요. pagehide 종료와 WebGL 복구도 확인했어요. 셰이더/geometry/material은 기존 landmark의 자원 정리 경로에 포함돼요.
 
@@ -47,7 +47,7 @@
 
 390×844, 360×780, 844×390에서 일반 초기 그림자가 ON이에요. 정오 Sun, 자정 Moon의 실제 map allocation과 castShadow를 확인했고, OFF에서는 양쪽 map과 caster가 해제돼요. 복구 후에도 선택된 시간과 그림자가 유지돼요. 기존 모바일 OFF를 정상으로 보던 QA와 map-size 기대값을 이번 정책에 맞게 수정했어요.
 
-[모바일 Moon 그림자](../artifacts/jelly-oasis/water-waterfall-v1/mobile-moon-shadow.png), [OFF 비교](../artifacts/jelly-oasis/water-waterfall-v1/mobile-shadow-off.png), [가로 화면](../artifacts/jelly-oasis/water-waterfall-v1/mobile-844x390.png).
+[모바일 Moon 그림자](../../../artifacts/jelly-oasis/water-waterfall-v1/mobile-moon-shadow.png), [OFF 비교](../../../artifacts/jelly-oasis/water-waterfall-v1/mobile-shadow-off.png), [가로 화면](../../../artifacts/jelly-oasis/water-waterfall-v1/mobile-844x390.png).
 
 ## 전 방향 카메라
 
@@ -59,8 +59,8 @@ OrbitControls 상하 범위를 **0.01 ~ π−0.01 rad**로 확장했고 좌우 �
 
 | 조작 검증 | PC | 모바일 |
 |---|---|---|
-| 태양 | [마우스 드래그](../artifacts/jelly-oasis/water-waterfall-v1/desktop-sun-input.png) | [터치 드래그](../artifacts/jelly-oasis/water-waterfall-v1/mobile-sun-input.png) |
-| 달 | [마우스 드래그](../artifacts/jelly-oasis/water-waterfall-v1/desktop-moon-input.png) | [터치 드래그](../artifacts/jelly-oasis/water-waterfall-v1/mobile-moon-input.png) |
+| 태양 | [마우스 드래그](../../../artifacts/jelly-oasis/water-waterfall-v1/desktop-sun-input.png) | [터치 드래그](../../../artifacts/jelly-oasis/water-waterfall-v1/mobile-sun-input.png) |
+| 달 | [마우스 드래그](../../../artifacts/jelly-oasis/water-waterfall-v1/desktop-moon-input.png) | [터치 드래그](../../../artifacts/jelly-oasis/water-waterfall-v1/mobile-moon-input.png) |
 
 모바일 핀치로 orbit 거리 약 **942.69→626.46m**, 극단적 wheel 입력에서 **35/1050m** 제한을 확인했어요. 일반 페이지 실제 드래그가 화면을 바꾸고, Reset 후 화면이 최초 화면과 픽셀 단위로 동일한 것도 확인했어요. 리셋 버튼 hover를 제거한 상태로 비교했어요.
 
@@ -96,7 +96,7 @@ warm-up·캐시·실행 환경 차이 때문에 v1의 CPU 중앙값이 더 낮�
 
 초기 QA의 실패는 검증 중 dist 재빌드로 생긴 stale asset 404, 소프트웨어 렌더링의 날씨 전환 대기 시간, 기존 pageshow 검사의 고정 200ms 대기, 테스트에서 bubble되지 않은 select 이벤트 및 Reset 버튼 hover 차이였어요. 각각 원인을 특정해 테스트 흐름/상태 대기/입력 이벤트/캡처를 보정했고 제품의 날씨 전환 시간은 바꾸지 않았어요. 최종 검증에는 해당 실패가 남아 있지 않아요. 캡처의 한글 시스템 폰트는 이 Linux 환경에 없어 네모로 표시되지만 UI 텍스트 코드는 변경하지 않았어요.
 
-전체 상태는 [browser-qa.json](../artifacts/jelly-oasis/water-waterfall-v1/browser-qa.json), 추가 조작은 [interaction-qa.json](../artifacts/jelly-oasis/water-waterfall-v1/interaction-qa.json), 회귀 명령 결과는 [regression/results.json](../artifacts/jelly-oasis/water-waterfall-v1/regression/results.json)과 각 실행 로그에 있어요. 기존 과거 보고서와 검수 자료는 보존했어요.
+전체 상태는 [browser-qa.json](../../../artifacts/jelly-oasis/water-waterfall-v1/browser-qa.json), 추가 조작은 [interaction-qa.json](../../../artifacts/jelly-oasis/water-waterfall-v1/interaction-qa.json), 회귀 명령 결과는 [regression/results.json](../../../artifacts/jelly-oasis/water-waterfall-v1/regression/results.json)과 각 실행 로그에 있어요. 기존 과거 보고서와 검수 자료는 보존했어요.
 
 ## 남은 리뷰와 Git
 

@@ -2,6 +2,7 @@ import { defineConfig } from 'vite';
 import { execFileSync } from 'node:child_process';
 import { resolve } from 'node:path';
 import react from '@vitejs/plugin-react';
+import siteEntries from './config/siteEntries.json';
 
 const gitCommit = process.env.GITHUB_SHA ?? readGitCommit();
 
@@ -22,13 +23,12 @@ export default defineConfig({
     sourcemap: true,
     chunkSizeWarningLimit: 700,
     rollupOptions: {
-      input: {
-        main: resolve(import.meta.dirname, 'index.html'),
-        viola: resolve(import.meta.dirname, 'projects/viola/index.html'),
-        uriel: resolve(import.meta.dirname, 'projects/uriel/index.html'),
-        jellyOasis: resolve(import.meta.dirname, 'projects/jelly-oasis/index.html'),
-        virusSim: resolve(import.meta.dirname, 'projects/virus-sim/index.html'),
-      },
+      input: Object.fromEntries(
+        Object.entries(siteEntries).map(([name, entry]) => [
+          name,
+          resolve(import.meta.dirname, entry),
+        ]),
+      ),
     },
   },
 });

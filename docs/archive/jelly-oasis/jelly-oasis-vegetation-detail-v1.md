@@ -33,7 +33,7 @@ B는 요청한 관목 36개 중 33개만 배치했다. 목표의 최대 12배 �
 
 **PASS — production preview 브라우저:** Chromium 143 + SwiftShader, 1440×900 / 390×844 / 360×780 / 844×390. debug Off/A/B 동일 camera·CLEAR·12시, 근접 3종, 정오/자정/RAIN/MIST, 16개 GLB, 일반 진입과 debug 쿼리 무시, Reset, 격리/복원, 3회 rebuild의 geometry/texture 수 유지, WebGL loss/restore, BFCache persisted pagehide/pageshow, 사이트 변경, CPU fallback 및 GLB 404 알림. 정상 시나리오의 pageerror/console error 0개. 404 시나리오의 로드 오류는 의도된 오류다. 실제 수면 높이 해법과 rain impulse가 유지되는지 확인했다.
 
-브라우저 결과는 [`browser-qa.json`](../artifacts/jelly-oasis/vegetation-detail-v1/browser-qa.json)에 남겼다. screenshot과 snapshot은 동일 검수 실행에서 수집했다.
+브라우저 결과는 [`browser-qa.json`](../../../artifacts/jelly-oasis/vegetation-detail-v1/browser-qa.json)에 남겼다. screenshot과 snapshot은 동일 검수 실행에서 수집했다.
 
 ## 성능 수치의 해석
 
@@ -59,9 +59,9 @@ B는 요청한 관목 36개 중 33개만 배치했다. 목표의 최대 12배 �
 
 ## 캡처
 
-- 동일 시점 A/B: [A medium](../artifacts/jelly-oasis/vegetation-detail-v1/density-a-medium.jpg), [B medium](../artifacts/jelly-oasis/vegetation-detail-v1/density-b-medium.jpg), [Off medium](../artifacts/jelly-oasis/vegetation-detail-v1/off-medium.jpg), 각 ground 캡처.
-- 근접: [풀](../artifacts/jelly-oasis/vegetation-detail-v1/prototype-grass.jpg), [관목](../artifacts/jelly-oasis/vegetation-detail-v1/prototype-shrub.jpg), [야생화](../artifacts/jelly-oasis/vegetation-detail-v1/prototype-flower.jpg).
-- [밤](../artifacts/jelly-oasis/vegetation-detail-v1/night.jpg), [비](../artifacts/jelly-oasis/vegetation-detail-v1/rain.jpg), [안개](../artifacts/jelly-oasis/vegetation-detail-v1/mist.jpg), mobile390/mobile360/landscape, production, Reset, restore 캡처 포함.
+- 동일 시점 A/B: [A medium](../../../artifacts/jelly-oasis/vegetation-detail-v1/density-a-medium.jpg), [B medium](../../../artifacts/jelly-oasis/vegetation-detail-v1/density-b-medium.jpg), [Off medium](../../../artifacts/jelly-oasis/vegetation-detail-v1/off-medium.jpg), 각 ground 캡처.
+- 근접: [풀](../../../artifacts/jelly-oasis/vegetation-detail-v1/prototype-grass.jpg), [관목](../../../artifacts/jelly-oasis/vegetation-detail-v1/prototype-shrub.jpg), [야생화](../../../artifacts/jelly-oasis/vegetation-detail-v1/prototype-flower.jpg).
+- [밤](../../../artifacts/jelly-oasis/vegetation-detail-v1/night.jpg), [비](../../../artifacts/jelly-oasis/vegetation-detail-v1/rain.jpg), [안개](../../../artifacts/jelly-oasis/vegetation-detail-v1/mist.jpg), mobile390/mobile360/landscape, production, Reset, restore 캡처 포함.
 
 브라우저 QA 재실행: `OASIS_QA_BROWSER=/path/to/chromium node scripts/vegetation-browser-qa.mjs` (`npm run build` 이후). 브라우저 경로가 없으면 Playwright 설치 경로 또는 `/tmp/chromium`을 사용한다. 브라우저 binary와 임시 전체 PNG는 커밋하지 않고 소형 JPEG와 JSON만 제출한다.
 
