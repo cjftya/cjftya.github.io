@@ -26,4 +26,4 @@ The normal scene is unchanged; this higher-cost version is a debug candidate.
 - Eight review images and snapshots are in `artifacts/jelly-oasis/realistic-water-v3/`.
 - Real-device frame rate, GPU time, and thermal behavior are not measured; software-browser rendering is not a device performance benchmark.
 
-![Desktop review](../artifacts/jelly-oasis/realistic-water-v3/desktop-front.webp)
+![Desktop review](../../../artifacts/jelly-oasis/realistic-water-v3/desktop-front.webp)

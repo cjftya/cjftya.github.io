@@ -45,74 +45,10 @@ Pages Archive의 상세 패널은 등록된 `보기`와 GitHub 버튼을 모두 
 Garden은 GitHub 버튼만 표시합니다. 기존 웹 프로젝트의 원본 정적 경로는 아래
 레거시 프로젝트 규칙으로 그대로 유지합니다.
 
-### Uriel 분석 엔진
+### Uriel
 
-Uriel은 목록에서 선택한 알고리즘으로 후보 100개와 구매용 10게임을 만듭니다. `기본
-방식`은 과거 번호의 장·중·단기 수치와 비슷한 과거 상태의 다음 회차를 반영합니다.
-`형태 전이 + Tail Coverage`는 공통 후보 15개의 5,005개 조합을 7×7 형태 전이로
-평가하고, 상위권 7게임과 연구 31–80위의 저중복 3게임을 묶습니다. 모든 계산은 선택한
-회차까지 알려진 기록만 사용합니다.
-
-화면의 알고리즘 목록은 `기본 방식`과 과거 실험에서 가장 좋았던 `형태 전이 + Tail
-Coverage`를 제공합니다. 새 아이디어는 `algorithmCatalog.ts`에 항목을 등록하고
-`algorithmRunner.ts`에 실행기를 연결해 같은 화면에서 선택·비교할 수 있습니다. 실험
-구현이 UI와 Worker 제어 코드에 섞이지 않도록 목록 메타데이터와 실제 계산 경로를
-분리했습니다.
-
-Walk-forward 진단은 선택한 알고리즘 하나를 대상으로 후보 6/12/24/50/100개의 최대
-적중 수와 구매 10게임의 최대 적중 수를 계산합니다. 최근 구간, 이전 192회, 사용자 지정
-구간을 별도 Web Worker에서 실행하며 진행 중 계산을 취소할 수 있습니다.
-
-#### 화면 성능과 코드 구조
-
-회차·도형·타임라인은 `App.tsx`, 후보와 구매 조합은 `PredictionPanels`, 백테스트
-실행과 보고서는 `BacktestPanel` / `BacktestReport`로 나눠요. 보고서는 결과가 있을
-때만 불러와요.
-
-후보 생성과 구매 조합 분석은 `prediction.worker.ts`에서 실행해요. Worker 세션 안에서
-후보 계산을 재사용하고, 화면에는 선택한 알고리즘의 결과만 보내요. 캐시는 후보 결과
-24개·화면 결과 6개로 제한하며 CSV가 바뀌면 Worker와 함께 초기화해요. 빠른 회차
-이동은 실행 중인 계산 하나와 마지막 요청 하나만 유지하고, 이전 회차의 응답은
-표시하지 않아요. 시간 변화 재생 중에는 도형에 집중하고 멈춘 회차에서 분석을
-재개해요. 백테스트는 별도 Worker에서 실행하며 계산 취소를 지원해요.
-
-후보 간 최대 겹침은 선택된 후보 전체를 매번 다시 훑지 않고 새 후보에 대해서만
-갱신해요. 점수·동점 순서·구매 조합은 1·1235·1239회 기준 결과와 비교하는 회귀
-테스트로 검증해요. Worker의 요청 병합·취소·오류·종료 동작도 테스트해요.
-
-#### 당첨 데이터 갱신
-
-앱의 원본은 `public/projects/uriel/data/draws.csv`예요. 엑셀에서도 열 수 있으며
-형식은 `회차,추첨일,당첨번호 6개`로 유지해요. 별도 `.xlsx` 파일은 사용하지 않아요.
-
-```bash
-npm run data:check   # 공식 최신 회차와 누락 확인, CSV 변경 없음
-npm run data:update  # 누락 회차를 검증한 뒤 CSV에 추가
-```
-
-[동행복권 공식 결과](https://www.dhlottery.co.kr/lt645/result)에서 발표된 최신
-회차를 확인하고, 해당 페이지가 사용하는 결과 조회 응답에서 실제 당첨번호를
-가져와요. 새 회차뿐 아니라 중간에 빠진 회차도 채워요. 이미 최신이면 파일을
-다시 쓰지 않고, 기존 행의 날짜 표기와 줄바꿈도 유지해요. 보너스 번호는 검증만
-하고 분석용 번호 6개에 포함하지 않아요.
-
-GitHub Actions는 **한국시간 토요일 21:35, 일요일 09:35**에 확인해요. 일요일 실행은
-발표 지연이나 일시적인 조회 실패에 대비한 재확인이에요. Actions의 **Validate and
-deploy GitHub Pages → Run workflow**에서 `master`와 `update_data`를 선택해 수동
-갱신할 수도 있어요. 예약 실행 시간은 GitHub 상황에 따라 지연될 수 있어요.
-
-누락 데이터 조회 → 검증·테스트 → CSV만 커밋 → 해당 커밋 빌드·배포 순서로
-진행해요. 자동 커밋은 별도 push 워크플로를 발생시키지 않으므로 같은 실행에서
-새 커밋을 직접 배포해요. 브라우저는 페이지를 다시 열거나 새로고침하면 CSV를
-재검증해 가져와요. 열어 둔 탭에서 실시간 갱신하거나 브라우저가 저장소에 쓰는
-방식은 아니에요. 기존 `CSV 교체` 기능과 분석·실험의 고정 평가 구간은 유지해요.
-
-조회 실패, 잘못된 회차·날짜·번호, 기존 기록과의 충돌이 있으면 **전체 갱신을
-중단하고 원본을 보존**해요. 미래 번호를 추측해 넣거나 다른 사이트의 자료로
-대체하지 않아요. 현재 조회 경로는 `/lt645/selectPstLt645InfoNew.do`이며
-`srchDir=center`, `srchLtEpsd=회차`를 사용해요. 공식 사이트 구조나 주간 추첨
-일정이 바뀌면 이 어댑터를 확인해야 해요. 브랜치 보호가 자동 커밋을 막는 경우에도
-실패로 표시하며 보호 규칙을 우회하지 않아요.
+알고리즘 선택, 후보·구매 조합과 Worker 기반 백테스트를 제공해요.
+화면·분석·Worker 구조와 공식 CSV 갱신 방법은 [Uriel 운영 안내](docs/uriel.md)를 확인해요.
 
 은하계 정보, 프로젝트 링크와 행성 설정은 `public/data/projects.json`에서 관리합니다.
 
@@ -146,9 +82,9 @@ deploy GitHub Pages → Run workflow**에서 `master`와 `update_data`를 선택
 - `environment/`는 시간·날씨·하늘·후처리, `landmark/`는 세계수·호수·랜드마크,
   `terrain/`, `vegetation/`, `composition/`, `scenery/`, `meadow/`는 지형과 식생을 관리해요.
 - [현재 운영·구조·기본값과 검증 방법](docs/jelly-oasis/README.md)
-- [현재 렌더링 최적화와 검증 범위](docs/jelly-oasis-performance-v1.md)
-- [랜드마크 통합 보고서와 스크린샷](docs/jelly-oasis-landmark-integration-v1.md)
-- [Blender blockout 원본과 재현 방법](docs/jelly-oasis-overgrown-ruin-blockout-v1.md)
+- [현재 렌더링 최적화와 검증 범위](docs/archive/jelly-oasis/jelly-oasis-performance-v1.md)
+- [랜드마크 통합 보고서와 스크린샷](docs/archive/jelly-oasis/jelly-oasis-landmark-integration-v1.md)
+- [Blender blockout 원본과 재현 방법](docs/archive/jelly-oasis/jelly-oasis-overgrown-ruin-blockout-v1.md)
 - 로컬 서버 실행 후 `npm run qa:landmark`로 브라우저 검수를 재실행합니다(Microsoft Edge 필요).
 
 ## 기술 스택
@@ -236,11 +172,15 @@ Pull Request에서는 lint, test, build까지만 실행하며 실제 배포는 �
 전체 필드와 예시는
 [docs/project-data-schema.md](docs/project-data-schema.md)를 참고하세요.
 
+작업별 수정 위치와 앱 간 의존성·빌드 규칙은 [유지보수 지도](docs/maintenance.md)에 있어요.
+
 ## 주요 디렉터리
 
 ```text
 public/data/       배포 시 읽는 프로젝트 JSON
-src/app/           앱 초기화와 생명주기 조정
+config/            HTML 빌드 진입점 (복사 제외 목록과 공유)
+src/shared/        앱 사이의 공용 TypeScript 코드
+src/app/           루트 앱 초기화와 생명주기 조정
 src/core/          Three.js 장면·카메라·렌더러·입력 기반
 src/data/          데이터 타입, 검증, 저장소 추상화
 src/planets/       행성 geometry 생성과 결정적 노이즈

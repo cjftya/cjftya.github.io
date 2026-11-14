@@ -1,6 +1,6 @@
 # Jelly Oasis 운영·개발 안내
 
-2026-11-03 코드 기준이에요. 과거 단계별 보고서의 후보 URL·예산·통과 건수는 당시 기록이며 현재 기본값을 뜻하지 않아요. 전체 기록은 [문서 안내](../README.md)에서 찾아요.
+2026-11-14 구조 정리 반영 기준이에요. 과거 단계별 보고서의 후보 URL·예산·통과 건수는 당시 기록이며 현재 기본값을 뜻하지 않아요. 전체 기록은 [문서 안내](../README.md)에서 찾아요.
 
 ## 실행과 현재 상태
 
@@ -12,14 +12,14 @@
 
 ## 수정할 위치
 
-| 경로 (`src/jelly-oasis/` 기준)                                                 | 책임                                        |
-| ------------------------------------------------------------------------------ | ------------------------------------------- |
-| `main.ts`, `startupOptions.ts`                                                 | 장면 통합, 생명주기, URL 옵션               |
-| `terrain/worldLayout.ts`, `terrain/heightfield.ts`, `terrain/createTerrain.ts` | 월드 설정, 결정적 높이 샘플, 지형 메시·색상 |
-| `environment/timeOfDay.ts`, `environment/weather.ts`                           | 시간 계산, 날씨 프로필·전환                 |
-| `environment/EnvironmentController.ts`                                         | 조명·하늘·안개·구름·비와 환경 자원 소유     |
-| `landmark/`                                                                    | GLB 로딩, 접지·동선, 연못과 수면 자원       |
-| `vegetation/`, `composition/`, `scenery/`, `meadow/`                           | 결정적 식생·풍경 배치와 인스턴싱            |
+| 경로 (`src/jelly-oasis/` 기준)                                                 | 책임                                          |
+| ------------------------------------------------------------------------------ | --------------------------------------------- |
+| `main.ts`, `startupOptions.ts`, `app/`                                         | 장면 통합·생명주기, URL 옵션, 카메라·검수 API |
+| `terrain/worldLayout.ts`, `terrain/heightfield.ts`, `terrain/createTerrain.ts` | 월드 설정, 결정적 높이 샘플, 지형 메시·색상   |
+| `environment/timeOfDay.ts`, `environment/weather.ts`                           | 시간 계산, 날씨 프로필·전환                   |
+| `environment/EnvironmentController.ts`                                         | 조명·하늘·안개·구름·비와 환경 자원 소유       |
+| `landmark/`                                                                    | GLB 로딩, 접지·동선, 연못과 수면 자원         |
+| `vegetation/`, `composition/`, `scenery/`, `meadow/`                           | 결정적 식생·풍경 배치와 인스턴싱              |
 
 단일 시간·날씨 상태에서 조명·하늘·안개·강수가 함께 반응해요. 날씨는 `CLEAR`, `PARTLY_CLOUDY`, `OVERCAST`, `RAIN`, `MIST`예요. 순수 계산과 Three.js 자원 소유를 구분하고, 큰 지형 형상과 반복 오브젝트는 생성 시 구성해요. 세부 기본값·예산은 현재 설정과 테스트를 확인해요. 초기 지형·환경 단계의 triangle/draw 수를 전체 장면의 현재 수치로 사용하지 않아요.
 
@@ -51,13 +51,13 @@ npm run build
 | ------------------- | ---------------------------------------------------------------------------------------------------------- |
 | 모델 자산·랜드마크  | `npm run qa:landmark` (`LANDMARK_QA_URL`, `LANDMARK_QA_BROWSER`, `LANDMARK_QA_OUTPUT`; 기본 브라우저 Edge) |
 | 최신 하늘·바람      | `node scripts/oasis-fantasy-sky-qa.mjs`                                                                    |
-| 후처리·성능 비교    | [최적화 검증과 재현 방법](../jelly-oasis-performance-v1.md)                                                |
-| 모델 원본·재제작    | [Blender blockout과 재현](../jelly-oasis-overgrown-ruin-blockout-v1.md)                                    |
-| 연못 v2 모델 근거   | [형상·검증 기록](../jelly-oasis-pond-edge-detail-v2.md)                                                    |
-| 과거 환경 최종 감사 | [전제·검증 한계와 스크립트](../jelly-oasis-environment-polish-v1.md)                                       |
+| 후처리·성능 비교    | [최적화 검증과 재현 방법](../archive/jelly-oasis/jelly-oasis-performance-v1.md)                            |
+| 모델 원본·재제작    | [Blender blockout과 재현](../archive/jelly-oasis/jelly-oasis-overgrown-ruin-blockout-v1.md)                |
+| 연못 v2 모델 근거   | [형상·검증 기록](../archive/jelly-oasis/jelly-oasis-pond-edge-detail-v2.md)                                |
+| 과거 환경 최종 감사 | [전제·검증 한계와 스크립트](../archive/jelly-oasis/jelly-oasis-environment-polish-v1.md)                   |
 
 낮·노을·밤, 맑음·비·안개, PC/모바일 세로·가로에서 모델·수면·카메라를 확인해요. shader/console 오류, 자원 경로, 반복 재배치·복구 뒤 자원 증가를 검사해요. 이미지·계측 JSON과 수동 원본은 검증 근거이므로 보존해요. 소프트웨어 WebGL이나 모바일 뷰포트 에뮬레이션 결과를 실기기 FPS·발열·터치 검증으로 표현하지 않아요.
 
 ## 과거 캡처 보관
 
-바이트가 동일한 과거 캡처 321개는 대표 파일로 통합했어요. [정리 기록](../cleanup-2026-10-28.md)과 [원래 경로 → 대표 경로 대응표](artifact-deduplication.json)를 확인해요. 과거 QA JSON·manifest는 당시 기록을 유지하므로 이미지 경로가 대응표의 `removed`에 있으면 `retained`를 사용해요. 새 캡처는 기존 QA 도구로 원래 출력 경로에 재생성할 수 있어요. 새 미디어는 기본적으로 Git에서 무시하며, 검토 후 보존할 자료만 `git add -f -- <경로>`로 추가해요. 대표 파일을 이동하거나 변경할 때는 대응표·문서 링크를 함께 수정하고 `npm run archive:check`를 실행해요.
+바이트가 동일한 과거 캡처 321개는 대표 파일로 통합했어요. [정리 기록](../archive/README.md#이전-정리-이력)과 [원래 경로 → 대표 경로 대응표](artifact-deduplication.json)를 확인해요. 과거 QA JSON·manifest는 당시 기록을 유지하므로 이미지 경로가 대응표의 `removed`에 있으면 `retained`를 사용해요. 새 캡처는 기존 QA 도구로 원래 출력 경로에 재생성할 수 있어요. 새 미디어는 기본적으로 Git에서 무시하며, 검토 후 보존할 자료만 `git add -f -- <경로>`로 추가해요. 대표 파일을 이동하거나 변경할 때는 대응표·문서 링크를 함께 수정하고 `npm run archive:check`를 실행해요.

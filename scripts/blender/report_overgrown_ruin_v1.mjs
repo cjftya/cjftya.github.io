@@ -4,9 +4,13 @@ import path from 'node:path';
 import assert from 'node:assert/strict';
 
 const out = path.resolve('artifacts/jelly-oasis/overgrown-ruin-v1');
-const manifest = JSON.parse(fs.readFileSync(path.join(out, 'asset-manifest.json'), 'utf8'));
+const manifest = JSON.parse(
+  fs.readFileSync(path.join(out, 'asset-manifest.json'), 'utf8'),
+);
 const checks = [];
-for (const file of fs.readdirSync(path.join(out, 'exports')).filter(f => f.endsWith('.glb'))) {
+for (const file of fs
+  .readdirSync(path.join(out, 'exports'))
+  .filter((f) => f.endsWith('.glb'))) {
   const bytes = fs.readFileSync(path.join(out, 'exports', file));
   assert.equal(bytes.toString('ascii', 0, 4), 'glTF');
   assert.equal(bytes.readUInt32LE(4), 2);
@@ -16,46 +20,73 @@ for (const file of fs.readdirSync(path.join(out, 'exports')).filter(f => f.endsW
   assert.equal((gltf.images ?? []).length, 0);
   const combined = file.startsWith('Overgrown_');
   const name = file.slice(0, -4);
-  const expected = combined ? manifest.assets.filter(a => a.export_asset) : [manifest.assets.find(a => a.name === name)];
-  const meshNodes = gltf.nodes.filter(n => n.mesh !== undefined);
-  assert.deepEqual(meshNodes.map(n => n.name).sort(), expected.map(a => a.name).sort());
+  const expected = combined
+    ? manifest.assets.filter((a) => a.export_asset)
+    : [manifest.assets.find((a) => a.name === name)];
+  const meshNodes = gltf.nodes.filter((n) => n.mesh !== undefined);
+  assert.deepEqual(
+    meshNodes.map((n) => n.name).sort(),
+    expected.map((a) => a.name).sort(),
+  );
   let triangles = 0;
   for (const node of meshNodes) {
-    assert.ok((node.scale ?? [1, 1, 1]).every(s => Math.abs(s - 1) < 1e-6));
-    if (!combined) assert.ok((node.translation ?? [0, 0, 0]).every(x => Math.abs(x) < 1e-6));
-    const a = expected.find(a => a.name === node.name);
-    const lo = [Infinity, Infinity, Infinity], hi = [-Infinity, -Infinity, -Infinity];
+    assert.ok((node.scale ?? [1, 1, 1]).every((s) => Math.abs(s - 1) < 1e-6));
+    if (!combined)
+      assert.ok((node.translation ?? [0, 0, 0]).every((x) => Math.abs(x) < 1e-6));
+    const a = expected.find((a) => a.name === node.name);
+    const lo = [Infinity, Infinity, Infinity],
+      hi = [-Infinity, -Infinity, -Infinity];
     let count = 0;
     for (const primitive of gltf.meshes[node.mesh].primitives) {
       assert.equal(primitive.mode ?? 4, 4);
       count += gltf.accessors[primitive.indices].count / 3;
       const pos = gltf.accessors[primitive.attributes.POSITION];
-      pos.min.forEach((v, i) => { lo[i] = Math.min(lo[i], v); });
-      pos.max.forEach((v, i) => { hi[i] = Math.max(hi[i], v); });
+      pos.min.forEach((v, i) => {
+        lo[i] = Math.min(lo[i], v);
+      });
+      pos.max.forEach((v, i) => {
+        hi[i] = Math.max(hi[i], v);
+      });
       const material = gltf.materials[primitive.material];
       assert.ok(a.materials.includes(material.name));
       assert.ok(material.pbrMetallicRoughness.baseColorFactor.length === 4);
     }
     assert.equal(count, a.triangles);
     const expectedDims = [a.dimensions_m[0], a.dimensions_m[2], a.dimensions_m[1]];
-    expectedDims.forEach((d, i) => assert.ok(Math.abs(hi[i] - lo[i] - d) < 0.001, `${node.name}: axis ${i}`));
+    expectedDims.forEach((d, i) =>
+      assert.ok(Math.abs(hi[i] - lo[i] - d) < 0.001, `${node.name}: axis ${i}`),
+    );
     triangles += count;
   }
-  checks.push({ file, bytes: bytes.length, meshes: meshNodes.length, triangles, passed: true });
+  checks.push({
+    file,
+    bytes: bytes.length,
+    meshes: meshNodes.length,
+    triangles,
+    passed: true,
+  });
 }
-fs.writeFileSync(path.join(out, 'glb-validation.json'), JSON.stringify(checks, null, 2) + '\n');
-const dimensions = a => a.dimensions_m.map(x => x.toFixed(2)).join(' × ');
-const rows = manifest.assets.map(a => `| ${a.name} | ${dimensions(a)} | ${a.triangles.toLocaleString('en-US')} | ${a.export_asset ? '포함' : '가이드만'} |`).join('\n');
-const materials = [...new Set(manifest.assets.flatMap(a => a.materials))];
+fs.writeFileSync(
+  path.join(out, 'glb-validation.json'),
+  JSON.stringify(checks, null, 2) + '\n',
+);
+const dimensions = (a) => a.dimensions_m.map((x) => x.toFixed(2)).join(' × ');
+const rows = manifest.assets
+  .map(
+    (a) =>
+      `| ${a.name} | ${dimensions(a)} | ${a.triangles.toLocaleString('en-US')} | ${a.export_asset ? '포함' : '가이드만'} |`,
+  )
+  .join('\n');
+const materials = [...new Set(manifest.assets.flatMap((a) => a.materials))];
 const report = `# Jelly Oasis — Overgrown Oasis Ruin Blockout v1
 
 계획서에 따라 실제 Blender MCP 씬 작업, 모듈 작성, 동선 검수와 GLB export test를 완료했다. 완성 자산이 아니라 크기·배치·재사용 기준을 정하는 blockout이다.
 
 - Blender ${manifest.blender_version}, 씬 \`${manifest.scene}\`.
 - 기존 \`Scene\`과 Cube/Camera/Light는 별도 씬에 보존했다.
-- 파일: [jelly-oasis-overgrown-ruin-v1.blend](../artifacts/jelly-oasis/overgrown-ruin-v1/jelly-oasis-overgrown-ruin-v1.blend).
-- 전체 배치 GLB: [Overgrown_Oasis_Ruin_Blockout_v1.glb](../artifacts/jelly-oasis/overgrown-ruin-v1/exports/Overgrown_Oasis_Ruin_Blockout_v1.glb).
-- [전체 보기](../artifacts/jelly-oasis/overgrown-ruin-v1/overview.png), [동선 평면도](../artifacts/jelly-oasis/overgrown-ruin-v1/layout-guides.png), [지상 시점](../artifacts/jelly-oasis/overgrown-ruin-v1/ground-level.png).
+- 파일: [jelly-oasis-overgrown-ruin-v1.blend](../../../artifacts/jelly-oasis/overgrown-ruin-v1/jelly-oasis-overgrown-ruin-v1.blend).
+- 전체 배치 GLB: [Overgrown_Oasis_Ruin_Blockout_v1.glb](../../../artifacts/jelly-oasis/overgrown-ruin-v1/exports/Overgrown_Oasis_Ruin_Blockout_v1.glb).
+- [전체 보기](../../../artifacts/jelly-oasis/overgrown-ruin-v1/overview.png), [동선 평면도](../../../artifacts/jelly-oasis/overgrown-ruin-v1/layout-guides.png), [지상 시점](../../../artifacts/jelly-oasis/overgrown-ruin-v1/ground-level.png).
 
 ## 크기와 구도
 
@@ -63,7 +94,7 @@ const report = `# Jelly Oasis — Overgrown Oasis Ruin Blockout v1
 
 ## 컬렉션과 모듈
 
-\`JellyOasis_Landmark_v1\` 아래 ${manifest.collections.map(c => '`' + c + '`').join(', ')}를 구성했다. \`BLOCKOUT/CompositionGuides\`는 기본적으로 숨겨져 있다. Outliner의 모니터 아이콘으로 켜면 녹색 순환 동선, 노란 공터, 청색 폭포 궤적을 볼 수 있다. 파란 연못 폴리곤은 수면 구현이 아닌 위치 가이드다. 검수 오브젝트는 CAM_Landmark_Overview, CAM_Ground_Level, CAM_Ruin_Close, CAM_Layout_Top, JO_Review_Sun, LandmarkBounds_80x76m이다.
+\`JellyOasis_Landmark_v1\` 아래 ${manifest.collections.map((c) => '`' + c + '`').join(', ')}를 구성했다. \`BLOCKOUT/CompositionGuides\`는 기본적으로 숨겨져 있다. Outliner의 모니터 아이콘으로 켜면 녹색 순환 동선, 노란 공터, 청색 폭포 궤적을 볼 수 있다. 파란 연못 폴리곤은 수면 구현이 아닌 위치 가이드다. 검수 오브젝트는 CAM_Landmark_Overview, CAM_Ground_Level, CAM_Ruin_Close, CAM_Layout_Top, JO_Review_Sun, LandmarkBounds_80x76m이다.
 
 | 오브젝트 | Blender 치수 X × Y × Z (m) | 삼각형 | GLB |
 |---|---:|---:|---|
@@ -90,11 +121,11 @@ Cliff_Waterfall_A, Ruin_Arch_A, Rock_Large_A를 임시 Blender 씬으로 다시 
 
 Rock/Cliff 원점은 바닥 bbox 중앙, Arch는 통로 바닥 중앙, Tree는 줄기 지면 접점이다. Root_Large_A는 뿌리 시작 단면 중심이며, 씬에서는 높이 1.3m의 연결점에 배치되어 있다. 뿌리의 아래쪽 부분은 지면에 조금 묻히도록 허용했다.
 
-검증 원자료: [asset-manifest.json](../artifacts/jelly-oasis/overgrown-ruin-v1/asset-manifest.json), [movement-audit.json](../artifacts/jelly-oasis/overgrown-ruin-v1/movement-audit.json), [glb-validation.json](../artifacts/jelly-oasis/overgrown-ruin-v1/glb-validation.json).
+검증 원자료: [asset-manifest.json](../../../artifacts/jelly-oasis/overgrown-ruin-v1/asset-manifest.json), [movement-audit.json](../../../artifacts/jelly-oasis/overgrown-ruin-v1/movement-audit.json), [glb-validation.json](../../../artifacts/jelly-oasis/overgrown-ruin-v1/glb-validation.json).
 
 ## 임시 재질
 
-${materials.map(m => '- `' + m + '`').join('\n')}
+${materials.map((m) => '- `' + m + '`').join('\n')}
 
 모두 단색 Principled material이다. 결정에는 위치 확인용으로 약한 emissive만 적용했다. 이미지 텍스처, 수면 셰이더, 폭포 셰이더, HDRI, 볼류메트릭, 베이크 조명은 없다.
 
@@ -108,7 +139,21 @@ Three.js에서 처음 시험할 자산은 **Rock_Large_A → Ruin_Arch_A → Cli
 
 ## 재현
 
-Blender에서 [build_overgrown_ruin_v1.py](../scripts/blender/build_overgrown_ruin_v1.py)를 실행한 뒤 [inspect_export_overgrown_ruin_v1.py](../scripts/blender/inspect_export_overgrown_ruin_v1.py)를 실행한다. 생성 스크립트는 동일 이름의 씬이 이미 있으면 중단하여 기존 작업을 덮어쓰지 않는다. 보고서 및 독립 GLB 검사는 프로젝트 루트에서 \`node scripts/blender/report_overgrown_ruin_v1.mjs\`로 재생성한다.
+Blender에서 [build_overgrown_ruin_v1.py](../../../scripts/blender/build_overgrown_ruin_v1.py)를 실행한 뒤 [inspect_export_overgrown_ruin_v1.py](../../../scripts/blender/inspect_export_overgrown_ruin_v1.py)를 실행한다. 생성 스크립트는 동일 이름의 씬이 이미 있으면 중단하여 기존 작업을 덮어쓰지 않는다. 보고서 및 독립 GLB 검사는 프로젝트 루트에서 \`node scripts/blender/report_overgrown_ruin_v1.mjs\`로 재생성한다.
 `;
-fs.writeFileSync(path.resolve('docs/jelly-oasis-overgrown-ruin-blockout-v1.md'), report);
-console.log(JSON.stringify({ glbs: checks.length, allPassed: true, totalSceneTriangles: manifest.total_exported_triangles, report: 'docs/jelly-oasis-overgrown-ruin-blockout-v1.md' }, null, 2));
+fs.writeFileSync(
+  path.resolve('docs/archive/jelly-oasis/jelly-oasis-overgrown-ruin-blockout-v1.md'),
+  report,
+);
+console.log(
+  JSON.stringify(
+    {
+      glbs: checks.length,
+      allPassed: true,
+      totalSceneTriangles: manifest.total_exported_triangles,
+      report: 'docs/archive/jelly-oasis/jelly-oasis-overgrown-ruin-blockout-v1.md',
+    },
+    null,
+    2,
+  ),
+);

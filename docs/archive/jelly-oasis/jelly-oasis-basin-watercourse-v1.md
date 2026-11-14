@@ -19,7 +19,7 @@
 
 새 수면은 실제 pondGuide 경계의 가장 낮은 지면보다 12cm 낮춘 로컬 `-0.074616`, 월드 `-6.311292`로 고정했어요. 호수 경계와 절벽 발치를 함께 감싸는 교체 범위는 월드 X `56–92`, Z `44–80`이에요. 이 사각형 전체를 파는 건 아니고, 내부의 basin/channel만 굴착해요. 유적·뿌리·기존 크리스탈의 지지 영역은 보호해요. 순환로와 16m 공터는 실제 굴착 범위 밖이고, 아치 접근 및 설치 높이는 그대로예요.
 
-측정 원본: [phase0-survey.json](../artifacts/jelly-oasis/basin-watercourse-v1/phase0-survey.json).
+측정 원본: [phase0-survey.json](../../../artifacts/jelly-oasis/basin-watercourse-v1/phase0-survey.json).
 
 ## Phase 1 — 실제 지형 교체
 
@@ -53,7 +53,7 @@ v7은 `traceWaterFlow()`의 호수 직행 포물선을 사용하지 않아요. `
 
 ## Phase 5 — 후속 배치 데이터
 
-[phase2-placement.json](../artifacts/jelly-oasis/basin-watercourse-v1/phase2-placement.json)은 **랜드마크 로컬 좌표**예요. 위치의 Y는 현재 지형 sampler에서 계산한 값이에요. 각 후보는 `groundY`, `waterY`, `waterDepth`, `signedDepth`, `radius`를 포함해요.
+[phase2-placement.json](../../../artifacts/jelly-oasis/basin-watercourse-v1/phase2-placement.json)은 **랜드마크 로컬 좌표**예요. 위치의 Y는 현재 지형 sampler에서 계산한 값이에요. 각 후보는 `groundY`, `waterY`, `waterDepth`, `signedDepth`, `radius`를 포함해요.
 
 - `shoreRockZones`: 해안 바깥 지면의 후보 9개.
 - `shoreCrystalZones`: 수면 위 해안의 후보 5개.
@@ -71,22 +71,22 @@ v7은 `traceWaterFlow()`의 호수 직행 포물선을 사용하지 않아요. `
 - `npm run build`: PASS.
 - `scripts/water-realism-v1-qa.mjs`: 기존 v5/v6 회귀 검증 PASS; 최종 후보 통합 후 v6도 다시 PASS.
 - `scripts/landmark-browser-qa.mjs`: 기존 지역 이동·회전·낮밤·날씨·모듈·동선·그림자 회귀, 21개 캡처 PASS. 신규 후보의 loop/clearing/approach/passage audit도 모두 clear예요.
-- `scripts/basin-watercourse-qa.mjs`: v6/v7/물 없는 지형, 정면·측면·상공·지면·낮밤·비·390×844 모바일, 기본값 보존, 재생성·context recovery 검증이에요. 결과는 [qa.json](../artifacts/jelly-oasis/basin-watercourse-v1/qa.json)에 있어요.
-- 지형 topology·raycast·수로 정점/바닥·보호 영역·dispose 검증: [geometry-qa.json](../artifacts/jelly-oasis/basin-watercourse-v1/geometry-qa.json).
+- `scripts/basin-watercourse-qa.mjs`: v6/v7/물 없는 지형, 정면·측면·상공·지면·낮밤·비·390×844 모바일, 기본값 보존, 재생성·context recovery 검증이에요. 결과는 [qa.json](../../../artifacts/jelly-oasis/basin-watercourse-v1/qa.json)에 있어요.
+- 지형 topology·raycast·수로 정점/바닥·보호 영역·dispose 검증: [geometry-qa.json](../../../artifacts/jelly-oasis/basin-watercourse-v1/geometry-qa.json).
 
 ### 전후 비교
 
 같은 카메라·시간·날씨로 캡처했어요. 왼쪽이 기존 v6, 오른쪽이 신규 v7이에요.
 
-![정면 전후](../artifacts/jelly-oasis/basin-watercourse-v1/comparison-front.webp)
+![정면 전후](../../../artifacts/jelly-oasis/basin-watercourse-v1/comparison-front.webp)
 
-![측면 전후](../artifacts/jelly-oasis/basin-watercourse-v1/comparison-side.webp)
+![측면 전후](../../../artifacts/jelly-oasis/basin-watercourse-v1/comparison-side.webp)
 
-![지면 전후](../artifacts/jelly-oasis/basin-watercourse-v1/comparison-ground.webp)
+![지면 전후](../../../artifacts/jelly-oasis/basin-watercourse-v1/comparison-ground.webp)
 
-![실제 굴착 지형](../artifacts/jelly-oasis/basin-watercourse-v1/terrain-desktop-pond-high.webp)
+![실제 굴착 지형](../../../artifacts/jelly-oasis/basin-watercourse-v1/terrain-desktop-pond-high.webp)
 
-6초의 시뮬레이션 변화도 [watercourse-motion.mp4](../artifacts/jelly-oasis/basin-watercourse-v1/watercourse-motion.mp4)에 있어요. 0.5초 간격의 12개 상태를 이어 붙인 2fps 비교 영상이며 실제 실시간 성능 영상은 아니에요.
+6초의 시뮬레이션 변화도 [watercourse-motion.mp4](../../../artifacts/jelly-oasis/basin-watercourse-v1/watercourse-motion.mp4)에 있어요. 0.5초 간격의 12개 상태를 이어 붙인 2fps 비교 영상이며 실제 실시간 성능 영상은 아니에요.
 
 ### 성능 범위
 

@@ -12,16 +12,16 @@
 
 ## 비교 화면
 
-전체 구도 기준 화면은 [이전 낮 화면](../artifacts/jelly-oasis/final-art-polish-v1/desktop-day.png)이다.
+전체 구도 기준 화면은 [이전 낮 화면](../../../artifacts/jelly-oasis/final-art-polish-v1/desktop-day.png)이다.
 
 | 시점      | 변경 전                                                                       | 변경 후                                                                   |
 | --------- | ----------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
-| 전체 낮   | [이전](../artifacts/jelly-oasis/final-art-polish-v1/desktop-day.png)          | [수정](../artifacts/jelly-oasis/shadow-detail-v1/desktop-day.png)         |
-| 근접 낮   | [동일 시점](../artifacts/jelly-oasis/shadow-detail-v1/before-contact-day.png) | [수정](../artifacts/jelly-oasis/shadow-detail-v1/desktop-contact-day.png) |
-| 전체 밤   | [이전](../artifacts/jelly-oasis/final-art-polish-v1/desktop-night.png)        | [수정](../artifacts/jelly-oasis/shadow-detail-v1/desktop-night.png)       |
-| 모바일 낮 | [이전](../artifacts/jelly-oasis/final-art-polish-v1/mobile-day.png)           | [수정](../artifacts/jelly-oasis/shadow-detail-v1/mobile-day.png)          |
+| 전체 낮   | [이전](../../../artifacts/jelly-oasis/final-art-polish-v1/desktop-day.png)          | [수정](../../../artifacts/jelly-oasis/shadow-detail-v1/desktop-day.png)         |
+| 근접 낮   | [동일 시점](../../../artifacts/jelly-oasis/shadow-detail-v1/before-contact-day.png) | [수정](../../../artifacts/jelly-oasis/shadow-detail-v1/desktop-contact-day.png) |
+| 전체 밤   | [이전](../../../artifacts/jelly-oasis/final-art-polish-v1/desktop-night.png)        | [수정](../../../artifacts/jelly-oasis/shadow-detail-v1/desktop-night.png)       |
+| 모바일 낮 | [이전](../../../artifacts/jelly-oasis/final-art-polish-v1/mobile-day.png)           | [수정](../../../artifacts/jelly-oasis/shadow-detail-v1/mobile-day.png)          |
 
-추가 검수: [숲/경사면](../artifacts/jelly-oasis/shadow-detail-v1/desktop-grove-day.png), [근접 밤](../artifacts/jelly-oasis/shadow-detail-v1/desktop-contact-night.png), [멀리서 본 새벽](../artifacts/jelly-oasis/shadow-detail-v1/desktop-wide-dawn.png), [황혼](../artifacts/jelly-oasis/shadow-detail-v1/desktop-dusk.png), [모바일 밤](../artifacts/jelly-oasis/shadow-detail-v1/mobile-night.png), [모바일 황혼](../artifacts/jelly-oasis/shadow-detail-v1/mobile-dusk.png).
+추가 검수: [숲/경사면](../../../artifacts/jelly-oasis/shadow-detail-v1/desktop-grove-day.png), [근접 밤](../../../artifacts/jelly-oasis/shadow-detail-v1/desktop-contact-night.png), [멀리서 본 새벽](../../../artifacts/jelly-oasis/shadow-detail-v1/desktop-wide-dawn.png), [황혼](../../../artifacts/jelly-oasis/shadow-detail-v1/desktop-dusk.png), [모바일 밤](../../../artifacts/jelly-oasis/shadow-detail-v1/mobile-night.png), [모바일 황혼](../../../artifacts/jelly-oasis/shadow-detail-v1/mobile-dusk.png).
 
 ## 비용과 한계
 
@@ -46,7 +46,7 @@
 - `npm run build` 통과(TypeScript 검사 포함), 변경 파일 ESLint와 `git diff --check` 통과.
 - 데스크톱/모바일 낮·황혼·밤 6개 화면 및 근접 낮/밤·숲·넓은 새벽 4개 화면 확인. 브라우저 오류 0, 물 GPU 오류 없음.
 - 실제 마우스 회전/휠 확대, 5.5→6.5→18→19→20→0→12시 전환 확인. 투영 범위 고정, 활성/할당 그림자 맵 최대 1, 낮·밤 광원 교대 유지.
-- 관측 결과와 카메라 좌표: [results.json](../artifacts/jelly-oasis/shadow-detail-v1/results.json). 이전 근접 검수: [before-results.json](../artifacts/jelly-oasis/shadow-detail-v1/before-results.json).
+- 관측 결과와 카메라 좌표: [results.json](../../../artifacts/jelly-oasis/shadow-detail-v1/results.json). 이전 근접 검수: [before-results.json](../../../artifacts/jelly-oasis/shadow-detail-v1/before-results.json).
 
 재현: `node scripts/shadow-detail-browser-qa.mjs`. 필요할 때 `OASIS_QA_BROWSER`, `OASIS_QA_SOFTWARE=1`, `OASIS_QA_FONT_CSS`로 검수 환경을 지정한다. 폰트 주입은 검수 전용이며 제품 소스나 의존성은 바꾸지 않는다.
 

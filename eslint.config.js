@@ -1,4 +1,5 @@
 import js from '@eslint/js';
+import appBoundaries from './scripts/eslint/app-boundaries.mjs';
 import prettier from 'eslint-config-prettier';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
@@ -10,6 +11,11 @@ export default tseslint.config(
   js.configs.recommended,
   ...tseslint.configs.recommended,
   prettier,
+  {
+    files: ['src/**/*.{ts,tsx}'],
+    plugins: { architecture: { rules: { 'app-boundaries': appBoundaries } } },
+    rules: { 'architecture/app-boundaries': 'error' },
+  },
   {
     languageOptions: {
       ecmaVersion: 'latest',

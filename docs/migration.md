@@ -4,6 +4,7 @@
 
 기본 브랜치는 `master`이고 `.github/workflows/deploy-pages.yml`이 검사한 `dist/`를
 GitHub Pages에 배포해요. Vite는 루트·Viola·Uriel·Virus Sim·Jelly Oasis를 빌드해요.
+빌드 진입점과 복사 제외 대상은 `config/siteEntries.json`에서 함께 관리해요.
 `copy-legacy.mjs`는 이 네 프로젝트를 원본 복사에서 제외하고 나머지 `projects/`와
 `shared/`를 같은 경로로 복사해요. 빌드된 HTML을 원본 TypeScript 진입점으로
 덮어쓰지 않는 것이 중요해요. 아래 최초 전환 이력과 구분해서 읽어 주세요.

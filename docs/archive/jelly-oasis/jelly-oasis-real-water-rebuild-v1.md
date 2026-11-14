@@ -28,15 +28,15 @@ All evidence is in `artifacts/jelly-oasis/real-water-rebuild-v1/`. WebP files ar
 
 | View | v5 | v6 |
 |---|---|---|
-| Front / attached rock | [Before](../artifacts/jelly-oasis/real-water-rebuild-v1/v5-desktop-front.webp) | [Candidate](../artifacts/jelly-oasis/real-water-rebuild-v1/v6-desktop-front.webp) |
-| Side / fall thickness | [Before](../artifacts/jelly-oasis/real-water-rebuild-v1/v5-desktop-side.webp) | [Candidate](../artifacts/jelly-oasis/real-water-rebuild-v1/v6-desktop-side.webp) |
-| Crest close-up | [Before](../artifacts/jelly-oasis/real-water-rebuild-v1/v5-desktop-crest.webp) | [Candidate](../artifacts/jelly-oasis/real-water-rebuild-v1/v6-desktop-crest.webp) |
-| Impact / foam | [Before](../artifacts/jelly-oasis/real-water-rebuild-v1/v5-desktop-impact.webp) | [Candidate](../artifacts/jelly-oasis/real-water-rebuild-v1/v6-desktop-impact.webp) |
-| Lake low camera | [Before](../artifacts/jelly-oasis/real-water-rebuild-v1/v5-desktop-pond-low.webp) | [Candidate](../artifacts/jelly-oasis/real-water-rebuild-v1/v6-desktop-pond-low.webp) |
-| Night | [Before](../artifacts/jelly-oasis/real-water-rebuild-v1/v5-desktop-night.webp) | [Candidate](../artifacts/jelly-oasis/real-water-rebuild-v1/v6-desktop-night.webp) |
-| Mobile front | [Before](../artifacts/jelly-oasis/real-water-rebuild-v1/v5-mobile-front.webp) | [Candidate](../artifacts/jelly-oasis/real-water-rebuild-v1/v6-mobile-front.webp) |
+| Front / attached rock | [Before](../../../artifacts/jelly-oasis/real-water-rebuild-v1/v5-desktop-front.webp) | [Candidate](../../../artifacts/jelly-oasis/real-water-rebuild-v1/v6-desktop-front.webp) |
+| Side / fall thickness | [Before](../../../artifacts/jelly-oasis/real-water-rebuild-v1/v5-desktop-side.webp) | [Candidate](../../../artifacts/jelly-oasis/real-water-rebuild-v1/v6-desktop-side.webp) |
+| Crest close-up | [Before](../../../artifacts/jelly-oasis/real-water-rebuild-v1/v5-desktop-crest.webp) | [Candidate](../../../artifacts/jelly-oasis/real-water-rebuild-v1/v6-desktop-crest.webp) |
+| Impact / foam | [Before](../../../artifacts/jelly-oasis/real-water-rebuild-v1/v5-desktop-impact.webp) | [Candidate](../../../artifacts/jelly-oasis/real-water-rebuild-v1/v6-desktop-impact.webp) |
+| Lake low camera | [Before](../../../artifacts/jelly-oasis/real-water-rebuild-v1/v5-desktop-pond-low.webp) | [Candidate](../../../artifacts/jelly-oasis/real-water-rebuild-v1/v6-desktop-pond-low.webp) |
+| Night | [Before](../../../artifacts/jelly-oasis/real-water-rebuild-v1/v5-desktop-night.webp) | [Candidate](../../../artifacts/jelly-oasis/real-water-rebuild-v1/v6-desktop-night.webp) |
+| Mobile front | [Before](../../../artifacts/jelly-oasis/real-water-rebuild-v1/v5-mobile-front.webp) | [Candidate](../../../artifacts/jelly-oasis/real-water-rebuild-v1/v6-mobile-front.webp) |
 
-[Before impact sequence](../artifacts/jelly-oasis/real-water-rebuild-v1/v5-impact-sequence.mp4) / [Candidate impact sequence](../artifacts/jelly-oasis/real-water-rebuild-v1/v6-impact-sequence.mp4): 20 samples at 0.5 simulation-second intervals. MP4 duplicates these samples to 20 output FPS; it is **not** evidence of real-time 20 FPS performance. `qa.json` records the simulation times. The additional strict right-profile camera is obstructed by the arch/cliff and cannot establish a clean side-quality pass. The unobstructed oblique side view is provided; strict profile remains a review limitation.
+[Before impact sequence](../../../artifacts/jelly-oasis/real-water-rebuild-v1/v5-impact-sequence.mp4) / [Candidate impact sequence](../../../artifacts/jelly-oasis/real-water-rebuild-v1/v6-impact-sequence.mp4): 20 samples at 0.5 simulation-second intervals. MP4 duplicates these samples to 20 output FPS; it is **not** evidence of real-time 20 FPS performance. `qa.json` records the simulation times. The additional strict right-profile camera is obstructed by the arch/cliff and cannot establish a clean side-quality pass. The unobstructed oblique side view is provided; strict profile remains a review limitation.
 
 ## Verification and limits
 

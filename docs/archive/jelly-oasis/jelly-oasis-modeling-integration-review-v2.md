@@ -69,19 +69,19 @@
 
 다음 이미지는 **2026-10-10~11 보존 증거**다. 기본 GLB 바이트 보존을 확인했으므로 모델 형상 평가에 재사용했지만 현재 기상·물·카메라의 시각 PASS 근거는 아니다.
 
-- [전체 정오](../artifacts/jelly-oasis/aesthetic-improvement-v1/integrated/desktop-refined-noon.png): 중심 랜드마크는 잘 읽히고 여백이 크다. 작은 오아시스 의도상 여백을 채우는 장식 추가를 추천하지 않는다.
-- [나무 아래 정오](../artifacts/jelly-oasis/aesthetic-improvement-v1/tree/refined/tree-under-noon.png): 면의 명암은 주변 암석과 맞는다. 수관 아래 잘린 막대처럼 읽히는 여러 끝이 근접 문제의 주된 후보다.
-- [절벽 정오](../artifacts/jelly-oasis/aesthetic-improvement-v1/cliff/refined/cliff-front-noon.png): 큰 띠의 반복이 남지만 전체 바위 재설계까지 필요한 근거는 없다.
-- [물가 조감](../artifacts/jelly-oasis/aesthetic-improvement-v1/pond/shore/pond-top-noon.png): 일부 밝은 띠·급한 경계 변화가 보인다. non-flat shore 456 triangles는 의도한 지형 이음 처리로 유지한다.
-- [390×844 medium](../artifacts/jelly-oasis/aesthetic-improvement-v1/camera/390x844-debug-medium.png): 주요 실루엣이 프레임 안에 들어오는 기존 개선 확인. 실제 휴대폰 FPS 근거가 아니다.
-- Crystal A [기본](../artifacts/jelly-oasis/crystal-accent-detail-v1/blockout-Crystal_Blockout_A.png) / [상세](../artifacts/jelly-oasis/crystal-accent-detail-v1/detail-Crystal_Blockout_A.png), [상세 B](../artifacts/jelly-oasis/crystal-accent-detail-v1/detail-Crystal_Blockout_B.png), [상세 C](../artifacts/jelly-oasis/crystal-accent-detail-v1/detail-Crystal_Blockout_C.png): 기존 분홍빛보다 차분하고 군집별 기울기·비율 차이가 있다. A/B/C는 각각의 기존 앵커에 재사용할 가치가 있다. 한 종류를 세 위치에 복제하는 안은 추천하지 않는다.
-- [Crystal 상세 자정](../artifacts/jelly-oasis/crystal-accent-detail-v1/detail-medium-night.png): 약한 glint가 과도한 발광으로 읽히지는 않지만 군집은 어둡고 작은 악센트가 된다. 밤 가독성 PASS로 확대하지 않는다.
+- [전체 정오](../../../artifacts/jelly-oasis/aesthetic-improvement-v1/integrated/desktop-refined-noon.png): 중심 랜드마크는 잘 읽히고 여백이 크다. 작은 오아시스 의도상 여백을 채우는 장식 추가를 추천하지 않는다.
+- [나무 아래 정오](../../../artifacts/jelly-oasis/aesthetic-improvement-v1/tree/refined/tree-under-noon.png): 면의 명암은 주변 암석과 맞는다. 수관 아래 잘린 막대처럼 읽히는 여러 끝이 근접 문제의 주된 후보다.
+- [절벽 정오](../../../artifacts/jelly-oasis/aesthetic-improvement-v1/cliff/refined/cliff-front-noon.png): 큰 띠의 반복이 남지만 전체 바위 재설계까지 필요한 근거는 없다.
+- [물가 조감](../../../artifacts/jelly-oasis/aesthetic-improvement-v1/pond/shore/pond-top-noon.png): 일부 밝은 띠·급한 경계 변화가 보인다. non-flat shore 456 triangles는 의도한 지형 이음 처리로 유지한다.
+- [390×844 medium](../../../artifacts/jelly-oasis/aesthetic-improvement-v1/camera/390x844-debug-medium.png): 주요 실루엣이 프레임 안에 들어오는 기존 개선 확인. 실제 휴대폰 FPS 근거가 아니다.
+- Crystal A [기본](../../../artifacts/jelly-oasis/crystal-accent-detail-v1/blockout-Crystal_Blockout_A.png) / [상세](../../../artifacts/jelly-oasis/crystal-accent-detail-v1/detail-Crystal_Blockout_A.png), [상세 B](../../../artifacts/jelly-oasis/crystal-accent-detail-v1/detail-Crystal_Blockout_B.png), [상세 C](../../../artifacts/jelly-oasis/crystal-accent-detail-v1/detail-Crystal_Blockout_C.png): 기존 분홍빛보다 차분하고 군집별 기울기·비율 차이가 있다. A/B/C는 각각의 기존 앵커에 재사용할 가치가 있다. 한 종류를 세 위치에 복제하는 안은 추천하지 않는다.
+- [Crystal 상세 자정](../../../artifacts/jelly-oasis/crystal-accent-detail-v1/detail-medium-night.png): 약한 glint가 과도한 발광으로 읽히지는 않지만 군집은 어둡고 작은 악센트가 된다. 밤 가독성 PASS로 확대하지 않는다.
 
 기존 보고서의 ground·arch·root-ruin·RAIN/MIST 검수 이력은 유지한다. 이번에는 해당 모든 시점을 새로 측정하지 않았다. 픽셀 diff, 애니메이션 중 z-fighting, 현재 후보 폭포 측면·수면 가림, 최신 모바일 portrait/landscape 모두 NOT_TESTED다.
 
 ## 기술 계측과 회귀
 
-[이번 계측 JSON](jelly-oasis-modeling-integration-review-v2-evidence.json)에 실제 파일명·SHA256·HTTP·triangles·primitives·runtime contact/audit를 기록했다.
+[이번 계측 JSON](../../jelly-oasis-modeling-integration-review-v2-evidence.json)에 실제 파일명·SHA256·HTTP·triangles·primitives·runtime contact/audit를 기록했다.
 
 | 현재 측정                                    | 결과                                                                        |
 | -------------------------------------------- | --------------------------------------------------------------------------- |
