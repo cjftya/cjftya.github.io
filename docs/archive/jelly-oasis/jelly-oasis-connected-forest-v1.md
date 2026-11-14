@@ -24,13 +24,13 @@ Kena의 다층 숲과 열린 중심 공간, TUNIC의 압축된 높낮이, Tiny G
 
 변경 전:
 
-![변경 전](../artifacts/jelly-oasis/connected-forest-v1/before-overview-day.png)
+![변경 전](../../../artifacts/jelly-oasis/connected-forest-v1/before-overview-day.png)
 
 변경 후:
 
-![변경 후](../artifacts/jelly-oasis/connected-forest-v1/overview-day.png)
+![변경 후](../../../artifacts/jelly-oasis/connected-forest-v1/overview-day.png)
 
-[세계수 앞](../artifacts/jelly-oasis/connected-forest-v1/worldtree-front.png) · [뒷면](../artifacts/jelly-oasis/connected-forest-v1/worldtree-rear.png) · [뿌리와 벽](../artifacts/jelly-oasis/connected-forest-v1/worldtree-roots.png) · [호숫가](../artifacts/jelly-oasis/connected-forest-v1/lake-day.png) · [밤](../artifacts/jelly-oasis/connected-forest-v1/medium-night.png) · [비](../artifacts/jelly-oasis/connected-forest-v1/lake-rain.png) · [모바일](../artifacts/jelly-oasis/connected-forest-v1/390-presentation.png)
+[세계수 앞](../../../artifacts/jelly-oasis/connected-forest-v1/worldtree-front.png) · [뒷면](../../../artifacts/jelly-oasis/connected-forest-v1/worldtree-rear.png) · [뿌리와 벽](../../../artifacts/jelly-oasis/connected-forest-v1/worldtree-roots.png) · [호숫가](../../../artifacts/jelly-oasis/connected-forest-v1/lake-day.png) · [밤](../../../artifacts/jelly-oasis/connected-forest-v1/medium-night.png) · [비](../../../artifacts/jelly-oasis/connected-forest-v1/lake-rain.png) · [모바일](../../../artifacts/jelly-oasis/connected-forest-v1/390-presentation.png)
 
 캡처 환경에는 한글 시스템 폰트가 없어 일부 UI 글자가 네모로 표시돼요. 애플리케이션의 글꼴이나 UI 문구는 변경하지 않았어요.
 
@@ -58,7 +58,7 @@ Kena의 다층 숲과 열린 중심 공간, TUNIC의 압축된 높낮이, Tiny G
 
 배치 결과는 데스크톱 일반 나무 240그루, 작은 돌 12개, 바위 18개, 낮은 암석 군락 8개, meadow 관목 20개예요. 세계수 정원과 기존 식생은 별도예요.
 
-원자료: [비교 수치](../artifacts/jelly-oasis/connected-forest-v1/comparison.json), [변경본 브라우저 QA](../artifacts/jelly-oasis/connected-forest-v1/sacred-lake-browser.json), [기준 브라우저 QA](../artifacts/jelly-oasis/connected-forest-v1/before-browser.json).
+원자료: [비교 수치](../../../artifacts/jelly-oasis/connected-forest-v1/comparison.json), [변경본 브라우저 QA](../../../artifacts/jelly-oasis/connected-forest-v1/sacred-lake-browser.json), [기준 브라우저 QA](../../../artifacts/jelly-oasis/connected-forest-v1/before-browser.json).
 
 재현 명령:
 

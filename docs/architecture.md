@@ -1,5 +1,8 @@
 # Jelly Plants 아키텍처
 
+전체 저장소의 앱 경계와 빌드 구조는 [유지보수 지도](maintenance.md)를 확인해요.
+`RendererManager`의 현재 위치는 `src/shared/rendering/RendererManager.ts`이며 루트 앱과 Oasis가 공유해요.
+
 이 구조의 우선순위는 처음 보는 개발자가 데이터 로딩부터 화면 표시까지의 흐름을 파일
 이름만으로 따라갈 수 있게 하는 것입니다. 현재 필요한 책임만 분리하고 범용 엔진 계층은
 만들지 않습니다.

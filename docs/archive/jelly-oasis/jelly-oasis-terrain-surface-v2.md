@@ -10,7 +10,7 @@ blended by world-space slope, height and restrained regional variation.
 
 | Before: flat-shaded slope                                          | After: smooth layered surface                                       |
 | ------------------------------------------------------------------ | ------------------------------------------------------------------- |
-| ![Original slope](images/jelly-oasis-surface-v2/before-slope.webp) | ![Surface v2 slope](images/jelly-oasis-surface-v2/after-slope.webp) |
+| ![Original slope](../../images/jelly-oasis-surface-v2/before-slope.webp) | ![Surface v2 slope](../../images/jelly-oasis-surface-v2/after-slope.webp) |
 
 ## Implementation and budget
 
@@ -90,11 +90,11 @@ visible on the steep northern shoulder, as intended. The silhouette is unchanged
 
 | Noon                                                            | Sunset                                                     |
 | --------------------------------------------------------------- | ---------------------------------------------------------- |
-| ![Noon](images/jelly-oasis-surface-v2/after-noon-overview.webp) | ![Sunset](images/jelly-oasis-surface-v2/after-sunset.webp) |
+| ![Noon](../../images/jelly-oasis-surface-v2/after-noon-overview.webp) | ![Sunset](../../images/jelly-oasis-surface-v2/after-sunset.webp) |
 | Overcast                                                        | Rain                                                       |
-| ![Overcast](images/jelly-oasis-surface-v2/after-overcast.webp)  | ![Rain](images/jelly-oasis-surface-v2/after-rain.webp)     |
+| ![Overcast](../../images/jelly-oasis-surface-v2/after-overcast.webp)  | ![Rain](../../images/jelly-oasis-surface-v2/after-rain.webp)     |
 | Night                                                           | Basin                                                      |
-| ![Night](images/jelly-oasis-surface-v2/after-night.webp)        | ![Basin](images/jelly-oasis-surface-v2/after-basin.webp)   |
+| ![Night](../../images/jelly-oasis-surface-v2/after-night.webp)        | ![Basin](../../images/jelly-oasis-surface-v2/after-basin.webp)   |
 
 ## Inspect in the app
 

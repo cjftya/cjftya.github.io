@@ -15,10 +15,10 @@
 입력: artifacts/jelly-oasis/ruin-root-night-v1/jelly-oasis-ruin-root-detail-v1.blend.
 Blender MCP 연결 및 5.2.2 LTS 확인. 원본 씬을 변경하기 전에 source-preserved.blend로 별도 저장했다.
 
-- [작업 파일](../artifacts/jelly-oasis/landmark-tree-detail-v1/jelly-oasis-landmark-tree-detail-v1.blend)
-- [원본 보존](../artifacts/jelly-oasis/landmark-tree-detail-v1/source-preserved.blend)
-- [후보 GLB](../public/assets/jelly-oasis/landmarks/overgrown-ruin/Tree_Landmark_Detail_v1.glb)
-- [바이너리 보존·GLB 검사](../artifacts/jelly-oasis/landmark-tree-detail-v1/glb-audit.json)
+- [작업 파일](../../../artifacts/jelly-oasis/landmark-tree-detail-v1/jelly-oasis-landmark-tree-detail-v1.blend)
+- [원본 보존](../../../artifacts/jelly-oasis/landmark-tree-detail-v1/source-preserved.blend)
+- [후보 GLB](../../../public/assets/jelly-oasis/landmarks/overgrown-ruin/Tree_Landmark_Detail_v1.glb)
+- [바이너리 보존·GLB 검사](../../../artifacts/jelly-oasis/landmark-tree-detail-v1/glb-audit.json)
 
 줄기는 높이에 따라 굽힘과 단면을 변화시킨 sweep이다. 큰 가지 6개와 보조 가지 14개를 배치하고 Boolean union 및 제한된 smooth로 분기 접합을 정리했다. 줄기·가지는 4,186 triangles, 수관은 7,680 triangles다.
 수관은 크기·회전·높이·윤곽이 다른 24개 불규칙 군집을 한 mesh에 병합했다. 기존 세 가지 잎색과 나무 재질을 재사용했다. 수관 아래에서 일부 하늘 틈과 가지 지지 구조가 보인다.
@@ -53,15 +53,15 @@ GLB root/mesh transform은 identity, export는 Z-up → glTF Y-up이다. runtime
 
 | 시점          | 기존                                                                            | 후보                                                                           |
 | ------------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
-| 전체          | [전](../artifacts/jelly-oasis/landmark-tree-detail-v1/before-overview-noon.png) | [후](../artifacts/jelly-oasis/landmark-tree-detail-v1/after-overview-noon.png) |
-| 중거리        | [전](../artifacts/jelly-oasis/landmark-tree-detail-v1/before-medium-noon.png)   | [후](../artifacts/jelly-oasis/landmark-tree-detail-v1/environment-noon.png)    |
-| 나무 지상     | [전](../artifacts/jelly-oasis/landmark-tree-detail-v1/before-tree-ground.png)   | [후](../artifacts/jelly-oasis/landmark-tree-detail-v1/after-tree-ground.png)   |
-| 좌측 3/4      | [전](../artifacts/jelly-oasis/landmark-tree-detail-v1/before-tree-left.png)     | [후](../artifacts/jelly-oasis/landmark-tree-detail-v1/after-tree-left.png)     |
-| 우측 3/4      | [전](../artifacts/jelly-oasis/landmark-tree-detail-v1/before-tree-right.png)    | [후](../artifacts/jelly-oasis/landmark-tree-detail-v1/after-tree-right.png)    |
-| 수관 아래     | [전](../artifacts/jelly-oasis/landmark-tree-detail-v1/before-tree-under.png)    | [후](../artifacts/jelly-oasis/landmark-tree-detail-v1/after-tree-under.png)    |
-| 모바일 중거리 | [전](../artifacts/jelly-oasis/landmark-tree-detail-v1/before-mobile-medium.png) | [후](../artifacts/jelly-oasis/landmark-tree-detail-v1/after-mobile-medium.png) |
+| 전체          | [전](../../../artifacts/jelly-oasis/landmark-tree-detail-v1/before-overview-noon.png) | [후](../../../artifacts/jelly-oasis/landmark-tree-detail-v1/after-overview-noon.png) |
+| 중거리        | [전](../../../artifacts/jelly-oasis/landmark-tree-detail-v1/before-medium-noon.png)   | [후](../../../artifacts/jelly-oasis/landmark-tree-detail-v1/environment-noon.png)    |
+| 나무 지상     | [전](../../../artifacts/jelly-oasis/landmark-tree-detail-v1/before-tree-ground.png)   | [후](../../../artifacts/jelly-oasis/landmark-tree-detail-v1/after-tree-ground.png)   |
+| 좌측 3/4      | [전](../../../artifacts/jelly-oasis/landmark-tree-detail-v1/before-tree-left.png)     | [후](../../../artifacts/jelly-oasis/landmark-tree-detail-v1/after-tree-left.png)     |
+| 우측 3/4      | [전](../../../artifacts/jelly-oasis/landmark-tree-detail-v1/before-tree-right.png)    | [후](../../../artifacts/jelly-oasis/landmark-tree-detail-v1/after-tree-right.png)    |
+| 수관 아래     | [전](../../../artifacts/jelly-oasis/landmark-tree-detail-v1/before-tree-under.png)    | [후](../../../artifacts/jelly-oasis/landmark-tree-detail-v1/after-tree-under.png)    |
+| 모바일 중거리 | [전](../../../artifacts/jelly-oasis/landmark-tree-detail-v1/before-mobile-medium.png) | [후](../../../artifacts/jelly-oasis/landmark-tree-detail-v1/after-mobile-medium.png) |
 
-[낮](../artifacts/jelly-oasis/landmark-tree-detail-v1/environment-noon.png), [노을](../artifacts/jelly-oasis/landmark-tree-detail-v1/environment-sunset.png), [달빛 밤](../artifacts/jelly-oasis/landmark-tree-detail-v1/environment-night.png), [흐림](../artifacts/jelly-oasis/landmark-tree-detail-v1/environment-overcast.png), [비](../artifacts/jelly-oasis/landmark-tree-detail-v1/environment-rain.png), [안개](../artifacts/jelly-oasis/landmark-tree-detail-v1/environment-mist.png).
+[낮](../../../artifacts/jelly-oasis/landmark-tree-detail-v1/environment-noon.png), [노을](../../../artifacts/jelly-oasis/landmark-tree-detail-v1/environment-sunset.png), [달빛 밤](../../../artifacts/jelly-oasis/landmark-tree-detail-v1/environment-night.png), [흐림](../../../artifacts/jelly-oasis/landmark-tree-detail-v1/environment-overcast.png), [비](../../../artifacts/jelly-oasis/landmark-tree-detail-v1/environment-rain.png), [안개](../../../artifacts/jelly-oasis/landmark-tree-detail-v1/environment-mist.png).
 
 ## 성능·검증
 
@@ -80,22 +80,22 @@ Windows headless Edge, production preview. desktop 1440×1000 / DPR1, mobile vie
 
 - lint 및 TypeScript 통과; 최종 npm run build (Vite + legacy copy) 통과.
 - 전체 Vitest --maxWorkers=2: 52 files / 287 tests 통과. 최초 병렬 렌더링 중 무관한 Uriel test가 5초 timeout으로 실패했으며, 렌더링 종료 후 같은 조건 전체 재실행 통과. timeout 설정은 변경하지 않았다.
-- [브라우저 QA](../artifacts/jelly-oasis/landmark-tree-detail-v1/browser-qa.json): 낮/노을/밤/흐림/비/안개, shadow toggle, context restore, persisted pagehide/pageshow, 모바일 UI, production blockout 기본값 통과. GLB HTTP200, 콘솔/shader 오류 0.
-- [생명주기 QA](../artifacts/jelly-oasis/landmark-tree-detail-v1/lifecycle-qa.json): GLB404 시 명시적 오류 UI, pagehide 후 debug API 제거, 지연 GLB 응답 후 scene 재등록 없음 확인. 실제 GLB unit test로 중복 dispose 및 실패 후 늦은 성공 응답의 resource 정리 검증.
-- [보충 시점 QA](../artifacts/jelly-oasis/landmark-tree-detail-v1/supplemental-qa.json).
+- [브라우저 QA](../../../artifacts/jelly-oasis/landmark-tree-detail-v1/browser-qa.json): 낮/노을/밤/흐림/비/안개, shadow toggle, context restore, persisted pagehide/pageshow, 모바일 UI, production blockout 기본값 통과. GLB HTTP200, 콘솔/shader 오류 0.
+- [생명주기 QA](../../../artifacts/jelly-oasis/landmark-tree-detail-v1/lifecycle-qa.json): GLB404 시 명시적 오류 UI, pagehide 후 debug API 제거, 지연 GLB 응답 후 scene 재등록 없음 확인. 실제 GLB unit test로 중복 dispose 및 실패 후 늦은 성공 응답의 resource 정리 검증.
+- [보충 시점 QA](../../../artifacts/jelly-oasis/landmark-tree-detail-v1/supplemental-qa.json).
 
 ## 남은 미적 판단과 한계
 
 중거리에서 큰 세 덩어리였던 기존 수관보다 층과 가지 구조가 읽히며, 아치·연못·절벽을 가리지 않는다. 근거리에서는 아직 둥근 잎 군집의 인상이 남고 일부 보조 가지 끝이 눈에 띈다. 더 잎다운 가장자리와 가지 끝의 자연스러운 가림은 다음 미적 수정 후보다. 아주 가까운 우측 시점에서는 절벽이 줄기를 가리는 기존 배치 관계를 유지한다. 모바일 비교 캡처는 같은 medium 목표점을 유지하고 카메라 거리를 1.55배 늘려 나무와 아치를 함께 담았다. 앱의 기존 preset 자체는 변경하지 않았다.
 수관 그림자는 기존대로 꺼져 있어 바닥에는 가지 중심의 그림자가 보인다. 이 단계에서 바람·식생·수면·NavMesh는 추가하지 않았다.
 
-Blender 활성 씬 정적 export 후 재임포트 검사 통과: 삼각형 11,866개와 bounds가 정확히 일치한다. [메시 검사](../artifacts/jelly-oasis/landmark-tree-detail-v1/mesh-audit.json)의 비다양체 edge, loose vertex, zero-area face, winding 오류, duplicate vertex 모두 0. Boolean 접합부를 삼각분할할 때 생성된 중복 내부 면 11쌍을 제거하고 느슨한 edge/vertex를 정리했다.
+Blender 활성 씬 정적 export 후 재임포트 검사 통과: 삼각형 11,866개와 bounds가 정확히 일치한다. [메시 검사](../../../artifacts/jelly-oasis/landmark-tree-detail-v1/mesh-audit.json)의 비다양체 edge, loose vertex, zero-area face, winding 오류, duplicate vertex 모두 0. Boolean 접합부를 삼각분할할 때 생성된 중복 내부 면 11쌍을 제거하고 느슨한 edge/vertex를 정리했다.
 
 전체 씬 export가 다른 씬 전환에서 지연되는 것을 설치된 exporter stack으로 확인해 use_active_scene=True 및 export_animations=False를 지정했다. 원본 다른 씬은 수정하지 않았다. 별도 background Blender에서 export 0.11초, import 1.26초로 검증했다.
 
-Blender 비교 12장은 blender-before/after-{tree-front,tree-left,tree-right,tree-ground,tree-under,overview}.png에 있다. 원본 Ruin+Root와 Cliff .blend도 [SHA-256 검사](../artifacts/jelly-oasis/landmark-tree-detail-v1/source-preservation.json)에서 기준 commit과 일치한다.
+Blender 비교 12장은 blender-before/after-{tree-front,tree-left,tree-right,tree-ground,tree-under,overview}.png에 있다. 원본 Ruin+Root와 Cliff .blend도 [SHA-256 검사](../../../artifacts/jelly-oasis/landmark-tree-detail-v1/source-preservation.json)에서 기준 commit과 일치한다.
 
-최종 정리 모델의 [단독 정면](../artifacts/jelly-oasis/landmark-tree-detail-v1/blender-after-tree-isolated.png)과 [잎을 숨긴 가지 구조](../artifacts/jelly-oasis/landmark-tree-detail-v1/blender-after-tree-skeleton.png)도 별도 Blender scene에서 렌더했다. 전체 landmark 비교 렌더는 외형에 영향을 주지 않는 내부 중복 면 정리 전이며, 웹 비교·단독 렌더·GLB 수치는 최종 정리 후 결과다.
+최종 정리 모델의 [단독 정면](../../../artifacts/jelly-oasis/landmark-tree-detail-v1/blender-after-tree-isolated.png)과 [잎을 숨긴 가지 구조](../../../artifacts/jelly-oasis/landmark-tree-detail-v1/blender-after-tree-skeleton.png)도 별도 Blender scene에서 렌더했다. 전체 landmark 비교 렌더는 외형에 영향을 주지 않는 내부 중복 면 정리 전이며, 웹 비교·단독 렌더·GLB 수치는 최종 정리 후 결과다.
 
 라이브 Blender의 이전 전체 씬 export 호출은 응답 제한을 초과해 정상 복귀를 확인하지 못했다. 최종 저장 파일은 background Blender에서 독립적으로 읽고 내보내기·재임포트를 검증했다.
 

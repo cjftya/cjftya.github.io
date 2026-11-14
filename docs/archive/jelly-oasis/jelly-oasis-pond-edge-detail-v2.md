@@ -1,6 +1,6 @@
 # Jelly Oasis 연못 가장자리 v2
 
-이 문서는 후보 커밋 4cba769의 검증 기록입니다. 이후 사용자 요청으로 v2를 운영 기본값으로 전환했으며 현재 선택 경로는 [운영 안내](jelly-oasis/README.md)에서 확인해요.
+이 문서는 후보 커밋 4cba769의 검증 기록입니다. 이후 사용자 요청으로 v2를 운영 기본값으로 전환했으며 현재 선택 경로는 [운영 안내](../../jelly-oasis/README.md)에서 확인해요.
 비대칭 수면과 둑을 같은 57개 경계점으로 연결했습니다. 원래 타원 guide는 수면 높이를 정하는 기준으로 유지하고, v2 GLB extras에 저장한 별도 경계를 수면·검수 오버레이·연못 제외 영역에 함께 사용합니다. 폭이 다른 흙/풀 경사면과 크기가 다른 바위 3개 군집을 배치했습니다. 좁은 만의 경사면 접힘을 제거했고, 풀 구간에는 기존 지형 재질을 재사용해 주변 지면으로 이어지도록 했습니다.
 
 사용자의 후속 지시로 master 커밋·push는 승인되었습니다. production의 일반 URL은 기존 pond blockout을 유지합니다. v1 후보와 원본 GLB/layout 등 28개 파일의 SHA-256을 확인해 보존했습니다. 기준 HEAD는 e9d0176이며 원격 최신 여부는 푸시 시점 별도 확인합니다.
@@ -35,14 +35,14 @@ Blender top은 ORTHO, 중심 (0, −7, 0), distance 32, 최대 이미지 변 100
 
 | 시점             | v1                                                                                 | v2                                                                                |
 | ---------------- | ---------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
-| Blender top      | [이미지](../artifacts/jelly-oasis/pond-edge-detail-v2/blender-top-v1.png)          | [이미지](../artifacts/jelly-oasis/pond-edge-detail-v2/blender-top-v2.png)         |
-| overview         | [이미지](../artifacts/jelly-oasis/pond-edge-detail-v2/before-overview.png)         | [이미지](../artifacts/jelly-oasis/pond-edge-detail-v2/after-overview.png)         |
-| medium           | [이미지](../artifacts/jelly-oasis/pond-edge-detail-v2/before-medium.png)           | [이미지](../artifacts/jelly-oasis/modeling-review-before-crystal-v1/medium.png)   |
-| ground           | [이미지](../artifacts/jelly-oasis/pond-edge-detail-v2/before-ground.png)           | [이미지](../artifacts/jelly-oasis/pond-edge-detail-v2/after-ground.png)           |
-| waterfall-facing | [이미지](../artifacts/jelly-oasis/pond-edge-detail-v2/before-waterfall-facing.png) | [이미지](../artifacts/jelly-oasis/pond-edge-detail-v2/after-waterfall-facing.png) |
-| night            | [이미지](../artifacts/jelly-oasis/pond-edge-detail-v2/before-night.png)            | [이미지](../artifacts/jelly-oasis/pond-edge-detail-v2/after-night.png)            |
-| rain             | [이미지](../artifacts/jelly-oasis/pond-edge-detail-v2/before-rain.png)             | [이미지](../artifacts/jelly-oasis/pond-edge-detail-v2/after-rain.png)             |
-| mobile           | [이미지](../artifacts/jelly-oasis/pond-edge-detail-v2/before-mobile.png)           | [이미지](../artifacts/jelly-oasis/pond-edge-detail-v2/after-mobile.png)           |
+| Blender top      | [이미지](../../../artifacts/jelly-oasis/pond-edge-detail-v2/blender-top-v1.png)          | [이미지](../../../artifacts/jelly-oasis/pond-edge-detail-v2/blender-top-v2.png)         |
+| overview         | [이미지](../../../artifacts/jelly-oasis/pond-edge-detail-v2/before-overview.png)         | [이미지](../../../artifacts/jelly-oasis/pond-edge-detail-v2/after-overview.png)         |
+| medium           | [이미지](../../../artifacts/jelly-oasis/pond-edge-detail-v2/before-medium.png)           | [이미지](../../../artifacts/jelly-oasis/modeling-review-before-crystal-v1/medium.png)   |
+| ground           | [이미지](../../../artifacts/jelly-oasis/pond-edge-detail-v2/before-ground.png)           | [이미지](../../../artifacts/jelly-oasis/pond-edge-detail-v2/after-ground.png)           |
+| waterfall-facing | [이미지](../../../artifacts/jelly-oasis/pond-edge-detail-v2/before-waterfall-facing.png) | [이미지](../../../artifacts/jelly-oasis/pond-edge-detail-v2/after-waterfall-facing.png) |
+| night            | [이미지](../../../artifacts/jelly-oasis/pond-edge-detail-v2/before-night.png)            | [이미지](../../../artifacts/jelly-oasis/pond-edge-detail-v2/after-night.png)            |
+| rain             | [이미지](../../../artifacts/jelly-oasis/pond-edge-detail-v2/before-rain.png)             | [이미지](../../../artifacts/jelly-oasis/pond-edge-detail-v2/after-rain.png)             |
+| mobile           | [이미지](../../../artifacts/jelly-oasis/pond-edge-detail-v2/before-mobile.png)           | [이미지](../../../artifacts/jelly-oasis/pond-edge-detail-v2/after-mobile.png)           |
 
 상면과 중거리에서 타원이 비대칭 만으로 바뀌고, 지상에서는 v1의 밝은 고리·장식 둔덕 대신 풀 경사면이 지형과 이어집니다. 돌은 서쪽/남쪽/동쪽의 서로 다른 3개 군집이며 나머지 접근부는 비워 두었습니다. 저폴리곤 흙 접근부의 면과 경계는 일부 보입니다.
 
@@ -61,13 +61,13 @@ Blender top은 ORTHO, 중심 (0, −7, 0), distance 32, 최대 이미지 변 100
 
 ## 파일과 재현
 
-- [Blender v2](../artifacts/jelly-oasis/pond-edge-detail-v2/jelly-oasis-pond-edge-detail-v2.blend)
-- [GLB v2](../public/assets/jelly-oasis/landmarks/overgrown-ruin/PondEdge_Blockout_Detail_v2.glb)
-- [윤곽 데이터](../scripts/blender/pond-contour-v2.json)
-- [생성 스크립트](../scripts/blender/detail_pond_edge_v2.py): v1 blend를 열고 실행하면 새 v2를 저장합니다. 이미 생성된 v2를 중복 실행하지 않습니다.
-- [export 스크립트](../scripts/blender/export_pond_edge_v2.py): v2 scene에서 실행해 GLB와 health/reimport 기록을 생성합니다.
-- [QA 스크립트](../scripts/pond-detail-browser-qa.mjs): POND_QA_VERSION=v2, LANDMARK_QA_URL=로컬 서버, LANDMARK_QA_PRODUCTION_URL=preview URL을 설정하고 실행합니다.
-- [검증 요약](../artifacts/jelly-oasis/pond-edge-detail-v2/audit-summary.json), [메시](../artifacts/jelly-oasis/pond-edge-detail-v2/mesh-audit.json), [건강 검사](../artifacts/jelly-oasis/pond-edge-detail-v2/mesh-health.json), [브라우저 기록](../artifacts/jelly-oasis/pond-edge-detail-v2/browser-qa.json).
+- [Blender v2](../../../artifacts/jelly-oasis/pond-edge-detail-v2/jelly-oasis-pond-edge-detail-v2.blend)
+- [GLB v2](../../../public/assets/jelly-oasis/landmarks/overgrown-ruin/PondEdge_Blockout_Detail_v2.glb)
+- [윤곽 데이터](../../../scripts/blender/pond-contour-v2.json)
+- [생성 스크립트](../../../scripts/blender/detail_pond_edge_v2.py): v1 blend를 열고 실행하면 새 v2를 저장합니다. 이미 생성된 v2를 중복 실행하지 않습니다.
+- [export 스크립트](../../../scripts/blender/export_pond_edge_v2.py): v2 scene에서 실행해 GLB와 health/reimport 기록을 생성합니다.
+- [QA 스크립트](../../../scripts/pond-detail-browser-qa.mjs): POND_QA_VERSION=v2, LANDMARK_QA_URL=로컬 서버, LANDMARK_QA_PRODUCTION_URL=preview URL을 설정하고 실행합니다.
+- [검증 요약](../../../artifacts/jelly-oasis/pond-edge-detail-v2/audit-summary.json), [메시](../../../artifacts/jelly-oasis/pond-edge-detail-v2/mesh-audit.json), [건강 검사](../../../artifacts/jelly-oasis/pond-edge-detail-v2/mesh-health.json), [브라우저 기록](../../../artifacts/jelly-oasis/pond-edge-detail-v2/browser-qa.json).
 
 코드 변경은 createOvergrownRuin.ts / loadLandmarkAssets.ts / landmarkAudit.ts / landmarkDebug.ts / main.ts, 기존 v1 기반 접지와 debug 선택, 테스트 및 QA 스크립트에 한정됩니다. 전역 지형 생성이나 원본 layout을 수정하지 않았습니다.
 

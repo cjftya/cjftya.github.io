@@ -46,7 +46,7 @@ Framebuffer bind는 GL 명령 수이며 렌더 패스 수와 같은 의미가 �
 - 각 뷰포트에서 3회 재배치 후 텍스처·geometry 수가 증가하지 않았어요.
 - PC/모바일의 BFCache 복귀 이벤트와 실제 `WEBGL_lose_context` 손실·복구 후 렌더링·호수 캡처가 재개됐어요. 페이지/셰이더 오류는 없었어요.
 
-대표 비교: [밤·호수 전후 화면](../artifacts/jelly-oasis/performance-v1/visual-comparison.jpg).
+대표 비교: [밤·호수 전후 화면](../../../artifacts/jelly-oasis/performance-v1/visual-comparison.jpg).
 
 ## 자동 검사와 일반 재생
 
