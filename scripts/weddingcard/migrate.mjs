@@ -1,26 +1,14 @@
 // Pass file paths only, never paste a private key into arguments or logs.
-import { readFile, access } from 'node:fs/promises';
+import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { restoreLegacy, readProtected, writeProtected } from './content.mjs';
+import { readProtected, writeProtected } from './content.mjs';
 const root = resolve(fileURLToPath(new URL('../..', import.meta.url)));
 async function main() {
   const [mode, ...files] = process.argv.slice(2);
   const directory = resolve(root, 'projects/weddingcard/protected');
-  const publicPath = resolve(root, 'projects/weddingcard/security/public-key.pem');
   let data, privatePem;
-  if (mode === 'migrate' && files.length === 1) {
-    if (
-      await access(directory).then(
-        () => true,
-        () => false,
-      )
-    )
-      throw new Error('Protected content already exists; use rotate');
-    privatePem = await readFile(resolve(files[0]));
-    data = await restoreLegacy(root);
-    await writeProtected(directory, data, await readFile(publicPath), privatePem);
-  } else if (mode === 'verify' && files.length === 1) {
+  if (mode === 'verify' && files.length === 1) {
     privatePem = await readFile(resolve(files[0]));
     data = await readProtected(directory, privatePem);
   } else if (mode === 'rotate' && files.length === 3) {
@@ -39,7 +27,7 @@ async function main() {
     );
   } else {
     throw new Error(
-      'Usage: migrate|verify PRIVATE_KEY_FILE, or rotate OLD_PRIVATE NEW_PUBLIC NEW_PRIVATE',
+      'Usage: verify PRIVATE_KEY_FILE, or rotate OLD_PRIVATE NEW_PUBLIC NEW_PRIVATE',
     );
   }
   privatePem.fill(0);

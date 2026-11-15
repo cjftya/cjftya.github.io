@@ -1,5 +1,4 @@
 import { createHash } from 'node:crypto';
-import { execFileSync } from 'node:child_process';
 import {
   readFile,
   readdir,
@@ -17,70 +16,6 @@ import {
   decrypt,
   validateManifest,
 } from '../../projects/weddingcard/security/crypto.js';
-export const LEGACY_REVISION = 'ee664cffa7c38cceadfa5f1d825dfb4ae10a0fe2';
-export const PRIVATE_SCRIPTS = [
-  'scripts/scenes/main/objectinitializer.js',
-  'scripts/scenes/main/mainscene.js',
-  'scripts/module/map/mapview.js',
-  'scripts/module/directions/directions.js',
-];
-const prefix = 'projects/weddingcard/';
-export function legacySnapshot(root) {
-  function read(path) {
-    return execFileSync('git', ['show', `${LEGACY_REVISION}:${prefix}${path}`], {
-      cwd: root,
-      maxBuffer: 16 * 1024 * 1024,
-    });
-  }
-  const html = read('index.html').toString('utf8');
-  const oldWorker = read(
-    'scripts/common/util/framework/resourcemanger/resourceworker.js',
-  ).toString('utf8');
-  const match = oldWorker.match(/ENCRYPTED_IMAGE_KEY_HEX\s*=\s*"([a-f0-9]{64})"/);
-  if (!match) throw new Error('Legacy key not found in pinned revision');
-  const scripts = [...html.matchAll(/<script\s+src="([^"]+)"[^>]*><\/script>/g)]
-    .map((m) => m[1])
-    .filter((src) => !src.startsWith('https:') && !src.endsWith('p5.min.js'))
-    .map((src) =>
-      PRIVATE_SCRIPTS.includes(src) ? { code: read(src).toString('utf8') } : { src },
-    );
-  const paths = execFileSync(
-    'git',
-    ['ls-tree', '-r', '--name-only', LEGACY_REVISION, '--', prefix + 'assets/private'],
-    { cwd: root, encoding: 'utf8' },
-  )
-    .trim()
-    .split('\n')
-    .map((p) => p.slice(prefix.length));
-  return {
-    content: { body: html.match(/<body>([\s\S]*?)<\/body>/)[1], scripts },
-    images: paths.map((path) => ({ path, bytes: read(path) })),
-    oldKey: Buffer.from(match[1], 'hex'),
-  };
-}
-export async function restoreLegacy(root) {
-  const snapshot = legacySnapshot(root);
-  const key = await crypto.subtle.importKey('raw', snapshot.oldKey, 'AES-GCM', false, [
-    'decrypt',
-  ]);
-  snapshot.oldKey.fill(0);
-  const images = [];
-  for (const { path, bytes } of snapshot.images) {
-    if (bytes.subarray(0, 6).toString() !== 'WCIMG1')
-      throw new Error('Unexpected legacy image');
-    images.push({
-      path,
-      bytes: new Uint8Array(
-        await crypto.subtle.decrypt(
-          { name: 'AES-GCM', iv: bytes.subarray(6, 18) },
-          key,
-          bytes.subarray(18),
-        ),
-      ),
-    });
-  }
-  return { content: snapshot.content, images };
-}
 export async function readProtected(directory, privatePem) {
   const manifest = validateManifest(
     JSON.parse(await readFile(join(directory, 'manifest.json'), 'utf8')),

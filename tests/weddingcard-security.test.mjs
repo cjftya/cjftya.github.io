@@ -9,11 +9,7 @@ import {
   decrypt,
   toBase64,
 } from '../projects/weddingcard/security/crypto.js';
-import {
-  restoreLegacy,
-  writeProtected,
-  readProtected,
-} from '../scripts/weddingcard/content.mjs';
+import { writeProtected, readProtected } from '../scripts/weddingcard/content.mjs';
 import { checkWedding } from '../scripts/weddingcard/check.mjs';
 const paths = Array.from(
   { length: 18 },
@@ -121,21 +117,6 @@ it('validates real encrypted release files and rejects extra plaintext and modif
     await rm(temp, { recursive: true, force: true });
   }
 });
-it.skipIf(Boolean(process.env.CI))(
-  'recovers the pinned legacy content and all 18 photos in memory',
-  async () => {
-    const restored = await restoreLegacy(resolve('.'));
-    expect(restored.images).toHaveLength(18);
-    expect(restored.content.scripts.filter((s) => s.code)).toHaveLength(4);
-    for (const image of restored.images) {
-      expect(Buffer.from(image.bytes.subarray(0, 2)).toString('hex')).toMatch(
-        /^(ffd8|8950)$/,
-      );
-      image.bytes.fill(0);
-    }
-  },
-);
-
 it('distinguishes ZIP, public keys and old encrypted keys before attempting unlock', async () => {
   const { inspectKeyFile, keyFileErrorMessage } =
     await import('../projects/weddingcard/security/key-file.js');
