@@ -69,6 +69,7 @@ const galaxySchema = z.object({
 const projectSchema = z.object({
   id: slugSchema,
   galaxyId: slugSchema,
+  parentProjectId: slugSchema.optional(),
   name: z.string().trim().min(1),
   summary: z.string(),
   status: z.enum(['active', 'legacy', 'archived']),
@@ -153,6 +154,24 @@ const projectCollectionSchema = z
         });
       }
 
+      if (project.parentProjectId !== undefined) {
+        const parent = projects.find(
+          (candidate) => candidate.id === project.parentProjectId,
+        );
+        if (
+          parent === undefined ||
+          parent.id === project.id ||
+          parent.galaxyId !== project.galaxyId ||
+          parent.parentProjectId !== undefined
+        ) {
+          context.addIssue({
+            code: 'custom',
+            path: ['projects', index, 'parentProjectId'],
+            message:
+              'A satellite must reference a different root project in the same galaxy',
+          });
+        }
+      }
       projectIds.add(project.id);
     });
   });

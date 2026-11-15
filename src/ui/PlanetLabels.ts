@@ -30,7 +30,13 @@ export class PlanetLabels {
       label.hidden = true;
       label.dataset.projectId = project.id;
       label.style.setProperty('--planet-color', project.planet.surface.baseColor);
-      label.textContent = project.name;
+      const parent = projects.find(
+        (candidate) => candidate.id === project.parentProjectId,
+      );
+      const satelliteName =
+        project.name.replace(parent?.name ?? '', '').trim() || project.name;
+      label.textContent = parent === undefined ? project.name : `☾ ${satelliteName}`;
+      label.classList.toggle('satellite-label', project.parentProjectId !== undefined);
       label.setAttribute('aria-label', `${project.name} 프로젝트 보기`);
       label.setAttribute('aria-pressed', 'false');
       this.labels.set(project.id, label);

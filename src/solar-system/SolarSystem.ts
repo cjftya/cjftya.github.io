@@ -61,6 +61,18 @@ export class SolarSystem {
       this.scene.add(orbit.object, planet.orbitPlane);
     });
 
+    // Attach after building every project so JSON ordering does not affect parenting.
+    for (const planet of this.planets) {
+      const parentId = planet.project.parentProjectId;
+      if (parentId !== undefined) {
+        const parent = this.planetByProjectId.get(parentId)!;
+        parent.bodyAnchor.add(
+          planet.orbitPlane,
+          this.orbitByProjectId.get(planet.project.id)!.object,
+        );
+      }
+    }
+
     const reducedEffects =
       (navigator.hardwareConcurrency ?? 8) <= 4 ||
       window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -68,7 +80,9 @@ export class SolarSystem {
 
     galaxyIds.forEach((galaxyId) => {
       const galaxyPlanets = this.planets.filter(
-        (planet) => planet.project.galaxyId === galaxyId,
+        (planet) =>
+          planet.project.galaxyId === galaxyId &&
+          planet.project.parentProjectId === undefined,
       );
       const cosmicGarden = new CosmicGarden(galaxyPlanets, reducedEffects);
       this.cosmicGardenByGalaxyId.set(galaxyId, cosmicGarden);
@@ -190,8 +204,10 @@ export class SolarSystem {
     });
     this.cosmicGardenByGalaxyId.clear();
 
+    // Detach all satellite objects before traversing each planet's own resources.
+    this.planets.forEach((planet) => planet.orbitPlane.removeFromParent());
+    this.orbits.forEach((orbit) => orbit.object.removeFromParent());
     this.planets.forEach((planet) => {
-      this.scene.remove(planet.orbitPlane);
       planet.dispose();
     });
     this.orbits.forEach((orbit) => {

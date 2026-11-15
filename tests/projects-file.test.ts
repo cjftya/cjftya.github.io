@@ -21,12 +21,13 @@ describe('public/data/projects.json', () => {
       'jelly-markdown',
       'callisto',
       'storage-tracking',
+      'storage-tracking-android',
       'viola',
       'uriel',
       'virus-sim',
       'jelly-oasis',
     ]);
-    expect(collection.projects).toHaveLength(11);
+    expect(collection.projects).toHaveLength(12);
     expect(
       collection.galaxies.every(
         (galaxy) =>
@@ -46,7 +47,7 @@ describe('public/data/projects.json', () => {
     );
     expect(
       collection.projects.filter((project) => project.galaxyId === 'jelly-garden'),
-    ).toHaveLength(7);
+    ).toHaveLength(8);
     expect(
       collection.projects.filter((project) => project.galaxyId === 'pages-archive'),
     ).toHaveLength(4);
@@ -77,9 +78,9 @@ describe('public/data/projects.json', () => {
       github: null,
       page: '/projects/viola/',
     });
-    expect(
-      collection.projects.some((project) => project.id === 'wedding-card'),
-    ).toBe(false);
+    expect(collection.projects.some((project) => project.id === 'wedding-card')).toBe(
+      false,
+    );
     expect(
       collection.projects.find((project) => project.id === 'uriel')?.links,
     ).toEqual({

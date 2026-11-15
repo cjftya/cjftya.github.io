@@ -30,7 +30,7 @@ export class Planet {
   readonly selectableMesh: Mesh<BufferGeometry, MeshStandardMaterial>;
   readonly project: Project;
 
-  private readonly bodyAnchor = new Group();
+  readonly bodyAnchor = new Group();
   private readonly axisGroup = new Group();
   private readonly spinGroup = new Group();
   private readonly aura: Mesh<IcosahedronGeometry, MeshBasicMaterial>;
@@ -56,7 +56,10 @@ export class Planet {
     this.baseAuraOpacity = definition.status === 'active' ? 0.075 : 0.045;
     this.aura = this.createAura(definition);
     this.spores = this.createSpores(definition);
-    this.satelliteOrbit = ring === undefined ? this.createSatellite(definition) : null;
+    this.satelliteOrbit =
+      ring === undefined && definition.parentProjectId === undefined
+        ? this.createSatellite(definition)
+        : null;
 
     this.orbitPlane.rotation.z = MathUtils.degToRad(
       definition.planet.orbit.inclination,

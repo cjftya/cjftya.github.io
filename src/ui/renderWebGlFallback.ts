@@ -57,7 +57,10 @@ export function renderWebGlFallback(
             : document.createElement('a');
         const summary = document.createElement('span');
 
-        name.textContent = project.name;
+        name.textContent =
+          project.parentProjectId === undefined
+            ? project.name
+            : `↳ ${project.name} · 서브 프로젝트`;
         if (name instanceof HTMLAnchorElement && destination.href !== null) {
           name.href = destination.href;
 

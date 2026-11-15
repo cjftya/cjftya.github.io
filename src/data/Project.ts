@@ -96,6 +96,7 @@ export interface PlanetSettings {
 export interface Project {
   id: string;
   galaxyId: string;
+  parentProjectId?: string;
   name: string;
   summary: string;
   status: ProjectStatus;

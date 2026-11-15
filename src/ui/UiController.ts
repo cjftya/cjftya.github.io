@@ -116,6 +116,7 @@ export class UiController {
       this.viewport,
       callbacks.onCloseSelection,
       () => this.playTravelEffect(),
+      callbacks.onSelectProject,
     );
     this.galaxySwitcher.addEventListener('click', this.handleGalaxyClick);
     document.addEventListener('keydown', this.handleKeyDown);
@@ -144,6 +145,7 @@ export class UiController {
 
   showProjects(projects: Project[]): void {
     this.planetLabels.show(projects);
+    this.projectPanel.setProjects(projects);
   }
 
   showGalaxies(galaxies: Galaxy[]): void {

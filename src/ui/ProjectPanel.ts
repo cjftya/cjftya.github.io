@@ -8,6 +8,8 @@ const STATUS_LABELS: Record<ProjectStatus, string> = {
 };
 
 export class ProjectPanel {
+  private readonly family = document.createElement('nav');
+  private projects: Project[] = [];
   private readonly panel: HTMLElement;
   private readonly status: HTMLElement;
   private readonly category: HTMLElement;
@@ -25,6 +27,7 @@ export class ProjectPanel {
     private readonly viewport: HTMLElement,
     private readonly onClose: () => void,
     private readonly onShow: () => void,
+    private readonly onSelectProject: (projectId: string) => void,
   ) {
     this.panel = this.requireElement(root, '.project-panel');
     this.status = this.requireElement(root, '.project-status');
@@ -32,6 +35,9 @@ export class ProjectPanel {
     this.name = this.requireElement(root, '.project-panel h2');
     this.summary = this.requireElement(root, '.project-summary');
     this.description = this.requireElement(root, '.project-description');
+    this.family.className = 'project-family';
+    this.family.setAttribute('aria-label', '프로젝트 플랫폼 선택');
+    this.summary.before(this.family);
     this.techStack = this.requireElement(root, '.project-tech-stack');
     this.pageLink = this.requireElement(root, '.project-page-link', HTMLAnchorElement);
     this.githubLink = this.requireElement(
@@ -48,6 +54,10 @@ export class ProjectPanel {
     return this.panel.hidden === true;
   }
 
+  setProjects(projects: Project[]): void {
+    this.projects = projects;
+  }
+
   show(project: Project | null): void {
     this.panel.hidden = project === null;
     if (project === null) {
@@ -58,6 +68,28 @@ export class ProjectPanel {
     this.viewport.style.setProperty(
       '--project-color',
       project.planet.surface.baseColor,
+    );
+    const rootId = project.parentProjectId ?? project.id;
+    const family = this.projects.filter(
+      (candidate) => candidate.id === rootId || candidate.parentProjectId === rootId,
+    );
+    this.family.hidden = family.length < 2;
+    this.family.replaceChildren(
+      ...family.map((member) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'project-link';
+        const rootName =
+          this.projects.find((candidate) => candidate.id === rootId)?.name ?? '';
+        const satelliteName = member.name.replace(rootName, '').trim() || member.name;
+        button.textContent =
+          member.parentProjectId === undefined
+            ? 'PC · 본행성'
+            : `${satelliteName} · 위성`;
+        button.setAttribute('aria-pressed', String(member.id === project.id));
+        button.onclick = () => this.onSelectProject(member.id);
+        return button;
+      }),
     );
     this.name.textContent = project.name;
     this.status.textContent = STATUS_LABELS[project.status];
