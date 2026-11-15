@@ -20,7 +20,7 @@ export default defineConfig({
   },
   build: {
     target: 'es2022',
-    sourcemap: true,
+    sourcemap: false,
     chunkSizeWarningLimit: 700,
     rollupOptions: {
       input: Object.fromEntries(

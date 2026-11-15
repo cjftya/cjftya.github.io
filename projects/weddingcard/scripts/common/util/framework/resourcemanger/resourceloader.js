@@ -40,7 +40,7 @@ class ResourceLoader {
         if (this.__typeMap[ThreadType.Background].size == 0) {
             return;
         }
-        const worker = new Worker("scripts/common/util/framework/resourcemanger/resourceworker.js");
+        const worker = window.WeddingResources.worker;
         const imgElements = document.querySelectorAll('img[data-src]');
         imgElements.forEach(imageElement => {
             var imgUrl = imageElement.getAttribute('data-src');
@@ -52,11 +52,12 @@ class ResourceLoader {
         worker.addEventListener('message', event => {
             const imageData = event.data;
             const imageElement = document.querySelector(`img[data-src='${imageData.imgUrl}']`);
-            const objectURL = URL.createObjectURL(imageData.blob);
+            const objectURL = window.WeddingResources.trackURL(imageData.blob);
 
             imageElement.onload = () => {
                 imageElement.removeAttribute('data-src');
-                URL.revokeObjectURL(objectURL);
+                // Gallery viewer needs this URL until the page is closed.
+
 
                 if (imageData.imgUrl.indexOf("/viewer/") < 0) {
                     var canvas = document.createElement("canvas");
