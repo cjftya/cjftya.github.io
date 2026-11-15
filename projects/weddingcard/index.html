@@ -10,7 +10,7 @@
   <title>Wedding Card</title>
   <link rel="stylesheet" href="security/lock.css">
   <link rel="stylesheet" href="security/viewer.min.css">
-  <script type="module" src="security/lock.js"></script>
+  <script type="module" src="security/lock.js?v=3.1"></script>
 </head>
 <body>
   <main id="lock">
@@ -18,8 +18,8 @@
       <h1>Wedding Card</h1>
       <p>소중한 추억을 담은 초대장이에요.<br>전달받은 개인키 파일을 선택해 주세요.</p>
       <label for="key-file">개인키 파일</label>
-      <input id="key-file" type="file" accept=".pem,.key" aria-describedby="key-help">
-      <p id="key-help">파일은 서버로 전송하지 않고 이 페이지 안에서만 사용해요.</p>
+      <input id="key-file" type="file" aria-describedby="key-help">
+      <p id="key-help">weddingcard-private.pem을 선택해 주세요. ZIP은 먼저 압축을 풀어 주세요. 파일은 기기 안에서만 사용해요.</p>
       <button type="submit">초대장 열기</button>
       <p id="status" role="status" aria-live="polite"></p>
     </form>
