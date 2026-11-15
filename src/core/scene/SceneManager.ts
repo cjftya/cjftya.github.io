@@ -1,4 +1,10 @@
-import { AmbientLight, Color, HemisphereLight, Scene } from 'three';
+import {
+  AmbientLight,
+  Color,
+  HemisphereLight,
+  Scene,
+  type PerspectiveCamera,
+} from 'three';
 import type { Galaxy } from '../../data/Project';
 import { SpaceBackdrop } from './SpaceBackdrop';
 
@@ -18,12 +24,12 @@ export class SceneManager {
     );
   }
 
-  update(deltaSeconds: number): void {
+  update(deltaSeconds: number, camera: PerspectiveCamera): void {
     this.backgroundColor.lerp(
       this.targetBackgroundColor,
       1 - Math.exp(-deltaSeconds * 3.2),
     );
-    this.backdrop.update(deltaSeconds);
+    this.backdrop.update(deltaSeconds, camera);
   }
 
   setGalaxy(galaxy: Galaxy): void {

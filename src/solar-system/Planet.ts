@@ -66,7 +66,13 @@ export class Planet {
     );
     this.orbitPlane.rotation.y = MathUtils.degToRad(definition.planet.orbit.startAngle);
     this.bodyAnchor.position.x = definition.planet.orbit.radius;
-    this.axisGroup.rotation.z = MathUtils.degToRad(definition.planet.rotation.axisTilt);
+    const axisRandom = this.createSeededRandom(definition.planet.seed + 1709);
+    this.axisGroup.rotation.y = axisRandom() * Math.PI * 2;
+    // Keep the authored tilt as the base, with occasional near-sideways planets.
+    const extraTilt = axisRandom() < 0.22 ? 60 : 0;
+    this.axisGroup.rotation.z = MathUtils.degToRad(
+      definition.planet.rotation.axisTilt + extraTilt,
+    );
 
     this.spinGroup.add(this.selectableMesh);
     this.axisGroup.add(this.aura, this.spores);
