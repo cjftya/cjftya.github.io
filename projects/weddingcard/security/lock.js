@@ -1,4 +1,10 @@
 import { inspectKeyFile, keyFileErrorMessage } from './key-file.js?v=1';
+// Keep key selection unavailable when embedded, including sandboxed frames.
+if (window.top !== window.self) {
+  document.body.replaceChildren();
+  throw new Error('Open Wedding Card in a standalone tab.');
+}
+document.body.hidden = false;
 const form = document.querySelector('#unlock-form');
 const input = document.querySelector('#key-file');
 const status = document.querySelector('#status');
