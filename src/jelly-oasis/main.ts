@@ -8,6 +8,7 @@ import { RendererManager } from '../shared/rendering/RendererManager';
 import { createTerrainMesh, createTerrainEdgeMesh } from './terrain/createTerrain';
 import { prepareTerrain } from './terrain/prepareTerrain';
 import { EnvironmentController } from './environment/EnvironmentController';
+import { RealitySync } from './environment/RealitySync';
 import { createEnvironmentPanel } from './environment/debugPanel';
 import { createTerrainSurface } from './terrain/terrainSurface';
 import { createSurfaceDebug } from './terrain/debugSurface';
@@ -132,6 +133,8 @@ async function start(canvas: HTMLCanvasElement): Promise<void> {
   };
   controls.addEventListener('change', invalidate);
   controls.addEventListener('start', cameraRig.releaseFraming);
+  const reality = new RealitySync(environment, invalidate);
+  reality.locate();
   const debugPanel = createEnvironmentPanel(
     environment,
     renderer,
@@ -144,6 +147,7 @@ async function start(canvas: HTMLCanvasElement): Promise<void> {
       ]!.value as Vector3;
       cameraRig.sky(direction);
     },
+    reality,
   );
   const surfaceDebug = debugEnabled
     ? createSurfaceDebug(terrain, surface, invalidate)
@@ -241,10 +245,7 @@ async function start(canvas: HTMLCanvasElement): Promise<void> {
       invalidate();
     });
   function motionChanged(): void {
-    if (motionPreference.matches) {
-      environment.setPlaying(false);
-      environment.setAutoWeather(false);
-    }
+    environment.setReducedMotion(motionPreference.matches);
     dirty = true;
   }
   motionPreference.addEventListener('change', motionChanged);
@@ -273,6 +274,7 @@ async function start(canvas: HTMLCanvasElement): Promise<void> {
     const frameStart = debugEnabled ? performance.now() : 0;
     const firstPass = renderer.info.render.frame;
     if (debugEnabled) renderer.info.reset();
+    reality.tick();
     if (cameraRig.update()) dirty = true;
     if (
       environment.update(
@@ -283,12 +285,19 @@ async function start(canvas: HTMLCanvasElement): Promise<void> {
       )
     )
       dirty = true;
-    if (landmark?.wind.update(seconds, environment.profile, motionPreference.matches))
+    if (
+      landmark?.wind.update(
+        seconds,
+        environment.profile,
+        motionPreference.matches,
+        environment.windDirection,
+      )
+    )
       dirty = true;
     if (
       landmark?.waterEffects?.update(
         seconds,
-        environment.state.timeOfDay,
+        environment.lightingTimeOfDay,
         motionPreference.matches,
         `${environment.state.weather}:${environment.state.weatherBlend.toFixed(2)}`,
         environment.profile.rainIntensity,
@@ -298,7 +307,7 @@ async function start(canvas: HTMLCanvasElement): Promise<void> {
     if (
       landmark?.fantasy?.update(
         seconds,
-        environment.state.timeOfDay,
+        environment.lightingTimeOfDay,
         motionPreference.matches,
         canvas.clientHeight * renderer.getPixelRatio(),
         environment.profile.cloudDarkness,
@@ -326,7 +335,7 @@ async function start(canvas: HTMLCanvasElement): Promise<void> {
     }
     document.documentElement.classList.toggle(
       'oasis-night',
-      environment.state.timeOfDay >= 19.5 || environment.state.timeOfDay < 6,
+      environment.lightingTimeOfDay >= 19.5 || environment.lightingTimeOfDay < 6,
     );
   }
 
@@ -355,6 +364,7 @@ async function start(canvas: HTMLCanvasElement): Promise<void> {
     surfaceDebug?.dispose();
     edge.geometry.dispose();
     edge.material.dispose();
+    reality.dispose();
     environment.dispose();
     pondPanel?.remove();
     debugPanel?.dispose();

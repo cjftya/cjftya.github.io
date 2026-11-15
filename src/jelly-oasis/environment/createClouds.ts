@@ -44,22 +44,30 @@ export function createClouds() {
     }
   }
   const transform = new Object3D();
-  function update(seconds: number, coverage: number, darkness: number): void {
+  function update(
+    seconds: number,
+    coverage: number,
+    darkness: number,
+    drift?: { x: number; z: number },
+  ): void {
     for (let cluster = 0; cluster < clusters; cluster++) {
       // Grow/shrink complete clusters smoothly instead of popping the instance count.
       const scale = Math.min(1, Math.max(0, coverage * clusters - cluster));
       const smoothed = scale * scale * (3 - 2 * scale);
-      let x = ((origins[cluster * 3]! + seconds * 1.7 + 360) % 720) - 360;
+      let x = ((origins[cluster * 3]! + (drift?.x ?? seconds * 1.7) + 360) % 720) - 360;
       if (x < -360) x += 720;
+      const z =
+        ((((origins[cluster * 3 + 2]! + (drift?.z ?? 0) + 360) % 720) + 720) % 720) -
+        360;
       // Fade at the wrap boundary so recycled clusters cannot jump visibly.
-      const edgeFade = Math.min(1, (360 - Math.abs(x)) / 65);
+      const edgeFade = Math.min(1, (360 - Math.abs(x)) / 65, (360 - Math.abs(z)) / 65);
       for (let puff = 0; puff < puffs; puff++) {
         const index = cluster * puffs + puff;
         const i = index * 6;
         transform.position.set(
           x + data[i]!,
           origins[cluster * 3 + 1]! + data[i + 1]! - darkness * 18,
-          origins[cluster * 3 + 2]! + data[i + 2]!,
+          z + data[i + 2]!,
         );
         transform.scale
           .set(data[i + 3]!, data[i + 4]!, data[i + 5]!)

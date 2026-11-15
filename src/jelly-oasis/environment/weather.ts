@@ -4,6 +4,9 @@ export const WEATHER_PRESETS = [
   'OVERCAST',
   'RAIN',
   'MIST',
+  'DRIZZLE',
+  'SNOW',
+  'THUNDERSTORM',
 ] as const;
 export type WeatherPreset = (typeof WEATHER_PRESETS)[number];
 export interface WeatherProfile {
@@ -15,6 +18,8 @@ export interface WeatherProfile {
   ambientMultiplier: number;
   fogStrength: number;
   rainIntensity: number;
+  snowIntensity: number;
+  lightning: number;
 }
 export const WEATHER_PROFILES: Record<WeatherPreset, Readonly<WeatherProfile>> = {
   CLEAR: {
@@ -26,6 +31,8 @@ export const WEATHER_PROFILES: Record<WeatherPreset, Readonly<WeatherProfile>> =
     ambientMultiplier: 1,
     fogStrength: 0.08,
     rainIntensity: 0,
+    snowIntensity: 0,
+    lightning: 0,
   },
   PARTLY_CLOUDY: {
     windStrength: 0.46,
@@ -36,6 +43,8 @@ export const WEATHER_PROFILES: Record<WeatherPreset, Readonly<WeatherProfile>> =
     ambientMultiplier: 0.96,
     fogStrength: 0.15,
     rainIntensity: 0,
+    snowIntensity: 0,
+    lightning: 0,
   },
   OVERCAST: {
     windStrength: 0.54,
@@ -46,6 +55,8 @@ export const WEATHER_PROFILES: Record<WeatherPreset, Readonly<WeatherProfile>> =
     ambientMultiplier: 0.88,
     fogStrength: 0.48,
     rainIntensity: 0,
+    snowIntensity: 0,
+    lightning: 0,
   },
   RAIN: {
     windStrength: 0.65,
@@ -56,6 +67,44 @@ export const WEATHER_PROFILES: Record<WeatherPreset, Readonly<WeatherProfile>> =
     ambientMultiplier: 0.82,
     fogStrength: 0.66,
     rainIntensity: 0.85,
+    snowIntensity: 0,
+    lightning: 0,
+  },
+  DRIZZLE: {
+    windStrength: 0.4,
+    windGust: 0.1,
+    cloudCoverage: 0.9,
+    cloudDarkness: 0.55,
+    sunlightMultiplier: 0.3,
+    ambientMultiplier: 0.9,
+    fogStrength: 0.55,
+    rainIntensity: 0.2,
+    snowIntensity: 0,
+    lightning: 0,
+  },
+  SNOW: {
+    windStrength: 0.4,
+    windGust: 0.15,
+    cloudCoverage: 1,
+    cloudDarkness: 0.5,
+    sunlightMultiplier: 0.3,
+    ambientMultiplier: 0.9,
+    fogStrength: 0.65,
+    rainIntensity: 0,
+    snowIntensity: 0.7,
+    lightning: 0,
+  },
+  THUNDERSTORM: {
+    windStrength: 0.8,
+    windGust: 0.2,
+    cloudCoverage: 1,
+    cloudDarkness: 0.95,
+    sunlightMultiplier: 0.12,
+    ambientMultiplier: 0.75,
+    fogStrength: 0.7,
+    rainIntensity: 1,
+    snowIntensity: 0,
+    lightning: 1,
   },
   MIST: {
     windStrength: 0.25,
@@ -66,6 +115,8 @@ export const WEATHER_PROFILES: Record<WeatherPreset, Readonly<WeatherProfile>> =
     ambientMultiplier: 0.94,
     fogStrength: 1,
     rainIntensity: 0,
+    snowIntensity: 0,
+    lightning: 0,
   },
 };
 export const WEATHER_LABELS: Record<WeatherPreset, string> = {
@@ -73,7 +124,10 @@ export const WEATHER_LABELS: Record<WeatherPreset, string> = {
   PARTLY_CLOUDY: '구름 조금',
   OVERCAST: '흐림',
   RAIN: '비',
-  MIST: '옅은 안개',
+  MIST: '안개',
+  DRIZZLE: '이슬비',
+  SNOW: '눈',
+  THUNDERSTORM: '뇌우',
 };
 const CHANNELS = Object.keys(WEATHER_PROFILES.CLEAR) as (keyof WeatherProfile)[];
 export function blendWeather(

@@ -88,7 +88,12 @@ export class VegetationWind {
   private materials = new Map<Material, MeshStandardMaterial>();
   private depths = new Map<Material, MeshDepthMaterial>();
 
-  update(seconds: number, weather: Readonly<WeatherProfile>, reducedMotion: boolean) {
+  update(
+    seconds: number,
+    weather: Readonly<WeatherProfile>,
+    reducedMotion: boolean,
+    direction?: { x: number; z: number },
+  ) {
     const u = this.uniforms;
     const wasMoving = u.oasisWindStrength.value > 0 || u.oasisWindGust.value > 0;
     if (!this.enabled) {
@@ -100,7 +105,10 @@ export class VegetationWind {
     u.oasisWindTime.value += dt;
     const t = u.oasisWindTime.value;
     const angle = 0.6 + 0.28 * Math.sin(t * 0.025) + 0.12 * Math.sin(t * 0.067);
-    u.oasisWindDirection.value.set(Math.cos(angle), Math.sin(angle));
+    u.oasisWindDirection.value.set(
+      direction?.x ?? Math.cos(angle),
+      direction?.z ?? Math.sin(angle),
+    );
     // Keep the breeze alive on every device. Reduced motion softens movement
     // instead of silently freezing the entire landscape. No device-specific gain.
     const blend = 1 - Math.exp(-dt * 1.8);

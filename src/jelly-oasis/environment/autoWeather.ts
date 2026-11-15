@@ -8,6 +8,9 @@ const WEIGHTS: Record<WeatherPreset, readonly number[]> = {
   OVERCAST: [1, 4, 0, 5, 3],
   RAIN: [0.1, 1, 7, 0, 4],
   MIST: [2, 3, 5, 1, 0],
+  DRIZZLE: [0.1, 1, 7, 3, 4],
+  SNOW: [0.1, 1, 7, 0, 4],
+  THUNDERSTORM: [0.1, 1, 5, 7, 1],
 };
 
 /** No wall-clock timers: hidden pages cannot accumulate missed weather changes. */

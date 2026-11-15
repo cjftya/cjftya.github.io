@@ -5,11 +5,16 @@ import {
   Group,
   HemisphereLight,
   MathUtils,
+  PointLight,
   SRGBColorSpace,
   Vector3,
 } from 'three';
 import type { PerspectiveCamera, Scene } from 'three';
 import { createClouds } from './createClouds';
+import { createSnow } from './createSnow';
+import { solarFrame } from './realTime';
+import type { GeoLocation } from './realTime';
+import type { LiveConditions } from './liveWeather';
 import { createRain } from './createRain';
 import { createSky } from './createSky';
 import { AutoWeather } from './autoWeather';
@@ -23,6 +28,17 @@ export class EnvironmentController {
   readonly sky = createSky();
   readonly clouds = createClouds();
   readonly rain: ReturnType<typeof createRain>;
+  readonly snow: ReturnType<typeof createSnow>;
+  readonly lightning = new PointLight('#d8e4ff', 0, 700, 0);
+  realtimeTime = false;
+  liveWeather = false;
+  realtimeLocation: GeoLocation | null = null;
+  windDirection: { x: number; z: number } | undefined;
+  private clockNow = Date.now();
+  private liveTarget: WeatherProfile | null = null;
+  private flashWait = 14;
+  private flashRemaining = 0;
+  private reducedMotion: boolean;
   readonly sun = new DirectionalLight('#fff0d0', 2.5);
   readonly moon = new DirectionalLight('#aadbe9', 0.5);
   readonly sanctuaryRim = new DirectionalLight('#79dfd6', 0.45);
@@ -50,6 +66,7 @@ export class EnvironmentController {
   private readonly cloudStorm = new Color('#727f8d');
   private readonly shadowFocus = new Vector3(0, 20, 0);
   private elapsed = 0;
+  private readonly cloudDrift = { x: 0, z: 0 };
   private cloudAge = Infinity;
   private changed = true;
 
@@ -60,6 +77,7 @@ export class EnvironmentController {
     weatherSeed?: number,
     worldSize = 224,
   ) {
+    this.reducedMotion = reducedMotion;
     this.autoWeather = new AutoWeather(weatherSeed, !reducedMotion);
     this.state = {
       timeOfDay: 10,
@@ -71,11 +89,15 @@ export class EnvironmentController {
     this.rain = createRain(
       mobile ? this.config.mobileRainCount : this.config.desktopRainCount,
     );
+    this.snow = createSnow(mobile ? 180 : 420);
+    this.lightning.position.set(0, 100, -50);
     this.root.name = 'OasisEnvironment';
     this.root.add(
       this.sky.group,
       this.clouds.mesh,
       this.rain.mesh,
+      this.snow.mesh,
+      this.lightning,
       this.sun,
       this.sun.target,
       this.moon,
@@ -143,14 +165,20 @@ export class EnvironmentController {
     }
   }
   setAutoWeather(enabled: boolean): void {
+    if (enabled) {
+      this.liveWeather = false;
+      this.clearLiveConditions();
+    }
     this.autoWeather.setEnabled(enabled);
     this.changed = true;
   }
   setTime(hour: number): void {
+    this.realtimeTime = false;
     this.state.timeOfDay = wrapTime(hour);
     this.changed = true;
   }
   setPlaying(value: boolean): void {
+    this.realtimeTime = false;
     this.state.playing = value;
     this.changed = true;
   }
@@ -159,6 +187,8 @@ export class EnvironmentController {
   }
   setWeather(weather: WeatherPreset): void {
     if (!(weather in WEATHER_PROFILES)) return;
+    this.liveWeather = false;
+    this.clearLiveConditions();
     this.setAutoWeather(false);
     this.transitionWeather(weather);
   }
@@ -167,6 +197,48 @@ export class EnvironmentController {
     Object.assign(this.from, this.profile);
     this.state.weather = weather;
     this.state.weatherBlend = 0;
+    this.changed = true;
+  }
+  setReducedMotion(reduced: boolean): void {
+    this.reducedMotion = reduced;
+    if (this.realtimeTime) this.state.playing = !reduced;
+    else if (reduced) this.state.playing = false;
+    if (reduced) this.setAutoWeather(false);
+    this.changed = true;
+  }
+  setRealtimeTime(enabled: boolean): void {
+    this.realtimeTime = enabled;
+    if (enabled) this.state.playing = !this.reducedMotion;
+    this.changed = true;
+  }
+  syncClock(now: number, hour: number): void {
+    this.clockNow = now;
+    this.state.timeOfDay = wrapTime(hour);
+    this.changed = true;
+  }
+  get lightingTimeOfDay(): number {
+    return this.realtimeTime && this.realtimeLocation
+      ? solarFrame(this.clockNow, this.realtimeLocation).lightingHour
+      : this.state.timeOfDay;
+  }
+  clearLiveConditions(reset = false): void {
+    if (reset) this.state.weather = 'CLEAR';
+    this.liveTarget = null;
+    this.windDirection = undefined;
+    Object.assign(this.from, this.profile);
+    this.state.weatherBlend = 0;
+    this.changed = true;
+  }
+  applyLiveConditions(conditions: LiveConditions): void {
+    if (!this.liveWeather) return;
+    this.autoWeather.setEnabled(false);
+    Object.assign(this.from, this.profile);
+    this.liveTarget = { ...conditions.profile };
+    this.state.weather = conditions.preset;
+    this.state.weatherBlend = 0;
+    // Meteorological direction is where wind comes FROM.
+    const angle = (conditions.windDirection * Math.PI) / 180;
+    this.windDirection = { x: -Math.sin(angle), z: Math.cos(angle) };
     this.changed = true;
   }
   get animated(): boolean {
@@ -190,16 +262,21 @@ export class EnvironmentController {
     const advancing = this.state.playing && dt > 0;
     const transitioning = this.state.weatherBlend < 1;
     if (advancing) {
-      this.state.timeOfDay = advanceTime(
-        this.state.timeOfDay,
-        dt,
-        this.config.cycleSeconds,
-        this.state.speed,
-      );
+      if (!this.realtimeTime)
+        this.state.timeOfDay = advanceTime(
+          this.state.timeOfDay,
+          dt,
+          this.config.cycleSeconds,
+          this.state.speed,
+        );
       this.elapsed += dt;
+      this.cloudDrift.x +=
+        dt * (this.windDirection?.x ?? 1) * this.profile.windStrength * 4;
+      this.cloudDrift.z +=
+        dt * (this.windDirection?.z ?? 0) * this.profile.windStrength * 4;
     }
     if (transitioning) {
-      const duration = this.config.transitionSeconds;
+      const duration = this.liveTarget ? 30 : this.config.transitionSeconds;
       this.state.weatherBlend = Math.min(
         1,
         this.state.weatherBlend +
@@ -207,13 +284,14 @@ export class EnvironmentController {
       );
       blendWeather(
         this.from,
-        WEATHER_PROFILES[this.state.weather],
+        this.liveTarget ?? WEATHER_PROFILES[this.state.weather],
         this.state.weatherBlend,
         this.profile,
       );
     }
     this.sky.group.position.copy(camera.position);
     this.rain.mesh.position.copy(camera.position);
+    this.snow.mesh.position.copy(camera.position);
     this.sky.starMaterial.uniforms.pixelRatio!.value = pixelRatio;
     // Camera-relative fog preserves the terrain at both close and overview zoom.
     // Keep the focal basin clear in fair weather; mist/rain retain their veil.
@@ -225,7 +303,14 @@ export class EnvironmentController {
     this.scene.fog = this.fogEnabled ? this.fog : null;
     const needsUpdate = this.changed || advancing || transitioning;
     if (!needsUpdate) return false;
-    const frame = sampleTime(this.state.timeOfDay, this.timeFrame);
+    const frame = sampleTime(this.lightingTimeOfDay, this.timeFrame);
+    if (this.realtimeTime && this.realtimeLocation) {
+      const solar = solarFrame(this.clockNow, this.realtimeLocation);
+      frame.elevation = solar.elevation;
+      frame.azimuth = solar.azimuth;
+      frame.sunlight *= MathUtils.smoothstep(solar.altitude, -0.833, 3);
+      frame.stars = 1 - MathUtils.smoothstep(solar.altitude, -8, 0);
+    }
     const weather = this.profile;
     const night = frame.stars;
     const u = this.sky.material.uniforms;
@@ -243,7 +328,9 @@ export class EnvironmentController {
     u.cloudDarkness!.value = weather.cloudDarkness;
     u.cloudsEnabled!.value = this.cloudsEnabled ? 1 : 0;
     // Continuous art-directed path; the actual light fades out below the horizon.
-    const angle = Math.asin(frame.elevation) * 0.78;
+    const angle =
+      Math.asin(frame.elevation) *
+      (this.realtimeTime && this.realtimeLocation ? 1 : 0.78);
     this.sun.position
       .set(
         Math.cos(frame.azimuth) * Math.cos(angle),
@@ -297,8 +384,35 @@ export class EnvironmentController {
       .lerp(this.cloudStorm, weather.cloudDarkness * (1 - night * 0.4));
     this.cloudAge += dt;
     if (this.changed || transitioning || this.cloudAge >= 0.05) {
-      this.clouds.update(this.elapsed, weather.cloudCoverage, weather.cloudDarkness);
+      this.clouds.update(
+        this.elapsed,
+        weather.cloudCoverage,
+        weather.cloudDarkness,
+        this.cloudDrift,
+      );
       this.cloudAge = 0;
+    }
+    this.snow.mesh.visible = weather.snowIntensity > 0.005;
+    const snowUniforms = this.snow.mesh.material.uniforms;
+    snowUniforms.elapsed!.value = this.elapsed;
+    snowUniforms.intensity!.value = weather.snowIntensity;
+    snowUniforms.pixelRatio!.value = pixelRatio;
+    snowUniforms.windX!.value =
+      (this.windDirection?.x ?? 0.5) * weather.windStrength * 4;
+    snowUniforms.windZ!.value = (this.windDirection?.z ?? 0) * weather.windStrength * 4;
+    // One soft illumination pulse, with no rapid flashes or extra shadow map.
+    if (!this.reducedMotion && this.state.playing && weather.lightning > 0.5) {
+      this.flashWait -= dt;
+      if (this.flashWait <= 0) {
+        this.flashRemaining = 0.8;
+        this.flashWait = 18 + Math.random() * 22;
+      }
+      this.flashRemaining = Math.max(0, this.flashRemaining - dt);
+      this.lightning.intensity =
+        Math.sin((this.flashRemaining / 0.8) * Math.PI) * 2 * weather.lightning;
+    } else {
+      this.lightning.intensity = 0;
+      this.flashRemaining = 0;
     }
     this.rain.mesh.visible = weather.rainIntensity > 0.005;
     this.rain.mesh.material.uniforms.elapsed!.value = this.elapsed;
@@ -312,6 +426,8 @@ export class EnvironmentController {
     this.sky.dispose();
     this.clouds.dispose();
     this.rain.dispose();
+    this.snow.dispose();
+    this.lightning.dispose();
     this.sun.dispose();
     this.moon.dispose();
     this.ambient.dispose();

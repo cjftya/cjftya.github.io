@@ -1,4 +1,5 @@
 import type { WebGLRenderer } from 'three';
+import type { RealitySync } from './RealitySync';
 import type { EnvironmentController } from './EnvironmentController';
 import { WEATHER_LABELS, WEATHER_PRESETS } from './weather';
 import type { WeatherPreset } from './weather';
@@ -10,15 +11,24 @@ export function createEnvironmentPanel(
   setShadows: (value: boolean) => void,
   debugEnabled = false,
   viewSky?: () => void,
+  reality?: RealitySync,
 ) {
   const panel = document.createElement('details');
   panel.id = 'environment-debug';
   panel.open = false;
   panel.innerHTML = `<summary aria-expanded="false">Environment · 환경</summary>
+    <div ${reality ? '' : 'hidden'}>
+      <label><input id="environment-real-time" type="checkbox" checked> 현지 실제 시간</label>
+      <label><input id="environment-real-weather" type="checkbox" checked> 현재 위치 날씨</label>
+      <button type="button" id="environment-location">현재 위치 다시 확인</button>
+      <p id="environment-sync-status" role="status"></p>
+      <small>위치 허용 시 대략적인 좌표를 날씨 제공자에게 전달해요. 위치는 저장하지 않아요.
+      <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Weather data by Open-Meteo</a> · 기상 모델 기반</small>
+    </div>
     <label>시간 <output id="environment-time-label"></output><input id="environment-time" aria-label="시간" type="range" min="0" max="23.99" step="0.01"></label>
-    <div class="debug-row"><button type="button" id="environment-play"></button><label>속도 <select id="environment-speed" aria-label="시간 속도"><option value="0.25">0.25×</option><option value="1" selected>1×</option><option value="4">4×</option><option value="12">12×</option></select></label></div>
+    <div class="debug-row"><button type="button" id="environment-play"></button><label>속도 <select id="environment-speed" aria-label="시간 속도"><option value="0.25">0.25×</option><option value="1" selected>1× (16분/일)</option><option value="4">4×</option><option value="12">12×</option></select></label></div>
     <label>날씨 <select id="environment-weather" aria-label="날씨">${WEATHER_PRESETS.map((p) => `<option value="${p}">${WEATHER_LABELS[p]}</option>`).join('')}</select></label>
-    <label><input id="environment-auto-weather" type="checkbox"> 자동 날씨 · 시간 정지 중에도 진행</label>
+    <label><input id="environment-auto-weather" type="checkbox"> 랜덤 날씨 · 실제 날씨 연동 해제</label>
     <button type="button" id="environment-sky" ${viewSky ? '' : 'hidden'}>하늘 보기</button>
     <div class="debug-row" ${debugEnabled ? '' : 'hidden'}><label><input id="environment-clouds" type="checkbox" checked> 구름</label><label><input id="environment-fog" type="checkbox" checked> 안개</label><label><input id="environment-shadows" type="checkbox"> 그림자</label></div>
     <output id="environment-stats" ${debugEnabled ? '' : 'hidden'}></output>`;
@@ -33,8 +43,39 @@ export function createEnvironmentPanel(
     '#environment-auto-weather',
   )!;
   const weather = panel.querySelector<HTMLSelectElement>('#environment-weather')!;
+  const realTime = panel.querySelector<HTMLInputElement>('#environment-real-time')!;
+  const realWeather = panel.querySelector<HTMLInputElement>(
+    '#environment-real-weather',
+  )!;
+  const syncStatus = panel.querySelector<HTMLElement>('#environment-sync-status')!;
   const events = new AbortController();
   const options = { signal: events.signal };
+  realTime.addEventListener(
+    'change',
+    () => {
+      environment.setRealtimeTime(realTime.checked);
+      invalidate();
+    },
+    options,
+  );
+  realWeather.addEventListener(
+    'change',
+    () => {
+      environment.liveWeather = realWeather.checked;
+      environment.setAutoWeather(false);
+      if (!realWeather.checked) environment.clearLiveConditions();
+      else if (!reality?.location) reality?.locate();
+      invalidate();
+    },
+    options,
+  );
+  panel.querySelector('#environment-location')!.addEventListener(
+    'click',
+    () => {
+      reality?.locate();
+    },
+    options,
+  );
   panel
     .querySelector('#environment-sky')!
     .addEventListener('click', () => viewSky?.(), options);
@@ -119,6 +160,16 @@ export function createEnvironmentPanel(
     const hour = environment.state.timeOfDay;
     if (document.activeElement !== time) time.value = String(hour);
     timeLabel.value = `${String(Math.floor(hour)).padStart(2, '0')}:${String(Math.floor((hour % 1) * 60)).padStart(2, '0')}`;
+    realTime.checked = environment.realtimeTime;
+    realWeather.checked = environment.liveWeather;
+    syncStatus.textContent = environment.liveWeather
+      ? (reality?.status ?? '')
+      : '수동 날씨';
+    play.disabled = environment.realtimeTime;
+    const speed = panel.querySelector<HTMLSelectElement>('#environment-speed')!;
+    speed.disabled = environment.realtimeTime;
+    panel.querySelector('summary')!.textContent =
+      `환경 · ${timeLabel.value} · ${environment.liveWeather && !reality?.location ? '위치 허용 필요' : WEATHER_LABELS[environment.state.weather]}`;
     play.textContent = environment.state.playing ? '일시정지' : '재생';
     autoWeather.checked = environment.autoWeather.enabled;
     weather.value = environment.state.weather;
