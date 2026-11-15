@@ -32,10 +32,10 @@ export function createNebulaTexture(): DataTexture {
       const density = Math.max(0, broad * 0.78 + detail * 0.22 - 0.36) * band;
       const tint = sampleSeededNoise(x * 3, y * 3, z * 3, 1203);
       const offset = (row * width + column) * 4;
-      pixels[offset] = Math.round(65 + tint * 45);
-      pixels[offset + 1] = Math.round(78 - tint * 30);
-      pixels[offset + 2] = 137;
-      pixels[offset + 3] = Math.round(Math.min(density * 0.85, 0.32) * 255);
+      pixels[offset] = Math.round(75 + tint * 55);
+      pixels[offset + 1] = Math.round(85 - tint * 32);
+      pixels[offset + 2] = 155;
+      pixels[offset + 3] = Math.round(Math.min(density * 1.1, 0.32) * 255);
     }
   }
 
@@ -56,7 +56,7 @@ export class NebulaBackdrop {
       map: this.texture,
       side: BackSide,
       transparent: true,
-      opacity: 0.7,
+      opacity: 1,
       blending: AdditiveBlending,
       // Opaque planets already wrote depth: the nebula must stay behind them.
       depthTest: true,
