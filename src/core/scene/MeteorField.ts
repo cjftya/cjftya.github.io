@@ -7,10 +7,11 @@ import {
   LineBasicMaterial,
   LineSegments,
   Vector3,
+  type PerspectiveCamera,
 } from 'three';
 
 const SEGMENT_COUNT = 6;
-const METEOR_DURATION_SECONDS = 0.8;
+const BACKGROUND_DISTANCE = 90;
 
 export class MeteorField {
   readonly object: LineSegments<BufferGeometry, LineBasicMaterial>;
@@ -36,6 +37,11 @@ export class MeteorField {
   private readonly isCoarsePointer = window.matchMedia('(pointer: coarse)').matches;
   private activeElapsedSeconds: number | null = null;
   private secondsUntilNext = this.getNextDelay();
+  private secondsUntilLarge = this.randomBetween(35, 60);
+  private durationSeconds = 0.8;
+  private travelDistance = 18;
+  private tailLength = 4.6;
+  private peakOpacity = 0.62;
 
   constructor() {
     this.geometry.setAttribute(
@@ -50,22 +56,22 @@ export class MeteorField {
     this.object.frustumCulled = false;
   }
 
-  update(deltaSeconds: number): void {
+  update(deltaSeconds: number, camera: PerspectiveCamera): void {
     if (this.prefersReducedMotion) {
       return;
     }
 
+    this.secondsUntilLarge -= deltaSeconds;
     if (this.activeElapsedSeconds === null) {
       this.secondsUntilNext -= deltaSeconds;
-
-      if (this.secondsUntilNext <= 0) {
-        this.spawn();
+      if (this.secondsUntilLarge <= 0 || this.secondsUntilNext <= 0) {
+        this.spawn(camera, this.secondsUntilLarge <= 0);
       }
       return;
     }
 
     this.activeElapsedSeconds += deltaSeconds;
-    const progress = this.activeElapsedSeconds / METEOR_DURATION_SECONDS;
+    const progress = this.activeElapsedSeconds / this.durationSeconds;
 
     if (progress >= 1) {
       this.activeElapsedSeconds = null;
@@ -76,7 +82,7 @@ export class MeteorField {
     }
 
     this.updateSegments(progress);
-    this.material.opacity = Math.sin(progress * Math.PI) * 0.78;
+    this.material.opacity = Math.sin(progress * Math.PI) * this.peakOpacity;
   }
 
   dispose(): void {
@@ -84,27 +90,40 @@ export class MeteorField {
     this.material.dispose();
   }
 
-  private spawn(): void {
+  private spawn(camera: PerspectiveCamera, large: boolean): void {
+    // Snapshot the current view so the event begins on screen, including on phones
+    // and while inspecting a planet. It remains in world space during its flight.
+    this.object.position.copy(camera.position);
+    this.object.quaternion.copy(camera.quaternion);
+    const halfHeight = Math.tan((camera.fov * Math.PI) / 360) * BACKGROUND_DISTANCE;
+    const halfWidth = halfHeight * camera.aspect;
+    const span = Math.min(halfHeight, halfWidth);
+    const reverse = Math.random() < 0.5 ? -1 : 1;
     this.start.set(
-      this.randomBetween(-11, 6),
-      this.randomBetween(5, 11),
-      this.randomBetween(-6, 5),
+      -reverse * this.randomBetween(0.35, 0.7) * halfWidth,
+      this.randomBetween(0.35, 0.7) * halfHeight,
+      -BACKGROUND_DISTANCE,
     );
-    this.direction
-      .set(this.randomBetween(0.65, 1), this.randomBetween(-0.62, -0.35), -0.08)
-      .normalize();
+    this.direction.set(reverse, -this.randomBetween(0.35, 0.65), 0).normalize();
+    this.durationSeconds = large ? 1.5 : 0.8;
+    this.travelDistance = span * (large ? 1.65 : 1.25);
+    this.tailLength = span * (large ? 0.48 : 0.24);
+    this.peakOpacity = large ? 0.72 : 0.58;
+    if (large) {
+      this.secondsUntilLarge = this.randomBetween(35, 60);
+    }
     this.activeElapsedSeconds = 0;
     this.geometry.setDrawRange(0, SEGMENT_COUNT * 2);
     this.updateSegments(0);
   }
 
   private updateSegments(progress: number): void {
-    const travelDistance = progress * 18;
+    const travelDistance = progress * this.travelDistance;
     this.head.copy(this.start).addScaledVector(this.direction, travelDistance);
 
     for (let index = 0; index < SEGMENT_COUNT; index += 1) {
-      const offset = (index / SEGMENT_COUNT) * 4.6;
-      const nextOffset = ((index + 0.82) / SEGMENT_COUNT) * 4.6;
+      const offset = (index / SEGMENT_COUNT) * this.tailLength;
+      const nextOffset = ((index + 0.82) / SEGMENT_COUNT) * this.tailLength;
       this.segmentStart.copy(this.head).addScaledVector(this.direction, -offset);
       this.segmentEnd.copy(this.head).addScaledVector(this.direction, -nextOffset);
 
@@ -130,8 +149,8 @@ export class MeteorField {
   }
 
   private getNextDelay(): number {
-    const minimum = this.isCoarsePointer ? 14 : 9;
-    const range = this.isCoarsePointer ? 12 : 10;
+    const minimum = this.isCoarsePointer ? 9 : 6;
+    const range = this.isCoarsePointer ? 7 : 6;
     return minimum + Math.random() * range;
   }
 

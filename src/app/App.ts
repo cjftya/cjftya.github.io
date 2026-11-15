@@ -145,9 +145,9 @@ export class App {
         ? timeMs - (elapsedMs % this.minimumFrameIntervalMs)
         : timeMs;
     const deltaSeconds = Math.min(this.clock.getDelta(), 0.1);
-    this.sceneManager.update(deltaSeconds);
     this.solarSystem.update(deltaSeconds);
     this.cameraController.update(deltaSeconds);
+    this.sceneManager.update(deltaSeconds, this.cameraController.camera);
     this.updatePlanetLabels();
     this.rendererManager.renderer.render(
       this.sceneManager.scene,
