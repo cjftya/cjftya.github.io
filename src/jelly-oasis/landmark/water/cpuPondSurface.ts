@@ -58,6 +58,7 @@ export class CPUPondSurface implements PondSurface {
     geometry: BufferGeometry,
     ground: (x: number, z: number) => number,
     level: number,
+    preparedWeights?: Float64Array,
   ) {
     const domain = pondDomain(geometry);
     this.bounds = domain.bounds;
@@ -72,7 +73,7 @@ export class CPUPondSurface implements PondSurface {
         const x = this.bounds.x + ((i + 0.5) / this.n) * this.bounds.z;
         const z = this.bounds.y + ((j + 0.5) / this.n) * this.bounds.w;
         const k = j * this.n + i,
-          weight = this.maskAt(x, z);
+          weight = preparedWeights?.[k] ?? this.maskAt(x, z);
         this.weights[k] = weight;
         mask[k * 4] = Math.round(weight * 255);
         if (weight > best) {

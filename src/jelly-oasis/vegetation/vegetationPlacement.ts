@@ -1,3 +1,4 @@
+import { finishSteps } from '../loading/loadingSteps';
 import { Mesh, Vector3 } from 'three';
 import type { Group, Object3D } from 'three';
 import type { LandmarkPlacement, LayoutGuide } from '../landmark/landmarkConfig';
@@ -38,21 +39,24 @@ export function segmentDistance(
   return Math.hypot(x - ax - dx * t, z - az - dz * t);
 }
 // Conservative boxes around individual near-ground triangles, never the tree canopy AABB.
-export function groundFootprints(
+export function* groundFootprintsSteps(
   root: Group,
   modules: Map<string, Group>,
   terrain: TerrainConfig,
-): Footprint[] {
+): Generator<string, Footprint[], void> {
   root.updateMatrixWorld(true);
   const inverse = root.matrixWorld.clone().invert(),
     p = new Vector3();
   const result: Footprint[] = [];
-  for (const object of modules.values())
-    object.traverse((child: Object3D) => {
-      if (!(child instanceof Mesh) || !child.visible) return;
+  for (const object of modules.values()) {
+    const children: Object3D[] = [];
+    object.traverse((child) => children.push(child));
+    for (const child of children) {
+      if (!(child instanceof Mesh) || !child.visible) continue;
       const pos = child.geometry.attributes.position!,
         index = child.geometry.index;
       for (let i = 0; i < (index?.count ?? pos.count); i += 3) {
+        if (i % 192 === 0) yield 'obstacle-footprints';
         const points: Vector3[] = [],
           heights: number[] = [];
         for (let j = 0; j < 3; j++) {
@@ -74,7 +78,8 @@ export function groundFootprints(
           maxZ: Math.max(...points.map((p) => p.z)),
         });
       }
-    });
+    }
+  }
   return result;
 }
 export function exclusionReason(
@@ -141,7 +146,7 @@ export interface VegetationInstance {
   tint: number;
   radius: number;
 }
-export function placeVegetation(
+export function* placeVegetationSteps(
   site: VegetationSite,
   density: VegetationDensity = 'density-a',
   seed = VEGETATION_SEED,
@@ -166,6 +171,7 @@ export function placeVegetation(
       target = VEGETATION_COUNTS[density][kind];
     let placed = 0;
     for (let attempt = 0; placed < target && attempt < target * 12; attempt++) {
+      if (attempt % 8 === 0) yield 'placeVegetation';
       const cluster = clusters[Math.floor(random() * clusters.length)]!;
       const angle = random() * Math.PI * 2,
         distance = Math.sqrt(random()) * (kind === 'shrub' ? 4.5 : 6);
@@ -213,4 +219,12 @@ export function placeVegetation(
     }
   }
   return { instances, rejected, requested: { ...VEGETATION_COUNTS[density] } };
+}
+
+export function placeVegetation(...args: Parameters<typeof placeVegetationSteps>) {
+  return finishSteps(placeVegetationSteps(...args));
+}
+
+export function groundFootprints(...args: Parameters<typeof groundFootprintsSteps>) {
+  return finishSteps(groundFootprintsSteps(...args));
 }

@@ -1,16 +1,17 @@
+import { finishSteps } from '../../loading/loadingSteps';
 import { Group } from 'three';
 import type { BufferGeometry, Mesh, MeshStandardMaterial } from 'three';
-import { GPGPUPondSurface } from './gpgpuPondSurface';
+import { GPGPUPondSurface, pondMaskSteps } from './gpgpuPondSurface';
 import type { PondControls } from './gpgpuPondSurface';
 import { CPUPondSurface } from './cpuPondSurface';
 import type { PondSurface } from './cpuPondSurface';
 import { PondImpulseScheduler } from './pondImpulseScheduler';
 import { createReflectivePond } from './createReflectivePond';
-import { tessellatePond } from './subdividePond';
+import { tessellatePondSteps } from './subdividePond';
 import type { WaterOptions } from './createWaterEffects';
 
 /** Owns only the pond footprint, solver and planar optics; never traces cliff flow. */
-export function createPondWater(
+export function* createPondWaterSteps(
   root: Group,
   content: Group,
   pond: Mesh<BufferGeometry, MeshStandardMaterial>,
@@ -38,7 +39,7 @@ export function createPondWater(
       shaderFailed = true;
       priorShaderError?.(...args);
     };
-  function rebuild(forceCpu = options.forceCpu ?? false) {
+  function* rebuildSteps(forceCpu = options.forceCpu ?? false) {
     reflection?.dispose();
     field.value?.dispose();
     field.value = undefined;
@@ -55,16 +56,23 @@ export function createPondWater(
           ground,
           pondY(),
           options.mobile ?? false,
+          yield* pondMaskSteps(source, ground, pondY(), options.mobile ? 64 : 128),
         );
       } catch (error) {
         gpuError = String(error);
       }
     }
     solver = field.value ? 'gpgpu-heightfield' : 'cpu-heightfield';
-    field.value ??= new CPUPondSurface(source, ground, pondY());
+    if (!field.value)
+      field.value = new CPUPondSurface(
+        source,
+        ground,
+        pondY(),
+        yield* pondMaskSteps(source, ground, pondY(), 32),
+      );
     field.value.configure(controls);
     const old = pond.geometry;
-    pond.geometry = tessellatePond(
+    pond.geometry = yield* tessellatePondSteps(
       source,
       options.mobile || solver === 'cpu-heightfield' ? 0.7 : 0.45,
       pondY(),
@@ -93,11 +101,15 @@ export function createPondWater(
     shaderFailed = false;
     elapsed = 0;
   }
+  function rebuild(...args: Parameters<typeof rebuildSteps>): void {
+    finishSteps(rebuildSteps(...args));
+  }
+  let initialized = false;
   try {
-    rebuild();
-  } catch (error) {
-    dispose();
-    throw error;
+    yield* rebuildSteps();
+    initialized = true;
+  } finally {
+    if (!initialized) dispose();
   }
   function dispose() {
     if (disposed) return;
@@ -200,4 +212,8 @@ export function createPondWater(
       fluid: null,
     }),
   };
+}
+
+export function createPondWater(...args: Parameters<typeof createPondWaterSteps>) {
+  return finishSteps(createPondWaterSteps(...args));
 }

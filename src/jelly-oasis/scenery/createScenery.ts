@@ -1,3 +1,4 @@
+import { finishSteps } from '../loading/loadingSteps';
 import { sanctuarySurface } from '../environment/sanctuarySurface';
 import {
   Color,
@@ -17,9 +18,9 @@ import {
   projectedFootprint,
   sceneryShapeCount,
 } from './sceneryGeometry';
-import { placeScenery } from './sceneryPlacement';
+import { placeScenery, placeScenerySteps } from './sceneryPlacement';
 import type { Occupied, SceneryFootprints } from './sceneryPlacement';
-export function createScenery(
+export function* createScenerySteps(
   root: Group,
   variant: SceneryVariant = 'a',
   mobile = false,
@@ -65,6 +66,7 @@ export function createScenery(
         meshes.set(key, mesh);
         meshKinds.set(key, kind);
         group.add(mesh);
+        yield 'source-geometry';
       }
   let disposed = false,
     placement = placeScenery({} as VegetationSite, [], {}, 'off');
@@ -75,9 +77,9 @@ export function createScenery(
   const priorityZones = new Set(
     SCENERY_ZONES.filter((z) => z.priority).map((z) => z.id),
   );
-  function refresh(site: VegetationSite, occupied: readonly Occupied[]) {
+  function* refreshSteps(site: VegetationSite, occupied: readonly Occupied[]) {
     if (disposed) return;
-    placement = placeScenery(site, occupied, footprints, variant);
+    placement = yield* placeScenerySteps(site, occupied, footprints, variant);
     for (const [key, mesh] of meshes) {
       const kind = meshKinds.get(key)!;
       let count = 0,
@@ -111,11 +113,16 @@ export function createScenery(
       if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
       mesh.computeBoundingBox();
       mesh.computeBoundingSphere();
+      yield 'instance-buffers';
     }
+  }
+  function refresh(...args: Parameters<typeof refreshSteps>): void {
+    finishSteps(refreshSteps(...args));
   }
   return {
     group,
     refresh,
+    refreshSteps,
     instances: () => placement.instances.map((p) => ({ ...p })),
     snapshot: () => ({
       variant,
@@ -160,4 +167,8 @@ export function createScenery(
       group.clear();
     },
   };
+}
+
+export function createScenery(...args: Parameters<typeof createScenerySteps>) {
+  return finishSteps(createScenerySteps(...args));
 }

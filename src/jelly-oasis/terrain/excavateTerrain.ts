@@ -1,3 +1,4 @@
+import { finishSteps } from '../loading/loadingSteps';
 import { BufferGeometry, Color, Float32BufferAttribute, Vector3 } from 'three';
 import type { Group, Mesh, MeshStandardMaterial } from 'three';
 import type { LayoutGuide } from '../landmark/landmarkConfig';
@@ -5,7 +6,7 @@ import { sampleOriginalGround } from '../landmark/landmarkPlacement';
 import { smoothstep } from './heightfield';
 import type { TerrainConfig } from './heightfield';
 import { setTerrainSampler } from './terrainSampling';
-import { clipTerrainOutline, insideTerrain } from './terrainOutline';
+import { clipTerrainOutlineSteps, insideTerrain } from './terrainOutline';
 import { sampleTerrainColor } from './terrainColor';
 
 export interface ChannelSample {
@@ -42,7 +43,7 @@ export function polygonDistance(x: number, z: number, boundary: number[][]) {
 /** Replace entire coarse cells. Outer edge nodes collapse onto the original
  * grid corners; degenerate faces are removed. Every retained face is shared by
  * rendering and the barycentric sampler; no hidden original floor remains. */
-export function excavateTerrain(
+export function* excavateTerrainSteps(
   mesh: Mesh<BufferGeometry, MeshStandardMaterial>,
   config: TerrainConfig,
   root: Group,
@@ -202,6 +203,7 @@ export function excavateTerrain(
   }
   for (let iz = 0; iz < config.segments; iz++)
     for (let ix = 0; ix < config.segments; ix++) {
+      if (ix % 4 === 0) yield 'terrain-basin';
       const x = ix * step - half,
         z = iz * step - half;
       const patch = x >= x0 && x < x1 && z >= z0 && z < z1,
@@ -211,6 +213,7 @@ export function excavateTerrain(
       if (patch) removedTriangles += 2;
       for (let j = 0; j < n; j++)
         for (let i = 0; i < n; i++) {
+          if (i === 0 && j % 2 === 0) yield 'terrain-basin';
           const a = vertex(x + i * h, z + j * h, patch),
             b = vertex(x + i * h, z + (j + 1) * h, patch),
             d = vertex(x + (i + 1) * h, z + j * h, patch),
@@ -227,7 +230,7 @@ export function excavateTerrain(
   // Keep the pond sampler indexed into the pre-clip Float32 positions. Clipping
   // only subdivides retained triangles, so their interpolated heights agree.
   const p = geometry.attributes.position!;
-  clipTerrainOutline(geometry, config);
+  yield* clipTerrainOutlineSteps(geometry, config);
   geometry.computeVertexNormals();
   geometry.computeBoundingBox();
   geometry.computeBoundingSphere();
@@ -273,4 +276,8 @@ export function excavateTerrain(
       geometry.dispose();
     },
   };
+}
+
+export function excavateTerrain(...args: Parameters<typeof excavateTerrainSteps>) {
+  return finishSteps(excavateTerrainSteps(...args));
 }

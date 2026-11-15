@@ -1,3 +1,4 @@
+import { finishSteps } from '../loading/loadingSteps';
 import { sanctuarySurface } from '../environment/sanctuarySurface';
 import { windWeights } from '../animation/vegetationWind';
 import {
@@ -12,13 +13,13 @@ import {
   Vector3,
 } from 'three';
 import {
-  mergeStoneParts,
+  mergeStonePartsSteps,
   paintFaces,
   stoneBlock,
   stoneHull,
 } from './sanctuaryGeometry';
 import { foliageCrown, leafBlade } from './treeFoliage';
-import { createPrecinctGarden } from './createPrecinctGarden';
+import { createPrecinctGardenSteps } from './createPrecinctGarden';
 import type { LayoutGuide } from './landmarkConfig';
 import type { Footprint } from '../vegetation/vegetationPlacement';
 
@@ -96,7 +97,7 @@ export function createWorldTree(
     owned = [];
     footprints.length = 0;
   }
-  function place(ground: (x: number, z: number) => number) {
+  function* placeSteps(ground: (x: number, z: number) => number) {
     if (disposed) return;
     clear();
     // Keep loaded source assets available for audits and resource disposal.
@@ -245,6 +246,7 @@ export function createWorldTree(
       }
     }
     for (let i = 0; i < 11; i++) {
+      yield 'world-tree';
       const a = i * 2.399,
         reach = 23 + (i % 3) * 3.5,
         height = 35 + (i % 4) * 6;
@@ -263,6 +265,7 @@ export function createWorldTree(
       );
       crown(dx * reach * 0.83, height + 3, dz * reach * 0.83, 10 + (i % 3), i);
       for (const side of [-1, 1]) {
+        yield 'world-tree';
         const b = a + side * 0.38;
         limb(
           [
@@ -278,6 +281,7 @@ export function createWorldTree(
     }
     crown(0, 62, 0, 17, 17);
     for (let i = 0; i < 5; i++) {
+      yield 'world-tree';
       const a = (i * Math.PI * 2) / 5 + 0.4;
       const x = Math.cos(a) * 15,
         z = Math.sin(a) * 15;
@@ -290,6 +294,7 @@ export function createWorldTree(
       crown(x, 59 + (i % 2) * 2, z, 13.5, i + 22);
     }
     for (let i = 0; i < 6; i++) {
+      yield 'world-tree';
       const a = i * 2.399;
       trailingVine(
         p(Math.cos(a) * 4.4, 22 + (i % 3) * 2, Math.sin(a) * 4.4),
@@ -298,6 +303,7 @@ export function createWorldTree(
       );
     }
     for (let i = 0; i < segments.length; i++) {
+      yield 'world-tree';
       const seg = segments[i]!,
         dx = Math.cos(seg.angle),
         dz = Math.sin(seg.angle);
@@ -307,6 +313,7 @@ export function createWorldTree(
       const rows = Math.ceil(seg.height / 1.5),
         cols = Math.ceil(seg.length / 3);
       for (let col = 0; col < cols; col++) {
+        yield 'world-tree';
         const top = Math.max(
           2,
           rows -
@@ -314,6 +321,7 @@ export function createWorldTree(
             (col % 3 === 0 ? 1 : 0),
         );
         for (let row = 0; row < top; row++) {
+          yield 'world-tree';
           const along = (col - (cols - 1) / 2) * 3 + (row % 2 ? 0.28 : -0.15);
           const x = cx - dz * along,
             z = cz + dx * along;
@@ -336,6 +344,7 @@ export function createWorldTree(
       }
       // Grounded rubble at the broken ends, away from the open lake sector.
       for (let j = 0; j < 4; j++) {
+        yield 'world-tree';
         const x = cx - dz * (seg.length / 2 + j * 0.7) + dx * 2,
           z = cz + dx * (seg.length / 2 + j * 0.7) + dz * 2;
         const g = stoneBlock(0, 0, 0, 2.3, 1.3, 1.8, i * 7 + j, 0.07);
@@ -345,6 +354,7 @@ export function createWorldTree(
       }
       const wallTop = floor + Math.max(2, rows - 1) * 1.5;
       for (let v = 0; v < 3; v++) {
+        yield 'world-tree';
         const along = (v - 1) * seg.length * 0.23;
         trailingVine(
           new Vector3(
@@ -379,6 +389,7 @@ export function createWorldTree(
         i,
       );
       for (const side of [-1, 1]) {
+        yield 'world-tree';
         const r = seg.radius * 0.55,
           x = tx + dx * r,
           z = tz + dz * r,
@@ -419,6 +430,7 @@ export function createWorldTree(
           ),
         );
     for (let j = 0; j < 11; j++) {
+      yield 'world-tree';
       const corners: Vector3[] = [];
       for (const z of [-1.25, 1.25])
         for (const [r, a] of [
@@ -434,6 +446,7 @@ export function createWorldTree(
     }
     // Exposed buttresses settle into the earth before reaching the circulation loop.
     for (let i = 0; i < 9; i++) {
+      yield 'world-tree';
       const a = (i * Math.PI * 2) / 9,
         dx = Math.cos(a),
         dz = Math.sin(a),
@@ -456,8 +469,10 @@ export function createWorldTree(
     // The six-metre circulation ring stays open. Roots dive under its soil,
     // then emerge on the far side; masonry intersecting that band is omitted.
     for (const g of wood) {
+      yield 'world-tree';
       const v = g.attributes.position!;
       for (let i = 0; i < v.count; i++) {
+        if (i % 128 === 0) yield 'world-tree';
         const x = v.getX(i),
           z = v.getZ(i),
           y = v.getY(i),
@@ -471,11 +486,13 @@ export function createWorldTree(
       g.computeVertexNormals();
     }
     for (let i = stones.length - 1; i >= 0; i--) {
+      yield 'world-tree';
       const g = stones[i]!,
         v = g.attributes.position!;
       let lo = Infinity,
         hi = -Infinity;
       for (let j = 0; j < v.count; j++) {
+        if (j % 128 === 0) yield 'world-tree';
         const q = Math.hypot(v.getX(j) / 34, v.getZ(j) / 32);
         lo = Math.min(lo, q);
         hi = Math.max(hi, q);
@@ -507,9 +524,11 @@ export function createWorldTree(
     }
     const front = new Vector3(0, 0, -1).transformDirection(content.matrixWorld);
     for (let col = 0; col < 7; col++) {
+      yield 'world-tree';
       const x = -7 + col * 2,
         points: Vector3[] = [];
       for (let row = 0; row < 14; row++) {
+        yield 'world-tree';
         const y = ground(x, -10) + 14 - row * 0.85;
         ray.set(
           content.localToWorld(new Vector3(x + 0.25 * Math.sin(row + col), y, 5)),
@@ -526,8 +545,10 @@ export function createWorldTree(
       }
       if (points.length > 2) limb(points, [0.065, 0.04, 0.01], vines, col);
     }
-    const garden = createPrecinctGarden(ground, pond, approach, mobile);
+    yield 'world-tree-vines';
+    const garden = yield* createPrecinctGardenSteps(ground, pond, approach, mobile);
     footprints.push(...garden.footprints);
+    yield 'world-tree-garden';
     for (const vine of vines)
       paintFaces(vine, [
         new Color('#586644'),
@@ -553,11 +574,13 @@ export function createWorldTree(
       )
         for (const part of parts)
           if (!part.hasAttribute('oasisWind')) windWeights(part, 0, 0, () => [0, 0]);
-      const g = mergeStoneParts(parts);
+      const g = yield* mergeStonePartsSteps(parts);
+      yield 'world-tree-merge';
       if (name === 'WorldTreeWood') {
         const positions = g.attributes.position!;
         const glow = new Float32Array(positions.count);
         for (let i = 0; i < positions.count; i++) {
+          if (i % 32 === 0) yield 'world-tree';
           const x = positions.getX(i),
             z = positions.getZ(i);
           const height = positions.getY(i) - ground(x, z);
@@ -580,12 +603,17 @@ export function createWorldTree(
       mesh.castShadow = mesh.receiveShadow = true;
       group.add(mesh);
     }
+    yield 'world-tree';
     original.updateMatrixWorld(true);
     group.updateMatrixWorld(true);
+  }
+  function place(...args: Parameters<typeof placeSteps>): void {
+    finishSteps(placeSteps(...args));
   }
   return {
     group,
     place,
+    placeSteps,
     updateLighting: (night: number) => {
       rootNight.value = night;
     },

@@ -1,3 +1,4 @@
+import { finishSteps } from '../../loading/loadingSteps';
 import { BufferGeometry, Float32BufferAttribute } from 'three';
 
 /** Subdivide existing triangles; original polygon edges and level stay exact. */
@@ -42,7 +43,11 @@ export function subdividePond(source: BufferGeometry, passes: number) {
 }
 
 /** Conforming edge splits on the flat pond, not exponential full-surface passes. */
-export function tessellatePond(source: BufferGeometry, maxEdge: number, level: number) {
+export function* tessellatePondSteps(
+  source: BufferGeometry,
+  maxEdge: number,
+  level: number,
+) {
   const p = source.attributes.position!;
   const positions: number[] = [];
   for (let i = 0; i < p.count; i++) positions.push(p.getX(i), p.getY(i), p.getZ(i));
@@ -51,6 +56,7 @@ export function tessellatePond(source: BufferGeometry, maxEdge: number, level: n
   for (let pass = 0; pass < 8; pass++) {
     const marked = new Map<string, number>();
     for (let i = 0; i < indices.length; i += 3) {
+      if (i % 384 === 0) yield 'pond-tessellation';
       const ids = indices.slice(i, i + 3);
       for (let j = 0; j < 3; j++) {
         const a = ids[j]!,
@@ -78,6 +84,7 @@ export function tessellatePond(source: BufferGeometry, maxEdge: number, level: n
     if (!marked.size) break;
     const next: number[] = [];
     for (let i = 0; i < indices.length; i += 3) {
+      if (i % 384 === 0) yield 'pond-tessellation';
       const ids = indices.slice(i, i + 3),
         mids = ids.map((a, j) => marked.get(key(a, ids[(j + 1) % 3]!)));
       const count = mids.filter((m) => m !== undefined).length;
@@ -115,4 +122,8 @@ export function tessellatePond(source: BufferGeometry, maxEdge: number, level: n
   geometry.computeVertexNormals();
   geometry.computeBoundingSphere();
   return geometry;
+}
+
+export function tessellatePond(...args: Parameters<typeof tessellatePondSteps>) {
+  return finishSteps(tessellatePondSteps(...args));
 }

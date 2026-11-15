@@ -1,3 +1,4 @@
+import { finishSteps } from '../loading/loadingSteps';
 import { landmarkWorldPoint, sampleGround } from '../landmark/landmarkPlacement';
 import { worldToLandmark } from '../composition/compositionPlacement';
 import {
@@ -34,7 +35,7 @@ export type Occupied = { x: number; z: number; radius: number };
 export type SceneryFootprints = Partial<
   Record<SceneryKind, readonly (readonly [number, number])[]>
 >;
-export function placeScenery(
+export function* placeScenerySteps(
   site: VegetationSite,
   occupied: readonly Occupied[],
   footprints: SceneryFootprints,
@@ -70,6 +71,7 @@ export function placeScenery(
         tree = TREE_KINDS.includes(kind);
       let placed = 0;
       for (let attempt = 0; placed < target && attempt < target * 32; attempt++) {
+        if (attempt % 8 === 0) yield 'placeScenery';
         const section = Math.floor(
           random() * (zone.ribbon ? zone.centers.length - 1 : zone.centers.length),
         );
@@ -186,4 +188,8 @@ export function placeScenery(
     }
   }
   return { instances, rejected, requested, zoneCounts };
+}
+
+export function placeScenery(...args: Parameters<typeof placeScenerySteps>) {
+  return finishSteps(placeScenerySteps(...args));
 }

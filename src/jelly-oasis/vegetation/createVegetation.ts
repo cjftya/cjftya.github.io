@@ -1,3 +1,4 @@
+import { finishSteps } from '../loading/loadingSteps';
 import { rootedWind } from '../animation/vegetationWind';
 import {
   BufferGeometry,
@@ -16,8 +17,8 @@ import {
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import type { LandmarkPlacement, LayoutGuide } from '../landmark/landmarkConfig';
 import type { TerrainConfig } from '../terrain/heightfield';
-import { groundFootprints, placeVegetation } from './vegetationPlacement';
-import type { Footprint } from './vegetationPlacement';
+import { groundFootprints, placeVegetationSteps } from './vegetationPlacement';
+import type { Footprint, placeVegetation } from './vegetationPlacement';
 import {
   VEGETATION_COUNTS,
   VEGETATION_KINDS,
@@ -141,7 +142,7 @@ export function createVegetationGeometry(kind: VegetationKind): BufferGeometry {
     kind === 'shrub' ? 0.18 : 0.14,
   );
 }
-export function createVegetation(
+export function* createVegetationSteps(
   root: Group,
   modules: Map<string, Group>,
   terrain: TerrainConfig,
@@ -174,6 +175,7 @@ export function createVegetation(
     mesh.receiveShadow = true;
     group.add(mesh);
     meshes[kind] = mesh;
+    yield 'source-geometry';
   }
   let disposed = false;
   let result = {
@@ -185,9 +187,9 @@ export function createVegetation(
     quaternion = new Quaternion(),
     up = new Vector3(0, 1, 0),
     tint = new Color();
-  function refresh(placement: LandmarkPlacement, obstacles?: Footprint[]) {
+  function* refreshSteps(placement: LandmarkPlacement, obstacles?: Footprint[]) {
     if (disposed) return;
-    result = placeVegetation(
+    result = yield* placeVegetationSteps(
       {
         placement,
         rootY: root.position.y,
@@ -222,11 +224,16 @@ export function createVegetation(
       if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
       mesh.computeBoundingBox();
       mesh.computeBoundingSphere();
+      yield 'instance-buffers';
     }
+  }
+  function refresh(...args: Parameters<typeof refreshSteps>): void {
+    finishSteps(refreshSteps(...args));
   }
   return {
     group,
     refresh,
+    refreshSteps,
     snapshot: () => ({
       seed: VEGETATION_SEED,
       density,
@@ -265,4 +272,8 @@ export function createVegetation(
       group.clear();
     },
   };
+}
+
+export function createVegetation(...args: Parameters<typeof createVegetationSteps>) {
+  return finishSteps(createVegetationSteps(...args));
 }

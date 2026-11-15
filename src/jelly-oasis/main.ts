@@ -1,3 +1,4 @@
+import { prepareLandmark } from './loading/prepareLandmark';
 import { createOasisCameraRig } from './app/createOasisCameraRig';
 import { createInspectionApi } from './app/createInspectionApi';
 import { createSanctuaryBloom } from './environment/createSanctuaryBloom';
@@ -85,6 +86,8 @@ async function start(canvas: HTMLCanvasElement): Promise<void> {
   let frameCalls = 0;
   let frameTriangles = 0;
   let landmark: OvergrownRuin | null = null;
+  const startupAbort = new AbortController();
+  const startupTimings = { shaderWarmupMs: 0, firstFrameMs: null as number | null };
   let pondPanel: HTMLElement | undefined;
   let landmarkDebug: ReturnType<typeof createLandmarkDebug> | null = null;
   function setShadows(enabled: boolean): void {
@@ -175,8 +178,29 @@ async function start(canvas: HTMLCanvasElement): Promise<void> {
     composition,
     scenery,
     meadow,
+    startupAbort.signal,
   )
-    .then((loaded) => {
+    .then(async (loaded) => {
+      if (disposed) {
+        loaded.dispose();
+        return;
+      }
+      landmarkStatus.textContent = '화면 준비 중…';
+      const warmupStart = performance.now();
+      try {
+        await prepareLandmark(
+          loaded.root,
+          camera,
+          renderer,
+          scene,
+          () => disposed || contextLost,
+        );
+      } catch (error) {
+        // Fall back to normal first-draw compilation on driver/context errors.
+        if (!disposed && !contextLost)
+          console.warn('Oasis shader preparation failed:', error);
+      }
+      startupTimings.shaderWarmupMs = performance.now() - warmupStart;
       if (disposed) {
         loaded.dispose();
         return;
@@ -208,6 +232,7 @@ async function start(canvas: HTMLCanvasElement): Promise<void> {
               renderPasses,
               frameCalls,
               frameTriangles,
+              startupTimings,
             }),
             invalidate,
           }),
@@ -317,7 +342,11 @@ async function start(canvas: HTMLCanvasElement): Promise<void> {
     if (!dirty) return;
     landmark?.worldTree?.updateLighting(landmark?.fantasy?.night ?? 0);
     const renderStart = debugEnabled ? performance.now() : 0;
+    const firstFrameStart =
+      landmark && startupTimings.firstFrameMs === null ? performance.now() : null;
     bloom.render(landmark?.fantasy?.night ?? 0);
+    if (firstFrameStart !== null)
+      startupTimings.firstFrameMs = performance.now() - firstFrameStart;
     if (debugEnabled) {
       const end = performance.now();
       renderCpuMs = end - renderStart;
@@ -353,6 +382,7 @@ async function start(canvas: HTMLCanvasElement): Promise<void> {
     renderer.setAnimationLoop(null);
     if (event.persisted) return;
     disposed = true;
+    startupAbort.abort();
     landmarkDebug?.dispose();
     landmark?.dispose();
     landmarkStatus.remove();

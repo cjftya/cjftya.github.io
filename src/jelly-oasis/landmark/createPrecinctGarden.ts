@@ -1,3 +1,4 @@
+import { finishSteps } from '../loading/loadingSteps';
 import { rootedWind } from '../animation/vegetationWind';
 import type { BufferGeometry } from 'three';
 import { Color, IcosahedronGeometry, Vector3 } from 'three';
@@ -8,7 +9,7 @@ import { paintFaces, stoneBlock } from './sanctuaryGeometry';
 import { leafBlade } from './treeFoliage';
 
 /** Plant colonies link the trunk, lake and broken walls without paving the soil. */
-export function createPrecinctGarden(
+export function* createPrecinctGardenSteps(
   floor: (x: number, z: number) => number,
   pond: LayoutGuide,
   approach: LayoutGuide,
@@ -121,7 +122,8 @@ export function createPrecinctGarden(
     [-22, 14, 2.8],
     [22, 11, 2.5],
   ];
-  colonies.forEach(([x, z, r], seed) => {
+  for (const [seed, [x, z, r]] of colonies.entries()) {
+    yield 'precinct-garden';
     bush(x!, z!, r!, seed);
     for (let i = 0; i < (mobile ? 10 : 16); i++) {
       const a = seed + i * 2.399,
@@ -131,14 +133,15 @@ export function createPrecinctGarden(
       if (i % 4 === 0) pebble(px, pz, 0.35 + (i % 3) * 0.22, i);
       else rosette(px, pz, i, 0.4 + (i % 4) * 0.13);
     }
-  });
+  }
   const walls = [
     { x: -23, z: 3, yaw: 0.2, columns: 4, rows: 3 },
     { x: -17, z: 18, yaw: -0.6, columns: 3, rows: 2 },
     { x: 27, z: 4, yaw: 0.4, columns: 3, rows: 3 },
     { x: 9, z: -23, yaw: 1.1, columns: 3, rows: 3 },
   ];
-  walls.forEach((w, seed) => {
+  for (const [seed, w] of walls.entries()) {
+    yield 'precinct-garden';
     let placed = false;
     for (let col = 0; col < w.columns; col++)
       for (
@@ -180,11 +183,18 @@ export function createPrecinctGarden(
         0.5 + (i % 3) * 0.3,
         i,
       );
-  });
+  }
   for (let i = 0; i < (mobile ? 85 : 140); i++) {
+    if (i % 4 === 0) yield 'precinct-garden';
     const a = i * 2.399,
       r = 17 + Math.sqrt((i * 0.618) % 1) * 24;
     rosette(Math.cos(a) * r, 5 + Math.sin(a) * r, i, 0.32 + (i % 5) * 0.12);
   }
   return { plants, stones, footprints };
+}
+
+export function createPrecinctGarden(
+  ...args: Parameters<typeof createPrecinctGardenSteps>
+) {
+  return finishSteps(createPrecinctGardenSteps(...args));
 }

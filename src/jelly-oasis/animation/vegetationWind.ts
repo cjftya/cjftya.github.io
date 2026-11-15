@@ -1,3 +1,4 @@
+import { finishSteps } from '../loading/loadingSteps';
 import {
   Float32BufferAttribute,
   InstancedMesh,
@@ -146,19 +147,26 @@ export class VegetationWind {
   }
 
   bind(root: Object3D) {
+    finishSteps(this.bindSteps(root));
+  }
+
+  *bindSteps(root: Object3D) {
     this.unbind();
-    root.traverse((mesh) => {
+    const children: Object3D[] = [];
+    root.traverse((mesh) => children.push(mesh));
+    for (const mesh of children) {
+      yield 'wind-bindings';
       if (!(mesh instanceof Mesh) || !(mesh.material instanceof MeshStandardMaterial))
-        return;
+        continue;
       const weights = mesh.geometry.getAttribute('oasisWind');
-      if (!weights) return;
+      if (!weights) continue;
       let maxMotion = 0;
       for (let i = 0; i < weights.count; i++)
         maxMotion = Math.max(
           maxMotion,
           Math.abs(weights.getZ(i)) + Math.abs(weights.getW(i)),
         );
-      if (!maxMotion) return;
+      if (!maxMotion) continue;
       const original = mesh.material;
       let material = this.materials.get(original);
       if (!material) {
@@ -189,7 +197,7 @@ export class VegetationWind {
         mesh.computeBoundingBox();
         mesh.computeBoundingSphere();
       }
-    });
+    }
   }
 
   refreshMaterials() {

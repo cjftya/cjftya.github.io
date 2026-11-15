@@ -1,3 +1,4 @@
+import { finishSteps } from '../loading/loadingSteps';
 import { meadowField } from './meadowField';
 import { landmarkWorldPoint, sampleGround } from '../landmark/landmarkPlacement';
 import { worldToLandmark } from '../composition/compositionPlacement';
@@ -38,7 +39,7 @@ export function meadowSeparation(
     0.12
   );
 }
-export function placeMeadow(
+export function* placeMeadowSteps(
   site: VegetationSite,
   occupied: readonly Occupied[],
   variant: MeadowVariant = 'a',
@@ -63,6 +64,7 @@ export function placeMeadow(
         shape = MEADOW_SHAPES[kind];
       let placed = 0;
       for (let attempt = 0; placed < target && attempt < target * 24; attempt++) {
+        if (attempt % 8 === 0) yield 'placeMeadow';
         const angle = random() * Math.PI * 2,
           d = Math.sqrt(random()) * patch.radius;
         const { x, z } = worldToLandmark(
@@ -133,4 +135,8 @@ export function placeMeadow(
     }
   }
   return { instances, rejected, requested, zoneCounts };
+}
+
+export function placeMeadow(...args: Parameters<typeof placeMeadowSteps>) {
+  return finishSteps(placeMeadowSteps(...args));
 }

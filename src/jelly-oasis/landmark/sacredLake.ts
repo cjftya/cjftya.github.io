@@ -1,5 +1,6 @@
+import { finishSteps } from '../loading/loadingSteps';
 import { Mesh, Vector3 } from 'three';
-import type { Group } from 'three';
+import type { Group, Object3D } from 'three';
 import type { LayoutGuide } from './landmarkConfig';
 
 export const SACRED_LAKE_SCALE = { west: 1.16, east: 1, z: 1.1 };
@@ -20,7 +21,10 @@ export function pondArea(guide: LayoutGuide): number {
  * piecewise map to the guide and every bank/rock vertex, in module coordinates.
  * Preserve the east bank beside the existing arch approach.
  * Existing GLBs and the original layout manifest remain immutable. */
-export function expandSacredLake(guide: LayoutGuide, bank: Group): LayoutGuide {
+export function* expandSacredLakeSteps(
+  guide: LayoutGuide,
+  bank: Group,
+): Generator<string, LayoutGuide, void> {
   const result = {
     positions: guide.positions.map(([x, y, z]) => [
       x! * (x! < 0 ? SACRED_LAKE_SCALE.west : SACRED_LAKE_SCALE.east),
@@ -31,11 +35,14 @@ export function expandSacredLake(guide: LayoutGuide, bank: Group): LayoutGuide {
   };
   bank.updateMatrixWorld(true);
   const point = new Vector3();
-  bank.traverse((child) => {
-    if (!(child instanceof Mesh)) return;
+  const children: Object3D[] = [];
+  bank.traverse((child) => children.push(child));
+  for (const child of children) {
+    if (!(child instanceof Mesh)) continue;
     const inverse = child.matrixWorld.clone().invert();
     const p = child.geometry.attributes.position!;
     for (let i = 0; i < p.count; i++) {
+      if (i % 128 === 0) yield 'lake-contour';
       point.fromBufferAttribute(p, i).applyMatrix4(child.matrixWorld);
       point.x *= point.x < 0 ? SACRED_LAKE_SCALE.west : SACRED_LAKE_SCALE.east;
       point.z *= SACRED_LAKE_SCALE.z;
@@ -46,7 +53,11 @@ export function expandSacredLake(guide: LayoutGuide, bank: Group): LayoutGuide {
     child.geometry.computeVertexNormals();
     child.geometry.computeBoundingBox();
     child.geometry.computeBoundingSphere();
-  });
+  }
   bank.userData.pondBoundaryVersion = 3;
   return result;
+}
+
+export function expandSacredLake(...args: Parameters<typeof expandSacredLakeSteps>) {
+  return finishSteps(expandSacredLakeSteps(...args));
 }

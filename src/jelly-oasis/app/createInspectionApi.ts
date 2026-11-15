@@ -13,6 +13,7 @@ export interface FrameMetrics {
   renderCpuMs: number;
   frameCpuMs: number;
   renderPasses: number;
+  startupTimings?: { shaderWarmupMs: number; firstFrameMs: number | null };
   frameCalls: number;
   frameTriangles: number;
 }
@@ -236,6 +237,7 @@ export function createInspectionApi({
       },
       assetTriangles: loaded.assetTriangles,
       loadMs: loaded.assets.loadMs,
+      loading: { ...loaded.loading, ...metrics().startupTimings },
       timings: loaded.assets.timings,
       placement: loaded.placement,
       renderCpuMs: metrics().renderCpuMs,

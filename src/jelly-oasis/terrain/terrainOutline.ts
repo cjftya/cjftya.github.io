@@ -1,3 +1,4 @@
+import { finishSteps } from '../loading/loadingSteps';
 import { Float32BufferAttribute } from 'three';
 import type { BufferGeometry } from 'three';
 import type { TerrainConfig } from './heightfield';
@@ -44,7 +45,10 @@ export function insideTerrain(x: number, z: number, config: TerrainConfig, margi
 
 /** Clip triangles, interpolating their original heights and colours at the cut.
  * Shared intersection vertices keep normals continuous and avoid stair-step edges. */
-export function clipTerrainOutline(geometry: BufferGeometry, config: TerrainConfig) {
+export function* clipTerrainOutlineSteps(
+  geometry: BufferGeometry,
+  config: TerrainConfig,
+) {
   if (!config.cornerRadius) return;
   const outline = terrainOutline(config);
   const attributes = Object.entries(geometry.attributes).filter(
@@ -75,6 +79,7 @@ export function clipTerrainOutline(geometry: BufferGeometry, config: TerrainConf
     return id;
   }
   for (let triangle = 0; triangle < source.count; triangle += 3) {
+    if (triangle % 384 === 0) yield 'terrain-outline';
     let polygon = [0, 1, 2].map((i) => {
       const id = source.getX(triangle + i);
       return attributes.flatMap(([, attribute]) =>
@@ -135,4 +140,10 @@ export function terrainBoundary(geometry: BufferGeometry): [number, number][] {
     }
   }
   return [...edges.values()];
+}
+
+export function clipTerrainOutline(
+  ...args: Parameters<typeof clipTerrainOutlineSteps>
+) {
+  return finishSteps(clipTerrainOutlineSteps(...args));
 }

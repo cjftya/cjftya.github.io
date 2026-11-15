@@ -1,3 +1,4 @@
+import { finishSteps } from '../loading/loadingSteps';
 import {
   Color,
   DoubleSide,
@@ -13,9 +14,9 @@ import type { VegetationSite } from '../vegetation/vegetationPlacement';
 import { MEADOW_KINDS, MEADOW_SEED, MEADOW_PATCHES } from './meadowConfig';
 import type { MeadowKind, MeadowVariant } from './meadowConfig';
 import { createMeadowGeometry } from './meadowGeometry';
-import { placeMeadow } from './meadowPlacement';
+import { placeMeadow, placeMeadowSteps } from './meadowPlacement';
 import type { Occupied } from '../scenery/sceneryPlacement';
-export function createMeadow(
+export function* createMeadowSteps(
   root: Group,
   variant: MeadowVariant = 'a',
   mobile = false,
@@ -52,6 +53,7 @@ export function createMeadow(
       mesh.receiveShadow = true;
       meshes.set(kind, mesh);
       group.add(mesh);
+      yield 'source-geometry';
     }
   let disposed = false,
     placement = placeMeadow({} as VegetationSite, [], 'off');
@@ -59,9 +61,9 @@ export function createMeadow(
     q = new Quaternion(),
     up = new Vector3(0, 1, 0),
     color = new Color();
-  function refresh(site: VegetationSite, occupied: readonly Occupied[]) {
+  function* refreshSteps(site: VegetationSite, occupied: readonly Occupied[]) {
     if (disposed) return;
-    placement = placeMeadow(site, occupied, variant);
+    placement = yield* placeMeadowSteps(site, occupied, variant);
     for (const [kind, mesh] of meshes) {
       let count = 0,
         ordinal = 0;
@@ -81,11 +83,16 @@ export function createMeadow(
       if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
       mesh.computeBoundingBox();
       mesh.computeBoundingSphere();
+      yield 'instance-buffers';
     }
+  }
+  function refresh(...args: Parameters<typeof refreshSteps>): void {
+    finishSteps(refreshSteps(...args));
   }
   return {
     group,
     refresh,
+    refreshSteps,
     instances: () => placement.instances.map((p) => ({ ...p })),
     snapshot: () => ({
       variant,
@@ -123,4 +130,8 @@ export function createMeadow(
       group.clear();
     },
   };
+}
+
+export function createMeadow(...args: Parameters<typeof createMeadowSteps>) {
+  return finishSteps(createMeadowSteps(...args));
 }

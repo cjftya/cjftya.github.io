@@ -1,3 +1,5 @@
+import { finishSteps } from '../loading/loadingSteps';
+import { geometryBoundsSteps } from '../loading/geometryBoundsSteps';
 import { Float32BufferAttribute, Vector3 } from 'three';
 import type { BufferGeometry, Color } from 'three';
 import { ConvexGeometry } from 'three/examples/jsm/geometries/ConvexGeometry.js';
@@ -82,10 +84,15 @@ export function stoneBlock(
   );
 }
 
-export function mergeStoneParts(parts: BufferGeometry[]): BufferGeometry {
+export function* mergeStonePartsSteps(
+  parts: BufferGeometry[],
+): Generator<string, BufferGeometry, void> {
   const result = mergeGeometries(parts, false)!;
   parts.forEach((part) => part.dispose());
-  result.computeBoundingBox();
-  result.computeBoundingSphere();
+  yield* geometryBoundsSteps(result);
   return result;
+}
+
+export function mergeStoneParts(...args: Parameters<typeof mergeStonePartsSteps>) {
+  return finishSteps(mergeStonePartsSteps(...args));
 }

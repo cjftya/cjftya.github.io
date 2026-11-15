@@ -88,6 +88,28 @@ export function pondDomain(geometry: BufferGeometry, shoreWidth = 0.8) {
   return { bounds, mask, boundaryEdges: boundary.length };
 }
 
+/** Initial pond-only masks can be prepared between browser tasks. Keep doubles
+ * until the original constructor writes Float32 weights / quantized mask bytes. */
+export function* pondMaskSteps(
+  geometry: BufferGeometry,
+  ground: (x: number, z: number) => number,
+  level: number,
+  n: number,
+) {
+  const domain = pondDomain(geometry);
+  const values = new Float64Array(n * n);
+  for (let j = 0; j < n; j++) {
+    yield 'pond-mask';
+    for (let i = 0; i < n; i++) {
+      const x = domain.bounds.x + ((i + 0.5) / n) * domain.bounds.z;
+      const z = domain.bounds.y + ((j + 0.5) / n) * domain.bounds.w;
+      const depth = Math.max(0, Math.min(1, (level - ground(x, z)) / 0.4));
+      values[j * n + i] = domain.mask(x, z) * depth * depth * (3 - 2 * depth);
+    }
+  }
+  return values;
+}
+
 export function waveCoefficients(
   n: number,
   bounds: Vector4,
@@ -139,6 +161,7 @@ export class GPGPUPondSurface {
     ground: (x: number, z: number) => number,
     level: number,
     mobile: boolean,
+    preparedWeights?: Float64Array,
   ) {
     if (
       !renderer.extensions.has('EXT_color_buffer_float') ||
@@ -174,7 +197,7 @@ export class GPGPUPondSurface {
       for (let i = 0; i < this.n; i++) {
         const x = this.bounds.x + ((i + 0.5) / this.n) * this.bounds.z;
         const z = this.bounds.y + ((j + 0.5) / this.n) * this.bounds.w;
-        const weight = this.maskAt(x, z);
+        const weight = preparedWeights?.[j * this.n + i] ?? this.maskAt(x, z);
         bytes[(j * this.n + i) * 4] = Math.round(weight * 255);
       }
     if (this.maskAt(this.diagnosticPoint.x, this.diagnosticPoint.y) < 0.95) {

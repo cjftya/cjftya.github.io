@@ -1,3 +1,4 @@
+import { finishSteps } from '../loading/loadingSteps';
 import {
   Color,
   DoubleSide,
@@ -17,7 +18,8 @@ import type {
 } from '../vegetation/vegetationPlacement';
 import { COMPOSITION_KINDS, COMPOSITION_SEED } from './compositionConfig';
 import type { CompositionKind, CompositionVariant } from './compositionConfig';
-import { placeComposition } from './compositionPlacement';
+import type { placeComposition } from './compositionPlacement';
+import { placeCompositionSteps } from './compositionPlacement';
 export function createCompositionRock() {
   const geometry = new IcosahedronGeometry(1, 0);
   geometry.scale(1, 0.42, 0.78);
@@ -26,7 +28,7 @@ export function createCompositionRock() {
   geometry.computeVertexNormals();
   return geometry;
 }
-export function createLandscapeComposition(
+export function* createLandscapeCompositionSteps(
   root: Group,
   variant: CompositionVariant = 'a',
   mobile = false,
@@ -57,6 +59,7 @@ export function createLandscapeComposition(
       mesh.castShadow = false;
       mesh.receiveShadow = true;
       group.add(mesh);
+      yield 'source-geometry';
       meshes.set(kind, mesh);
     }
   let disposed = false;
@@ -71,9 +74,9 @@ export function createLandscapeComposition(
     up = new Vector3(0, 1, 0),
     color = new Color();
   // Each source and material belongs solely to this owner.
-  function refresh(site: VegetationSite, vegetation: VegetationInstance[]) {
+  function* refreshSteps(site: VegetationSite, vegetation: VegetationInstance[]) {
     if (disposed) return;
-    placement = placeComposition(site, vegetation, variant);
+    placement = yield* placeCompositionSteps(site, vegetation, variant);
     for (const [kind, mesh] of meshes) {
       let count = 0,
         ordinal = 0;
@@ -93,11 +96,16 @@ export function createLandscapeComposition(
       if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
       mesh.computeBoundingBox();
       mesh.computeBoundingSphere();
+      yield 'instance-buffers';
     }
+  }
+  function refresh(...args: Parameters<typeof refreshSteps>): void {
+    finishSteps(refreshSteps(...args));
   }
   return {
     group,
     refresh,
+    refreshSteps,
     instances: () => placement.instances.map((p) => ({ ...p })),
     snapshot: () => ({
       variant,
@@ -135,4 +143,10 @@ export function createLandscapeComposition(
       group.clear();
     },
   };
+}
+
+export function createLandscapeComposition(
+  ...args: Parameters<typeof createLandscapeCompositionSteps>
+) {
+  return finishSteps(createLandscapeCompositionSteps(...args));
 }

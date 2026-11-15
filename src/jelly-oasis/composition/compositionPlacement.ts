@@ -1,3 +1,4 @@
+import { finishSteps } from '../loading/loadingSteps';
 import { landmarkWorldPoint, sampleGround } from '../landmark/landmarkPlacement';
 import { exclusionReason, seededRandom } from '../vegetation/vegetationPlacement';
 import type {
@@ -39,7 +40,7 @@ function zoneSeed(id: string, kind: string, seed: number) {
   for (const c of `${id}:${kind}`) h = Math.imul(h ^ c.charCodeAt(0), 16777619);
   return h >>> 0;
 }
-export function placeComposition(
+export function* placeCompositionSteps(
   site: VegetationSite,
   vegetation: VegetationInstance[],
   variant: CompositionVariant = 'a',
@@ -59,6 +60,7 @@ export function placeComposition(
       const random = seededRandom(zoneSeed(zone.id, kind, seed));
       let placed = 0;
       for (let attempt = 0; placed < target && attempt < target * 16; attempt++) {
+        if (attempt % 8 === 0) yield 'placeComposition';
         const center = zone.centers[Math.floor(random() * zone.centers.length)]!;
         const a = random() * Math.PI * 2,
           d = Math.sqrt(random()) * zone.radius;
@@ -123,4 +125,8 @@ export function placeComposition(
     }
   }
   return { instances, rejected, requested, zoneCounts };
+}
+
+export function placeComposition(...args: Parameters<typeof placeCompositionSteps>) {
+  return finishSteps(placeCompositionSteps(...args));
 }
