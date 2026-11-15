@@ -1,6 +1,7 @@
 import { cp, mkdir, writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
+import { checkWedding } from './weddingcard/check.mjs';
 import siteEntries from '../config/siteEntries.json' with { type: 'json' };
 
 /** Copy only static projects; built HTML must never be replaced by source HTML. */
@@ -34,6 +35,8 @@ if (
 ) {
   const repositoryRoot = resolve(import.meta.dirname, '..');
   const outputRoot = resolve(repositoryRoot, 'dist');
+  await checkWedding(resolve(repositoryRoot, 'projects/weddingcard'));
   await copyLegacy(repositoryRoot, outputRoot);
+  await checkWedding(resolve(outputRoot, 'projects/weddingcard'));
   console.log(`Copied legacy directories to ${outputRoot}`);
 }
