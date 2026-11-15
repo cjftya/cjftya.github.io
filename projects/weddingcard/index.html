@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' blob:; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data:; font-src 'self'; connect-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta property="og:title" content="Wedding Card">
+  <title>Wedding Card</title>
+  <link rel="stylesheet" href="security/lock.css">
+  <link rel="stylesheet" href="security/viewer.min.css">
+  <script type="module" src="security/lock.js?v=3.1"></script>
+</head>
+<body>
+  <main id="lock">
+    <form id="unlock-form" novalidate>
+      <h1>Wedding Card</h1>
+      <p>소중한 추억을 담은 초대장이에요.<br>전달받은 개인키 파일을 선택해 주세요.</p>
+      <label for="key-file">개인키 파일</label>
+      <input id="key-file" type="file" aria-describedby="key-help">
+      <p id="key-help">weddingcard-private.pem을 선택해 주세요. ZIP은 먼저 압축을 풀어 주세요. 파일은 기기 안에서만 사용해요.</p>
+      <button type="submit">초대장 열기</button>
+      <p id="status" role="status" aria-live="polite"></p>
+    </form>
+  </main>
+  <noscript>초대장을 열려면 JavaScript를 활성화해 주세요.</noscript>
+</body>
+</html>

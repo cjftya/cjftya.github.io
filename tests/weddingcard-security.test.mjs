@@ -1,4 +1,4 @@
-import { beforeAll, it, expect } from 'vitest';
+import { beforeAll, it, expect, vi } from 'vitest';
 import { mkdtemp, rm, readFile, writeFile, cp } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
@@ -135,3 +135,62 @@ it.skipIf(Boolean(process.env.CI))(
     }
   },
 );
+
+it('distinguishes ZIP, public keys and old encrypted keys before attempting unlock', async () => {
+  const { inspectKeyFile, keyFileErrorMessage } =
+    await import('../projects/weddingcard/security/key-file.js');
+  const bytes = (s) => new TextEncoder().encode(s).buffer;
+  expect(inspectKeyFile(bytes(first.private))).toBeNull();
+  expect(
+    inspectKeyFile(bytes('\ufeff' + first.private.replaceAll('\n', '\r\n'))),
+  ).toBeNull();
+  expect(inspectKeyFile(bytes(first.public))).toBe('public_key');
+  expect(
+    inspectKeyFile(
+      bytes(
+        '-----BEGIN ENCRYPTED PRIVATE KEY-----\nAAAA\n-----END ENCRYPTED PRIVATE KEY-----',
+      ),
+    ),
+  ).toBe('encrypted_key');
+  expect(inspectKeyFile(new Uint8Array([0x50, 0x4b, 3, 4]).buffer)).toBe('archive');
+  expect(inspectKeyFile(new Uint8Array([0xff, 0xff]).buffer)).toBe('invalid_key');
+  for (const code of ['archive', 'encrypted_key', 'public_key', 'invalid_key'])
+    expect(keyFileErrorMessage(code)).toContain('weddingcard-private.pem');
+});
+
+it('reports key, network and ciphertext failures separately without revealing protected content', async () => {
+  const messages = [];
+  const fakeSelf = {
+    postMessage: (message) => messages.push(message),
+    close: () => {},
+  };
+  const { manifest } = await createEnvelope(paths, first.public);
+  const response = (path) => ({
+    ok: true,
+    json: async () => manifest,
+    arrayBuffer: async () => new Uint8Array(40).buffer,
+    url: path,
+  });
+  vi.stubGlobal('self', fakeSelf);
+  vi.stubGlobal('fetch', async (path) => response(path));
+  try {
+    await import('../projects/weddingcard/security/unlock-worker.js');
+    const run = async (key) => {
+      messages.length = 0;
+      await fakeSelf.onmessage({
+        data: { type: 'unlock', keyFile: new TextEncoder().encode(key).buffer },
+      });
+      return [...messages];
+    };
+    expect(await run(second.private)).toEqual([{ type: 'error', code: 'wrong_key' }]);
+    expect(await run(first.private)).toEqual([
+      { type: 'error', code: 'authentication' },
+    ]);
+    vi.stubGlobal('fetch', async () => {
+      throw new Error('Offline');
+    });
+    expect(await run(first.private)).toEqual([{ type: 'error', code: 'network' }]);
+  } finally {
+    vi.unstubAllGlobals();
+  }
+});
