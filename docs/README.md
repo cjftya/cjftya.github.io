@@ -23,4 +23,4 @@ Uriel의 상세 운영·CSV 갱신 방법은 [전용 안내](uriel.md)에 있어
 과거 후보·예산·명령을 현재 작업의 지시로 사용하지 않아요. 고유 모델·계측 자료는
 재현 근거로 보존하며 원래 캡처 경로는 `jelly-oasis/artifact-deduplication.json`으로 해석해요.
 
-Wedding Card의 비밀번호 잠금·로컬 전환·남은 배포 조건은 [보안 운영 안내](weddingcard-security.md)에 있어요.
+Wedding Card의 개인키 파일 잠금·키 교체·검증 범위은 [보안 운영 안내](weddingcard-security.md)에 있어요.

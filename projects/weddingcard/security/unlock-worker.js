@@ -1,4 +1,4 @@
-import { validateManifest, deriveKey, decrypt } from './crypto.js';
+import { validateManifest, openEnvelope, decrypt } from './crypto.js';
 let blobs = new Map();
 async function read(path) {
   const response = await fetch(new URL('../' + path, import.meta.url), {cache: 'no-store'});
@@ -10,8 +10,8 @@ self.onmessage = async ({data}) => {
     if (data.type === 'unlock') {
       blobs.clear();
       const manifest = validateManifest(await (await read('protected/manifest.json')).json());
-      const key = await deriveKey(data.password, manifest);
-      data.password = '';
+      const key = await openEnvelope(new Uint8Array(data.keyFile), manifest);
+      new Uint8Array(data.keyFile).fill(0);
       const bytes = await decrypt(await (await read('protected/content.bin')).arrayBuffer(), key, manifest, 'content');
       let content;
       try { content = JSON.parse(new TextDecoder().decode(bytes)); } finally { bytes.fill(0); }
@@ -32,5 +32,5 @@ self.onmessage = async ({data}) => {
   } catch {
     blobs.clear();
     self.postMessage({type: 'error'});
-  } finally { if (data.type === 'unlock') data.password = ''; }
+  } finally { if (data.type === 'unlock') new Uint8Array(data.keyFile).fill(0); }
 };

@@ -11,8 +11,8 @@ import {
 } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import {
-  newManifest,
-  deriveKey,
+  createEnvelope,
+  openEnvelope,
   encrypt,
   decrypt,
   validateManifest,
@@ -81,11 +81,11 @@ export async function restoreLegacy(root) {
   }
   return { content: snapshot.content, images };
 }
-export async function readProtected(directory, password) {
+export async function readProtected(directory, privatePem) {
   const manifest = validateManifest(
     JSON.parse(await readFile(join(directory, 'manifest.json'), 'utf8')),
   );
-  const key = await deriveKey(password, manifest);
+  const key = await openEnvelope(privatePem, manifest);
   const content = JSON.parse(
     new TextDecoder().decode(
       await decrypt(
@@ -104,9 +104,11 @@ export async function readProtected(directory, password) {
     });
   return { content, images };
 }
-export async function writeProtected(directory, data, password) {
-  const manifest = newManifest(data.images.map((i) => i.path));
-  const key = await deriveKey(password, manifest);
+export async function writeProtected(directory, data, publicPem, privatePem) {
+  const { manifest, key } = await createEnvelope(
+    data.images.map((i) => i.path),
+    publicPem,
+  );
   const stage = await mkdtemp(join(dirname(directory), '.weddingcard-stage-'));
   const backup = stage + '-backup';
   let backedUp = false;
@@ -128,7 +130,7 @@ export async function writeProtected(directory, data, password) {
       join(stage, 'manifest.json'),
       JSON.stringify(manifest, null, 2) + '\n',
     );
-    const verified = await readProtected(stage, password);
+    const verified = await readProtected(stage, privatePem);
     if (
       JSON.stringify(verified.content) !== JSON.stringify(data.content) ||
       verified.images.some(

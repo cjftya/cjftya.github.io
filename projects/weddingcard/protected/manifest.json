@@ -1,0 +1,26 @@
+{
+  "version": 3,
+  "algorithm": "RSA-OAEP-256+A256GCM",
+  "keyId": "22679565acacde7f6918ba65148b0b341e6bcf6a4dd23c7a241ac347f36d7f56",
+  "wrappedKey": "yDZ7TCvhAih9O9vuLwSr64PSFul4+l0YnReDA0k4zdKGbzOjRnxr1uFc0FSodJcIqjvnDmUTAS63SSewsIhKZE00mVxVVzEAHQFlKvdndnkWqQebGkGLwG2GNZxj3tRG/5iuGSHSpet4iLvyYJ0CJX361OqtE6XQYenBuIXsMzckqEqZerGosacIPoqskJfkziSmx3FOb4Mxwk+Qg/1Yz8v3Y8iW1hOB2fJRVu+Zlu7x8HBz1eUbIKCDFv0/dljtZYV3HkOReY+eGIqCtUtfqdfg6DmKC34JRWrIEmsa/NT0Z/vfr0Hzu6BSdXxOisEoxB6TT+Hsl1b7CA5B8fnuEBiZciohaOkKjNMtXtp3iB/tPmYd4oU/kOQmJcp5efgjeVzWBfp4gs6onrONN0wk5x6W4VCjjAZX9QzQQyjQv4wygwSez05BPrJciWVq1rv3sMwmtVujkTnpwGNB9QYQB0iAF/HeUlKHN46onIbHka27JXGLZK5NbJRoN5rqao5+",
+  "images": [
+    "assets/private/image/dynamictextframe.jpg.bin",
+    "assets/private/image/gallery_main.png.bin",
+    "assets/private/image/link.jpg.bin",
+    "assets/private/image/main.jpg.bin",
+    "assets/private/image/map.jpg.bin",
+    "assets/private/image/ring.jpg.bin",
+    "assets/private/image/viewer/thumb1.jpg.bin",
+    "assets/private/image/viewer/thumb10.jpg.bin",
+    "assets/private/image/viewer/thumb11.jpg.bin",
+    "assets/private/image/viewer/thumb12.jpg.bin",
+    "assets/private/image/viewer/thumb2.jpg.bin",
+    "assets/private/image/viewer/thumb3.jpg.bin",
+    "assets/private/image/viewer/thumb4.jpg.bin",
+    "assets/private/image/viewer/thumb5.jpg.bin",
+    "assets/private/image/viewer/thumb6.jpg.bin",
+    "assets/private/image/viewer/thumb7.jpg.bin",
+    "assets/private/image/viewer/thumb8.jpg.bin",
+    "assets/private/image/viewer/thumb9.jpg.bin"
+  ]
+}
