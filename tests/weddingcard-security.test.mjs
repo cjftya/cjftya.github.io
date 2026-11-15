@@ -1,0 +1,137 @@
+import { beforeAll, it, expect } from 'vitest';
+import { mkdtemp, rm, readFile, writeFile, cp } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { resolve } from 'node:path';
+import {
+  createEnvelope,
+  openEnvelope,
+  encrypt,
+  decrypt,
+  toBase64,
+} from '../projects/weddingcard/security/crypto.js';
+import {
+  restoreLegacy,
+  writeProtected,
+  readProtected,
+} from '../scripts/weddingcard/content.mjs';
+import { checkWedding } from '../scripts/weddingcard/check.mjs';
+const paths = Array.from(
+  { length: 18 },
+  (_, i) => `assets/private/image/viewer/thumb${i + 1}.jpg.bin`,
+);
+let first, second;
+async function keypair() {
+  const keys = await crypto.subtle.generateKey(
+    {
+      name: 'RSA-OAEP',
+      modulusLength: 3072,
+      publicExponent: new Uint8Array([1, 0, 1]),
+      hash: 'SHA-256',
+    },
+    true,
+    ['encrypt', 'decrypt'],
+  );
+  const pem = (kind, bytes) =>
+    `-----BEGIN ${kind}-----\n${toBase64(bytes)}\n-----END ${kind}-----\n`;
+  return {
+    public: pem('PUBLIC KEY', await crypto.subtle.exportKey('spki', keys.publicKey)),
+    private: pem(
+      'PRIVATE KEY',
+      await crypto.subtle.exportKey('pkcs8', keys.privateKey),
+    ),
+  };
+}
+beforeAll(async () => {
+  first = await keypair();
+  second = await keypair();
+});
+it('unwraps only with the correct private key and imports a nonextractable AES-256 key', async () => {
+  const { manifest, key } = await createEnvelope(paths, first.public);
+  const opened = await openEnvelope(first.private, manifest);
+  expect(opened.extractable).toBe(false);
+  expect(opened.algorithm.length).toBe(256);
+  expect(opened.usages).toEqual(['decrypt']);
+  await expect(crypto.subtle.exportKey('raw', opened)).rejects.toThrow();
+  const plain = new TextEncoder().encode('synthetic private fixture');
+  const cipher = await encrypt(plain, key, manifest, 'content');
+  expect(await decrypt(cipher, opened, manifest, 'content')).toEqual(plain);
+  await expect(openEnvelope(second.private, manifest)).rejects.toThrow();
+  await expect(openEnvelope(first.public, manifest)).rejects.toThrow();
+  await expect(openEnvelope('', manifest)).rejects.toThrow();
+  await expect(
+    openEnvelope(first.private, { ...manifest, version: 2 }),
+  ).rejects.toThrow();
+  const altered = {
+    ...manifest,
+    wrappedKey:
+      (manifest.wrappedKey[0] === 'A' ? 'B' : 'A') + manifest.wrappedKey.slice(1),
+  };
+  await expect(openEnvelope(first.private, altered)).rejects.toThrow();
+  await expect(decrypt(cipher, opened, manifest, paths[0])).rejects.toThrow();
+  const changed = cipher.slice();
+  changed[changed.length - 1] ^= 1;
+  await expect(decrypt(changed, opened, manifest, 'content')).rejects.toThrow();
+  await expect(decrypt(plain, opened, manifest, 'content')).rejects.toThrow();
+  await expect(
+    decrypt(cipher, opened, { ...manifest, images: [...paths].reverse() }, 'content'),
+  ).rejects.toThrow();
+  expect(await encrypt(plain, key, manifest, 'content')).not.toEqual(cipher);
+});
+it('round-trips and rotates all images; the old private key fails after rotation', async () => {
+  const temp = await mkdtemp(resolve(tmpdir(), 'wc-test-'));
+  const target = resolve(temp, 'protected');
+  try {
+    const original = {
+      content: { body: '<div>synthetic</div>', scripts: [] },
+      images: paths.map((path) => ({ path, bytes: new Uint8Array([1, 2, 3]) })),
+    };
+    await writeProtected(target, original, first.public, first.private);
+    expect(await readProtected(target, first.private)).toEqual(original);
+    await writeProtected(
+      target,
+      await readProtected(target, first.private),
+      second.public,
+      second.private,
+    );
+    expect(await readProtected(target, second.private)).toEqual(original);
+    await expect(readProtected(target, first.private)).rejects.toThrow();
+    expect(await readFile(resolve(target, 'manifest.json'), 'utf8')).not.toContain(
+      'PRIVATE KEY',
+    );
+  } finally {
+    await rm(temp, { recursive: true, force: true });
+  }
+});
+it('validates real encrypted release files and rejects extra plaintext and modified ciphertext', async () => {
+  await checkWedding(resolve('projects/weddingcard'));
+  const temp = await mkdtemp(resolve(tmpdir(), 'wc-release-test-'));
+  try {
+    await cp(resolve('projects/weddingcard'), temp, { recursive: true });
+    await checkWedding(temp);
+    await writeFile(resolve(temp, 'leaked-photo.jpg'), new Uint8Array([255, 216, 255]));
+    await expect(checkWedding(temp)).rejects.toThrow('Unexpected public');
+    await rm(resolve(temp, 'leaked-photo.jpg'));
+    const bytes = await readFile(resolve(temp, 'protected/content.bin'));
+    bytes[bytes.length - 1] ^= 1;
+    await writeFile(resolve(temp, 'protected/content.bin'), bytes);
+    await expect(checkWedding(temp)).rejects.toThrow(
+      'changed after local verification',
+    );
+  } finally {
+    await rm(temp, { recursive: true, force: true });
+  }
+});
+it.skipIf(Boolean(process.env.CI))(
+  'recovers the pinned legacy content and all 18 photos in memory',
+  async () => {
+    const restored = await restoreLegacy(resolve('.'));
+    expect(restored.images).toHaveLength(18);
+    expect(restored.content.scripts.filter((s) => s.code)).toHaveLength(4);
+    for (const image of restored.images) {
+      expect(Buffer.from(image.bytes.subarray(0, 2)).toString('hex')).toMatch(
+        /^(ffd8|8950)$/,
+      );
+      image.bytes.fill(0);
+    }
+  },
+);
