@@ -19,8 +19,6 @@ on:
 permissions:
   actions: read
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
   group: pages-${{ github.ref }}
@@ -34,15 +32,19 @@ jobs:
        (github.event_name == 'workflow_dispatch' && inputs.update_data))
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    permissions:
-      contents: write
     outputs:
-      revision: ${{ steps.commit.outputs.revision }}
+      revision: ${{ steps.source.outputs.revision }}
+      artifact-id: ${{ steps.upload.outputs.artifact-id }}
     steps:
       - name: Checkout current master
         uses: actions/checkout@v7
         with:
           ref: master
+          persist-credentials: false
+
+      - name: Record source revision
+        id: source
+        run: echo "revision=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
       - name: Set up Node.js
         uses: actions/setup-node@v7
@@ -59,23 +61,59 @@ jobs:
       - name: Validate updated data before committing
         run: npm test
 
+      - name: Upload verified draw data
+        id: upload
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: verified-uriel-draws
+          path: public/projects/uriel/data/draws.csv
+          if-no-files-found: error
+          retention-days: 1
+
+  commit-data:
+    needs: update-data
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    outputs:
+      revision: ${{ steps.commit.outputs.revision }}
+    steps:
+      # This job never installs dependencies or runs repository code.
+      - name: Checkout the validated source revision
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.update-data.outputs.revision }}
+          persist-credentials: false
+
+      - name: Download the verified data artifact
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          artifact-ids: ${{ needs.update-data.outputs.artifact-id }}
+          path: ${{ runner.temp }}/verified-uriel-draws
+          merge-multiple: true
+
       - name: Commit only the verified data file
         id: commit
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
+          cp -- "$RUNNER_TEMP/verified-uriel-draws/draws.csv" public/projects/uriel/data/draws.csv
           if ! git diff --quiet -- public/projects/uriel/data/draws.csv; then
             git config user.name 'github-actions[bot]'
             git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-            git add -- public/projects/uriel/data/draws.csv
-            git commit -m 'Update Uriel official draw results'
-            git push origin HEAD:master
+            git -c core.hooksPath=/dev/null add -- public/projects/uriel/data/draws.csv
+            git -c core.hooksPath=/dev/null commit -m 'Update Uriel official draw results'
+            AUTH_HEADER="$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)"
+            git -c "http.https://github.com/.extraheader=AUTHORIZATION: basic $AUTH_HEADER" push origin HEAD:master
           fi
           echo "revision=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
   build:
-    needs: update-data
+    needs: [update-data, commit-data]
     if: >-
       !cancelled() &&
-      (needs.update-data.result == 'success' || needs.update-data.result == 'skipped')
+      (needs.update-data.result == 'skipped' || needs.commit-data.result == 'success')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -83,7 +121,8 @@ jobs:
         with:
           # Bot pushes do not trigger another push workflow. Build the updated
           # commit in this run, rather than deploying the old event SHA.
-          ref: ${{ needs.update-data.outputs.revision || github.sha }}
+          ref: ${{ needs.commit-data.outputs.revision || github.sha }}
+          persist-credentials: false
 
       - name: Set up Node.js
         uses: actions/setup-node@v7
@@ -125,6 +164,10 @@ jobs:
     if: >-
       !cancelled() && github.event_name != 'pull_request' && needs.build.result == 'success'
     runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

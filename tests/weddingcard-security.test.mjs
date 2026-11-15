@@ -175,3 +175,47 @@ it('reports key, network and ciphertext failures separately without revealing pr
     vi.unstubAllGlobals();
   }
 });
+
+it('blocks embedded key selection before accessing the form or starting a worker', async () => {
+  const body = { hidden: true, replaceChildren: vi.fn() };
+  const documentStub = {
+    body,
+    documentElement: { dataset: {} },
+    querySelector: vi.fn(),
+  };
+  vi.stubGlobal('window', { top: {}, self: {} });
+  vi.stubGlobal('document', documentStub);
+  try {
+    vi.resetModules();
+    await expect(import('../projects/weddingcard/security/lock.js')).rejects.toThrow(
+      'standalone tab',
+    );
+    expect(body.replaceChildren).toHaveBeenCalledOnce();
+    expect(documentStub.querySelector).not.toHaveBeenCalled();
+    expect(body.hidden).toBe(true);
+  } finally {
+    vi.unstubAllGlobals();
+  }
+});
+
+it('enables key selection in a standalone tab', async () => {
+  const form = { addEventListener: vi.fn() };
+  const documentStub = {
+    body: { hidden: true },
+    documentElement: { dataset: {} },
+    querySelector: vi.fn((selector) => (selector === '#unlock-form' ? form : {})),
+  };
+  const windowStub = { addEventListener: vi.fn() };
+  windowStub.top = windowStub;
+  windowStub.self = windowStub;
+  vi.stubGlobal('window', windowStub);
+  vi.stubGlobal('document', documentStub);
+  try {
+    vi.resetModules();
+    await import('../projects/weddingcard/security/lock.js');
+    expect(documentStub.body.hidden).toBe(false);
+    expect(form.addEventListener).toHaveBeenCalledWith('submit', expect.any(Function));
+  } finally {
+    vi.unstubAllGlobals();
+  }
+});
