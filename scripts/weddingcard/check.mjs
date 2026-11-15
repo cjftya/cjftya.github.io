@@ -3,7 +3,10 @@ import { createHash } from 'node:crypto';
 import { resolve, relative } from 'node:path';
 import { pathToFileURL, fileURLToPath } from 'node:url';
 import { filesBelow } from './content.mjs';
-import { validateManifest } from '../../projects/weddingcard/security/crypto.js';
+import {
+  validateManifest,
+  publicKeyId,
+} from '../../projects/weddingcard/security/crypto.js';
 const root = resolve(fileURLToPath(new URL('../..', import.meta.url)));
 export const digest = (bytes) => createHash('sha256').update(bytes).digest('hex');
 export async function checkWedding(directory, { requireContent = true } = {}) {
@@ -28,10 +31,16 @@ export async function checkWedding(directory, { requireContent = true } = {}) {
     );
   } catch (e) {
     if (!requireContent && e.code === 'ENOENT') return;
-    throw new Error('Local password migration is required before deployment', {
+    throw new Error('Private-key migration is required before deployment', {
       cause: e,
     });
   }
+  const publicPem = await readFile(
+    resolve(directory, 'security/public-key.pem'),
+    'utf8',
+  );
+  if ((await publicKeyId(publicPem)) !== manifest.keyId)
+    throw new Error('Public key does not match encrypted content');
   const receipt = JSON.parse(
     await readFile(resolve(directory, 'protected/verified.json'), 'utf8'),
   );
@@ -50,7 +59,7 @@ export async function checkWedding(directory, { requireContent = true } = {}) {
     if (digest(bytes) !== receipt[name])
       throw new Error('Encrypted file changed after local verification');
     if (name !== 'manifest.json') {
-      if (bytes.length < 32 || bytes.subarray(0, 4).toString() !== 'WCP2')
+      if (bytes.length < 32 || bytes.subarray(0, 4).toString() !== 'WCP3')
         throw new Error('Unencrypted content rejected');
       const iv = bytes.subarray(4, 16).toString('hex');
       if (ivs.has(iv)) throw new Error('Duplicate AES-GCM IV');
