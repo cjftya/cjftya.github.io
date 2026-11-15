@@ -83,7 +83,7 @@
       },
       "details": {
         "category": "시장 분석 자동화",
-        "description": "Binance의 현물·선물 OHLCV 데이터를 병렬로 수집하고, 주기별 롱·숏 조건 분석과 Telegram 알림 흐름을 실험한 Python 서비스예요.",
+        "description": "이 행성은 쉼 없이 물결치는 시장의 신호를 모아두던 관측소예요. Binance에서 흘러오는 가격과 거래량을 기록하고, 롱·숏 조건을 살피며 Telegram으로 소식을 전하는 자동화를 실험했어요. 분주했던 관측의 흔적이 지금도 이곳에 남아 있어요.",
         "techStack": ["Python", "Flask", "CCXT", "APScheduler", "Telegram Bot API"]
       },
       "planet": {
@@ -129,7 +129,7 @@
       },
       "details": {
         "category": "Android Studio 플러그인",
-        "description": "Android Studio 안에서 Java 코드와 주변 컨텍스트를 수집하고, Ollama로 실행한 Gemma 모델에 전달해 메모리 누수 가능성을 대화형으로 분석해요.",
+        "description": "이 행성은 코드 틈새로 새어 나가는 기억을 살피는 작은 점검소예요. Android Studio에서 Java 코드와 주변 맥락을 모아, 로컬에서 실행하는 Gemma와 함께 메모리 누수의 단서를 찾아봐요. 눈에 잘 띄지 않는 문제도 대화를 이어가며 하나씩 들여다봐요.",
         "techStack": [
           "Kotlin",
           "IntelliJ Platform SDK",
@@ -181,7 +181,7 @@
       },
       "details": {
         "category": "Android 성능 포렌식",
-        "description": "실행·블로킹·스케줄링 시간을 분리하고 Point Scan, Insight Scan, Context Scan을 통해 앱 실행 지연의 원인과 주변 시스템 부하를 단계적으로 좁혀요.",
+        "description": "이 행성은 앱이 잠시 멈춘 순간의 흔적을 따라가는 추적자의 세계예요. Perfetto 기록 속에서 실행한 시간과 기다린 시간을 나누고, 주변 시스템의 움직임까지 살피며 지연의 원인을 좁혀가요. 짧은 멈춤 하나에도 저마다의 사연이 있어요.",
         "techStack": ["Python", "Perfetto Trace Processor", "Pandas", "Gemma"]
       },
       "planet": {
@@ -227,7 +227,7 @@
       },
       "details": {
         "category": "멀티 에이전트 시뮬레이션",
-        "description": "Google GenAI와 로컬 임베딩을 사용해 에이전트의 행동을 만들고, Kuzu 그래프에 에피소드 기억과 감정 흔적을 저장하며 가상 세계의 상호작용을 시뮬레이션해요.",
+        "description": "이 행성은 기억과 감정을 가진 AI 에이전트들의 이야기가 만나는 작은 세계예요. 서로의 행동에 반응하고, 만남의 흔적을 기억에 남기며 가상 세계의 하루를 만들어가요. 같은 공간에서도 서로 다른 기억이 쌓이는 모습을 지켜볼 수 있어요.",
         "techStack": [
           "Python",
           "CustomTkinter",
@@ -279,7 +279,7 @@
       },
       "details": {
         "category": "Android 문서 도구",
-        "description": "SAF로 로컬·클라우드 Markdown 파일을 열고 저장하며, WebView 미리보기와 편집 모드, 목차 이동, 테마 설정, 읽던 위치 복원을 제공해요.",
+        "description": "이 행성은 긴 글 사이에서 길을 잃지 않도록 마련한 작은 서재예요. Android에서 Markdown 문서를 펼쳐 읽고 고치며, 목차를 따라 원하는 곳으로 이동해요. 잠시 떠났다가 돌아와도 읽던 자리에 책갈피가 남아 있어요.",
         "techStack": [
           "Java",
           "Android SDK",
@@ -331,7 +331,7 @@
       },
       "details": {
         "category": "Android 테스트 자동화",
-        "description": "Google ARTEMIS의 Pro 자동화 엔진을 AI CLI용 스킬로 연결해요. Codex·Claude Code·Gemini CLI에서 자연어로 테스트를 요청하면 로컬 AI CLI와 ADB를 이용해 계획·탐색·조작·검증·복구를 수행해요.",
+        "description": "이 행성은 말로 건넨 테스트 계획을 따라 Android 앱의 길을 찾아가는 탐사 기지예요. ARTEMIS의 Pro 엔진을 연결한 AI CLI가 ADB를 통해 화면을 살피고 조작하며 결과를 확인해요. 길이 막히면 다시 경로를 찾으며, 다음 테스트를 위한 발자국을 남겨요.",
         "techStack": ["Python", "ADB", "UIAutomator2", "AI CLI"]
       },
       "planet": {
@@ -377,7 +377,7 @@
       },
       "details": {
         "category": "스토리지 검색 도구",
-        "description": "로컬 스토리지의 파일 메타데이터로 크기를 확인하고, 조건에 맞는 파일과 상위 폴더의 용량 합계를 트리로 보여줘요. 시스템 경로 제외, 검색 취소·재시작과 폴더 열기를 지원하며 스캔 엔진과 Tkinter 화면을 분리했어요.",
+        "description": "이 행성은 파일이 켜켜이 쌓인 저장 공간의 지도를 펼치는 곳이에요. Windows와 Linux의 폴더를 따라가며 어디에 얼마나 큰 파일이 머무는지, 폴더마다 얼마만큼의 공간을 쓰는지 트리로 보여줘요. 익숙한 저장소에도 미처 몰랐던 넓은 구역이 숨어 있어요.",
         "techStack": ["Python", "Tkinter"]
       },
       "planet": {
@@ -423,7 +423,7 @@
       },
       "details": {
         "category": "Storage Tracking · Android 서브 프로젝트",
-        "description": "Storage Tracking의 Android 버전이에요. 로컬 및 이동식 공유 저장소의 폴더별 사용량과 대용량 파일을 읽기 전용으로 분석하며, 폴더 스캔과 파일 스캔을 독립적으로 실행해요.",
+        "description": "이 행성은 Storage Tracking 곁을 돌며 Android의 저장 공간을 살피는 작은 위성이에요. 기기 안과 이동식 공유 저장소를 읽기 전용으로 둘러보고, 폴더의 사용량과 큰 파일의 위치를 각각 찾아봐요. 본행성에서 시작한 지도 그리기가 손안의 작은 세계로 이어져요.",
         "techStack": ["Java", "Android", "Material 3"]
       },
       "planet": {
@@ -471,7 +471,7 @@
       },
       "details": {
         "category": "브라우저 물리 실험",
-        "description": "도형 충돌과 반응, 스프링과 제약 조건, 고밀도 파티클 등 오래된 토이 프로젝트 46개를 원본 로직 중심으로 보존하고 공통 물리 코어 위에서 실행해요.",
+        "description": "이 행성은 오래전의 호기심이 아직 움직이고 있는 실험 정원이에요. 2013년부터 쌓아온 46개의 물리·파티클 실험 속에서 도형이 부딪히고, 스프링이 흔들리고, 작은 입자들이 흩어져요. 예전의 생각을 건드려보면 오늘의 화면에서 다시 움직이기 시작해요.",
         "techStack": ["TypeScript", "PixiJS", "WebGL", "Vite"]
       },
       "planet": {
@@ -518,7 +518,7 @@
       },
       "details": {
         "category": "로또 패턴 시각화",
-        "description": "1~45 번호를 원 둘레와 실제 선택표 배치에 대응시켜, 여섯 번호가 만드는 다각형의 형태와 회차별 변화를 비교하고 탐색해요.",
+        "description": "이 행성은 흩어진 숫자를 이어 모양을 그려보는 관측실이에요. 1부터 45까지의 번호를 원 둘레와 선택표 위에 놓고, 회차마다 여섯 점이 만드는 다각형을 비교해요. 숫자로만 보던 기록이 서로 다른 윤곽을 가진 풍경으로 펼쳐져요.",
         "techStack": ["React", "TypeScript", "SVG"]
       },
       "planet": {
@@ -565,7 +565,7 @@
       },
       "details": {
         "category": "브라우저 생물학 실험",
-        "description": "실제 바이러스 56종의 표면까지 연속 접근하고, Hero Virus 내부 경로·공간 분해·Time Lens·자동 관찰을 한 장면에서 경험해요.",
+        "description": "이 행성은 맨눈으로 볼 수 없는 세계를 가까이 들여다보는 작은 관찰실이에요. 실제 바이러스의 구조를 바탕으로 표면에 다가가고, 대표 모델의 내부를 지나며 공간과 시간의 변화를 살펴봐요. 멀리서는 하나의 점이었던 존재가 가까이에서 복잡한 구조를 드러내요.",
         "techStack": ["TypeScript", "Three.js", "Vite"]
       },
       "planet": {
@@ -612,7 +612,7 @@
       },
       "details": {
         "category": "인터랙티브 자연 공간",
-        "description": "넓은 초원과 완만한 능선, 작은 분지를 자유롭게 둘러보며 시간에 따라 변하는 하늘과 빛을 감상해요. 구름과 별, 안개와 비를 가볍게 표현한 Three.js 기반의 자연 공간을 만들어 가고 있어요.",
+        "description": "이 행성은 잠시 걸음을 늦추고 하늘을 바라볼 수 있는 작은 오아시스예요. 낮과 밤이 바뀌는 초원과 능선 사이로 구름이 흐르고, 안개와 비가 풍경의 표정을 바꿔요. 서두르지 않고 둘러보면 같은 자리에서도 조금씩 다른 빛을 만나게 돼요.",
         "techStack": ["TypeScript", "Three.js", "WebGL", "Vite"]
       },
       "planet": {
