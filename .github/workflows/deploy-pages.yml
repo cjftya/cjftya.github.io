@@ -103,6 +103,9 @@ jobs:
       - name: Test
         run: npm run test
 
+      - name: Verify Wedding Card encrypted release
+        run: npm run wedding:check
+
       - name: Build
         run: npm run build
 

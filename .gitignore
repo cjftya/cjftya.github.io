@@ -40,3 +40,6 @@ test-results/
 /artifacts/**/*.webp
 /artifacts/**/*.mp4
 /artifacts/**/*.svg
+
+# Encrypted migration staging; never plaintext.
+/projects/weddingcard/.weddingcard-stage-*
