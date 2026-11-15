@@ -10,6 +10,8 @@ import {
   type PerspectiveCamera,
 } from 'three';
 import type { GalaxyAtmosphere } from '../../data/Project';
+import { DistantProbe } from './DistantProbe';
+import { CometPass } from './CometPass';
 import { MeteorField } from './MeteorField';
 import { NebulaBackdrop } from './NebulaBackdrop';
 
@@ -52,6 +54,8 @@ export class SpaceBackdrop {
   });
   private readonly nebula = new NebulaBackdrop();
   private readonly meteors = new MeteorField();
+  private readonly probe = new DistantProbe();
+  private readonly comet = new CometPass();
   private readonly targetFarStarColor = new Color('#dce6ff');
   private readonly targetDustColor = new Color('#8ea6d8');
   private targetStarOpacity = 0.82;
@@ -68,12 +72,16 @@ export class SpaceBackdrop {
       this.farStars.points,
       this.nearDust.points,
       this.meteors.object,
+      this.probe.object,
+      this.comet.object,
     );
   }
 
   update(deltaSeconds: number, camera: PerspectiveCamera): void {
     this.nebula.object.position.copy(camera.position);
-    this.meteors.update(deltaSeconds, camera);
+    this.probe.update(deltaSeconds, camera);
+    this.comet.update(deltaSeconds, camera, !this.meteors.active);
+    this.meteors.update(deltaSeconds, camera, !this.comet.active);
     const colorMix = 1 - Math.exp(-deltaSeconds * 3.5);
     this.farStars.material.color.lerp(this.targetFarStarColor, colorMix);
     this.nearDust.material.color.lerp(this.targetDustColor, colorMix);
@@ -122,6 +130,9 @@ export class SpaceBackdrop {
     this.object.remove(this.nebula.object);
     this.nebula.dispose();
     this.meteors.dispose();
+    this.object.remove(this.probe.object, this.comet.object);
+    this.probe.dispose();
+    this.comet.dispose();
   }
 
   private createPointField(options: PointFieldOptions): PointField {

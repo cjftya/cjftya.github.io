@@ -56,10 +56,16 @@ export class MeteorField {
     this.object.frustumCulled = false;
   }
 
-  update(deltaSeconds: number, camera: PerspectiveCamera): void {
+  get active(): boolean {
+    return this.activeElapsedSeconds !== null;
+  }
+
+  update(deltaSeconds: number, camera: PerspectiveCamera, allowSpawn = true): void {
     if (this.prefersReducedMotion) {
       return;
     }
+
+    if (!this.active && !allowSpawn) return;
 
     this.secondsUntilLarge -= deltaSeconds;
     if (this.activeElapsedSeconds === null) {
