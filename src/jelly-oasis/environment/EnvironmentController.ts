@@ -51,7 +51,7 @@ export class EnvironmentController {
   private shadowsEnabled = false;
   private shadowCaster: 'sun' | 'moon' = 'sun';
   fogEnabled = true;
-  cloudsEnabled = true;
+  cloudsEnabled = false;
   private readonly from: WeatherProfile = { ...WEATHER_PROFILES.CLEAR };
   private readonly timeFrame = createTimeFrame();
   private readonly overcastZenith = new Color('#777e9c');
@@ -383,7 +383,7 @@ export class EnvironmentController {
       .lerp(this.cloudNight, night)
       .lerp(this.cloudStorm, weather.cloudDarkness * (1 - night * 0.4));
     this.cloudAge += dt;
-    if (this.changed || transitioning || this.cloudAge >= 0.05) {
+    if (this.cloudsEnabled && (this.changed || transitioning || this.cloudAge >= 0.05)) {
       this.clouds.update(
         this.elapsed,
         weather.cloudCoverage,

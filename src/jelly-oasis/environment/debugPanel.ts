@@ -30,7 +30,7 @@ export function createEnvironmentPanel(
     <label>날씨 <select id="environment-weather" aria-label="날씨">${WEATHER_PRESETS.map((p) => `<option value="${p}">${WEATHER_LABELS[p]}</option>`).join('')}</select></label>
     <label><input id="environment-auto-weather" type="checkbox"> 랜덤 날씨 · 실제 날씨 연동 해제</label>
     <button type="button" id="environment-sky" ${viewSky ? '' : 'hidden'}>하늘 보기</button>
-    <div class="debug-row" ${debugEnabled ? '' : 'hidden'}><label><input id="environment-clouds" type="checkbox" checked> 구름</label><label><input id="environment-fog" type="checkbox" checked> 안개</label><label><input id="environment-shadows" type="checkbox"> 그림자</label></div>
+    <div class="debug-row" ${debugEnabled ? '' : 'hidden'}><label><input id="environment-clouds" type="checkbox"> 구름</label><label><input id="environment-fog" type="checkbox" checked> 안개</label><label><input id="environment-shadows" type="checkbox"> 그림자</label></div>
     <output id="environment-stats" ${debugEnabled ? '' : 'hidden'}></output>`;
   document.querySelector('.oasis-shell')!.append(panel);
   const time = panel.querySelector<HTMLInputElement>('#environment-time')!;

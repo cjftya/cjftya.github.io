@@ -142,6 +142,7 @@ export function createSky() {
         color = moon(color,ray,moonDirection,.039,vec3(.76,.85,.98),11.);
         color = moon(color,ray,companionDirection,.023,vec3(.91,.67,.66),29.);
 
+        if (cloudsEnabled > 0.5) {
         // Two inexpensive cloud scales in the existing sky draw; no raymarching.
         vec3 p = ray * vec3(3.8,11.,3.8) + vec3(elapsed*.006,0,elapsed*.003);
         float broad = noise3(p);
@@ -159,6 +160,7 @@ export function createSky() {
         cloudColor += mix(vec3(.30,.20,.14),vec3(.07,.20,.22),night)
           * cloudEdge * (.35+.65*pow(sunDot,4.)) * clearSky;
         color = mix(color,cloudColor,clouds * cloudsEnabled * mix(.48,.83,cloudCover));
+        }
         gl_FragColor = vec4(color,1.);
         #include <tonemapping_fragment>
         #include <colorspace_fragment>

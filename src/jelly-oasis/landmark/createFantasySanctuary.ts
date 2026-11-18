@@ -1,3 +1,4 @@
+import { createPassingBirds } from './createPassingBirds';
 import { createSanctuaryLight } from './createSanctuaryLight';
 import { rootedWind } from '../animation/vegetationWind';
 import type { Matrix4 } from 'three';
@@ -259,6 +260,7 @@ export function createFantasySanctuary(
   group.name = 'FantasySanctuary';
   content.add(group);
   const understory = createEnchantedUnderstory(pond, approach);
+  const birds = createPassingBirds();
   const moths = createSpiritMoths();
   const canopyLight = createSanctuaryLight();
   const crystalMaterials = palettes.map((color) => {
@@ -372,8 +374,9 @@ export function createFantasySanctuary(
     clear();
     understory.place(ground);
     canopyLight.place(ground);
+    birds.place(waterY);
     moths.place(ground, waterY);
-    group.add(understory.group, canopyLight.mesh, moths.group);
+    group.add(understory.group, canopyLight.mesh, birds.group, moths.group);
     anchors = [];
     const shards: BufferGeometry[][] = [[], []];
     const source = crystalGeometry();
@@ -585,6 +588,7 @@ export function createFantasySanctuary(
       const changed = night !== previousNight;
       understory.update(night);
       if (!reducedMotion) elapsed += Math.min(Math.max(seconds, 0), 0.1);
+      birds.update(elapsed, reducedMotion);
       moths.update(elapsed, night);
       crystalMaterials.forEach((m, i) => {
         const pulse = reducedMotion
@@ -618,6 +622,7 @@ export function createFantasySanctuary(
     dispose() {
       if (disposed) return;
       disposed = true;
+      birds.dispose();
       moths.dispose();
       understory.dispose();
       canopyLight.dispose();
