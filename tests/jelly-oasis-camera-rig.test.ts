@@ -39,7 +39,7 @@ describe('Oasis camera ownership', () => {
     expect(camera.position.toArray()).toEqual([200, 100, 150]);
     rig.reset();
     expect(camera.position).toEqual(initial);
-    expect(controls.minDistance).toBe(1.5);
+    expect(controls.minDistance).toBe(1);
   });
 
   it('follows panned terrain and lifts eye/pivot together without changing view direction', () => {
@@ -64,7 +64,7 @@ describe('Oasis camera ownership', () => {
     camera.position.set(500, 200, 0);
     controls.target.set(500, 100, 0);
     rig.update();
-    expect(controls.target.x).toBeCloseTo(config.size * 0.36);
+    expect(controls.target.x).toBeCloseTo(config.size * 0.5);
     rig.review([500, 200, 0], [500, 100, 0]);
     rig.update();
     expect(controls.target.x).toBe(500);
