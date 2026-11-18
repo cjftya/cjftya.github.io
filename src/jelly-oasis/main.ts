@@ -129,7 +129,27 @@ async function start(canvas: HTMLCanvasElement): Promise<void> {
   const observer = new ResizeObserver(resize);
   observer.observe(canvas);
   resize();
-  const resetPresentation = () => cameraRig.reset();
+  const autoButton = document.createElement('button');
+  autoButton.type = 'button';
+  autoButton.id = 'auto-view';
+  resetButton.after(autoButton);
+  let autoView = false;
+  function setAutoView(enabled: boolean): void {
+    autoView = enabled;
+    autoButton.textContent = enabled ? '감상 멈추기' : '자동 감상';
+    autoButton.setAttribute('aria-pressed', String(enabled));
+    if (enabled) cameraRig.releaseFraming();
+    dirty = true;
+  }
+  const toggleAutoView = () => setAutoView(!autoView);
+  const stopAutoView = () => { if (autoView) setAutoView(false); };
+  setAutoView(false);
+  autoButton.addEventListener('click', toggleAutoView);
+  controls.addEventListener('start', stopAutoView);
+  const resetPresentation = () => {
+    stopAutoView();
+    cameraRig.reset();
+  };
   resetButton.addEventListener('click', resetPresentation);
   const invalidate = (): void => {
     dirty = true;
@@ -300,6 +320,14 @@ async function start(canvas: HTMLCanvasElement): Promise<void> {
     const firstPass = renderer.info.render.frame;
     if (debugEnabled) renderer.info.reset();
     reality.tick();
+    if (autoView) {
+      const angle = seconds * (motionPreference.matches ? 0.009 : 0.018);
+      const dx = camera.position.x - controls.target.x;
+      const dz = camera.position.z - controls.target.z;
+      camera.position.x = controls.target.x + dx * Math.cos(angle) + dz * Math.sin(angle);
+      camera.position.z = controls.target.z + dz * Math.cos(angle) - dx * Math.sin(angle);
+      dirty = true;
+    }
     if (cameraRig.update()) dirty = true;
     if (
       environment.update(
@@ -401,6 +429,9 @@ async function start(canvas: HTMLCanvasElement): Promise<void> {
     motionPreference.removeEventListener('change', motionChanged);
     bloom.dispose();
     manager.dispose();
+    controls.removeEventListener('start', stopAutoView);
+    autoButton.removeEventListener('click', toggleAutoView);
+    autoButton.remove();
     resetButton.removeEventListener('click', resetPresentation);
     controls.removeEventListener('start', cameraRig.releaseFraming);
     controls.removeEventListener('change', invalidate);
