@@ -27,14 +27,14 @@ export function createOasisCameraRig({
   invalidate: () => void;
 }) {
   controls.enableDamping = true;
-  controls.dampingFactor = 0.09;
-  controls.screenSpacePanning = false;
-  controls.minDistance = 1.5;
+  controls.dampingFactor = 0.14;
+  controls.screenSpacePanning = true;
+  controls.minDistance = 1;
   controls.maxDistance = Math.max(1050, config.size * 7);
   controls.minPolarAngle = 0.01;
   controls.maxPolarAngle = Math.PI - 0.01;
   controls.maxTargetRadius = Infinity;
-  controls.zoomSpeed = 0.8;
+  controls.zoomSpeed = 1;
   controls.zoomToCursor = true;
   let reviewCamera = false;
   let groundCamera = false;
@@ -48,7 +48,7 @@ export function createOasisCameraRig({
     presentationCamera = !overview;
     mediumCamera = false;
     reviewCamera = groundCamera = false;
-    controls.minDistance = 1.5;
+    controls.minDistance = 1;
     controls.maxPolarAngle = Math.PI - 0.01;
     controls.maxTargetRadius = Infinity;
     if (overview)
@@ -82,6 +82,7 @@ export function createOasisCameraRig({
     if (overviewCamera || presentationCamera) reset(overviewCamera);
   }
   const releaseFraming = (): void => {
+    controls.minDistance = 1;
     mediumCamera = false;
     overviewCamera = false;
     presentationCamera = false;
@@ -171,9 +172,9 @@ export function createOasisCameraRig({
     controls.update();
     // Preserve the orbit's view direction when it touches the ground by lifting
     // both eye and pivot. The elevated pivot lets the same drag look at the sky.
-    // Ground-follow only tracks horizontal panning, never pulls a sky pivot down.
+    // Keep screen-space pans level even when the pivot crosses a steep slope.
     if (!reviewCamera) {
-      const radius = config.size * 0.36;
+      const radius = config.size * 0.5;
       const horizontal = Math.hypot(controls.target.x, controls.target.z);
       if (horizontal > radius) {
         const x = (controls.target.x * radius) / horizontal;
@@ -183,18 +184,15 @@ export function createOasisCameraRig({
         controls.target.x = x;
         controls.target.z = z;
       }
-      const groundDelta =
-        sampleTerrainHeight(controls.target.x, controls.target.z, config) -
-        sampleTerrainHeight(previousTarget.x, previousTarget.z, config);
-      controls.target.y += groundDelta;
-      camera.position.y += groundDelta;
     }
     const onIsland =
       Math.abs(camera.position.x) <= config.size / 2 &&
       Math.abs(camera.position.z) <= config.size / 2;
+    const clearance = groundCamera ? 1.7 : Math.min(6, Math.max(0.65,
+      camera.position.distanceTo(controls.target) * 0.07));
     const minimumY = onIsland
       ? sampleTerrainHeight(camera.position.x, camera.position.z, config) +
-        (groundCamera ? 1.7 : 6)
+        clearance
       : -30;
     if (camera.position.y < minimumY) {
       const lift = minimumY - camera.position.y;
