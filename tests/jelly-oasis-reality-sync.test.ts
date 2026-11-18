@@ -180,7 +180,7 @@ describe('reality synchronization lifecycle', () => {
     expect(f.environment.state.timeOfDay).not.toBe(3);
     f.dispose();
   });
-  it('times out and retries once instead of issuing overlapping requests', async () => {
+  it('times out and retries promptly without issuing overlapping requests', async () => {
     const fetcher = vi.fn<typeof fetch>().mockImplementation(
       (_url, init) =>
         new Promise((_resolve, reject) => {
@@ -195,10 +195,69 @@ describe('reality synchronization lifecycle', () => {
     expect(f.sync.status).toContain('재시도');
     f.sync.tick();
     expect(fetcher).toHaveBeenCalledTimes(1);
-    await vi.advanceTimersByTimeAsync(60000);
+    await vi.advanceTimersByTimeAsync(3000);
     f.sync.tick();
     expect(fetcher).toHaveBeenCalledTimes(2);
     f.dispose();
+  });
+  it('recovers from an HTTP 503 without reloading the page', async () => {
+    const fetcher = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(new Response(null, { status: 503 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify(data())));
+    const f = fixture(fetcher);
+    f.sync.tick();
+    await vi.advanceTimersByTimeAsync(2999);
+    f.sync.tick();
+    expect(fetcher).toHaveBeenCalledTimes(1);
+    await vi.advanceTimersByTimeAsync(1);
+    f.sync.tick();
+    await vi.advanceTimersByTimeAsync(0);
+    expect(fetcher).toHaveBeenCalledTimes(2);
+    expect(f.environment.state.weather).toBe('RAIN');
+    expect(f.sync.status).toContain('서울 · 비');
+    f.dispose();
+  });
+  it('waits for Retry-After when the API rate-limits requests', async () => {
+    const fetcher = vi.fn<typeof fetch>().mockImplementation(async () => {
+      return new Response(null, { status: 429, headers: { 'Retry-After': '120' } });
+    });
+    const f = fixture(fetcher);
+    f.sync.tick();
+    await vi.advanceTimersByTimeAsync(119999);
+    f.sync.tick();
+    expect(fetcher).toHaveBeenCalledTimes(1);
+    await vi.advanceTimersByTimeAsync(1);
+    f.sync.tick();
+    expect(fetcher).toHaveBeenCalledTimes(2);
+    f.dispose();
+  });
+  it('restores the last valid weather after reload and discards it once it expires', async () => {
+    const storage = new Map<string, string>();
+    vi.stubGlobal('localStorage', {
+      getItem: storage.get.bind(storage),
+      setItem: storage.set.bind(storage),
+    });
+    const initial = fixture(
+      vi.fn<typeof fetch>().mockResolvedValue(new Response(JSON.stringify(data()))),
+    );
+    initial.sync.tick();
+    await vi.advanceTimersByTimeAsync(0);
+    initial.dispose();
+
+    const offline = vi
+      .fn<typeof fetch>()
+      .mockRejectedValue(new TypeError('Failed to fetch'));
+    const reloaded = fixture(offline);
+    expect(reloaded.environment.state.weather).toBe('RAIN');
+    reloaded.sync.tick();
+    await vi.advanceTimersByTimeAsync(0);
+    expect(reloaded.sync.status).toContain('마지막 날씨 유지 중');
+    vi.setSystemTime(NOW + 2 * 3600000 + 1000);
+    reloaded.sync.tick();
+    await vi.advanceTimersByTimeAsync(0);
+    expect(reloaded.environment.state.weather).toBe('CLEAR');
+    reloaded.dispose();
   });
   it('ignores a weather response that arrives after disposal', async () => {
     let resolve!: (response: Response) => void;
