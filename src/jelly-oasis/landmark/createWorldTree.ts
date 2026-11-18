@@ -26,7 +26,7 @@ import type { Footprint } from '../vegetation/vegetationPlacement';
 // Landmark-local coordinates. The open southeast sector keeps the lake and
 // existing approach clear; the ruined enclosure occupies the wooded hillside.
 const segments = [
-  { angle: 2.85, radius: 36, length: 15, height: 4 },
+  { angle: 2.85, radius: 36, length: 15, height: 4, rootContact: true },
   { angle: 3.48, radius: 28, length: 15, height: 5 },
   { angle: 4.08, radius: 30, length: 17, height: 4 },
   { angle: 4.73, radius: 29, length: 16, height: 5 },
@@ -117,7 +117,7 @@ export function createWorldTree(
     const bark = [new Color('#8b704d'), new Color('#a78c61'), new Color('#68563d')];
     // Variable-radius swept rings give branches a continuous taper, avoiding
     // cylinder joints. Every face is flat; no external textures or subdivision.
-    function limb(points: Vector3[], radii: number[], into = wood, seed = 0) {
+    function limb(points: Vector3[], radii: number[], into = wood, seed = 0, pressAgainstWall = false) {
       const curve = new CatmullRomCurve3(points),
         rings = Math.max(12, points.length * (radii[0]! > 4 ? 9 : 5)),
         sides = radii[0]! > 4 ? 24 : radii[0]! > 1 ? 14 : 6;
@@ -132,16 +132,19 @@ export function createWorldTree(
         const f = t * (radii.length - 1),
           j = Math.min(radii.length - 2, Math.floor(f));
         const radius = radii[j]! + (radii[j + 1]! - radii[j]!) * (f - j);
+        const contact = pressAgainstWall ? Math.max(0, Math.min(1, f - 2, 5 - f)) : 0;
         ring.push(
           Array.from({ length: sides }, (_, k) => {
             const a = (k * Math.PI * 2) / sides + 0.16 * Math.sin(t * 5 + seed);
             const r =
               radius *
               (1 + 0.16 * Math.sin(k * 2.7 + seed) + 0.055 * Math.sin(i * 0.55 + k));
-            return p
+            const vertex = p
               .clone()
               .addScaledVector(right, Math.cos(a) * r)
               .addScaledVector(up, Math.sin(a) * r);
+            if (contact) vertex.y = p.y + (vertex.y - p.y) * (1 - 0.5 * contact);
+            return vertex;
           }),
         );
       }
@@ -337,8 +340,10 @@ export function createWorldTree(
             seed,
             exposed ? 0.045 : 0.015,
           );
+          const displaced = seg.rootContact && exposed && col === Math.floor(cols / 2);
+          if (displaced) g.rotateZ(0.09);
           g.rotateY(-seg.angle - Math.PI / 2 + (exposed ? 0.025 * Math.sin(seed) : 0));
-          g.translate(x, floor + (row + 0.5) * 1.5, z);
+          g.translate(x - (displaced ? dz * 0.42 : 0), floor + (row + 0.5) * 1.5, z + (displaced ? dx * 0.42 : 0));
           stones.push(paintFaces(g, (col + i) % 3 === 0 ? mossPalette : palette));
         }
       }
@@ -353,6 +358,8 @@ export function createWorldTree(
         stones.push(paintFaces(g, palette));
       }
       const wallTop = floor + Math.max(2, rows - 1) * 1.5;
+      // The central capstone on the western wall retains all three courses.
+      const crossingTop = seg.rootContact ? floor + rows * 1.5 : wallTop;
       for (let v = 0; v < 3; v++) {
         yield 'world-tree';
         const along = (v - 1) * seg.length * 0.23;
@@ -375,8 +382,8 @@ export function createWorldTree(
           p(dx * 2, 2, dz * 2),
           point(inner * 0.5, ground(tx + dx * inner * 0.5, tz + dz * inner * 0.5) + 1),
           point(inner, ground(tx + dx * inner, tz + dz * inner) + 1.4),
-          point(seg.radius - 1.5, wallTop + 0.8),
-          point(seg.radius + 1.5, wallTop + 0.6, 0.7),
+          point(seg.radius - 1.5, crossingTop + (seg.rootContact ? 0.35 : 0.8)),
+          point(seg.radius + 1.5, crossingTop + (seg.rootContact ? 0.27 : 0.6), 0.7),
           point(outer, ground(tx + dx * outer, tz + dz * outer) + 0.6, 1),
           point(
             outer + 4,
@@ -384,9 +391,10 @@ export function createWorldTree(
             1,
           ),
         ],
-        [2.2, 1.5, 0.95, 0.7, 0.55, 0.3, 0.04],
+        seg.rootContact ? [3, 1.8, 1.15, 1, 0.8, 0.35, 0.04] : [2.2, 1.5, 0.95, 0.7, 0.55, 0.3, 0.04],
         wood,
         i,
+        seg.rootContact,
       );
       for (const side of [-1, 1]) {
         yield 'world-tree';
