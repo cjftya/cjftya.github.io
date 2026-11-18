@@ -90,29 +90,15 @@ it('moves sunlight with longitude, season and hemisphere, including polar locati
       expect(Number.isFinite(value)).toBe(true);
 });
 
-function fixture(fetcher: typeof fetch) {
+function fixture(fetcher?: typeof fetch) {
   vi.useFakeTimers();
   vi.setSystemTime(NOW);
-  let success: PositionCallback = () => {};
-  let failure: PositionErrorCallback = () => {};
-  const geo = vi.fn((a: PositionCallback, b: PositionErrorCallback) => {
-    success = a;
-    failure = b;
-  });
-  vi.stubGlobal('navigator', { geolocation: { getCurrentPosition: geo } });
   const environment = new EnvironmentController(new Scene(), false, false);
   const sync = new RealitySync(environment, vi.fn(), fetcher);
   const camera = new PerspectiveCamera();
   return {
     environment,
     sync,
-    geo,
-    allow(latitude = 37.271234, longitude = 127.011234) {
-      success({ coords: { latitude, longitude } } as GeolocationPosition);
-    },
-    deny() {
-      failure({ code: 1 } as GeolocationPositionError);
-    },
     update(dt = 0.1) {
       environment.update(dt, camera, 100, 1);
     },
@@ -123,24 +109,24 @@ function fixture(fetcher: typeof fetch) {
   };
 }
 describe('reality synchronization lifecycle', () => {
-  it('requests permission, sends rounded coordinates, applies local time and throttles visible refresh', async () => {
+  it('uses the Seoul clock before the response and throttles visible refreshes', async () => {
     const fetcher = vi
       .fn<typeof fetch>()
-      .mockResolvedValue(new Response(JSON.stringify(data())));
+      .mockImplementation(async () => new Response(JSON.stringify(data())));
     const f = fixture(fetcher);
     expect(f.environment.autoWeather.enabled).toBe(false);
-    f.sync.locate();
-    f.sync.locate();
-    expect(f.geo).toHaveBeenCalledTimes(1);
+    expect(f.environment.realtimeLocation).toEqual({
+      latitude: 37.57,
+      longitude: 126.98,
+    });
     f.sync.tick();
-    expect(fetcher).not.toHaveBeenCalled();
-    f.allow();
-    f.sync.tick();
+    expect(f.environment.state.timeOfDay).toBe(12);
     await vi.advanceTimersByTimeAsync(0);
     f.sync.tick();
     expect(fetcher).toHaveBeenCalledTimes(1);
-    expect(fetcher.mock.calls[0]![0]).toContain('latitude=37.27');
-    expect(f.environment.state.timeOfDay).toBe(12);
+    const url = new URL(String(fetcher.mock.calls[0]![0]));
+    expect(url.searchParams.get('latitude')).toBe('37.57');
+    expect(url.searchParams.get('longitude')).toBe('126.98');
     expect(f.environment.state.weather).toBe('RAIN');
     expect(f.environment.windDirection?.x).toBeCloseTo(-1);
     for (let i = 0; i < 310; i++) f.update();
@@ -155,18 +141,20 @@ describe('reality synchronization lifecycle', () => {
     await vi.advanceTimersByTimeAsync(0);
     f.dispose();
   });
-  it('does not substitute a fixed city after denial, and supports retry', () => {
-    const fetcher = vi.fn<typeof fetch>();
-    const f = fixture(fetcher);
-    f.sync.locate();
-    f.deny();
+  it('calls the native fetch path with its global receiver and skips geolocation', async () => {
+    const getCurrentPosition = vi.fn();
+    vi.stubGlobal('navigator', { geolocation: { getCurrentPosition } });
+    const fetcher = vi.fn(function (this: unknown) {
+      if (this !== globalThis) throw new TypeError('Illegal invocation');
+      return Promise.resolve(new Response(JSON.stringify(data())));
+    });
+    vi.stubGlobal('fetch', fetcher);
+    const f = fixture();
     f.sync.tick();
-    expect(f.sync.location).toBeNull();
-    expect(f.environment.realtimeLocation).toBeNull();
-    expect(fetcher).not.toHaveBeenCalled();
-    expect(f.sync.status).toContain('권한');
-    f.sync.locate();
-    expect(f.geo).toHaveBeenCalledTimes(2);
+    await vi.advanceTimersByTimeAsync(0);
+    expect(getCurrentPosition).not.toHaveBeenCalled();
+    expect(fetcher).toHaveBeenCalledTimes(1);
+    expect(f.sync.status).toContain('서울 · 비');
     f.dispose();
   });
   it('keeps manual overrides until explicitly re-enabled and rejects late responses', async () => {
@@ -178,8 +166,6 @@ describe('reality synchronization lifecycle', () => {
         }),
     );
     const f = fixture(fetcher);
-    f.sync.locate();
-    f.allow();
     f.sync.tick();
     f.environment.setTime(3);
     f.environment.setWeather('SNOW');
@@ -202,8 +188,6 @@ describe('reality synchronization lifecycle', () => {
         }),
     );
     const f = fixture(fetcher);
-    f.sync.locate();
-    f.allow();
     f.sync.tick();
     for (let i = 0; i < 20; i++) f.sync.tick();
     expect(fetcher).toHaveBeenCalledTimes(1);
@@ -216,16 +200,24 @@ describe('reality synchronization lifecycle', () => {
     expect(fetcher).toHaveBeenCalledTimes(2);
     f.dispose();
   });
-  it('ignores permission and network callbacks after disposal', async () => {
-    const fetcher = vi.fn<typeof fetch>();
+  it('ignores a weather response that arrives after disposal', async () => {
+    let resolve!: (response: Response) => void;
+    const fetcher = vi.fn<typeof fetch>().mockImplementation(
+      () =>
+        new Promise((done) => {
+          resolve = done;
+        }),
+    );
     const f = fixture(fetcher);
-    f.sync.locate();
-    f.dispose();
-    f.allow();
     f.sync.tick();
-    expect(fetcher).not.toHaveBeenCalled();
-    expect(f.sync.location).toBeNull();
+    const signal = fetcher.mock.calls[0]![1]?.signal;
+    f.dispose();
+    expect(signal?.aborted).toBe(true);
+    resolve(new Response(JSON.stringify(data())));
     await vi.advanceTimersByTimeAsync(0);
+    f.sync.tick();
+    expect(f.environment.state.weather).toBe('CLEAR');
+    expect(fetcher).toHaveBeenCalledTimes(1);
   });
   it('removes outdated weather once while keeping time sync alive', async () => {
     const fetcher = vi
@@ -233,8 +225,6 @@ describe('reality synchronization lifecycle', () => {
       .mockResolvedValueOnce(new Response(JSON.stringify(data())))
       .mockRejectedValue(new Error('offline'));
     const f = fixture(fetcher);
-    f.sync.locate();
-    f.allow();
     f.sync.tick();
     await vi.advanceTimersByTimeAsync(0);
     vi.setSystemTime(NOW + 3 * 3600000);

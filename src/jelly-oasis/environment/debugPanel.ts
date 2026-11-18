@@ -18,12 +18,10 @@ export function createEnvironmentPanel(
   panel.open = false;
   panel.innerHTML = `<summary aria-expanded="false">Environment · 환경</summary>
     <div ${reality ? '' : 'hidden'}>
-      <label><input id="environment-real-time" type="checkbox" checked> 현지 실제 시간</label>
-      <label><input id="environment-real-weather" type="checkbox" checked> 현재 위치 날씨</label>
-      <button type="button" id="environment-location">현재 위치 다시 확인</button>
+      <label><input id="environment-real-time" type="checkbox" checked> 서울 현재 시간</label>
+      <label><input id="environment-real-weather" type="checkbox" checked> 서울 현재 날씨</label>
       <p id="environment-sync-status" role="status"></p>
-      <small>위치 허용 시 대략적인 좌표를 날씨 제공자에게 전달해요. 위치는 저장하지 않아요.
-      <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Weather data by Open-Meteo</a> · 기상 모델 기반</small>
+      <small><a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Weather data by Open-Meteo</a> · 기상 모델 기반</small>
     </div>
     <label>시간 <output id="environment-time-label"></output><input id="environment-time" aria-label="시간" type="range" min="0" max="23.99" step="0.01"></label>
     <div class="debug-row"><button type="button" id="environment-play"></button><label>속도 <select id="environment-speed" aria-label="시간 속도"><option value="0.25">0.25×</option><option value="1" selected>1× (16분/일)</option><option value="4">4×</option><option value="12">12×</option></select></label></div>
@@ -64,15 +62,7 @@ export function createEnvironmentPanel(
       environment.liveWeather = realWeather.checked;
       environment.setAutoWeather(false);
       if (!realWeather.checked) environment.clearLiveConditions();
-      else if (!reality?.location) reality?.locate();
       invalidate();
-    },
-    options,
-  );
-  panel.querySelector('#environment-location')!.addEventListener(
-    'click',
-    () => {
-      reality?.locate();
     },
     options,
   );
@@ -169,7 +159,7 @@ export function createEnvironmentPanel(
     const speed = panel.querySelector<HTMLSelectElement>('#environment-speed')!;
     speed.disabled = environment.realtimeTime;
     panel.querySelector('summary')!.textContent =
-      `환경 · ${timeLabel.value} · ${environment.liveWeather && !reality?.location ? '위치 허용 필요' : WEATHER_LABELS[environment.state.weather]}`;
+      `환경 · ${timeLabel.value} · ${WEATHER_LABELS[environment.state.weather]}`;
     play.textContent = environment.state.playing ? '일시정지' : '재생';
     autoWeather.checked = environment.autoWeather.enabled;
     weather.value = environment.state.weather;

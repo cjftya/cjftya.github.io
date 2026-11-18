@@ -157,7 +157,6 @@ async function start(canvas: HTMLCanvasElement): Promise<void> {
   controls.addEventListener('change', invalidate);
   controls.addEventListener('start', cameraRig.releaseFraming);
   const reality = new RealitySync(environment, invalidate);
-  reality.locate();
   const debugPanel = createEnvironmentPanel(
     environment,
     renderer,
