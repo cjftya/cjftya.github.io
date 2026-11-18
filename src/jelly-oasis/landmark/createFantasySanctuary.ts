@@ -19,6 +19,7 @@ import {
   SpotLight,
   Points,
   ShaderMaterial,
+  Vector3,
   UniformsLib,
   UniformsUtils,
 } from 'three';
@@ -166,6 +167,88 @@ void main() {
   #include <colorspace_fragment>
 }`;
 
+// Alternating shoreline perches; only the baked paths sample the terrain.
+function createSpiritMoths() {
+  const group = new Group();
+  group.name = 'SpiritMoths';
+  const wing = new BufferGeometry();
+  wing.setAttribute('position', new Float32BufferAttribute([
+    0,0,0.12, 0.54,0.04,0.27, 0.34,0,-0.04,
+    0,0,0.12, 0.34,0,-0.04, 0,0,-0.13,
+    0,0,-0.13, 0.34,0,-0.04, 0.25,0,-0.26,
+    0.54,0.04,0.27, 0.65,0.05,0.31, 0.34,0,-0.04,
+  ], 3));
+  wing.computeVertexNormals();
+  wing.addGroup(0, 9, 0);
+  wing.addGroup(9, 3, 1);
+  const silk = new MeshStandardMaterial({ color: '#a898bd', side: DoubleSide });
+  const tip = new MeshStandardMaterial({
+    color: '#dec6f3', emissive: '#c798ff', side: DoubleSide,
+  });
+  const body = new DodecahedronGeometry(0.085);
+  const insects = Array.from({ length: 3 }, (_, i) => {
+    const pivot = new Group();
+    const torso = new Mesh(body, silk);
+    torso.scale.set(0.7, 0.8, 2.2);
+    const left = new Mesh(wing, [silk, tip]);
+    const right = new Mesh(wing, [silk, tip]);
+    left.scale.x = -1;
+    pivot.add(torso, left, right);
+    group.add(pivot);
+    pivot.scale.setScalar(0.8 + 0.07 * i);
+    return { pivot, left, right, path: [] as Vector3[] };
+  });
+  function place(ground: (x: number, z: number) => number, water: number) {
+    const routes = [
+      [-15, 10, -5, 22, 2.8], [15, 6, 7, -6, -3.5], [-4, -6, 12, 17, 2.2],
+    ] as const;
+    insects.forEach(({ path }, i) => {
+      const [x0, z0, x1, z1, bend] = routes[i]!;
+      path.length = 0;
+      for (let j = 0; j <= 32; j++) {
+        const t = j / 32;
+        const arc = Math.sin(Math.PI * t);
+        const x = MathUtils.lerp(x0, x1, t) + bend * arc;
+        const z = MathUtils.lerp(z0, z1, t) + arc * Math.sin(t * Math.PI * 2 + i);
+        path.push(new Vector3(x, Math.max(water, ground(x, z)) + 0.12 +
+          arc * (1.4 + 0.55 * Math.sin(t * Math.PI * 3 + i)), z));
+      }
+    });
+    update(0, 0);
+  }
+  function update(time: number, night: number) {
+    tip.emissiveIntensity = 0.12 + 2.8 * night;
+    insects.forEach(({ pivot, left, right, path }, i) => {
+      if (!path.length) return;
+      const cycle = 18 + i * 3.7;
+      const clock = time + [3, 14, 21][i]!;
+      const leg = Math.floor(clock / cycle);
+      const local = clock % cycle;
+      const flight = 7 + i;
+      const u = Math.min(1, local / flight);
+      const t = u * u * (3 - 2 * u);
+      const cursor = (leg % 2 ? 1 - t : t) * 32;
+      const j = Math.min(31, Math.floor(cursor));
+      const a = path[j]!, b = path[j + 1]!;
+      pivot.position.lerpVectors(a, b, cursor - j);
+      if (u < 1) pivot.rotation.y = Math.atan2(b.x - a.x, b.z - a.z) + (leg % 2 ? Math.PI : 0);
+      const airborne = Math.min(1, local * 3, Math.max(0, flight - local) * 3);
+      const glide = Math.max(0, Math.sin(local * 1.7 + leg + i));
+      const beat = Math.sin(time * (22 + i * 2) + i);
+      const fold = MathUtils.lerp(1.19 + 0.06 * Math.sin(time * 1.4 + i),
+        0.32 + beat * (0.64 - 0.48 * glide), airborne);
+      left.rotation.z = -fold;
+      right.rotation.z = fold;
+    });
+  }
+  return { group, place, update, dispose() {
+    wing.dispose();
+    body.dispose();
+    silk.dispose();
+    tip.dispose();
+  } };
+}
+
 export function createFantasySanctuary(
   content: Group,
   pond: LayoutGuide,
@@ -176,6 +259,7 @@ export function createFantasySanctuary(
   group.name = 'FantasySanctuary';
   content.add(group);
   const understory = createEnchantedUnderstory(pond, approach);
+  const moths = createSpiritMoths();
   const canopyLight = createSanctuaryLight();
   const crystalMaterials = palettes.map((color) => {
     const material = new MeshStandardMaterial({
@@ -288,7 +372,8 @@ export function createFantasySanctuary(
     clear();
     understory.place(ground);
     canopyLight.place(ground);
-    group.add(understory.group, canopyLight.mesh);
+    moths.place(ground, waterY);
+    group.add(understory.group, canopyLight.mesh, moths.group);
     anchors = [];
     const shards: BufferGeometry[][] = [[], []];
     const source = crystalGeometry();
@@ -500,6 +585,7 @@ export function createFantasySanctuary(
       const changed = night !== previousNight;
       understory.update(night);
       if (!reducedMotion) elapsed += Math.min(Math.max(seconds, 0), 0.1);
+      moths.update(elapsed, night);
       crystalMaterials.forEach((m, i) => {
         const pulse = reducedMotion
           ? 1
@@ -532,6 +618,7 @@ export function createFantasySanctuary(
     dispose() {
       if (disposed) return;
       disposed = true;
+      moths.dispose();
       understory.dispose();
       canopyLight.dispose();
       clear();
