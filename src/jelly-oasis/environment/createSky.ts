@@ -92,7 +92,8 @@ export function createSky() {
         color += sunColor * (pow(sunDot,24.)*.10 + smoothstep(.9992,.9997,sunDot)*.8) * sunStrength;
         float clearSky = 1. - cloudDarkness * .85;
         // Broad, irregular star river. It fades completely in daylight and storms.
-        float river = exp(-pow((dot(ray,normalize(vec3(.2,.9,-.36))) - .24) * 9.,2.));
+        float riverOffset = (dot(ray,normalize(vec3(.2,.9,-.36))) - .24) * 9.;
+        float river = exp(-riverOffset * riverOffset);
         float nebula = noise3(ray * 7.) * .65 + noise3(ray * 19.) * .35;
         color += mix(vec3(.08,.16,.25),vec3(.22,.09,.30),nebula) * river * nebula * night * clearSky * .62;
 
@@ -101,8 +102,10 @@ export function createSky() {
         float az = atan(ray.z,ray.x);
         float warp = noise3(ray * 3.2 + vec3(0.,elapsed*.004,0.));
         float beltY = .27 + .11*sin(az*2.+warp*2.) + .045*sin(az*5.-elapsed*.008);
-        float veilBand = exp(-pow((ray.y-beltY)*13.,2.));
-        float ribbon = exp(-pow((ray.y-beltY+.025*sin(az*13.+warp*5.))*40.,2.));
+        float veilOffset = (ray.y-beltY)*13.;
+        float veilBand = exp(-veilOffset * veilOffset);
+        float ribbonOffset = (ray.y-beltY+.025*sin(az*13.+warp*5.))*40.;
+        float ribbon = exp(-ribbonOffset * ribbonOffset);
         float breaks = smoothstep(.24,.70,noise3(ray*9.+vec3(elapsed*.003,0.,0.)));
         vec3 veilColor = mix(vec3(.025,.32,.30),vec3(.24,.09,.36),smoothstep(-.6,.8,sin(az*2.3)));
         color += veilColor * (veilBand*.42+ribbon*.34) * breaks
