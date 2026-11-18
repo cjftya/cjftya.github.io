@@ -1,6 +1,9 @@
 import {
   Color,
   DirectionalLight,
+  BufferGeometry,
+  LineBasicMaterial,
+  LineSegments,
   Fog,
   Group,
   HemisphereLight,
@@ -22,6 +25,23 @@ import { advanceTime, createTimeFrame, sampleTime, wrapTime } from './timeOfDay'
 import { blendWeather, ENVIRONMENT_CONFIG, WEATHER_PROFILES } from './weather';
 import type { EnvironmentState, WeatherPreset, WeatherProfile } from './weather';
 
+function createDistantBolt() {
+  // A tapered-looking broken silhouette with a shorter side fork.
+  const trunk = [[0, 58], [-5, 43], [-2, 44], [-10, 29], [-7, 30], [-16, 9]];
+  const fork = [[-5, 43], [2, 37], [1, 33], [8, 27]];
+  const points: Vector3[] = [];
+  for (const path of [trunk, fork]) {
+    for (let i = 1; i < path.length; i++) {
+      for (const [x, y] of [path[i - 1]!, path[i]!]) points.push(new Vector3(x, y, 0));
+    }
+  }
+  const bolt = new LineSegments(new BufferGeometry().setFromPoints(points),
+    new LineBasicMaterial({ color: '#e6dcff', transparent: true, opacity: 0,
+      fog: false, depthWrite: false }));
+  bolt.visible = false;
+  return bolt;
+}
+
 export class EnvironmentController {
   readonly state: EnvironmentState;
   readonly root = new Group();
@@ -36,6 +56,8 @@ export class EnvironmentController {
   windDirection: { x: number; z: number } | undefined;
   private clockNow = Date.now();
   private liveTarget: WeatherProfile | null = null;
+  private readonly bolt = createDistantBolt();
+  private readonly strikeDirection = new Vector3();
   private flashWait = 14;
   private flashRemaining = 0;
   private reducedMotion: boolean;
@@ -98,6 +120,7 @@ export class EnvironmentController {
       this.rain.mesh,
       this.snow.mesh,
       this.lightning,
+      this.bolt,
       this.sun,
       this.sun.target,
       this.moon,
@@ -313,13 +336,16 @@ export class EnvironmentController {
     }
     const weather = this.profile;
     const night = frame.stars;
+    const overcast = MathUtils.smoothstep(weather.cloudCoverage, 0.4, 0.95) * (1 - night);
+    const directSun = weather.sunlightMultiplier * (1 - 0.56 * overcast);
+    const skyVeil = Math.min(1, weather.cloudDarkness + 0.22 * overcast);
     const u = this.sky.material.uniforms;
     (u.zenith!.value as Color)
       .setRGB(...frame.zenith, SRGBColorSpace)
-      .lerp(this.overcastZenith, weather.cloudDarkness * (1 - night * 0.8));
+      .lerp(this.overcastZenith, skyVeil * (1 - night * 0.8));
     (u.horizon!.value as Color)
       .setRGB(...frame.horizon, SRGBColorSpace)
-      .lerp(this.overcastHorizon, weather.cloudDarkness * (1 - night * 0.8));
+      .lerp(this.overcastHorizon, skyVeil * (1 - night * 0.8));
     (u.sunColor!.value as Color).setRGB(...frame.sun, SRGBColorSpace);
     (u.midSky!.value as Color).copy(u.horizon!.value).lerp(u.zenith!.value, 0.53);
     u.elapsed!.value = this.elapsed;
@@ -340,13 +366,13 @@ export class EnvironmentController {
       .multiplyScalar(300);
     u.sunDirection!.value.copy(this.sun.position).normalize();
     this.sun.position.add(this.shadowFocus);
-    u.sunStrength!.value = (frame.sunlight / 2.5) * weather.sunlightMultiplier;
+    u.sunStrength!.value = (frame.sunlight / 2.5) * directSun;
     this.sun.color.copy(u.sunColor!.value);
-    this.sun.intensity = frame.sunlight * weather.sunlightMultiplier;
+    this.sun.intensity = frame.sunlight * directSun;
     this.sun.visible = this.sun.intensity > 0.005;
     this.ambient.color.copy(this.dayAmbient).lerp(this.nightAmbient, night);
     this.ambient.groundColor.copy(this.dayGround).lerp(this.nightGround, night);
-    this.ambient.intensity = frame.ambient * weather.ambientMultiplier;
+    this.ambient.intensity = frame.ambient * (weather.ambientMultiplier + 0.2 * overcast);
     const sanctuaryVisibility = 1 - weather.cloudDarkness * 0.55;
     this.sanctuaryRim.intensity = (0.38 + night * 0.62) * sanctuaryVisibility;
     this.sanctuaryFill.intensity = (0.16 + night * 0.22) * sanctuaryVisibility;
@@ -404,6 +430,12 @@ export class EnvironmentController {
     if (!this.reducedMotion && this.state.playing && weather.lightning > 0.5) {
       this.flashWait -= dt;
       if (this.flashWait <= 0) {
+        camera.getWorldDirection(this.strikeDirection);
+        const bearing = Math.atan2(this.strikeDirection.x, this.strikeDirection.z)
+          + (Math.random() - 0.5) * 0.48;
+        this.bolt.position.set(camera.position.x + Math.sin(bearing) * 260,
+          this.shadowFocus.y, camera.position.z + Math.cos(bearing) * 260);
+        this.bolt.rotation.y = bearing;
         this.flashRemaining = 0.8;
         this.flashWait = 18 + Math.random() * 22;
       }
@@ -414,6 +446,8 @@ export class EnvironmentController {
       this.lightning.intensity = 0;
       this.flashRemaining = 0;
     }
+    this.bolt.material.opacity = Math.min(0.9, this.lightning.intensity * 0.55);
+    this.bolt.visible = this.bolt.material.opacity > 0.01;
     this.rain.mesh.visible = weather.rainIntensity > 0.005;
     this.rain.mesh.material.uniforms.elapsed!.value = this.elapsed;
     this.rain.mesh.material.uniforms.intensity!.value = weather.rainIntensity;
@@ -427,6 +461,8 @@ export class EnvironmentController {
     this.clouds.dispose();
     this.rain.dispose();
     this.snow.dispose();
+    this.bolt.geometry.dispose();
+    this.bolt.material.dispose();
     this.lightning.dispose();
     this.sun.dispose();
     this.moon.dispose();
