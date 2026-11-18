@@ -54,7 +54,7 @@ h1 {
   font-size: 12px;
   color: #617568;
 }
-#reset-view {
+:is(#reset-view, #auto-view) {
   position: absolute;
   right: max(32px, env(safe-area-inset-right));
   top: max(32px, env(safe-area-inset-top));
@@ -67,13 +67,13 @@ h1 {
   font-size: 12px;
   cursor: pointer;
 }
-#reset-view span {
+:is(#reset-view, #auto-view) span {
   margin-left: 12px;
 }
-#reset-view:hover {
+:is(#reset-view, #auto-view):hover {
   background: #fffef3;
 }
-#reset-view:focus-visible {
+:is(#reset-view, #auto-view):focus-visible {
   outline: 2px solid #476d55;
   outline-offset: 4px;
 }
@@ -127,7 +127,7 @@ h1 {
     max-width: 190px;
     line-height: 1.7;
   }
-  #reset-view {
+  :is(#reset-view, #auto-view) {
     right: 16px;
     top: max(24px, env(safe-area-inset-top));
     padding: 10px 13px;
@@ -141,7 +141,7 @@ h1 {
 .oasis-night .terrain-help {
   color: #d1d8e5;
 }
-.oasis-night #reset-view {
+.oasis-night :is(#reset-view, #auto-view) {
   background: #202d49cc;
   border-color: #b5c5df55;
 }
@@ -316,4 +316,8 @@ h1 {
     left: max(16px, env(safe-area-inset-left));
     right: auto;
   }
+}
+
+#auto-view {
+  transform: translateY(calc(100% + 8px));
 }
