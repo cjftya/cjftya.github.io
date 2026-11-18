@@ -174,20 +174,26 @@ function createSpiritMoths() {
   group.name = 'SpiritMoths';
   const wing = new BufferGeometry();
   wing.setAttribute('position', new Float32BufferAttribute([
-    0,0,0.12, 0.54,0.04,0.27, 0.34,0,-0.04,
-    0,0,0.12, 0.34,0,-0.04, 0,0,-0.13,
-    0,0,-0.13, 0.34,0,-0.04, 0.25,0,-0.26,
-    0.54,0.04,0.27, 0.65,0.05,0.31, 0.34,0,-0.04,
+    0,0,0.12, 0.33,0.025,0.21, 0.30,0,-0.09,
+    0,0,0.12, 0.30,0,-0.09, 0,0,-0.13,
+    0,0,-0.13, 0.30,0,-0.09, 0.25,0,-0.26,
+    0.33,0.025,0.21, 0.65,0.05,0.31, 0.30,0,-0.09,
   ], 3));
   wing.computeVertexNormals();
   wing.addGroup(0, 9, 0);
   wing.addGroup(9, 3, 1);
-  const silk = new MeshStandardMaterial({ color: '#a898bd', side: DoubleSide });
+  const silk = new MeshStandardMaterial({ color: '#cbb5d8', side: DoubleSide });
   const tip = new MeshStandardMaterial({
     color: '#dec6f3', emissive: '#c798ff', side: DoubleSide,
   });
   const body = new DodecahedronGeometry(0.085);
-  const insects = Array.from({ length: 3 }, (_, i) => {
+  // Shoreline endpoints, lateral bend, and initial flight phase (seconds).
+  const routes = [
+    [-15, 10, -5, 22, 2.8, 3], [15, 6, 7, -6, -3.5, 14],
+    [-4, -6, 12, 17, 2.2, 21], [-12, 17, 6, 18, -2, 5],
+    [11, 13, 2, 0, 2.6, 17], [-9, 1, 4, 15, -2.4, 2],
+  ] as const;
+  const insects = routes.map((_, i) => {
     const pivot = new Group();
     const torso = new Mesh(body, silk);
     torso.scale.set(0.7, 0.8, 2.2);
@@ -196,13 +202,10 @@ function createSpiritMoths() {
     left.scale.x = -1;
     pivot.add(torso, left, right);
     group.add(pivot);
-    pivot.scale.setScalar(0.8 + 0.07 * i);
+    pivot.scale.setScalar(1.55 * (0.8 + 0.07 * (i % 3)));
     return { pivot, left, right, path: [] as Vector3[] };
   });
   function place(ground: (x: number, z: number) => number, water: number) {
-    const routes = [
-      [-15, 10, -5, 22, 2.8], [15, 6, 7, -6, -3.5], [-4, -6, 12, 17, 2.2],
-    ] as const;
     insects.forEach(({ path }, i) => {
       const [x0, z0, x1, z1, bend] = routes[i]!;
       path.length = 0;
@@ -212,17 +215,17 @@ function createSpiritMoths() {
         const x = MathUtils.lerp(x0, x1, t) + bend * arc;
         const z = MathUtils.lerp(z0, z1, t) + arc * Math.sin(t * Math.PI * 2 + i);
         path.push(new Vector3(x, Math.max(water, ground(x, z)) + 0.12 +
-          arc * (1.4 + 0.55 * Math.sin(t * Math.PI * 3 + i)), z));
+          arc * (2.1 + 0.55 * Math.sin(t * Math.PI * 3 + i)), z));
       }
     });
     update(0, 0);
   }
   function update(time: number, night: number) {
-    tip.emissiveIntensity = 0.12 + 2.8 * night;
+    tip.emissiveIntensity = 0.22 + 3.7 * night;
     insects.forEach(({ pivot, left, right, path }, i) => {
       if (!path.length) return;
       const cycle = 18 + i * 3.7;
-      const clock = time + [3, 14, 21][i]!;
+      const clock = time + routes[i]![5];
       const leg = Math.floor(clock / cycle);
       const local = clock % cycle;
       const flight = 7 + i;
