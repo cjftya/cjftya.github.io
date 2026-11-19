@@ -1,5 +1,8 @@
 import {
   AdditiveBlending,
+  BufferGeometry,
+  Float32BufferAttribute,
+  DoubleSide,
   Color,
   Group,
   Mesh,
@@ -143,6 +146,7 @@ export class Sun {
     createCoronaGeometry(0, 0, 173),
     this.outerGlowMaterial,
   );
+  private readonly wind = this.createStellarWind();
   private readonly light = new PointLight('#ffe0ad', 105, 82, 1.45);
   private readonly prefersReducedMotion = window.matchMedia(
     '(prefers-reduced-motion: reduce)',
@@ -157,7 +161,8 @@ export class Sun {
     this.innerGlow.scale.setScalar(this.innerGlowScale);
     this.outerGlow.scale.setScalar(this.outerGlowScale);
     this.outerGlow.renderOrder = -1;
-    this.object.add(this.outerGlow, this.innerGlow, this.core, this.light);
+    this.object.add(this.outerGlow, this.innerGlow, this.core, this.light, this.wind);
+    this.wind.visible = !this.prefersReducedMotion;
   }
 
   setProfile(profile: StarProfile): void {
@@ -213,9 +218,82 @@ export class Sun {
     this.geometry.dispose();
     this.innerGlow.geometry.dispose();
     this.outerGlow.geometry.dispose();
+    this.wind.geometry.dispose();
+    this.wind.material.dispose();
     this.coreMaterial.dispose();
     this.innerGlowMaterial.dispose();
     this.outerGlowMaterial.dispose();
+  }
+
+  private createStellarWind(): Mesh<BufferGeometry, ShaderMaterial> {
+    const positions: number[] = [];
+    const particles: number[] = [];
+    for (let index = 0; index < 24; index += 1) {
+      const speed = ((index * 17) % 24) / 24;
+      // Local triangle coordinates: forward tip, then the two rear corners.
+      const corners = [[1, 0], [-0.6, 0.55], [-0.6, -0.55]];
+      if (speed > 0.75) {
+        corners.push([-0.6, 0.25], [-2.1, 0], [-0.6, -0.25]);
+      }
+      for (const [forward, across] of corners) {
+        positions.push(forward, across, 0);
+        particles.push(index, speed);
+      }
+    }
+    const geometry = new BufferGeometry();
+    geometry.setAttribute('position', new Float32BufferAttribute(positions, 3));
+    geometry.setAttribute('particle', new Float32BufferAttribute(particles, 2));
+    const material = new ShaderMaterial({
+      side: DoubleSide,
+      uniforms: {
+        uTime: this.timeUniform,
+        uSeed: this.seedUniform,
+        uColor: this.middleColorUniform,
+      },
+      vertexShader: `
+        attribute vec2 particle;
+        uniform float uTime;
+        uniform float uSeed;
+        varying float vShade;
+
+        void main() {
+          float progress = uTime * (0.17 + 0.09 * particle.y) + particle.x * 0.618034;
+          float age = fract(progress);
+          float path = particle.x + floor(progress) * 0.73 + uSeed * 0.001;
+          float latitude = 1.65 * (fract(path * 0.381966 + 0.5) - 0.5);
+          float angle = path * 2.39996 + 0.40 * age * (2.0 - age);
+          float circle = sqrt(1.0 - latitude * latitude);
+          vec3 radial = vec3(circle * cos(angle), latitude, circle * sin(angle));
+          float radius = 1.12 + age * (1.85 + particle.y * 0.65);
+          vec3 tangent = vec3(-radial.z, 0.0, radial.x);
+          vec3 velocity = radial * (1.85 + particle.y * 0.65)
+                        + tangent * radius * 0.80 * (1.0 - age);
+          vec4 center = modelViewMatrix * vec4(radial * radius, 1.0);
+          vec3 motion = mat3(modelViewMatrix) * velocity;
+          vec2 projected = motion.xy - center.xy * motion.z / min(center.z, -0.001);
+          vec2 forward = normalize(projected + vec2(0.00001, 0.0));
+          vec2 across = vec2(-forward.y, forward.x);
+          float size = clamp(-center.z * 0.0028 / projectionMatrix[1][1], 0.046, 0.16);
+          size *= smoothstep(0.0, 0.10, age) * (1.0 - smoothstep(0.67, 1.0, age));
+          center.xy += (position.x * forward + position.y * across) * size;
+          gl_Position = projectionMatrix * center;
+          vShade = 0.65 + 0.25 * particle.y;
+        }
+      `,
+      fragmentShader: `
+        uniform vec3 uColor;
+        varying float vShade;
+        void main() {
+          gl_FragColor = vec4(uColor * vShade, 1.0);
+          #include <tonemapping_fragment>
+          #include <colorspace_fragment>
+        }
+      `,
+    });
+    const wind = new Mesh(geometry, material);
+    // Positions are expanded around the star by the vertex shader.
+    wind.frustumCulled = false;
+    return wind;
   }
 
   private applyPulse(pulse: number): void {
