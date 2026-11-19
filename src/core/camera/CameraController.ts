@@ -34,6 +34,8 @@ export class CameraController {
   ).matches;
   private focusTargetResolver: FocusTargetResolver | undefined;
   private transition: CameraTransition | undefined;
+  private verticalFraming = 0;
+  private targetVerticalFraming = 0;
 
   constructor(canvas: HTMLCanvasElement, aspect: number) {
     this.camera = new PerspectiveCamera(48, aspect, 0.1, CAMERA_FAR_PLANE);
@@ -51,7 +53,11 @@ export class CameraController {
 
   resize(aspect: number): void {
     this.camera.aspect = aspect;
-    this.camera.updateProjectionMatrix();
+    this.updateProjection();
+  }
+
+  setVerticalFraming(offset: number): void {
+    this.targetVerticalFraming = offset;
   }
 
   focusOn(resolveTarget: FocusTargetResolver, planetRadius: number): void {
@@ -77,6 +83,7 @@ export class CameraController {
   }
 
   update(deltaSeconds: number): void {
+    this.updateVerticalFraming(deltaSeconds);
     this.updateFocusedTarget();
 
     if (this.transition !== undefined) {
@@ -89,6 +96,31 @@ export class CameraController {
 
   dispose(): void {
     this.controls.dispose();
+  }
+
+  private updateVerticalFraming(deltaSeconds: number): void {
+    const difference = this.targetVerticalFraming - this.verticalFraming;
+    if (difference === 0) {
+      return;
+    }
+
+    this.verticalFraming =
+      this.prefersReducedMotion || Math.abs(difference) < 0.0005
+        ? this.targetVerticalFraming
+        : this.verticalFraming + difference * (1 - Math.exp(-12 * deltaSeconds));
+    this.updateProjection();
+  }
+
+  private updateProjection(): void {
+    if (this.verticalFraming === 0) {
+      this.camera.clearViewOffset();
+      return;
+    }
+
+    // Shift the projected center by a fraction of the viewport height, keeping
+    // the same field of view and the selected planet as the orbit pivot.
+    const { aspect } = this.camera;
+    this.camera.setViewOffset(aspect, 1, 0, this.verticalFraming, aspect, 1);
   }
 
   private startTransition(

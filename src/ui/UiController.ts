@@ -4,6 +4,7 @@ import { ProjectPanel } from './ProjectPanel';
 
 interface UiCallbacks {
   onCloseSelection: () => void;
+  onPanelFramingChange: (verticalOffset: number) => void;
   onSelectGalaxy: (galaxyId: string) => void;
   onSelectProject: (projectId: string) => void;
   onHoverProject: (projectId: string | null) => void;
@@ -73,6 +74,12 @@ export class UiController {
             >
               <span aria-hidden="true">×</span>
             </button>
+            <button
+              class="panel-toggle"
+              type="button"
+              aria-controls="project-details"
+              aria-expanded="false"
+            >자세히</button>
             <span class="observation-signal" aria-hidden="true"></span>
             <div class="project-meta">
               <span class="project-status"></span>
@@ -80,20 +87,22 @@ export class UiController {
             </div>
             <h2 id="selected-project-name"></h2>
             <p class="project-summary"></p>
-            <p class="project-description"></p>
-            <section class="project-stack" aria-labelledby="project-stack-title">
-              <p id="project-stack-title" class="panel-label">Tech stack</p>
-              <ul class="project-tech-stack"></ul>
-            </section>
-            <div class="project-actions">
-              <a class="project-link project-page-link"></a>
-              <a
-                class="project-link project-github-link"
-                target="_blank"
-                rel="noreferrer"
-              >
-                GitHub에서 보기
-              </a>
+            <div id="project-details" class="project-details">
+              <p class="project-description"></p>
+              <section class="project-stack" aria-labelledby="project-stack-title">
+                <p id="project-stack-title" class="panel-label">Tech stack</p>
+                <ul class="project-tech-stack"></ul>
+              </section>
+              <div class="project-actions">
+                <a class="project-link project-page-link"></a>
+                <a
+                  class="project-link project-github-link"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  GitHub에서 보기
+                </a>
+              </div>
             </div>
           </aside>
         </section>
@@ -117,6 +126,7 @@ export class UiController {
       callbacks.onCloseSelection,
       () => this.playTravelEffect(),
       callbacks.onSelectProject,
+      callbacks.onPanelFramingChange,
     );
     this.galaxySwitcher.addEventListener('click', this.handleGalaxyClick);
     document.addEventListener('keydown', this.handleKeyDown);

@@ -8,6 +8,8 @@ const STATUS_LABELS: Record<ProjectStatus, string> = {
 };
 
 export class ProjectPanel {
+  private readonly touchLayout = window.matchMedia('(pointer: coarse)');
+  private readonly resizeObserver: ResizeObserver;
   private readonly family = document.createElement('nav');
   private projects: Project[] = [];
   private readonly panel: HTMLElement;
@@ -21,6 +23,8 @@ export class ProjectPanel {
   private readonly githubLink: HTMLAnchorElement;
   private readonly actions: HTMLElement;
   private readonly closeButton: HTMLButtonElement;
+  private readonly toggleButton: HTMLButtonElement;
+  private readonly details: HTMLElement;
 
   constructor(
     root: HTMLElement,
@@ -28,6 +32,7 @@ export class ProjectPanel {
     private readonly onClose: () => void,
     private readonly onShow: () => void,
     private readonly onSelectProject: (projectId: string) => void,
+    private readonly onFramingChange: (verticalOffset: number) => void,
   ) {
     this.panel = this.requireElement(root, '.project-panel');
     this.status = this.requireElement(root, '.project-status');
@@ -48,6 +53,13 @@ export class ProjectPanel {
     this.actions = this.requireElement(root, '.project-actions');
     this.closeButton = this.requireElement(root, '.panel-close', HTMLButtonElement);
     this.closeButton.addEventListener('click', this.handleClose);
+    this.toggleButton = this.requireElement(root, '.panel-toggle', HTMLButtonElement);
+    this.details = this.requireElement(root, '.project-details');
+    this.toggleButton.addEventListener('click', this.handleToggle);
+    this.touchLayout.addEventListener('change', this.updateFraming);
+    this.resizeObserver = new ResizeObserver(this.updateFraming);
+    this.resizeObserver.observe(this.panel);
+    this.resizeObserver.observe(this.viewport);
   }
 
   get hidden(): boolean {
@@ -60,8 +72,10 @@ export class ProjectPanel {
 
   show(project: Project | null): void {
     this.panel.hidden = project === null;
+    this.setExpanded(false);
     if (project === null) {
       this.viewport.style.removeProperty('--project-color');
+      this.updateFraming();
       return;
     }
 
@@ -110,15 +124,40 @@ export class ProjectPanel {
         return item;
       }),
     );
+    this.updateFraming();
     this.onShow();
   }
 
   dispose(): void {
     this.closeButton.removeEventListener('click', this.handleClose);
+    this.toggleButton.removeEventListener('click', this.handleToggle);
+    this.touchLayout.removeEventListener('change', this.updateFraming);
+    this.resizeObserver.disconnect();
   }
 
   private readonly handleClose = (): void => {
     this.onClose();
+  };
+
+  private readonly handleToggle = (): void => {
+    this.setExpanded(this.panel.dataset.expanded !== 'true');
+    this.updateFraming();
+  };
+
+  private setExpanded(expanded: boolean): void {
+    this.panel.dataset.expanded = String(expanded);
+    this.toggleButton.setAttribute('aria-expanded', String(expanded));
+    this.toggleButton.textContent = expanded ? '접기' : '자세히';
+    this.details.scrollTop = 0;
+  }
+
+  private readonly updateFraming = (): void => {
+    const height = this.viewport.clientHeight;
+    const offset =
+      this.touchLayout.matches && !this.hidden && height > 0
+        ? (height - this.panel.offsetTop) / (2 * height)
+        : 0;
+    this.onFramingChange(offset);
   };
 
   private showLink(link: HTMLAnchorElement, href: string | null): void {

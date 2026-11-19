@@ -44,6 +44,8 @@ export class App {
   ) {
     this.ui = new UiController(root, {
       onCloseSelection: this.requestClearSelection,
+      onPanelFramingChange: (offset) =>
+        this.cameraController.setVerticalFraming(offset),
       onSelectGalaxy: this.handleGalaxySelection,
       onSelectProject: this.handleLabelSelection,
       onHoverProject: this.handleLabelHover,
