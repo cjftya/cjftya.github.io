@@ -187,6 +187,35 @@ export class Planet {
       blending: AdditiveBlending,
     });
 
+    // Shape the existing atmosphere around the central star without a bloom pass.
+    material.onBeforeCompile = (shader) => {
+      const varying = 'varying vec3 vShellNormal; varying vec3 vStarDirection; varying vec3 vShellView;';
+      shader.vertexShader = varying + '\n' + shader.vertexShader.replace(
+        '#include <project_vertex>',
+        `#include <project_vertex>
+        vec3 center = modelViewMatrix[3].xyz;
+        vShellNormal = normalMatrix * normalize(position);
+        vStarDirection = viewMatrix[3].xyz - center;
+        vShellView = -mvPosition.xyz;
+        // Give small projected planets a soft, readable atmospheric margin.
+        mvPosition.xyz += normalize(vShellNormal) * min(
+          length(mvPosition.xyz - center) * 0.12,
+          max(0.0, -center.z) * 0.0016 / projectionMatrix[1][1]
+        );
+        gl_Position = projectionMatrix * mvPosition;`,
+      );
+      shader.fragmentShader = varying + '\n' + shader.fragmentShader.replace(
+        '#include <opaque_fragment>',
+        `vec3 outward = normalize(vShellNormal);
+        float sunlight = smoothstep(-0.35, 0.85, dot(outward, normalize(vStarDirection)));
+        float depth = abs(dot(outward, normalize(vShellView)));
+        float falloff = smoothstep(0.0, 0.52, depth);
+        outgoingLight = mix(outgoingLight, vec3(1.0, 0.88, 0.77), sunlight * 0.35);
+        diffuseColor.a = falloff * (diffuseColor.a * 0.6 + sunlight * 0.32);
+        #include <opaque_fragment>`,
+      );
+    };
+
     return new Mesh(geometry, material);
   }
 
