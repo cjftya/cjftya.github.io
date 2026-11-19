@@ -231,7 +231,11 @@ export class Sun {
     for (let index = 0; index < 24; index += 1) {
       const speed = ((index * 17) % 24) / 24;
       // Local triangle coordinates: forward tip, then the two rear corners.
-      const corners = [[1, 0], [-0.6, 0.55], [-0.6, -0.55]];
+      const corners: [number, number][] = [
+        [1, 0],
+        [-0.6, 0.55],
+        [-0.6, -0.55],
+      ];
       if (speed > 0.75) {
         corners.push([-0.6, 0.25], [-2.1, 0], [-0.6, -0.25]);
       }
